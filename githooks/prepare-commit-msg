@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# Check if input can be read from tty, exit if not
+if ! { true < /dev/tty; } > /dev/null 2> /dev/null; then
+  exit 0
+fi
+
+# Constants declaration
+declare -r COMMIT_MSG_FILE_PATH="$1"
+declare -r COMMIT_TYPE="$2"
+declare -r AMENDED_COMMIT_SHA="$3"
+
+# Exit if the commit is an amended one
+if test -n "$AMENDED_COMMIT_SHA"; then
+  exit 0
+fi
+
+# Exit for certain commit types
+case "$COMMIT_TYPE" in
+  message | template | merge | squash)
+    exit 0
+    ;;
+esac
+
+# Conventional commit types array
+declare -a CONVENTIONAL_COMMIT_TYPES=(
+  chore
+  ci
+  docs
+  feat
+  fix
+  refactor
+  style
+  test
+)
+
+# Read previous commit message
+previous_msg="$(< "$COMMIT_MSG_FILE_PATH")" || exit
+
+# Function to check if the first line of the previous message is empty
+check_if_previous_msg_first_line_empty() {
+  declare first_line
+  read -r first_line <<< "$previous_msg"
+
+  if test -n "$first_line"; then
+    exit 0
+  fi
+}
+
+# Prompt user if they want to proceed
+query_if_proceed() {
+  printf '%s' 'Do you want to prepare a conventional commit message? (y/[n]) '
+
+  declare reply
+  read -r reply
+
+  if test "$reply" != y; then
+    exit 0
+  fi
+}
+
+# Prompt user to select conventional commit type
+query_conventional_commit_type() {
+  echo 'Select a conventional commit type:'
+
+  declare reply
+  select reply in "${CONVENTIONAL_COMMIT_TYPES[@]}"; do
+    conventional_line="$reply"
+    return
+  done
+
+  return 1
+}
+
+# Prompt user for scope name
+query_scope() {
+  printf '%s' 'Enter the scope name (optional): '
+
+  declare reply
+  read -r reply
+
+  if test -n "$reply"; then
+    conventional_line+="($reply)"
+  fi
+}
+
+# Extract issue from branch name and append it to conventional_line
+extract_issue_from_branch_name() {
+  declare branch_name issue_name
+  branch_name="$(git rev-parse --symbolic --abbrev-ref '@' 2>/dev/null)" || return
+  issue_name="$(grep -Eo '^OK-[0-9]+' <<< "$branch_name" 2>/dev/null)" || return
+  conventional_line+="[$issue_name] "
+}
+
+# Invoke functions to interact with the user and prepare conventional commit message
+check_if_previous_msg_first_line_empty
+query_if_proceed < /dev/tty
+query_conventional_commit_type < /dev/tty || exit
+query_scope < /dev/tty
+extract_issue_from_branch_name
+
+# Append conventional_line and previous_msg to COMMIT_MSG_FILE_PATH
+printf '%s\n%s' "$conventional_line" "$previous_msg" > "$COMMIT_MSG_FILE_PATH"
