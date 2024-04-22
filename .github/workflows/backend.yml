@@ -4,82 +4,44 @@ on:
   push:
 
 jobs:
-  dependencies-installation:
-
+  pipeline:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [20.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: checkout code
+        uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-deps
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
 
-    - name: install dependencies
-      run: cd frontend && npm install
+      - name: use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-  build:
+      - name: dependencies-installation
+        run: cd backend && npm install
 
-    runs-on: ubuntu-latest
+      - name: build
+        run: cd backend && npm run build
 
-    strategy:
-      matrix:
-        node-version: [20.x]
+      - name: lint
+        run: cd backend && npm run lint
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: unit tests
+        run: cd backend && npm run test
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: e2e tests
+        run: cd backend && npm run test:e2e
 
-    - name: Run Build
-      run: cd frontend && npm install && npm run build
-
-  test:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Run Build
-      run: cd frontend && npm install && npm test -- --watch=false --browsers=ChromeHeadless
-
-  lint:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Run Build
-      run: cd frontend && npm install && npm run lint
+      - name: code coverage
+        run: cd backend && npm run test:cov
