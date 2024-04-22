@@ -11,10 +11,10 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: cache dependencies
+      - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
         with:
@@ -23,25 +23,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{ matrix.node-version }}-
 
-      - name: use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: dependencies-installation
+      - name: Install dependencies
         run: cd backend && npm install
 
-      - name: build
+      - name: Build
         run: cd backend && npm run build
 
-      - name: lint
+      - name: Lint
         run: cd backend && npm run lint
 
-      - name: unit tests
+      - name: Unit tests
         run: cd backend && npm run test
 
       - name: e2e tests
         run: cd backend && npm run test:e2e
 
-      - name: code coverage
+      - name: Code coverage
         run: cd backend && npm run test:cov
