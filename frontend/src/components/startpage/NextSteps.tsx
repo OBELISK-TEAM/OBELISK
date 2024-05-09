@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from './start.module.css'
 const NextSteps: React.FC = () => {
   return (
-    <section className="min-h-[90vh] text-xl overflow-auto relative p-4 text-palette1-creme-light bg-palette1-darkest-blue-template1  flex justify-center text-right items-center lg:bottom-[240px] lg:clip-next-steps">
+    <section className="min-h-[100vh] text-xl overflow-auto relative p-4 text-palette1-creme-light bg-palette1-darkest-blue-template1  flex justify-center text-right items-center  lg:bottom-[260px] lg:clip-next-steps">
       <div className="absolute inset-0 opacity-25 object-cover">
         <Image
           src="https://picsum.photos/1280/720?random=5"
