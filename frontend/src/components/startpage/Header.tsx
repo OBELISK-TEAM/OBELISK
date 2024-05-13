@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 const Header: React.FC = () => {
-  // Custom CSS classes for large initials
+
   const largeInitial = "text-6xl ";
 
   return (

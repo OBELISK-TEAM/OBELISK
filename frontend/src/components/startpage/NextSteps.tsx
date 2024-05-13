@@ -1,7 +1,7 @@
 import React from "react";
 
 import Image from "next/image";
-import styles from './start.module.css'
+import styles from './startpage.module.css'
 const NextSteps: React.FC = () => {
   return (
     <section className="min-h-[100vh] text-xl overflow-auto relative p-4 text-palette1-creme-light bg-palette1-darkest-blue-template1  flex justify-center text-right items-center  lg:bottom-[260px] lg:clip-next-steps">
@@ -18,7 +18,7 @@ const NextSteps: React.FC = () => {
        
         
         <h2 className={`${styles['styled-h1']} text-left text-5xl font-semibold`}>Our Next Steps</h2>
-        <p className="text-left mb-5 leading-9" style={{ letterSpacing: "1.2px" }}>
+        <p className="text-left mb-5 leading-9">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut

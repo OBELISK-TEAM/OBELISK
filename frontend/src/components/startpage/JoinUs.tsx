@@ -16,7 +16,7 @@ const CallToAction: React.FC = () => {
         />
       </div>
 
-      <Button variant="gold" className="text-2xl px-12" style={{padding: "1.06em 3.2em 0.9em",lineHeight: "20rem"}}>
+      <Button variant="gold" className="text-2xl px-12" >
         Get Started!
       </Button>
     </section>

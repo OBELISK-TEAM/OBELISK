@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
 import { Inter, Anek_Devanagari,Aldrich } from "next/font/google";
 import "./globals.css";
+const options = {
+  weight: "400",  // Można wybrać pomiędzy "400" a "400[]" - w zależności od potrzeb
+  style: "normal",  // opcjonalne, domyślnie 'undefined'
+  display: undefined,  // opcjonalne, domyślnie 'undefined'
+  variable: undefined,  // opcjonalne, domyślnie 'undefined'
+  preload: true,  // opcjonalne, domyślnie 'undefined'
+  fallback: undefined,  // opcjonalne, domyślnie 'undefined'
+  adjustFontFallback: true,  // opcjonalne, domyślnie 'undefined'
+  subsets: ["latin"]  // opcjonalne, domyślnie 'undefined'
+};
 
-const anekDev = Anek_Devanagari({ subsets: ["latin"] });
+// Wywołanie funkcji z odpowiednimi opcjami
+
+const anekDev = Aldrich({weight:"400",subsets:["latin"]});
 
 export const metadata: Metadata = {
   title: "Obelisk",
