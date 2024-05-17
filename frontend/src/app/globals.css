@@ -74,3 +74,15 @@
       @apply bg-background text-foreground;
     }
   }
+
+  @layer utilities {
+    .clip-mission-statement {
+      clip-path: polygon(0 0, 100% 21%, 100% 100%, 0 100%);
+    }
+    .clip-next-steps {
+      clip-path: polygon(0 34%, 100% 13%, 100% 100%, 0 100%);
+    }
+  }
+  
+
+  
