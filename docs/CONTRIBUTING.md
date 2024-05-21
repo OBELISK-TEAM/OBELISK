@@ -4,8 +4,6 @@ This document outlines the rules and guidelines that apply to the OBELISK projec
 
 Please note that this document might (and probably will) change in the future. By contributing you are expected to keep up with all of the updates.
 
-___
-
 
 ## Branches
 
@@ -18,8 +16,6 @@ Branches that don't fall under any of the branch types listed above are not allo
 
 `--force` is allowed only on the feature branches and under the condition that you work on the branch alone, which will be the case for most branches.
 
-___
-
 
 ## Commits
 
@@ -28,8 +24,6 @@ We use slightly modified version of [conventional commits](https://www.conventio
 In order to preserve consistency among the commits please don't use any other hooks that modify commit messages.
 
 Please note that the hook might be updated in the future. By contributing, you are expected to use the latest version of `prepare-commit-msg` hook.
-
-___
 
 
 ## Pull Requests
@@ -48,8 +42,6 @@ We merge pull requests we authored. Avoid merging other pull requests (exception
 We use `squash and merge` when merging to the `develop` branch. `rebase and merge` is allowed only if each of the commit in the pull request introduce one, consistent logical change.
 
 After the merge the source branch should be deleted.
-
-___
 
 
 ## Manual Tests
