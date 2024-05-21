@@ -14,7 +14,7 @@ There are three types of branches:
 
 Branches that don't fall under any of the branch types listed above are not allowed.
 
-`--force` is allowed only on the feature branches and under the condition that you work on the branch alone, which will be the case for most branches.
+Pushing with `--force` is not allowed. Pushing with `--force-with-lease` is allowed only on the feature branches and under the condition that you work on the branch alone, which will be the case for most branches.
 
 
 ## Commits
