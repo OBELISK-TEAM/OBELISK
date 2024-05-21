@@ -19,7 +19,7 @@ Branches that don't fall under any of the branch types listed above are not allo
 
 ## Commits
 
-We use slightly modified version of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). A special hook has been prepared for this purpose. It can be found [here](https://github.com/OBELISK-TEAM/OBELISK/tree/develop/.githooks/prepare-commit-msg). In order to use it, copy the `prepare-commit-msg` file to `.git/hooks` directory. Using it on Linux might also require changing the execution privelleges: `chmod +x prepare-commit-msg`. To run the hook, use the following command: `commit -a`.
+We use slightly modified version of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). A special hook has been prepared for this purpose. It can be found [here](https://github.com/OBELISK-TEAM/OBELISK/tree/develop/.githooks/prepare-commit-msg). In order to use it, copy the `prepare-commit-msg` file to `.git/hooks` directory. Using it on Linux might also require changing the execution privelleges: `chmod +x prepare-commit-msg`. To run the hook, use the following command: `git commit -a`.
 
 In order to preserve consistency among the commits please don't use any other hooks that modify commit messages.
 
@@ -39,7 +39,7 @@ Pull request can be merged under the following conditions:
 
 We merge pull requests we authored. Avoid merging other pull requests (exception: the author of the pull request doesn't have a write access to the target branch)
 
-We use `squash and merge` when merging to the `develop` branch. `rebase and merge` is allowed only if each of the commit in the pull request introduce one, consistent logical change.
+We use `squash and merge` when merging to the `develop` branch. `rebase and merge` is allowed only if each of the commit in the pull request introduces one, consistent logical change.
 
 After the merge the source branch should be deleted.
 
