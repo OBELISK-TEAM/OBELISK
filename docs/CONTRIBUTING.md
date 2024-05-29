@@ -19,7 +19,7 @@ Pushing with `--force` is not allowed. Pushing with `--force-with-lease` is allo
 
 ## Commits
 
-We use slightly modified version of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). A special hook has been prepared for this purpose. It can be found [here](https://github.com/OBELISK-TEAM/OBELISK/tree/develop/.githooks/prepare-commit-msg). In order to use it, copy the `prepare-commit-msg` file to `.git/hooks` directory. Using it on Linux might also require changing the execution privelleges: `chmod +x prepare-commit-msg`. To run the hook, use the following command: `git commit -a`.
+We use slightly modified version of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). A special hook has been prepared for this purpose. It can be found [here](https://github.com/OBELISK-TEAM/OBELISK/tree/develop/.githooks/prepare-commit-msg). In order to use it, copy the `prepare-commit-msg` file to `.git/hooks` directory. Using it on Linux might also require changing the execution permissions: `chmod +x prepare-commit-msg`. To run the hook, use the following command: `git commit -a`.
 
 In order to preserve consistency among the commits please don't use any other hooks that modify commit messages.
 
