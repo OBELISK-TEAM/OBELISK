@@ -9,11 +9,11 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
 // imports: [MongooseModule.forRoot('mongodb://user:password@ipaddr/db_name')],
 // add certificate to the connection for ensure the security (encrypt the data)
 
-const dbName = process.env.DB_NAME || 'mongo_obelisk';
-const dbUser = process.env.DB_USER || 'admin';
-const dbPassword = process.env.DB_PASSWORD || 'password';
-const dbHost = process.env.DB_HOST || 'localhost';
-const dbPort = process.env.DB_PORT || '30000';
+// const dbName = process.env.DB_NAME || 'mongo_obelisk';
+// const dbUser = process.env.DB_USER || 'admin';
+// const dbPassword = process.env.DB_PASSWORD || 'password';
+// const dbHost = process.env.DB_HOST || 'localhost';
+// const dbPort = process.env.DB_PORT || '30000';
 
 @Module({
   imports: [
