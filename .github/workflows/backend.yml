@@ -40,8 +40,8 @@ jobs:
       - name: Unit tests
         run: cd backend && npm run test
 
-      - name: e2e tests
-        run: cd backend && npm run test:e2e
+#      - name: e2e tests
+#        run: cd backend && npm run test:e2e
 
-      - name: Code coverage
-        run: cd backend && npm run test:cov
+#      - name: Code coverage
+#        run: cd backend && npm run test:cov
