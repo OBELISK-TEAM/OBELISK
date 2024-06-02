@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
 import { CogIcon } from "lucide-react";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import RenderItem from "./SidebarItem";
+
 interface DashboardSidebarProps {
   menuItem: MenuGroup;
   onIconClick: (name: string) => void;
@@ -49,11 +50,9 @@ const DashboardSidebar: FC<DashboardSidebarProps> = ({
 
   let borderClass = fromRight ? "border-l" : "border-r";
 
-
-
   return (
     <div
-      className={`relative flex flex-col bg-white ${borderClass} group hover:w-60 w-[56px] w-min-[56px] transition-all duration-300 ease-in-out overflow-hidden`}
+      className={`relative flex flex-col bg-white ${borderClass} group hover:w-60 w-[56px] transition-all duration-500 ease-in-out overflow-hidden`}
       style={{ height: "calc(100vh - 64px)" }}
     >
       <div className="flex flex-col flex-1 p-2 space-y-4">
@@ -74,10 +73,10 @@ const DashboardSidebar: FC<DashboardSidebarProps> = ({
         </div>
         {withSettings && (
           <div className="border-t pt-3">
-            <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black">
-              <CogIcon className="h-5 w-5 flex-shrink-0" />
+            <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded cursor-pointer hover:text-black">
+              <CogIcon className="h-5 w-5 flex-shrink-0 cursor-pointer" />
               <span
-                className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap"
+                className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer"
                 style={{ fontSize: "14px", fontWeight: "500" }}
               >
                 Settings

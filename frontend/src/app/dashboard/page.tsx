@@ -77,15 +77,21 @@ const Dashboard: React.FC = () => {
   const { menuList, handleAddImageByUrl, handleFileChange, handleLoadImagesFromJson, color, size, handleColorChange, handleSizeChange } = useMenuData(canvas);
 
   const [addGroup, editGroup, fileGroup] = menuList;
-
+  
   const handleIconClick = (name: string) => {
-    if (activeItem === 'add-image-disk') {
+    
+    if (name === 'add-image-disk') {
       fileInputRef.current?.click();
-    }
-    else if (activeItem === 'load-images-json'){
+      setActiveItem(null);
+      
+    } else if (name === 'load-images-json') {
       fileJSONInputRef.current?.click();
+      setActiveItem(null);
+      
     }
   };
+  
+  
 
   return (
     <div className="flex flex-col">
