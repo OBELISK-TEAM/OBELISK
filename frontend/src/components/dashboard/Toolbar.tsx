@@ -37,7 +37,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
     type: string = "text"
   ) => {
     const isColor = type === "color";
-    let inputClasses = "w-16";
+    let inputClasses = "w-[5.5em]";
     if (isColor) {
       inputClasses = "w-5 h-5 p-0  rounded-full";
     }
@@ -139,37 +139,49 @@ const ToolBar: React.FC<ToolBarProps> = ({
     </>
   );
 
-  const renderShapeControls = () => (
+  const renderRectangleControls = () => (
     <>
       {selectedObjectStyles?.fill !== undefined &&
         renderInput("fill", "Color", "color")}
+
       {selectedObjectStyles?.stroke !== undefined &&
         renderInput("stroke", "Stroke Color", "color")}
+
+      {selectedObjectStyles?.strokeWidth !== undefined &&
+        renderInput("strokeWidth", "Stroke Width", "number")}
+      {selectedObjectStyles?.width !== undefined &&
+        renderInput("width", "Width", "number")}
+      {selectedObjectStyles?.height !== undefined &&
+        renderInput("height", "Height", "number")}
+
+      {selectedObjectStyles?.angle !== undefined &&
+        renderInput("angle", "Angle", "number")}
+    </>
+  );
+
+  const renderCircleControls = () => (
+    <>
+      {selectedObjectStyles?.fill !== undefined &&
+        renderInput("fill", "Color", "color")}
+
+      {selectedObjectStyles?.stroke !== undefined &&
+        renderInput("stroke", "Stroke Color", "color")}
+
       {selectedObjectStyles?.strokeWidth !== undefined &&
         renderInput("strokeWidth", "Stroke Width", "number")}
       {selectedObjectStyles?.radius !== undefined &&
         renderInput("radius", "Radius", "number")}
       {selectedObjectStyles?.angle !== undefined &&
         renderInput("angle", "Angle", "number")}
-      {selectedObjectStyles?.scaleX !== undefined &&
-        renderInput("scaleX", "Scale X", "number")}
-      {selectedObjectStyles?.scaleY !== undefined &&
-        renderInput("scaleY", "Scale Y", "number")}
     </>
   );
 
   const renderPathControls = () => (
     <>
-      {selectedObjectStyles?.fill !== undefined &&
-        renderInput("fill", "Color", "color")}
       {selectedObjectStyles?.stroke !== undefined &&
         renderInput("stroke", "Stroke Color", "color")}
       {selectedObjectStyles?.strokeWidth !== undefined &&
         renderInput("strokeWidth", "Stroke Width", "number")}
-      {selectedObjectStyles?.scaleX !== undefined &&
-        renderInput("scaleX", "Scale X", "number")}
-      {selectedObjectStyles?.scaleY !== undefined &&
-        renderInput("scaleY", "Scale Y", "number")}
     </>
   );
 
@@ -177,10 +189,10 @@ const ToolBar: React.FC<ToolBarProps> = ({
     <>
       {selectedObjectStyles?.stroke !== undefined &&
         renderInput("stroke", "Stroke Color", "color")}
-      {selectedObjectStyles?.scaleX !== undefined &&
-        renderInput("scaleX", "Scale X", "number")}
-      {selectedObjectStyles?.scaleY !== undefined &&
-        renderInput("scaleY", "Scale Y", "number")}
+        {selectedObjectStyles?.width !== undefined &&
+        renderInput("width", "Width", "number")}
+      {selectedObjectStyles?.height !== undefined &&
+        renderInput("height", "Height", "number")}
     </>
   );
 
@@ -190,8 +202,9 @@ const ToolBar: React.FC<ToolBarProps> = ({
       case "i-text":
         return renderTextControls();
       case "rect":
+        return renderRectangleControls();
       case "circle":
-        return renderShapeControls();
+        return renderCircleControls();
       case "path":
         return renderPathControls();
       case "line":

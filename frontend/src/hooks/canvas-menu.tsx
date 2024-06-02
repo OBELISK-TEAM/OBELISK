@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef,useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { MenuGroup, DropDownMenuItem } from "@/interfaces/canva-interfaces";
 import {
   Pencil,
@@ -49,22 +49,28 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     return JSON.stringify(state1) === JSON.stringify(state2);
   };
 
-  const saveState = useCallback((canvas: fabric.Canvas | null) => {
-    if (canvas) {
-      const state = canvas.toJSON();
-      if (
-        undoStack.current.length === 0 ||
-        !areStatesEqual(state, undoStack.current[undoStack.current.length - 1])
-      ) {
-        undoStack.current.push(state);
-        if (undoStack.current.length > 50) {
-          undoStack.current.shift(); // Limit the stack size to 50 states
+  const saveState = useCallback(
+    (canvas: fabric.Canvas | null) => {
+      if (canvas) {
+        const state = canvas.toJSON();
+        if (
+          undoStack.current.length === 0 ||
+          !areStatesEqual(
+            state,
+            undoStack.current[undoStack.current.length - 1]
+          )
+        ) {
+          undoStack.current.push(state);
+          if (undoStack.current.length > 50) {
+            undoStack.current.shift(); // Limit the stack size to 50 states
+          }
+          redoStack.current.length = 0; // Clear the redo stack
         }
-        redoStack.current.length = 0; // Clear the redo stack
       }
-    }
-    //console.log(undoStack.current, redoStack.current);
-  }, [undoStack, redoStack]);
+      //console.log(undoStack.current, redoStack.current);
+    },
+    [undoStack, redoStack]
+  );
 
   const undo = (canvas: fabric.Canvas | null) => {
     if (undoStack.current.length > 0) {
@@ -143,53 +149,10 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
         canvas.off("mouse:wheel", handleMouseWheel);
       };
     }
-  }, [isDrawingMode, color, size, canvas,saveState]);
+  }, [isDrawingMode, color, size, canvas, saveState]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey) {
-        switch (event.key) {
-          case "z":
-            undo(canvas);
-            break;
-          case "y":
-            redo(canvas);
-            break;
-          case "Z":
-            if (event.shiftKey) {
-              redo(canvas);
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [canvas]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && canvas) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result;
-        if (result) {
-          resizeImage(result as string, 800, 600, (resizedImage) => {
-            addImage(canvas, resizedImage);
-            saveState(canvas);
-          });
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleLoadImagesFromJson = (
+  
+  const handleLoadImagesFromJson = useCallback((
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
@@ -204,30 +167,9 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       };
       reader.readAsText(file);
     }
-  };
+  },[canvas, saveState]);
 
-  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setColor(event.target.value);
-  };
-
-  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSize(Number(event.target.value));
-  };
-
- 
-  const handleAddImageByUrl = (url:string) => {
-    if (canvas) {
-      addImage(canvas, url);
-      saveState(canvas);
-    }
-  };
-
-  const handleSaveImages = () => {
-    saveImagesToLocalFile(canvas);
-    saveState(canvas);
-  };
-
-  const performAction = (name: string) => {
+  const performAction = useCallback((name: string) => {
     const properties = {
       color,
       strokeWidth: size,
@@ -273,10 +215,78 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
         default:
           break;
       }
+      saveState(canvas);
+    }
+  },[canvas, color, size, saveState, handleLoadImagesFromJson]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey) {
+        switch (event.key) {
+          case "z":
+            undo(canvas);
+            break;
+          case "y":
+            redo(canvas);
+            break;
+          case "Z":
+            if (event.shiftKey) {
+              redo(canvas);
+            }
+            break;
+          default:
+            break;
+        }
+      } else if (event.key === "Backspace" || event.key === "Delete") {
+        performAction("remove-selected");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [canvas, performAction]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && canvas) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (result) {
+          resizeImage(result as string, 800, 600, (resizedImage) => {
+            addImage(canvas, resizedImage);
+            saveState(canvas);
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  
+
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(event.target.value);
+  };
+
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSize(Number(event.target.value));
+  };
+
+  const handleAddImageByUrl = (url: string) => {
+    if (canvas) {
+      addImage(canvas, url);
       saveState(canvas);
     }
   };
+
+  const handleSaveImages = () => {
+    saveImagesToLocalFile(canvas);
+    saveState(canvas);
+  };
+
+  
 
   const menuList: MenuGroup[] = [
     {
@@ -329,18 +339,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     {
       group: "Object Manipulation",
       items: [
-        {
-          action: () => performAction("group-selected"),
-          text: "Group Selected",
-          icon: <Group />,
-          name: "group-selected",
-        },
-        {
-          action: () => performAction("remove-selected"),
-          text: "Remove Selected",
-          icon: <Trash />,
-          name: "remove-selected",
-        },
+
         {
           action: () => performAction("clear-canvas"),
           text: "Clear Canvas",
@@ -405,6 +404,18 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           text: "Load Images from JSON",
           icon: <Upload />,
           name: "load-images-json",
+        },
+        {
+          action: () => performAction("group-selected"),
+          text: "Group Selected",
+          icon: <Group />,
+          name: "group-selected",
+        },
+        {
+          action: () => performAction("remove-selected"),
+          text: "Remove Selected",
+          icon: <Trash />,
+          name: "remove-selected",
         },
       ],
     },

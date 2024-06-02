@@ -7,6 +7,7 @@ import {
   initializeCanvas,
   getSelectedObjectStyles as getSelectedObjectStylesUtil,
   setSelectedObjectStyles as setSelectedObjectStylesUtil,
+  updateDimensions
 } from "@/lib/fabricCanvasUtils";
 import ToolBar from "@/components/dashboard/Toolbar";
 import { DashboardPagination } from "@/components/dashboard/Pagination";
@@ -43,11 +44,15 @@ const Dashboard: React.FC = () => {
       setActiveItem(null)
     });
     
-    newCanvas?.on("object:modified", () => {
+    newCanvas?.on("object:modified", (e) => {
       setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
       console.log("Object modified", JSON.stringify(getSelectedObjectStylesUtil(newCanvas)));
+      const obj = e.target;
+      updateDimensions(obj);
       setActiveItem(null)
     });
+
+    
 
     return () => {
       newCanvas?.dispose();
@@ -91,6 +96,7 @@ const Dashboard: React.FC = () => {
         fromRight={true}
         activeItem={activeItem}
         onActiveItemChange={setActiveItem}
+        activeCanvasObject={selectedObjectStyles}
       />
       <div className="flex">
         <DashboardSidebar

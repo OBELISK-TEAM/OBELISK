@@ -311,7 +311,7 @@ export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | 
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
       return activeObject.toObject([
-        'fill', 'stroke', 'strokeWidth', 'fontSize', 'fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'angle', 'left', 'top', 'scaleX', 'scaleY'
+        'fill', 'stroke', 'strokeWidth', 'fontSize', 'fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'angle', 'left', 'top', 
       ]);
     }
   }
@@ -326,5 +326,21 @@ export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: ob
       obj.set(styles);
     });
     canvas.requestRenderAll();
+  }
+};
+
+export const updateDimensions = (obj: any) => {
+  if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line' || obj.type === 'path') {
+    const scaledWidth = Math.round(obj.width * obj.scaleX);
+    const scaledHeight = Math.round(obj.height * obj.scaleY);
+    const scaledRadius = Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY));
+
+    obj.set({
+      width: scaledWidth,
+      height: scaledHeight,
+      radius: scaledRadius,
+      scaleX: 1,
+      scaleY: 1,
+    });
   }
 };
