@@ -9,7 +9,6 @@ import {
   setSelectedObjectStyles as setSelectedObjectStylesUtil,
 } from "@/lib/fabricCanvasUtils";
 import ToolBar from "@/components/dashboard/Toolbar";
-import Header from "@/components/Header";
 import { DashboardPagination } from "@/components/dashboard/Pagination";
 import HorizontalMenu from "@/components/dashboard/HorizontalMenu";
 
