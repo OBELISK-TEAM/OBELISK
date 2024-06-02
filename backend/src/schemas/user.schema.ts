@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { UserRoleEnum } from '../enums/user.role.enum';
-import { UserTypeEnum } from '../enums/user.type.enum';
+import { UserRole } from '../enums/user.role';
+import { UserAuthProvider } from '../enums/user.auth.provider';
 import * as bcrypt from 'bcrypt';
 
 export type UserDocument = HydratedDocument<User>;
@@ -24,17 +24,17 @@ export class User {
 
   @Prop({
     required: false,
-    enum: UserRoleEnum,
-    default: UserRoleEnum.USER,
+    enum: UserRole,
+    default: UserRole.USER,
   })
-  userRole: UserRoleEnum;
+  userRole: UserRole;
 
   @Prop({
     required: false,
-    enum: UserTypeEnum,
-    default: UserTypeEnum.NORMAL,
+    enum: UserAuthProvider,
+    default: UserAuthProvider.INTERNAL,
   })
-  userType: UserTypeEnum;
+  userType: UserAuthProvider;
 
   @Prop({
     required: false,
