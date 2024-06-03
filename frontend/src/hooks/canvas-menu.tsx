@@ -1,3 +1,7 @@
+
+/* IMPORTANT: Please retain this file. It serves as a critical fallback in case of future issues or bugs. */
+
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MenuGroup, DropDownMenuItem } from "@/interfaces/canva-interfaces";
 import {

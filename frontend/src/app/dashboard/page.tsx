@@ -1,102 +1,33 @@
 "use client";
-import { useRef, useState, useEffect, ChangeEvent } from "react";
+import { useRef, useState } from "react";
 import DashboardSidebar from "@/components/dashboard/Sidebar";
-import { fabric } from "fabric";
-import useMenuData from "@/hooks/canvas-menu";
-import {
-  initializeCanvas,
-  getSelectedObjectStyles as getSelectedObjectStylesUtil,
-  setSelectedObjectStyles as setSelectedObjectStylesUtil,
-  updateDimensions
-} from "@/lib/fabricCanvasUtils";
 import ToolBar from "@/components/dashboard/Toolbar";
 import { DashboardPagination } from "@/components/dashboard/Pagination";
 import HorizontalMenu from "@/components/dashboard/HorizontalMenu";
+import useCanvas from "@/hooks/useCanvas";
+import useMenuData from "@/hooks/useMenuData";
+import useFileClick from "@/hooks/useFileClick";
 
 const Dashboard: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
-  const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const [selectedObjectStyles, setSelectedObjectStyles] = useState<{ [key: string]: any } | null>(null);
 
-  const boardName = "Board 1";
+  useFileClick(activeItem, setActiveItem, fileInputRef, fileJSONInputRef);
 
-  useEffect(() => {
-    const newCanvas = initializeCanvas({ current: canvasRef.current });
-    setCanvas(newCanvas);
-
-    newCanvas?.on("selection:updated", () => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log("Selection updated", JSON.stringify(getSelectedObjectStylesUtil(newCanvas)));
-      setActiveItem(null)
-    });
-
-    newCanvas?.on("selection:created", () => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log("Selection created", JSON.stringify(getSelectedObjectStylesUtil(newCanvas)));
-      setActiveItem(null)
-    });
-
-    newCanvas?.on("selection:cleared", () => {
-      setSelectedObjectStyles(null);
-      setActiveItem(null)
-    });
-    
-    newCanvas?.on("object:modified", (e) => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log("Object modified", JSON.stringify(getSelectedObjectStylesUtil(newCanvas)));
-      const obj = e.target;
-      updateDimensions(obj);
-      setActiveItem(null)
-    });
-
-    
-
-    return () => {
-      newCanvas?.dispose();
-    };
-  }, []);
-  useEffect(() => {
-    if (activeItem === 'add-image-disk') {
-      fileInputRef.current?.click();
-    }
-    else if (activeItem === 'load-images-json'){
-      fileJSONInputRef.current?.click();
-    }
-  }, [activeItem]);
-
-  const handleStyleChange = (styles: object) => {
-    if (canvas) {
-      setSelectedObjectStylesUtil(canvas, styles);
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(canvas));
-    }
-  };
-
-  const { menuList, handleAddImageByUrl, handleFileChange, handleLoadImagesFromJson, color, size, handleColorChange, handleSizeChange } = useMenuData(canvas);
+  const { menuList, handleAddImageByUrl, handleFileChange, handleLoadImagesFromJson, color, size, setColor, setSize } = useMenuData(canvas);
 
   const [addGroup, editGroup, fileGroup] = menuList;
-  
+
   const handleIconClick = (name: string) => {
-    
-    if (name === 'add-image-disk') {
-      fileInputRef.current?.click();
-      setActiveItem(null);
-      
-    } else if (name === 'load-images-json') {
-      fileJSONInputRef.current?.click();
-      setActiveItem(null);
-      
-    }
+    setActiveItem(name);
   };
-  
-  
 
   return (
     <div className="flex flex-col">
       <HorizontalMenu
-        boardName={boardName}
+        boardName="Board 1"
         menuItem={fileGroup}
         onIconClick={handleIconClick}
         fromRight={true}
@@ -113,8 +44,8 @@ const Dashboard: React.FC = () => {
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
-          handleColorChange={handleColorChange}
-          handleSizeChange={handleSizeChange}
+          handleColorChange={(e) => setColor(e.target.value)}
+          handleSizeChange={(e) => setSize(Number(e.target.value))}
         />
         <DashboardSidebar
           menuItem={editGroup}
@@ -123,8 +54,8 @@ const Dashboard: React.FC = () => {
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
-          handleColorChange={handleColorChange}
-          handleSizeChange={handleSizeChange}
+          handleColorChange={(e) => setColor(e.target.value)}
+          handleSizeChange={(e) => setSize(Number(e.target.value))}
         />
         <div
           className="flex flex-col items-center bg-[#F1F5F9]"

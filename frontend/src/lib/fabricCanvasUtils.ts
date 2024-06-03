@@ -330,6 +330,10 @@ export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: ob
 };
 
 export const updateDimensions = (obj: any) => {
+  if (!obj) {
+    return;
+  }
+  
   if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line' || obj.type === 'path') {
     const scaledWidth = Math.round(obj.width * obj.scaleX);
     const scaledHeight = Math.round(obj.height * obj.scaleY);
