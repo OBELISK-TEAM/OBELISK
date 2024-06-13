@@ -34,7 +34,7 @@ export class User {
     enum: UserAuthProvider,
     default: UserAuthProvider.INTERNAL,
   })
-  userType: UserAuthProvider;
+  userAuthProvider: UserAuthProvider;
 
   @Prop({
     required: false,
