@@ -54,24 +54,38 @@ export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<
   if (canvas) {
     canvas.loadFromJSON(jsonData, () => canvas.renderAll());
   }
-};
+}
 
-export const handleAddText = (canvas: fabric.Canvas | null, posX: number, posY: number, options?: { text?: string; color?: string; fontSize?: number }): boolean => {
+export const handleAddText = (
+  canvas: fabric.Canvas | null,
+  posX: number,
+  posY: number,
+  options?: { text?: string; color?: string; fontSize?: number }
+): boolean => {
   const { text = "Type here...", color = "#333", fontSize = 20 } = options || {};
-  console.log("HEEEEELOOO")
+  
   const newText = new fabric.IText(text, {
     left: posX,
     top: posY,
     fontFamily: "arial",
     fill: color,
     fontSize: fontSize,
+    lockScalingY: true, 
+    lockScalingX: true,
+    lockSkewingX: true,
+    lockSkewingY: true,
+    lockScalingFlip: true, 
   });
+ 
   canvas?.add(newText);
   canvas?.setActiveObject(newText);
   newText.enterEditing();
   newText.selectAll();
+
   return false;
 };
+
+
 
 export const handleRemoveSelected = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
