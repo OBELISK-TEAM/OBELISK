@@ -10,7 +10,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export function DashboardPagination() {
+export function BoardPagination() {
   return (
     <Pagination className="flex items-center space-x-2 mt-[0.3em]">
       <PaginationContent>

@@ -1,14 +1,14 @@
 "use client";
 import { useRef, useState } from "react";
-import DashboardSidebar from "@/components/dashboard/Sidebar";
-import ToolBar from "@/components/dashboard/Toolbar";
-import { DashboardPagination } from "@/components/dashboard/Pagination";
-import HorizontalMenu from "@/components/dashboard/HorizontalMenu";
+import DashboardSidebar from "@/components/board/Sidebar";
+import ToolBar from "@/components/board/Toolbar";
+import { BoardPagination } from "@/components/board/Pagination";
+import HorizontalMenu from "@/components/board/HorizontalMenu";
 import useCanvas from "@/hooks/useCanvas";
 import useMenuData from "@/hooks/useMenuData";
 import useFileClick from "@/hooks/useFileClick";
 
-const Dashboard: React.FC = () => {
+const Board: React.FC = () => {
   const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
-          <DashboardPagination />
+          <BoardPagination />
           <input
             type="file"
             id="file-input1"
@@ -99,4 +99,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default Board;

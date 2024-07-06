@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import ActionButtons from "@/components/ActionButtons";
 import TabButtons from "@/components/TabButtons";
 
-export default function Home() {
+export default function UserBoards() {
   const tabs = [
     { label: "All" },
     { label: "Shared by others" },
