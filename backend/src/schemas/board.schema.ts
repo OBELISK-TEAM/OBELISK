@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { User } from './user.schema';
+import { Slide } from './slide.schema';
 
 export type BoardDocument = HydratedDocument<Board>;
 
@@ -14,16 +15,14 @@ export class Board {
   })
   owner: User;
 
-  // if multiple owners:
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }] })
-  // owner: User[];
-
   @Prop({
     required: false,
     type: String,
+    unique: true,
   })
-  boardName: string;
+  name: string;
 
+  // owner has all permissions
   @Prop({
     required: false,
     type: {
@@ -39,17 +38,26 @@ export class Board {
     share: User[];
   };
 
-  // JSON object
   @Prop({
     required: false,
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Slide',
+    default: [],
   })
-  slides: string[];
+  slides: Slide[];
 
-  @Prop({ required: false, type: Date, default: Date.now })
+  @Prop({
+    required: false,
+    type: Date,
+    default: Date.now,
+  })
   created: Date;
 
-  @Prop({ required: false, type: Date, default: Date.now })
+  @Prop({
+    required: false,
+    type: Date,
+    default: Date.now,
+  })
   updated: Date;
 }
 

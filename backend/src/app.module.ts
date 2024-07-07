@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './users/users.module';
-import { BoardsModule } from './boards/boards.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/http.error.filter';
 import { LoggingInterceptor } from './shared/logging.interceptor';
+import { UsersModule } from './modules/users/users.module';
+import { BoardsModule } from './modules/boards/boards.module';
+import { SlidesModule } from './modules/slides/slides.module';
 
 // imports: [MongooseModule.forRoot('mongodb://user:password@ipaddr/db_name')],
 // add certificate to the connection for ensure the security (encrypt the data)
@@ -23,6 +24,7 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
     ),
     UsersModule,
     BoardsModule,
+    SlidesModule,
   ],
   providers: [
     {
@@ -34,5 +36,6 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
       useClass: LoggingInterceptor,
     },
   ],
+  controllers: [],
 })
 export class AppModule {}
