@@ -8,8 +8,6 @@ export class SlidesController {
 
   @Post()
   create(@Body() createSlideDto: CreateSlideDto) {
-    console.log(createSlideDto);
-    return createSlideDto;
-    // return this.slidesService.create(createSlideDto);
+    return this.slidesService.create(createSlideDto);
   }
 }
