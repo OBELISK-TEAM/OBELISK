@@ -1,5 +1,5 @@
 export enum UserAuthProvider {
-  INTERNAL = 'internal',
-  GOOGLE = 'google',
-  GITHUB = 'github',
+  INTERNAL = 1,
+  GOOGLE = 2,
+  GITHUB = 3,
 }
