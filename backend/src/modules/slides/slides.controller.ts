@@ -31,7 +31,7 @@ export class SlidesController {
   }
 
   @Put(':id')
-  Update(@Body() createSlideDto: CreateSlideDto, @Param('id') slideId: string) {
+  Update(@Param('id') slideId: string, @Body() createSlideDto: CreateSlideDto) {
     return this.slidesService.update(slideId, createSlideDto);
   }
 

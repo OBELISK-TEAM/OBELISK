@@ -1,17 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 import { UserRole } from '../enums/user.role';
 import { UserAuthProvider } from '../enums/user.auth.provider';
 import * as bcrypt from 'bcrypt';
+import { Board } from './board.schema';
+import * as mongoose from 'mongoose';
 
-export type UserDocument = HydratedDocument<User>;
-
-// @Prop([String])
-// permissions: string[];
-
-// no need prop for id, it is automatically created by mongoose
-
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({
     required: true,
@@ -21,7 +15,7 @@ export class User {
 
   @Prop({
     required: true,
-    nullable: true, // google user
+    nullable: true, // user with external auth provider may not have password
   })
   password: string;
 
@@ -44,27 +38,22 @@ export class User {
     type: Date,
     default: Date.now,
   })
-  created: Date;
-
-  @Prop({
-    required: false,
-    type: Date,
-    default: Date.now,
-  })
-  updated: Date;
-
-  @Prop({
-    required: false,
-    type: Date,
-    default: Date.now,
-  })
   lastActive: Date;
+
+  // relations
+
+  @Prop({
+    required: false,
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Board',
+    default: [],
+  })
+  boards: Board[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', function (next) {
-  this.updated = new Date();
   if (!this.isModified('password')) return next();
   this.password = bcrypt.hashSync(this.password, 10);
   next();

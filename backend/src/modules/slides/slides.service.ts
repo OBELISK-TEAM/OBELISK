@@ -2,12 +2,16 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Slide } from '../../schemas/slide.schema';
-import { CreateSlideDto } from './slides.dto';
+import { CreateSlideDto, UpdateSlideDto } from './slides.dto';
+import { BoardsService } from '../boards/boards.service';
 
 @Injectable()
 export class SlidesService {
-  private readonly limit = 5;
-  constructor(@InjectModel(Slide.name) private slideModel: Model<Slide>) {}
+  private readonly limit = 1;
+  constructor(
+    @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
+    private readonly boardService: BoardsService,
+  ) {}
 
   async findAll(page: number = 1): Promise<Slide[]> {
     const skip = (page - 1) * this.limit;
@@ -15,7 +19,10 @@ export class SlidesService {
   }
 
   async create(createSlideDto: CreateSlideDto): Promise<Slide> {
-    const createdSlide = new this.slideModel(createSlideDto);
+    const { boardId, ...rest } = createSlideDto;
+    const board = await this.boardService.findOne(boardId);
+    const createdSlide = new this.slideModel({ ...rest, board });
+    await this.boardService.addSlide(boardId, createdSlide);
     return createdSlide.save();
   }
 
@@ -27,10 +34,10 @@ export class SlidesService {
 
   async update(
     slideId: string,
-    createSlideDto: CreateSlideDto,
+    updateSlideDto: UpdateSlideDto,
   ): Promise<Slide> {
     const existingSlide = await this.slideModel
-      .findByIdAndUpdate(slideId, createSlideDto, { new: true })
+      .findByIdAndUpdate(slideId, updateSlideDto, { new: true })
       .exec();
     if (!existingSlide) throw new HttpException('Slide not found', 404);
     return existingSlide;
