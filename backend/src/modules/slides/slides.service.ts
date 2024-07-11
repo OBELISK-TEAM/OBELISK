@@ -23,7 +23,7 @@ export class SlidesService {
   async create(createSlideDto: CreateSlideDto): Promise<Slide> {
     const { boardId, ...rest } = createSlideDto;
     const board = await this.boardService.findOne(boardId);
-    await this.validateSlidesLimit(board);
+    this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });
     await this.boardService.addSlide(boardId, createdSlide);
     return createdSlide.save();
@@ -54,7 +54,7 @@ export class SlidesService {
     return existingSlide;
   }
 
-  private async validateSlidesLimit(board: Board): Promise<void> {
+  private validateSlidesLimit(board: Board): void {
     const slidesCount = board.slides.length;
     if (slidesCount >= this.slidesLimitPerBoard)
       throw new HttpException('Slides limit reached', 400);
