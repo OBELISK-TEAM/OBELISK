@@ -6,5 +6,21 @@ export class CreateSlideDto {
   @IsNotEmpty()
   version: string;
 
+  @IsString()
+  @IsNotEmpty()
+  boardId: string;
+
+  objects: SlideObject[];
+}
+
+export class UpdateSlideDto {
+  @IsString()
+  @IsNotEmpty()
+  version: string;
+
+  @IsString()
+  @IsNotEmpty()
+  boardId: string;
+
   objects: SlideObject[];
 }

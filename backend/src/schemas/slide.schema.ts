@@ -1,18 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-
-export type SlideDocument = Slide & Document;
-
-@Schema()
-export class Slide {
-  @Prop({ required: true })
-  version: string;
-
-  @Prop({ type: [{ type: Object, required: true }] })
-  objects: SlideObject[];
-}
-
-export const SlideSchema = SchemaFactory.createForClass(Slide);
+import { Board } from './board.schema';
 
 export class SlideObject {
   type: string;
@@ -90,3 +77,31 @@ export class SlideObject {
     value: number;
   }[];
 }
+
+@Schema({ timestamps: true })
+export class Slide {
+  @Prop({
+    required: true,
+  })
+  version: string;
+
+  // relations
+
+  @Prop({
+    type: [
+      {
+        type: SlideObject,
+        required: true,
+      },
+    ],
+  })
+  objects: SlideObject[];
+
+  @Prop({
+    required: true,
+    type: Board,
+  })
+  board: Board;
+}
+
+export const SlideSchema = SchemaFactory.createForClass(Slide);
