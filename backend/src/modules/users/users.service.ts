@@ -7,12 +7,12 @@ import { Board } from '../../schemas/board.schema';
 
 @Injectable()
 export class UsersService {
-  private readonly limit = 10;
+  private readonly pageSize = 10;
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async findAll(page: number = 1): Promise<User[]> {
-    const skip = (page - 1) * this.limit;
-    return this.userModel.find().skip(skip).limit(this.limit).exec();
+    const skip = (page - 1) * this.pageSize;
+    return this.userModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

@@ -8,15 +8,15 @@ import { Slide } from '../../schemas/slide.schema';
 
 @Injectable()
 export class BoardsService {
-  private readonly limit = 10;
+  private readonly pageSize = 10;
   constructor(
     @InjectModel(Board.name) private readonly boardModel: Model<Board>,
     private readonly userService: UsersService,
   ) {}
 
   async findAll(page: number = 1): Promise<Board[]> {
-    const skip = (page - 1) * this.limit;
-    return this.boardModel.find().skip(skip).limit(this.limit).exec();
+    const skip = (page - 1) * this.pageSize;
+    return this.boardModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
   async create(userId: string, createBoardDto: CreateBoardDto): Promise<Board> {
