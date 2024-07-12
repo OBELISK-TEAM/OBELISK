@@ -88,8 +88,20 @@ query_scope() {
 extract_issue_from_branch_name() {
   declare branch_name issue_name
   branch_name="$(git rev-parse --symbolic --abbrev-ref '@' 2>/dev/null)" || return
-  issue_name="$(grep -Eo '^OK-[0-9]+' <<< "$branch_name" 2>/dev/null)" || return
-  conventional_line+="[$issue_name] "
+  issue_name="$(grep -Eo 'OK-[0-9]+' <<< "$branch_name" 2>/dev/null)" || return
+  conventional_line+=": [$issue_name]"
+}
+
+# Prompt user for commit message
+query_commit_message() {
+  printf '%s' 'Enter the commit message: '
+
+  declare reply
+  read -r reply
+
+  if test -n "$reply"; then
+    conventional_line+=": $reply"
+  fi
 }
 
 # Invoke functions to interact with the user and prepare conventional commit message
@@ -98,6 +110,7 @@ query_if_proceed < /dev/tty
 query_conventional_commit_type < /dev/tty || exit
 query_scope < /dev/tty
 extract_issue_from_branch_name
+query_commit_message < /dev/tty
 
 # Append conventional_line and previous_msg to COMMIT_MSG_FILE_PATH
 printf '%s\n%s' "$conventional_line" "$previous_msg" > "$COMMIT_MSG_FILE_PATH"
