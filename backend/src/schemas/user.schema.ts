@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from '../enums/user.role';
 import { UserAuthProvider } from '../enums/user.auth.provider';
-import * as bcrypt from 'bcrypt';
 import { Board } from './board.schema';
+import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 
 @Schema({ timestamps: true })
@@ -49,6 +49,10 @@ export class User {
     default: [],
   })
   boards: Board[];
+
+  async comparePassword(attempt: string): Promise<boolean> {
+    return bcrypt.compare(attempt, this.password);
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -58,6 +62,3 @@ UserSchema.pre('save', function (next) {
   this.password = bcrypt.hashSync(this.password, 10);
   next();
 });
-
-// TODO: after update, update the update field
-// const updateMethods = ['findOneAndUpdate', 'update'];

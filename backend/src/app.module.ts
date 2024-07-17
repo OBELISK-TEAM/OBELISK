@@ -7,6 +7,7 @@ import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { UsersModule } from './modules/users/users.module';
 import { BoardsModule } from './modules/boards/boards.module';
 import { SlidesModule } from './modules/slides/slides.module';
+import { ConfigModule } from '@nestjs/config';
 
 // imports: [MongooseModule.forRoot('mongodb://user:password@ipaddr/db_name')],
 // add certificate to the connection for ensure the security (encrypt the data)
@@ -23,6 +24,7 @@ import { SlidesModule } from './modules/slides/slides.module';
       // `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`,
       `mongodb://localhost/mongo_obelisk`,
     ),
+    ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     BoardsModule,
     SlidesModule,
