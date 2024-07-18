@@ -51,7 +51,7 @@ export class AuthService {
     return await compare(attempt, hashedPassword);
   }
 
-  login(user: SafeUserDoc): Promise<string> {
+  login(user: SafeUserDoc): string {
     return this.generateToken({ _id: user._id as string, email: user.email });
   }
 
@@ -65,7 +65,7 @@ export class AuthService {
     });
   }
 
-  async generateToken(payload: Omit<Payload, 'iat' | 'exp'>): Promise<string> {
+  generateToken(payload: Omit<Payload, 'iat' | 'exp'>): string {
     return this.jwtService.sign(payload);
   }
 }

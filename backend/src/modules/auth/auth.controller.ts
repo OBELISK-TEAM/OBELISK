@@ -17,13 +17,13 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@User() user: SafeUserDoc): Promise<string> {
+  login(@User() user: SafeUserDoc): string {
     return this.authService.login(user);
   }
 
   @Get('secure')
   @UseGuards(JwtAuthGuard)
-  async status(@User('_id') userId: string): Promise<string> {
-    return 'You are authorized';
+  status(@User('_id') userId: string): string {
+    return `You are authorized with id: ${userId}`;
   }
 }
