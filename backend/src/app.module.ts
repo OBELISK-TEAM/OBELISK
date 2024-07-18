@@ -10,21 +10,17 @@ import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 
-// imports: [MongooseModule.forRoot('mongodb://user:password@ipaddr/db_name')],
-// add certificate to the connection for ensure the security (encrypt the data)
-
-// const dbName = process.env.DB_NAME || 'mongo_obelisk';
-// const dbUser = process.env.DB_USER || 'admin';
-// const dbPassword = process.env.DB_PASSWORD || 'password';
-// const dbHost = process.env.DB_HOST || 'localhost';
-// const dbPort = process.env.DB_PORT || '27017';
+const dbName = process.env.DB_NAME || 'mongo_obelisk';
+const dbUser = process.env.DB_USER || 'admin';
+const dbPassword = process.env.DB_PASSWORD || 'password';
+const dbHost = process.env.DB_HOST || 'localhost';
+const dbPort = process.env.DB_PORT || '27017';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(
-      // `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`,
-      `mongodb://localhost/mongo_obelisk`,
+      `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`
     ),
     AuthModule,
     UsersModule,
