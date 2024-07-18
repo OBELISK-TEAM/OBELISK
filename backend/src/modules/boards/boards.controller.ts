@@ -13,7 +13,7 @@ import { CreateBoardDto } from './boards.dto';
 
 @Controller('boards')
 export class BoardsController {
-  constructor(private boardsService: BoardsService) {}
+  constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
   async findAll(@Query('page') page: number) {
@@ -30,7 +30,7 @@ export class BoardsController {
 
   @Get(':id')
   async findOne(@Param('id') boardId: string) {
-    return this.boardsService.findOne(boardId);
+    return this.boardsService.findOneById(boardId);
   }
 
   @Put(':id')

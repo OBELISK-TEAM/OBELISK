@@ -22,14 +22,14 @@ export class SlidesService {
 
   async create(createSlideDto: CreateSlideDto): Promise<Slide> {
     const { boardId, ...rest } = createSlideDto;
-    const board = await this.boardService.findOne(boardId);
+    const board = await this.boardService.findOneById(boardId);
     this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });
     await this.boardService.addSlide(boardId, createdSlide);
     return createdSlide.save();
   }
 
-  async findOne(slideId: string): Promise<Slide> {
+  async findOneById(slideId: string): Promise<Slide> {
     const existingSlide = await this.slideModel.findById(slideId).exec();
     if (!existingSlide) throw new HttpException('Slide not found', 404);
     return existingSlide;

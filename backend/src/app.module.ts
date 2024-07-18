@@ -4,10 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
-import { UsersModule } from './modules/users/users.module';
+import { UsersModule } from './modules/auth/users/users.module';
 import { BoardsModule } from './modules/boards/boards.module';
 import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './modules/auth/auth.module';
 
 // imports: [MongooseModule.forRoot('mongodb://user:password@ipaddr/db_name')],
 // add certificate to the connection for ensure the security (encrypt the data)
@@ -20,11 +21,12 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(
       // `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`,
       `mongodb://localhost/mongo_obelisk`,
     ),
-    ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
     UsersModule,
     BoardsModule,
     SlidesModule,

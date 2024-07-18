@@ -13,7 +13,7 @@ import { CreateSlideDto } from './slides.dto';
 
 @Controller('slides')
 export class SlidesController {
-  constructor(private slidesService: SlidesService) {}
+  constructor(private readonly slidesService: SlidesService) {}
 
   @Get()
   async findAll(@Query('page') page: number) {
@@ -27,7 +27,7 @@ export class SlidesController {
 
   @Get(':id')
   async findOne(@Param('id') slideId: string) {
-    return this.slidesService.findOne(slideId);
+    return this.slidesService.findOneById(slideId);
   }
 
   @Put(':id')

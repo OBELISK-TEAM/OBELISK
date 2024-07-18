@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
 import { Board } from '../../schemas/board.schema';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../auth/users/users.service';
 import { Slide } from '../../schemas/slide.schema';
 
 @Injectable()
@@ -21,13 +21,13 @@ export class BoardsService {
 
   async create(userId: string, createBoardDto: CreateBoardDto): Promise<Board> {
     const { name } = createBoardDto;
-    const owner = await this.userService.findOne(userId);
+    const owner = await this.userService.findOneById(userId);
     const createdBoard = new this.boardModel({ name, owner });
     await this.userService.addBoard(userId, createdBoard);
     return createdBoard.save();
   }
 
-  async findOne(boardId: string): Promise<Board> {
+  async findOneById(boardId: string): Promise<Board> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
     if (!existingBoard) throw new HttpException('Board not found', 404);
     return existingBoard;
