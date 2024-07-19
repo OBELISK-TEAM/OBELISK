@@ -16,6 +16,8 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+    if (await this.emailExists(createUserDto.email))
+      throw new HttpException('User already exists', 400);
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }

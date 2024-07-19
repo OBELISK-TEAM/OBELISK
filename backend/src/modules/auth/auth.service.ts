@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
-import { compare } from 'bcrypt';
 import { UserDocument } from '../../schemas/user.schema';
 import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
 import { Payload } from '../../shared/interfaces/Payload';
@@ -40,8 +40,9 @@ export class AuthService {
   }
 
   private extractUserWithoutPassword(user: UserDocument): SafeUserDoc {
-    const { password, ...userWithoutPassword } = user.toObject();
-    return userWithoutPassword as Omit<UserDocument, 'password'>;
+    const userObj: UserDocument = user.toObject();
+    const { password, ...userWithoutPassword } = userObj;
+    return userWithoutPassword as SafeUserDoc;
   }
 
   private async comparePasswords(

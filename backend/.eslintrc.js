@@ -16,5 +16,6 @@ module.exports = {
       'error',
       { ignoreRestSiblings: true },
     ],
+    'nestjs/use-validation-pipe': 'off',
   },
 };
