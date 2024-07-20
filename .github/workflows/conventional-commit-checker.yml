@@ -1,17 +1,23 @@
-name: conventional-commit-checker
+name: 'conventional-commit-checker'
 
 on:
+  push:
+    branches:
+      - '**'
   pull_request:
+    branches:
+      - '**'
 
 jobs:
-  validate:
+  validate-commit-message:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Validate commit messages
-        id: validate
-        uses: agenthunt/conventional-commit-checker-action@v1.0.0
+      - name: Commit Message Checker
+        uses: gsactions/commit-message-checker@v2
         with:
-          pr-body-regex: '.*'
+          pattern: '^[a-z]+(\([^()]+\))?(\[[^\[\]]+\])?: .+$'
+          flags: 'gm'
+          error: 'Commit message does not follow conventional commits rules. Pattern: `^[a-z]+(\([^()]+\))?(\[[^\[\]]+\])?: .+$`'
