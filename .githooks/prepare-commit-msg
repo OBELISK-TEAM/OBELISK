@@ -69,7 +69,7 @@ query_conventional_commit_type() {
     return
   done
 
-  return 1
+  return 1s
 }
 
 # Prompt user for scope name
@@ -89,7 +89,7 @@ extract_issue_from_branch_name() {
   declare branch_name issue_name
   branch_name="$(git rev-parse --symbolic --abbrev-ref '@' 2>/dev/null)" || return
   issue_name="$(grep -Eo 'OK-[0-9]+' <<< "$branch_name" 2>/dev/null)" || return
-  conventional_line+=": [$issue_name]"
+  conventional_line+="[$issue_name]"
 }
 
 # Prompt user for commit message
