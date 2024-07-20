@@ -1,9 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from '../enums/user.role';
 import { UserAuthProvider } from '../enums/user.auth.provider';
-import * as bcrypt from 'bcrypt';
 import { Board } from './board.schema';
-import * as mongoose from 'mongoose';
+import { hashSync } from 'bcrypt';
+import {
+  Schema as MongooseSchema,
+  Document as MongooseDocument,
+} from 'mongoose';
+
+export type UserDocument = User & MongooseDocument;
 
 @Schema({ timestamps: true })
 export class User {
@@ -44,7 +49,7 @@ export class User {
 
   @Prop({
     required: false,
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [MongooseSchema.Types.ObjectId],
     ref: 'Board',
     default: [],
   })
@@ -55,9 +60,6 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', function (next) {
   if (!this.isModified('password')) return next();
-  this.password = bcrypt.hashSync(this.password, 10);
+  this.password = hashSync(this.password, 10);
   next();
 });
-
-// TODO: after update, update the update field
-// const updateMethods = ['findOneAndUpdate', 'update'];

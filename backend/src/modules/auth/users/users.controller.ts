@@ -12,7 +12,7 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   async findAll(@Query('page') page: number) {
@@ -26,7 +26,7 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id') userId: string) {
-    return this.usersService.findOne(userId);
+    return this.usersService.findOneById(userId);
   }
 
   @Delete(':id')

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
 
@@ -16,19 +16,19 @@ export class Board {
     type: {
       edit: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: MongooseSchema.Types.ObjectId,
           ref: 'User',
         },
       ],
       view: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: MongooseSchema.Types.ObjectId,
           ref: 'User',
         },
       ],
       share: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: MongooseSchema.Types.ObjectId,
           ref: 'User',
         },
       ],
@@ -49,14 +49,14 @@ export class Board {
 
   @Prop({
     required: true,
-    type: mongoose.Schema.Types.ObjectId,
+    type: MongooseSchema.Types.ObjectId,
     ref: 'User',
   })
   owner: User;
 
   @Prop({
     required: false,
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [MongooseSchema.Types.ObjectId],
     ref: 'Slide',
     default: [],
   })

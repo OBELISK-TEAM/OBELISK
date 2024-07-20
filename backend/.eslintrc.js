@@ -12,6 +12,10 @@ module.exports = {
     project: './tsconfig.json',
   },
   rules: {
-    // Additional rules can be added here
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { ignoreRestSiblings: true },
+    ],
+    'nestjs/use-validation-pipe': 'off',
   },
 };

@@ -2,31 +2,44 @@ import { Model } from 'mongoose';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './users.dto';
-import { User } from '../../schemas/user.schema';
-import { Board } from '../../schemas/board.schema';
+import { User, UserDocument } from '../../../schemas/user.schema';
+import { Board } from '../../../schemas/board.schema';
 
 @Injectable()
 export class UsersService {
   private readonly pageSize = 10;
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async findAll(page: number = 1): Promise<User[]> {
+  async findAll(page: number = 1): Promise<UserDocument[]> {
     const skip = (page - 1) * this.pageSize;
     return this.userModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+    if (await this.emailExists(createUserDto.email))
+      throw new HttpException('User already exists', 400);
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
 
-  async findOne(userId: string): Promise<User> {
+  async findOneById(userId: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findById(userId).exec();
     if (!existingUser) throw new HttpException('User not found', 404);
     return existingUser;
   }
 
-  async delete(userId: string): Promise<User> {
+  async findOneByEmail(email: string): Promise<UserDocument> {
+    const existingUser = await this.userModel.findOne({ email }).exec();
+    if (!existingUser) throw new HttpException('User not found', 404);
+    return existingUser;
+  }
+
+  async emailExists(email: string): Promise<boolean> {
+    const existingUser = await this.userModel.findOne({ email }).exec();
+    return !!existingUser;
+  }
+
+  async delete(userId: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findByIdAndDelete(userId).exec();
     if (!existingUser) throw new HttpException('User not found', 404);
     return existingUser;
