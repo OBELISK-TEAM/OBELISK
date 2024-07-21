@@ -47,3 +47,31 @@ After the merge the source branch should be deleted.
 ## Manual Tests
 
 If you decide that changes made in your pull request require a manual test, add step-by-step test scenario to the description of the pull request. Don't forget `test-required` label. After successfully conducting the manual test, the tester should replace `test-required` label with `tested-ok` label. Otherwise, the tester should describe what went wrong during manual test in the pull request.
+
+
+## Commit Messages and Pull Request Titles
+
+GitHub actions will check if the commit message or pull request title follows the rules. If it doesn't, the action will fail and the pull request won't be able to merge.
+
+### Format:
+
+- Type of Change - the message must start with one of the following types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+- Optional Scope - an optional scope can be included in parentheses, e.g., `(api)`, `(backend)`.
+- Jira Issue ID - a mandatory Jira issue ID must be included in square brackets, e.g., `[OK-123]`.
+- Description - a short description must follow, starting with a capital letter.
+
+### Example format:
+`[type](optional scope)[JIRA-ISSUE] Description`
+
+Examples of correct commit messages / pull request titles:
+- `ci(github)[OK-215] Add github action for building the project`
+- `fix[OK-215] Fix bug in the user data endpoint`
+- `style(login/registration)[OK-215] Change the color of the login button`
+
+### Example of incorrect commit messages / pull request titles:
+
+- `feat[OK-215] add new endpoint for fetching user data` - no capital letter at the beginning of the description
+- `feat(backend) Add new endpoint for fetching user data` - missing JIRA issue ID
+- `test(frontend): [OK-215] Add new test for the user data endpoint` - unnecessary colon
+- `docs (backend) [OK-215] Add new documentation for the user data endpoint` - unnecessary spaces
+- `refactor((backend))[OK-215] Refactor the user data endpoint` - unnecessary parentheses
