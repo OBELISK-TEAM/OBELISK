@@ -100,7 +100,7 @@ query_commit_message() {
   read -r reply
 
   if test -n "$reply"; then
-    conventional_line+=": $reply"
+    conventional_line+=" $reply"
   fi
 }
 
