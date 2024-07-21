@@ -66,6 +66,7 @@ GitHub actions will check if the commit message or pull request title follows th
 Examples of correct commit messages / pull request titles:
 - `ci(github)[OK-215] Add github action for building the project`
 - `fix[OK-215] Fix bug in the user data endpoint`
+- `style(login/registration)[OK-215] Change the color of the login button`
 
 ### Example of incorrect commit messages / pull request titles:
 
@@ -73,3 +74,4 @@ Examples of correct commit messages / pull request titles:
 - `feat(backend) Add new endpoint for fetching user data` - missing JIRA issue ID
 - `test(frontend): [OK-215] Add new test for the user data endpoint` - unnecessary colon
 - `docs (backend) [OK-215] Add new documentation for the user data endpoint` - unnecessary spaces
+- `refactor((backend))[OK-215] Refactor the user data endpoint` - unnecessary parentheses
