@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from './users/users.module';
@@ -32,21 +32,4 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule implements OnModuleInit {
-  constructor(private readonly configService: ConfigService) {}
-
-  onModuleInit() {
-    const jwtSecret = this.configService.get<string>(
-      'JWT_SECRET',
-      DEFAULT_JWT_SECRET,
-    );
-
-    const jwtExpiresIn = this.configService.get<string>(
-      'JWT_EXPIRES_IN',
-      DEFAULT_JWT_EXPIRES_IN,
-    );
-
-    console.log(`JWT_SECRET: ${jwtSecret}`);
-    console.log(`JWT_EXPIRES_IN: ${jwtExpiresIn}`);
-  }
-}
+export class AuthModule {}
