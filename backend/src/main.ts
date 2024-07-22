@@ -1,13 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-
-const host = process.env.BACKEND_HOST || 'localhost';
-const port = process.env.BACKEND_PORT || 8080;
+import { ConfigService } from '@nestjs/config';
+import * as compression from 'compression';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get<ConfigService>(ConfigService);
+  const host = configService.get<string>('BACKEND_HOST', 'localhost');
+  const port = configService.get<number>('BACKEND_PORT', 8080);
 
+  // global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // removes properties that are not defined in the DTO
@@ -15,6 +19,19 @@ async function bootstrap() {
       transform: true, // automatically transforms input data to the expected types based on the DTO
     }),
   );
+
+  // response size compression
+  app.use(
+    compression({
+      filter: () => {
+        return true;
+      },
+      threshold: 0,
+    }),
+  );
+
+  // security headers
+  app.use(helmet());
 
   await app.listen(port);
   Logger.log(`Server running on https://${host}:${port}`, 'Bootstrap');

@@ -3,6 +3,8 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
 
+// TODO - add document type as in user.schema.ts
+
 @Schema({ timestamps: true })
 export class Board {
   @Prop({

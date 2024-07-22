@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from './users/users.module';
@@ -8,7 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
-// https://stackoverflow.com/questions/55673424/nestjs-unable-to-read-env-variables-in-module-files-but-able-in-service-files
+const DEFAULT_JWT_SECRET = 'secret';
+const DEFAULT_JWT_EXPIRES_IN = '14d';
 
 @Module({
   imports: [
@@ -16,9 +17,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'secret'),
+        secret: configService.get<string>('JWT_SECRET', DEFAULT_JWT_SECRET),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d'),
+          expiresIn: configService.get<string>(
+            'JWT_EXPIRES_IN',
+            DEFAULT_JWT_EXPIRES_IN,
+          ),
         },
       }),
       inject: [ConfigService],
@@ -28,4 +32,21 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule implements OnModuleInit {
+  constructor(private readonly configService: ConfigService) {}
+
+  onModuleInit() {
+    const jwtSecret = this.configService.get<string>(
+      'JWT_SECRET',
+      DEFAULT_JWT_SECRET,
+    );
+
+    const jwtExpiresIn = this.configService.get<string>(
+      'JWT_EXPIRES_IN',
+      DEFAULT_JWT_EXPIRES_IN,
+    );
+
+    console.log(`JWT_SECRET: ${jwtSecret}`);
+    console.log(`JWT_EXPIRES_IN: ${jwtExpiresIn}`);
+  }
+}
