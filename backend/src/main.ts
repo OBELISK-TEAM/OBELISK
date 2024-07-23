@@ -3,11 +3,14 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+const DEFAULT_HOST = 'localhost';
+const DEFAULT_PORT = 8080;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
-  const host = configService.get<string>('BACKEND_HOST', 'localhost');
-  const port = configService.get<number>('BACKEND_PORT', 8080);
+  const host = configService.get<string>('BACKEND_HOST', DEFAULT_HOST);
+  const port = configService.get<number>('BACKEND_PORT', DEFAULT_PORT);
 
   // global validation pipe
   app.useGlobalPipes(
