@@ -8,7 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
-// https://stackoverflow.com/questions/55673424/nestjs-unable-to-read-env-variables-in-module-files-but-able-in-service-files
+const DEFAULT_JWT_SECRET = 'secret';
+const DEFAULT_JWT_EXPIRES_IN = '14d';
 
 @Module({
   imports: [
@@ -16,9 +17,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'secret'),
+        secret: configService.get<string>('JWT_SECRET', DEFAULT_JWT_SECRET),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d'),
+          expiresIn: configService.get<string>(
+            'JWT_EXPIRES_IN',
+            DEFAULT_JWT_EXPIRES_IN,
+          ),
         },
       }),
       inject: [ConfigService],

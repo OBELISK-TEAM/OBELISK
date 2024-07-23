@@ -63,7 +63,7 @@ GitHub actions will check if the commit message or pull request title follows th
 ### Example format:
 `[type](optional scope)[JIRA-ISSUE] Description`
 
-Examples of correct commit messages / pull request titles:
+### Examples of correct commit messages / pull request titles:
 - `ci(github)[OK-215] Add github action for building the project`
 - `fix[OK-215] Fix bug in the user data endpoint`
 - `style(login/registration)[OK-215] Change the color of the login button`

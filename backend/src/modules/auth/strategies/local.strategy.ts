@@ -10,6 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'email' });
   }
 
+  // TODO - create class with email and password properties to validate
   async validate(email: string, password: string): Promise<SafeUserDoc> {
     const safeUser = await this.authService.validateUserByEmailAndPassword(
       email,
