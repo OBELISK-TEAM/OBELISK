@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { UsersModule } from './modules/auth/users/users.module';
@@ -8,15 +8,6 @@ import { BoardsModule } from './modules/boards/boards.module';
 import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
-import {
-  ThrottlerGuard,
-  ThrottlerModule,
-  ThrottlerModuleOptions,
-  ThrottlerOptions,
-} from '@nestjs/throttler';
-
-const DEFAULT_THROTTLE_TTL = 60;
-const DEFAULT_THROTTLE_LIMIT = 10;
 
 @Module({
   imports: [
@@ -40,25 +31,6 @@ const DEFAULT_THROTTLE_LIMIT = 10;
       },
       inject: [ConfigService],
     }),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService): ThrottlerModuleOptions => {
-        const ttl = configService.get<number>(
-          'THROTTLE_TTL',
-          DEFAULT_THROTTLE_TTL,
-        );
-        const limit = configService.get<number>(
-          'THROTTLE_LIMIT',
-          DEFAULT_THROTTLE_LIMIT,
-        );
-        const throttlerOptions: ThrottlerOptions = { ttl, limit };
-        return {
-          throttlers: [throttlerOptions],
-          errorMessage: 'Too many requests',
-        };
-      },
-      inject: [ConfigService],
-    }),
     AuthModule,
     UsersModule,
     BoardsModule,
@@ -72,10 +44,6 @@ const DEFAULT_THROTTLE_LIMIT = 10;
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
     },
   ],
   controllers: [],
