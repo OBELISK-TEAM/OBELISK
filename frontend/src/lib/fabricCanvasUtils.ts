@@ -19,11 +19,11 @@ interface CanvasImage {
 
 interface ImageData {
   src: string;
-  left: number;
-  top: number;
-  scaleX: number;
-  scaleY: number;
-  angle: number;
+  left: number | undefined;
+  top: number | undefined;
+  scaleX: number | undefined;
+  scaleY: number | undefined;
+  angle: number | undefined;
 }
 
 
@@ -344,6 +344,7 @@ export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | 
       return activeObject.toObject();
     }
   }
+  return null;
 };
 
 
