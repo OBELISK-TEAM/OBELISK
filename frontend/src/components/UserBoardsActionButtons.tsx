@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { FilterIcon, ViewIcon, PlusIcon } from "lucide-react";
 
-const ActionButtons = () => {
+const UserBoardsActionButtons = () => {
   return (
     <div className="flex space-x-2">
       <Button variant="outline">
@@ -20,4 +20,4 @@ const ActionButtons = () => {
   );
 };
 
-export default ActionButtons;
+export default UserBoardsActionButtons;

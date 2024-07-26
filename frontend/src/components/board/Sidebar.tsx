@@ -8,10 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import RenderItem from "./SidebarItem";
+import SidebarItem from "./SidebarItem";
 
-interface DashboardSidebarProps {
-  menuItem: MenuGroup;
+interface BoardSidebarProps {
+  menuGroup: MenuGroup;
   onIconClick: (name: string) => void;
   withSettings?: boolean;
   fromRight?: boolean;
@@ -23,8 +23,8 @@ interface DashboardSidebarProps {
   handleSizeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const DashboardSidebar: FC<DashboardSidebarProps> = ({
-  menuItem,
+const BoardSidebar: FC<BoardSidebarProps> = ({
+  menuGroup,
   onIconClick,
   withSettings = false,
   fromRight = false,
@@ -57,9 +57,9 @@ const DashboardSidebar: FC<DashboardSidebarProps> = ({
     >
       <div className="flex flex-col flex-1 p-2 space-y-4">
         <div className="grow">
-          {menuItem.items.map((item: MenuItem, itemIndex: number) => (
+          {menuGroup.items.map((item: MenuItem, itemIndex: number) => (
             <div key={itemIndex}>
-              <RenderItem
+              <SidebarItem
                 item={item}
                 activeItem={activeItem}
                 color={color}
@@ -89,4 +89,4 @@ const DashboardSidebar: FC<DashboardSidebarProps> = ({
   );
 };
 
-export default DashboardSidebar;
+export default BoardSidebar;

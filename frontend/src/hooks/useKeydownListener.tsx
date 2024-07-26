@@ -22,8 +22,6 @@ const useKeydownListener = (
               redo();
             }
             break;
-          default:
-            break;
         }
       } else if (event.key === "Delete") {
         performAction("remove-selected", canvas);

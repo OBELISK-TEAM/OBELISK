@@ -24,8 +24,6 @@ interface HorizontalMenuProps {
 const HorizontalMenu: FC<HorizontalMenuProps> = ({
   menuItem,
   onIconClick,
-  withSettings = false,
-  fromRight = false,
   boardName,
   onActiveItemChange,
   activeItem,
@@ -56,7 +54,8 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
           {menuItem.items.map((item: MenuItem, itemIndex: number) => {
             if(!(activeCanvasObject && activeCanvasObject.type === 'activeSelection') && (item.name === 'group-selected')) return null;
             else if(!(activeCanvasObject) && (item.name === 'remove-selected')) return null;
-            return (<HoverCard key={itemIndex}>
+            return (
+                <HoverCard key={itemIndex}>
               <HoverCardTrigger asChild>
                 <button
                   className={`flex items-center p-2 rounded ${

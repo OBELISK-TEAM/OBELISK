@@ -25,7 +25,7 @@ import {
   Undo,
 } from "lucide-react";
 import useKeydownListener from "./useKeydownListener";
-
+import {MenuAction} from "@/enums/MenuActions";
 const useMenuData = (canvas: fabric.Canvas | null) => {
   const { isDrawingMode, setIsDrawingMode } = useDrawingMode(canvas);
   const { color, size, setColor, setSize } = useColorAndSize(canvas);
@@ -45,7 +45,6 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     setIsDrawingMode
   );
   useKeydownListener(canvas, performAction, undo, redo);
-
   const menuList: MenuGroup[] = [
     {
       group: "Drawing Tools",
@@ -54,43 +53,43 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           action: () => setIsDrawingMode(!isDrawingMode),
           text: isDrawingMode ? "Turn Selection Mode" : "Turn Drawing Mode",
           icon: isDrawingMode ? <MousePointer /> : <Pencil />,
-          name: "drawing-mode",
+          name: MenuAction.DrawingMode,
         },
         {
           action: () => {},
           text: "Change Color",
           icon: <Color />,
-          name: "change-color",
+          name: MenuAction.ChangeColor,
         },
         {
           action: () => {},
           text: "Change Size",
           icon: <Size />,
-          name: "change-size",
+          name: MenuAction.ChangeSize,
         },
         {
           text: "Add Line",
           icon: <Minus />,
-          name: "add-line",
-          action: () => performAction("add-line"),
+          name: MenuAction.AddLine,
+          action: () => performAction(MenuAction.AddLine),
         },
         {
           text: "Add Rectangle",
           icon: <Square />,
-          name: "add-rectangle",
-          action: () => performAction("add-rectangle"),
+          name: MenuAction.AddRectangle,
+          action: () => performAction(MenuAction.AddRectangle),
         },
         {
           text: "Add Circle",
           icon: <Circle />,
-          name: "add-circle",
-          action: () => performAction("add-circle"),
+          name: MenuAction.AddCircle,
+          action: () => performAction(MenuAction.AddCircle),
         },
         {
           text: "Add Text",
           icon: <Text />,
-          name: "add-text",
-          action: () => performAction("add-text"),
+          name: MenuAction.AddText,
+          action: () => performAction(MenuAction.AddText),
         },
       ],
     },
@@ -98,22 +97,22 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       group: "Object Manipulation",
       items: [
         {
-          action: () => performAction("clear-canvas"),
+          action: () => performAction(MenuAction.ClearCanvas),
           text: "Clear Canvas",
           icon: <Trash />,
-          name: "clear-canvas",
+          name: MenuAction.ClearCanvas,
         },
         {
           text: "Add Image from URL",
           icon: <UrlIcon />,
-          name: "add-image-url",
-          action: () => performAction("add-image-url"),
+          name: MenuAction.AddImageUrl,
+          action: () => performAction(MenuAction.AddImageUrl),
         },
         {
           text: "Add Image from disk",
           icon: <ImageIcon />,
-          name: "add-image-disk",
-          action: () => performAction("add-image-disk"),
+          name: MenuAction.AddImageDisk,
+          action: () => performAction(MenuAction.AddImageDisk),
         },
       ],
     },
@@ -124,7 +123,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           action: () => exportToPDF(canvas),
           text: "Export to PDF",
           icon: <Save />,
-          name: "export-pdf",
+          name: MenuAction.ExportPdf,
         },
         {
           text: "Undo",
@@ -133,7 +132,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
             e?.preventDefault();
             undo();
           },
-          name: "undo",
+          name: MenuAction.Undo,
         },
         {
           text: "Redo",
@@ -142,47 +141,48 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
             e?.preventDefault();
             redo();
           },
-          name: "redo",
+          name: MenuAction.Redo,
         },
         {
-          action: () => performAction("load-canvas"),
+          action: () => performAction(MenuAction.LoadCanvas),
           text: "Load Canvas",
           icon: <Upload />,
-          name: "load-canvas",
+          name: MenuAction.LoadCanvas,
         },
         {
           action: () => handleSave(canvas),
           text: "Save Canvas",
           icon: <Save />,
-          name: "save-canvas",
+          name: MenuAction.SaveCanvas,
         },
         {
           action: () => handleSaveImages(),
           text: "Save Images",
           icon: <Save />,
-          name: "save-images",
+          name: MenuAction.SaveImages,
         },
         {
-          action: () => performAction("load-images-json"),
+          action: () => performAction(MenuAction.LoadImagesJson),
           text: "Load Images from JSON",
           icon: <Upload />,
-          name: "load-images-json",
+          name: MenuAction.LoadImagesJson,
         },
         {
-          action: () => performAction("group-selected"),
-          text: "Group Selected",
+          action: () => performAction(MenuAction.GroupSelected),
+          text: "Group Selected Objects",
           icon: <Group />,
-          name: "group-selected",
+          name: MenuAction.GroupSelected,
         },
         {
-          action: () => performAction("remove-selected"),
-          text: "Remove Selected",
+          action: () => performAction(MenuAction.RemoveSelected),
+          text: "Remove Selected Objects",
           icon: <Trash />,
-          name: "remove-selected",
+          name: MenuAction.RemoveSelected,
         },
       ],
     },
   ];
+
 
   return {
     menuList,

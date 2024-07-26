@@ -26,7 +26,6 @@ export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => 
     newCanvas.freeDrawingBrush.color = "black";
     newCanvas.freeDrawingBrush.width = 5;
     newCanvas.freeDrawingBrush.decimate = 4;
-
     newCanvas.on('before:render', () => newCanvas.selection = false);
     newCanvas.on('after:render', () => newCanvas.selection = true);
 
@@ -49,7 +48,7 @@ export const handleSave = (canvas: fabric.Canvas | null): void => {
 };
 
 export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<void> => {
-  const response = await fetch("/savedKonva.json");
+  const response = await fetch("/saved.json");
   const jsonData = await response.json();
   if (canvas) {
     canvas.loadFromJSON(jsonData, () => canvas.renderAll());
@@ -61,7 +60,7 @@ export const handleAddText = (
   posX: number,
   posY: number,
   options?: { text?: string; color?: string; fontSize?: number }
-): boolean => {
+): void => {
   const { text = "Type here...", color = "#333", fontSize = 20 } = options || {};
   
   const newText = new fabric.IText(text, {
@@ -70,19 +69,17 @@ export const handleAddText = (
     fontFamily: "arial",
     fill: color,
     fontSize: fontSize,
-    lockScalingY: true, 
+    lockScalingY: true,
     lockScalingX: true,
     lockSkewingX: true,
     lockSkewingY: true,
-    lockScalingFlip: true, 
+    lockScalingFlip: true,
   });
  
   canvas?.add(newText);
   canvas?.setActiveObject(newText);
   newText.enterEditing();
   newText.selectAll();
-
-  return false;
 };
 
 
@@ -116,7 +113,7 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string; strokeWidth?: number }): boolean => {
+export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string; strokeWidth?: number }): void => {
   const { color = "black", strokeWidth = 5 } = options || {};
   const line = new fabric.Line([50, 100, 200, 200], {
     stroke: color,
@@ -125,7 +122,6 @@ export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string
   });
   canvas?.add(line);
   canvas?.setActiveObject(line);
-  return false;
 };
 
 export const addRectangle = (canvas: fabric.Canvas | null, options?: { fillColor?: string; width?: number; height?: number }): void => {
@@ -155,6 +151,11 @@ export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: 
   canvas?.setActiveObject(circle);
 };
 
+/**
+ * Removes all images from the canva
+ * @param canvas The canva to remove images from
+ * @returns Removed images in a form of imagesData
+ */
 const removeImagesFromCanvas = (canvas:fabric.Canvas | null) => {
   const imageObjects = canvas?.getObjects('image') as fabric.Image[];
   const imagesData = imageObjects.map((imageObj) => ({
@@ -180,10 +181,10 @@ const restoreImagesToCanvas = (canvas:fabric.Canvas | null, imagesData:any) => {
         scaleY: imgData.scaleY,
         angle: imgData.angle,
       });
-      canvas?.add(img);
-      canvas?.renderAll();
-    });
+      canvas?.add(img); 
+    }); 
   });
+  canvas?.renderAll();
 };
 
 export const exportToPDF = async (canvas: fabric.Canvas | null): Promise<void> => {
@@ -220,10 +221,15 @@ export const addImage = (canvas: fabric.Canvas | null, imageUrl: string, options
       scaleY: scaleY,
       left: left,
       top: top,
+      lockScalingFlip: false,
+      lockUniScaling: false,
+      lockRotation: false,
+      lockMovementX: false,
+      lockMovementY: false,
     });
     canvas?.add(img);
+    canvas?.setActiveObject(img);
   });
-
 };
 
 export const resizeImage = (imageSrc: string, maxWidth: number, maxHeight: number, callback: (resizedImage: string) => void) => {
@@ -245,6 +251,7 @@ export const resizeImage = (imageSrc: string, maxWidth: number, maxHeight: numbe
         height = maxHeight;
       }
     }
+
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
@@ -324,34 +331,29 @@ export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | 
   if (canvas) {
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
-      return activeObject.toObject([
-        'fill', 'stroke', 'strokeWidth', 'fontSize', 'fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'angle', 'left', 'top', 
-      ]);
+      return activeObject.toObject();
     }
   }
-  return null;
 };
 
 
 export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
-  if (canvas) {
+  if (!canvas) return
     const activeObjects = canvas.getActiveObjects();
     activeObjects.forEach((obj) => {
       obj.set(styles);
     });
     canvas.requestRenderAll();
-  }
 };
 
 export const updateDimensions = (obj: any) => {
   if (!obj) {
     return;
   }
-  
-  if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line' || obj.type === 'path') {
+  if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
     const scaledWidth = Math.round(obj.width * obj.scaleX);
     const scaledHeight = Math.round(obj.height * obj.scaleY);
-    const scaledRadius = Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY));
+    const scaledRadius = obj.radius ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY)) : undefined;
 
     obj.set({
       width: scaledWidth,
@@ -361,4 +363,7 @@ export const updateDimensions = (obj: any) => {
       scaleY: 1,
     });
   }
+  obj.setCoords();
+  console.log("obj.getCoords()",obj.getCoords())
 };
+

@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 
 import { Bold, Italic, Underline } from "lucide-react";
-import StyledLabel from "@/components/Label";
+import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
 interface ToolBarProps {
@@ -31,21 +31,21 @@ const ToolBar: React.FC<ToolBarProps> = ({
       }
     };
 
-  const renderInput = (
+  const ToolbarInput = (
     styleKey: string,
-    label: string,
-    type: string = "text"
+    labelText: string,
+    inputType: string = "text"
   ) => {
-    const isColor = type === "color";
+    const isColor = inputType === "color";
     let inputClasses = "w-[5.5em]";
     if (isColor) {
       inputClasses = "w-5 h-5 p-0  rounded-full";
     }
     return (
       <div className={`flex items-center space-x-2 border-r pr-4`}>
-        <StyledLabel htmlFor={styleKey}>{label}</StyledLabel>
+        <StyledLabel htmlFor={styleKey}>{labelText}</StyledLabel>
         <Input
-          type={type}
+          type={inputType}
           id={styleKey}
           className={inputClasses}
           value={
@@ -78,7 +78,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const onUnderlineClick = () => {
     if (onStyleChange) {
       onStyleChange({
-        underline: selectedObjectStyles?.underline === false ? true : false,
+        underline: selectedObjectStyles?.underline === false,
       });
     }
   };
@@ -109,9 +109,9 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const renderTextControls = () => (
     <>
       {selectedObjectStyles?.fill !== undefined &&
-        renderInput("fill", "Color", "color")}
+        ToolbarInput("fill", "Color", "color")}
       {selectedObjectStyles?.fontSize !== undefined &&
-        renderInput("fontSize", "Font Size", "number")}
+        ToolbarInput("fontSize", "Font Size", "number")}
       <div className="flex items-center space-x-2">
         <StyledLabel>Font styles</StyledLabel>
         <Toggle
@@ -142,57 +142,59 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const renderRectangleControls = () => (
     <>
       {selectedObjectStyles?.fill !== undefined &&
-        renderInput("fill", "Color", "color")}
+        ToolbarInput("fill", "Color", "color")}
 
       {selectedObjectStyles?.stroke !== undefined &&
-        renderInput("stroke", "Stroke Color", "color")}
+        ToolbarInput("stroke", "Stroke Color", "color")}
 
       {selectedObjectStyles?.strokeWidth !== undefined &&
-        renderInput("strokeWidth", "Stroke Width", "number")}
+        ToolbarInput("strokeWidth", "Stroke Width", "number")}
       {selectedObjectStyles?.width !== undefined &&
-        renderInput("width", "Width", "number")}
+        ToolbarInput("width", "Width", "number")}
       {selectedObjectStyles?.height !== undefined &&
-        renderInput("height", "Height", "number")}
+        ToolbarInput("height", "Height", "number")}
 
       {selectedObjectStyles?.angle !== undefined &&
-        renderInput("angle", "Angle", "number")}
+        ToolbarInput("angle", "Angle", "number")}
     </>
   );
 
   const renderCircleControls = () => (
     <>
       {selectedObjectStyles?.fill !== undefined &&
-        renderInput("fill", "Color", "color")}
+        ToolbarInput("fill", "Color", "color")}
 
       {selectedObjectStyles?.stroke !== undefined &&
-        renderInput("stroke", "Stroke Color", "color")}
+        ToolbarInput("stroke", "Stroke Color", "color")}
 
       {selectedObjectStyles?.strokeWidth !== undefined &&
-        renderInput("strokeWidth", "Stroke Width", "number")}
+        ToolbarInput("strokeWidth", "Stroke Width", "number")}
       {selectedObjectStyles?.radius !== undefined &&
-        renderInput("radius", "Radius", "number")}
+        ToolbarInput("radius", "Radius", "number")}
       {selectedObjectStyles?.angle !== undefined &&
-        renderInput("angle", "Angle", "number")}
+        ToolbarInput("angle", "Angle", "number")}
     </>
   );
 
   const renderPathControls = () => (
     <>
       {selectedObjectStyles?.stroke !== undefined &&
-        renderInput("stroke", "Stroke Color", "color")}
+        ToolbarInput("stroke", "Stroke Color", "color")}
       {selectedObjectStyles?.strokeWidth !== undefined &&
-        renderInput("strokeWidth", "Stroke Width", "number")}
+        ToolbarInput("strokeWidth", "Stroke Width", "number")}
     </>
   );
 
   const renderLineControls = () => (
     <>
       {selectedObjectStyles?.stroke !== undefined &&
-        renderInput("stroke", "Stroke Color", "color")}
+        ToolbarInput("stroke", "Stroke Color", "color")}
         {selectedObjectStyles?.width !== undefined &&
-        renderInput("width", "Width", "number")}
+        ToolbarInput("width", "Width", "number")}
       {selectedObjectStyles?.height !== undefined &&
-        renderInput("height", "Height", "number")}
+        ToolbarInput("height", "Height", "number")}
+      {selectedObjectStyles?.angle !== undefined &&
+          ToolbarInput("angle", "Angle", "number")}
     </>
   );
 

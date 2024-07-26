@@ -1,7 +1,7 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
 
-interface RenderItemProps {
+interface SidebarItemProps {
   item: MenuItem;
   activeItem: string | null;
   color: string;
@@ -11,7 +11,7 @@ interface RenderItemProps {
   handleClick: (name: string, action?: () => void) => void;
 }
 
-const RenderItem: React.FC<RenderItemProps> = ({
+const SidebarItem: React.FC<SidebarItemProps> = ({
   item,
   activeItem,
   color,
@@ -45,8 +45,7 @@ const RenderItem: React.FC<RenderItemProps> = ({
         )}
         <label
           htmlFor={id}
-          className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer"
-          style={{ fontSize: "14px", fontWeight: "500" }}
+          className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer text-sm font-medium"
         >
           {item.name === "change-size" ? "Size" : ""}
           {item.name === "change-size" ? (
@@ -65,4 +64,4 @@ const RenderItem: React.FC<RenderItemProps> = ({
   );
 };
 
-export default RenderItem;
+export default SidebarItem;

@@ -1,9 +1,7 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import BoardTable from "@/components/BoardTable";
-import { PaginationDemo } from "@/components/PaginationDemo";
-import { Button } from "@/components/ui/button";
-import ActionButtons from "@/components/ActionButtons";
+import UserBoardsActionButtons from "@/components/UserBoardsActionButtons";
 import TabButtons from "@/components/TabButtons";
 
 export default function UserBoards() {
@@ -22,7 +20,7 @@ export default function UserBoards() {
           <div className="bg-white p-4 ">
             <div className="flex justify-between items-center mb-4">
               <TabButtons tabs={tabs} />
-              <ActionButtons />
+              <UserBoardsActionButtons />
             </div>
             <BoardTable />
           </div>

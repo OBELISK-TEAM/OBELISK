@@ -9,7 +9,7 @@ import {
   handleRemoveSelected,
   handleLoadFromJSON,
 } from "@/lib/fabricCanvasUtils";
-
+import {CanvasActions } from "@/enums/CanvasActions";
 const useMenuActions = (
   canvas: fabric.Canvas | null,
   color: string,
@@ -32,43 +32,43 @@ const useMenuActions = (
       };
       if (name) {
         switch (name) {
-          case "add-line":
+          case CanvasActions.ADD_LINE:
             addLine(canvas, properties);
             setIsDrawingMode(false);
             break;
-          case "add-rectangle":
+          case CanvasActions.ADD_RECTANGLE:
             addRectangle(canvas, properties);
             setIsDrawingMode(false);
             break;
-          case "add-circle":
+          case CanvasActions.ADD_CIRCLE:
             addCircle(canvas, properties);
             setIsDrawingMode(false);
             break;
-          case "add-text":
+          case CanvasActions.ADD_TEXT:
             handleAddText(canvas, 50, 50, properties);
             setIsDrawingMode(false);
             break;
-          case "group-selected":
+          case CanvasActions.GROUP_SELECTED:
             handleGroupSelected(canvas);
             break;
-          case "remove-selected":
+          case CanvasActions.REMOVE_SELECTED:
             handleRemoveSelected(canvas);
             break;
-          case "clear-canvas":
+          case CanvasActions.CLEAR_CANVAS:
             canvas?.clear();
             break;
-          case "load-canvas":
+          case CanvasActions.LOAD_CANVAS:
             handleLoadFromJSON(canvas);
             setIsDrawingMode(false);
             break;
-          case "add-image-url":
+          case CanvasActions.ADD_IMAGE_URL:
             setIsDrawingMode(false);
             break;
-          case "add-image-disk":
+          case CanvasActions.ADD_IMAGE_DISK:
             setIsDrawingMode(false);
             break;
 
-          case "load-images-json":
+          case CanvasActions.LOAD_IMAGES_JSON:
             setIsDrawingMode(false);
             break;
           default:

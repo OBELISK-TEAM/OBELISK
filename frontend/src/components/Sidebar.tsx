@@ -1,7 +1,5 @@
 import { FC } from "react";
 import { HomeIcon, FolderIcon, CogIcon, ShareIcon } from "lucide-react";
-import Image from "next/image";
-import { Button } from "./ui/button";
 
 const Sidebar: FC = () => {
   return (
@@ -14,19 +12,19 @@ const Sidebar: FC = () => {
           <div className="grow">
             <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black">
               <HomeIcon className="h-5 w-5 flex-shrink-0" />
-              <span  className="text-left ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap" style={{ fontSize: '14px' ,fontWeight:'500'}}>
+              <span  className="text-left ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap text-sm font-medium">
                 Dashboard
               </span>
             </button>
             <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black">
               <FolderIcon className="h-5 w-5 flex-shrink-0" />
-              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap" style={{ fontSize: '14px' ,fontWeight:'500'}}>
+              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap text-sm font-medium">
                 My Boards
               </span>
             </button>
             <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black">
               <ShareIcon className="h-5 w-5 flex-shrink-0" />
-              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap" style={{ fontSize: '14px' ,fontWeight:'500'}}>
+              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap text-sm font-medium">
                 Shared
               </span>
             </button>
@@ -34,7 +32,7 @@ const Sidebar: FC = () => {
           <div>
             <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black">
               <CogIcon className="h-5 w-5 flex-shrink-0" />
-              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap" style={{ fontSize: '14px' ,fontWeight:'500'}}>
+              <span className="ml-8 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap text-sm font-medium">
                 Settings
               </span>
             </button>

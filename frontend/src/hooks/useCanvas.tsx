@@ -10,7 +10,7 @@ import {
 const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-  const [selectedObjectStyles, setSelectedObjectStyles] = useState<{
+  const [selectedObjectStylesState, setSelectedObjectStylesState] = useState<{
     [key: string]: any;
   } | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(null);
@@ -20,46 +20,42 @@ const useCanvas = () => {
     setCanvas(newCanvas);
 
     const handleSelectionUpdated = (e:any) => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log(
-        "Selection updated",
-        JSON.stringify(getSelectedObjectStylesUtil(newCanvas))
-      );
+      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
       const obj = e.target;
       updateDimensions(obj);
       setActiveItem(null);
     };
 
     const handleSelectionCreated = () => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log(
-        "Selection created",
-        JSON.stringify(getSelectedObjectStylesUtil(newCanvas))
-      );
+      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
       setActiveItem(null);
     };
 
     const handleSelectionCleared = () => {
-      setSelectedObjectStyles(null);
+      setSelectedObjectStylesState(null);
       setActiveItem(null);
     };
 
     const handleObjectModified = (e: any) => {
-      setSelectedObjectStyles(getSelectedObjectStylesUtil(newCanvas));
-      console.log(
-        "Object modified",
-        JSON.stringify(getSelectedObjectStylesUtil(newCanvas))
-      );
+      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
       const obj = e.target;
       updateDimensions(obj);
       setActiveItem(null);
     };
 
-    newCanvas?.on("selection:updated", handleSelectionUpdated);
+    const handleMouse = (e: any) => {
+      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
+      const obj = e.target;
+      updateDimensions(obj);
+      setActiveItem(null);
+    };
+
+
     newCanvas?.on("selection:created", handleSelectionCreated);
     newCanvas?.on("selection:cleared", handleSelectionCleared);
     newCanvas?.on("object:modified", handleObjectModified);
-
+    newCanvas?.on("mouse:down", handleMouse);
+    newCanvas?.on("mouse:up", handleMouse);
     return () => {
       newCanvas?.dispose();
     };
@@ -69,7 +65,7 @@ const useCanvas = () => {
     (styles: object) => {
       if (canvas) {
         setSelectedObjectStylesUtil(canvas, styles);
-        setSelectedObjectStyles(getSelectedObjectStylesUtil(canvas));
+        setSelectedObjectStylesState(getSelectedObjectStylesUtil(canvas));
       }
     },
     [canvas]
@@ -78,7 +74,7 @@ const useCanvas = () => {
   return {
     canvasRef,
     canvas,
-    selectedObjectStyles,
+    selectedObjectStyles: selectedObjectStylesState,
     handleStyleChange,
     activeItem,
     setActiveItem,

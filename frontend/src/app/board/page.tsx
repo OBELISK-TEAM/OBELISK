@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import DashboardSidebar from "@/components/board/Sidebar";
+import BoardSidebar from "@/components/board/Sidebar";
 import ToolBar from "@/components/board/Toolbar";
 import { BoardPagination } from "@/components/board/Pagination";
 import HorizontalMenu from "@/components/board/HorizontalMenu";
@@ -30,15 +30,14 @@ const Board: React.FC = () => {
         boardName="Board 1"
         menuItem={fileGroup}
         onIconClick={handleIconClick}
-        fromRight={true}
         activeItem={activeItem}
         onActiveItemChange={setActiveItem}
         activeCanvasObject={selectedObjectStyles}
       />
       <div className="flex">
-        <DashboardSidebar
+        <BoardSidebar
           withSettings={true}
-          menuItem={addGroup}
+          menuGroup={addGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
           onActiveItemChange={setActiveItem}
@@ -47,8 +46,8 @@ const Board: React.FC = () => {
           handleColorChange={(e) => setColor(e.target.value)}
           handleSizeChange={(e) => setSize(Number(e.target.value))}
         />
-        <DashboardSidebar
-          menuItem={editGroup}
+        <BoardSidebar
+          menuGroup={editGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
           onActiveItemChange={setActiveItem}
@@ -82,14 +81,14 @@ const Board: React.FC = () => {
           <input
             type="file"
             id="file-input1"
-            style={{ display: "none" }}
+            className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}
           />
           <input
             type="file"
             id="file-input2"
-            style={{ display: "none" }}
+            className="hidden"
             ref={fileJSONInputRef}
             onChange={handleLoadImagesFromJson}
           />
