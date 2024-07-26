@@ -76,8 +76,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
             <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded cursor-pointer hover:text-black">
               <CogIcon className="h-5 w-5 flex-shrink-0 cursor-pointer" />
               <span
-                className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer"
-                style={{ fontSize: "14px", fontWeight: "500" }}
+                className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer text-sm font-medium"
               >
                 Settings
               </span>

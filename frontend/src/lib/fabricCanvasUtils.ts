@@ -17,6 +17,16 @@ interface CanvasImage {
   src: string;
 }
 
+interface ImageData {
+  src: string;
+  left: number;
+  top: number;
+  scaleX: number;
+  scaleY: number;
+  angle: number;
+}
+
+
 export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
   if (canvasRef.current) {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
@@ -171,8 +181,8 @@ const removeImagesFromCanvas = (canvas:fabric.Canvas | null) => {
   return imagesData;
 };
 
-const restoreImagesToCanvas = (canvas:fabric.Canvas | null, imagesData:any) => {
-  imagesData.forEach((imgData:any) => {
+const restoreImagesToCanvas = (canvas:fabric.Canvas | null, imagesData:ImageData[]) => {
+  imagesData.forEach((imgData:ImageData) => {
     fabric.Image.fromURL(imgData.src, (img) => {
       img.set({
         left: imgData.left,
@@ -364,6 +374,5 @@ export const updateDimensions = (obj: any) => {
     });
   }
   obj.setCoords();
-  console.log("obj.getCoords()",obj.getCoords())
 };
 
