@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8080;
@@ -20,6 +21,16 @@ async function bootstrap() {
       transform: true, // automatically transforms input data to the expected types based on the DTO
     }),
   );
+
+  // Swagger
+  const swaggerConfig = new DocumentBuilder()
+  .setTitle('OBELISK')
+  .setDescription('OBELISK API description')
+  .setVersion('1.0')
+  .addTag('obelisk')
+  .build();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, swaggerDocument);
 
   await app.listen(port);
   Logger.log(`Server running on https://${host}:${port}`, 'Bootstrap');

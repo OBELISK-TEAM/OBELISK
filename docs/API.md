@@ -1,0 +1,1 @@
+We use [Swagger](https://swagger.io/) for documenting our API. To access it, host backend of OBELISK and go to `/docs` (for example `http://localhost:8080/docs`).
