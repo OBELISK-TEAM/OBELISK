@@ -34,7 +34,7 @@ import {
   addCircle,
   handleAddText,
   addImage,
-  resizeImage,
+  fitImageByShrinking,
   saveImagesToLocalFile,
   loadImagesFromJSON,
   toggleDrawingMode,
@@ -258,7 +258,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       reader.onload = (e) => {
         const result = e.target?.result;
         if (result) {
-          resizeImage(result as string, 800, 600, (resizedImage) => {
+          fitImageByShrinking(result as string, 800, 600, (resizedImage) => {
             addImage(canvas, resizedImage);
             saveState(canvas);
           });

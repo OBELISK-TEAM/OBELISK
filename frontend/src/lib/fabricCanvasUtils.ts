@@ -242,7 +242,7 @@ export const addImage = (canvas: fabric.Canvas | null, imageUrl: string, options
   });
 };
 
-export const resizeImage = (imageSrc: string, maxWidth: number, maxHeight: number, callback: (resizedImage: string) => void) => {
+export const fitImageByShrinking = (imageSrc: string, maxWidth: number, maxHeight: number, callback: (resizedImage: string) => void) => {
   const img = new Image();
   img.src = imageSrc;
   img.onload = () => {

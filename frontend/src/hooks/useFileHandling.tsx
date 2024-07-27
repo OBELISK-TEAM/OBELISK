@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { fabric } from "fabric";
-import { loadImagesFromJSON, resizeImage, addImage, saveImagesToLocalFile } from "@/lib/fabricCanvasUtils";
+import { loadImagesFromJSON, fitImageByShrinking, addImage, saveImagesToLocalFile } from "@/lib/fabricCanvasUtils";
 
 const useFileHandling = (canvas: fabric.Canvas | null, saveState: () => void) => {
   const handleLoadImagesFromJson = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +25,7 @@ const useFileHandling = (canvas: fabric.Canvas | null, saveState: () => void) =>
       reader.onload = (e) => {
         const result = e.target?.result;
         if (result) {
-          resizeImage(result as string, 800, 600, (resizedImage) => {
+          fitImageByShrinking(result as string, 800, 600, (resizedImage) => {
             addImage(canvas, resizedImage);
             saveState();
           });
