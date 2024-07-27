@@ -1,7 +1,6 @@
 import { FC } from "react";
-import { MenuGroup } from "../../interfaces/canva-interfaces";
-import { MenuItem } from "@/interfaces/canva-interfaces";
-import { CogIcon } from "lucide-react";
+import { MenuGroup , MenuItem } from "../../interfaces/canva-interfaces";
+
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef } from "react";
+import React, { ChangeEvent, useRef } from "react";
 import { Input } from "@/components/ui/input";
 
 import { Bold, Italic, Underline } from "lucide-react";

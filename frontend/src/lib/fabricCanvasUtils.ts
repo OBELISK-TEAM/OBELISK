@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 interface CanvasRef {
   current: HTMLCanvasElement | null;

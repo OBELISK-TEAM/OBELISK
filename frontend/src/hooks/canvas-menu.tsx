@@ -3,7 +3,7 @@
 
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MenuGroup, DropDownMenuItem } from "@/interfaces/canva-interfaces";
+import { MenuGroup } from "@/interfaces/canva-interfaces";
 import {
   Pencil,
   MousePointer,
@@ -12,7 +12,6 @@ import {
   Upload,
   Trash,
   Text,
-  File,
   Group,
   Circle,
   Link as UrlIcon,
@@ -214,7 +213,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           handleLoadFromJSON(canvas);
           break;
         case "load-images-json":
-          handleLoadImagesFromJson;
+          handleLoadImagesFromJson; // eslint-disable-line no-unused-expressions
           break;
         default:
           break;
