@@ -8,6 +8,7 @@ import { BoardsModule } from './modules/boards/boards.module';
 import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -18,19 +19,13 @@ import { AuthModule } from './modules/auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: () => {
-        // useFactory: async (configService: ConfigService) => {
-        // const dbName = configService.get<string>('DB_NAME', 'mongo_obelisk');
-        // const dbUser = configService.get<string>('DB_USER', 'admin');
-        // const dbPassword = configService.get<string>('DB_PASSWORD', 'password');
-        // const dbHost = configService.get<string>('DB_HOST', 'localhost');
-        // const dbPort = configService.get<string>('DB_PORT', '27017');
         return {
-          // uri: `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`,
           uri: `mongodb://localhost/mongo_obelisk`,
         };
       },
       inject: [ConfigService],
     }),
+    PassportModule.register({ session: true }),
     AuthModule,
     UsersModule,
     BoardsModule,

@@ -7,6 +7,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { SessionSerializer } from './serializers/session.serializer';
+import { CacheModule } from '@nestjs/cache-manager';
 
 const DEFAULT_JWT_SECRET = 'secret';
 const DEFAULT_JWT_EXPIRES_IN = '14d';
@@ -14,6 +17,7 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
 @Module({
   imports: [
     PassportModule,
+    CacheModule.register(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -29,7 +33,13 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
     }),
     UsersModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+    SessionSerializer,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { User } from './decorators/users.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
 import { CreateUserDto } from './users/users.dto';
+import { GoogleAuthGuard } from './guards/google.auth.guard';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -25,5 +35,20 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   status(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
+  }
+
+  // GOOGLE AUTHENTICATION
+
+  // Google OAuth callback
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleRedirect(@Req() req: Request, @Res() res: Response) {
+    return this.authService.googleRedirect(req, res);
+  }
+
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  async googleLogin(@Req() req: Request) {
+    return this.authService.googleLogin(req);
   }
 }
