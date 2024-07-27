@@ -1,12 +1,6 @@
-import { FC, useState, useRef } from "react";
+import { FC, useState } from "react";
 import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
 import { CogIcon } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import SidebarItem from "./SidebarItem";
 
@@ -35,7 +29,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
   handleColorChange,
   handleSizeChange,
 }) => {
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const handleClick = (name: string, action?: () => void) => {
     if (onActiveItemChange) {
@@ -48,7 +42,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
     onIconClick(name);
   };
 
-  let borderClass = fromRight ? "border-l" : "border-r";
+  const borderClass = fromRight ? "border-l" : "border-r";
 
   return (
     <div

@@ -19,12 +19,14 @@ const useCanvas = () => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     setCanvas(newCanvas);
 
-    const handleSelectionUpdated = (e:any) => {
-      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
-      const obj = e.target;
-      updateDimensions(obj);
-      setActiveItem(null);
-    };
+    // the function is used nowhere, but I don't know, if I can remove it
+    //
+    // const handleSelectionUpdated = (e:any) => {
+    //   setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
+    //   const obj = e.target;
+    //   updateDimensions(obj);
+    //   setActiveItem(null);
+    // };
 
     const handleSelectionCreated = () => {
       setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
