@@ -2,11 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as session from 'express-session';
 import * as passport from 'passport';
+import * as session from 'express-session';
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8080;
+const DEFAULT_CORS_ORIGIN = '*';
 const DEFAULT_SESSION_SECRET = 'default-session-secret';
 const DEFAULT_COOKIE_SESSION_MAX_AGE = 1000 * 60 * 60 * 24 * 7; // 7 days
 
@@ -18,6 +19,18 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
   const host = configService.get<string>('BACKEND_HOST', DEFAULT_HOST);
   const port = configService.get<number>('BACKEND_PORT', DEFAULT_PORT);
+  const corsOrigin = configService.get<string>(
+    'CORS_ORIGIN',
+    DEFAULT_CORS_ORIGIN,
+  );
+
+  console.log(host, port, corsOrigin);
+
+  app.enableCors({
+    origin: [corsOrigin],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+  });
 
   // global validation pipe
   app.useGlobalPipes(
@@ -45,8 +58,7 @@ async function bootstrap() {
       saveUninitialized: false,
       resave: false,
       cookie: {
-        maxAge: passportCookieSessionMaxAge,
-        // maxAge: 60000,
+        maxAge: Number(passportCookieSessionMaxAge),
       },
     }),
   );

@@ -117,4 +117,4 @@ export class AuthService {
 }
 
 // TODO - generate token using SafeUserDoc
-// { _id: user._id as string, email: user.email }); - too much casting
+// { _id: user._id as string, email: user.email }); - too much casting and passing params
