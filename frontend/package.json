@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
-    "build": "next build",
-    "start": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
+    "dev": "node dev.js",
+    "build": "node build.js",
+    "start": "node start.js",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
@@ -25,6 +25,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "embla-carousel-react": "^8.1.7",
     "fabric": "^5.3.0",
     "html2canvas": "^1.4.1",
