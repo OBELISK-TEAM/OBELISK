@@ -11,7 +11,6 @@ export type SlideObjectDocument = SlideObject & MongooseDocument;
 
 @Schema({ timestamps: true })
 export class SlideObject {
-
   // Fabric.js-specific properties
 
   @Prop({

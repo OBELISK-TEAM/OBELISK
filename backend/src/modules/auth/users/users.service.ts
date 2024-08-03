@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './users.dto';
 import { User, UserDocument } from '../../../schemas/user.schema';
 import { Board } from '../../../schemas/board.schema';
+import { UserAuthProvider } from '../../../enums/user.auth.provider';
 
 @Injectable()
 export class UsersService {
@@ -50,5 +51,19 @@ export class UsersService {
       .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
       .exec();
     if (!updatedUser) throw new HttpException('User not found', 404);
+  }
+
+  async createGoogleUser(email: string): Promise<UserDocument> {
+    const createdUser = new this.userModel({
+      email,
+      userAuthProvider: UserAuthProvider.GOOGLE,
+    });
+    return createdUser.save();
+  }
+
+  async updateUserProvider(email: string): Promise<UserDocument> {
+    const existingUser = await this.findOneByEmail(email);
+    existingUser.userAuthProvider = UserAuthProvider.GOOGLE;
+    return existingUser.save();
   }
 }
