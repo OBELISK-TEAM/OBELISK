@@ -1,13 +1,13 @@
 import { useReducer, useCallback } from "react";
 import { AuthAction, AuthState } from "@/interfaces/auth-form";
 
-
 export const initialState: AuthState = {
     email: "",
     password: "",
     error: null,
     loading: false,
 };
+
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     switch (action.type) {
         case "SET_EMAIL":
@@ -36,7 +36,7 @@ export const useAuthForm = () => {
         dispatch({ type: "SET_PASSWORD", payload: password });
     }, []);
 
-    const setError = useCallback((error: string | null) => {
+    const setError = useCallback((error: string[] | null) => {
         dispatch({ type: "SET_ERROR", payload: error });
     }, []);
 

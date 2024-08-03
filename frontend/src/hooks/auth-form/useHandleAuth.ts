@@ -2,10 +2,13 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AuthRequestFunction } from "@/interfaces/auth-api";
 import { useAuthForm } from "@/hooks/auth-form/useAuthForm";
+import {useAuth} from "@/context/AuthContext";
+import {AuthActionType} from "@/enums/AuthMessage";
 
 export const useHandleAuth = () => {
-    const authForm = useAuthForm()
-    const { email, password,error,loading,setEmail,setPassword, setError, setLoading } = authForm;
+    const authForm = useAuthForm();
+    const { email, password, error, loading, setEmail, setPassword, setError, setLoading } = authForm;
+    const { setAuthAction } = useAuth();
     const router = useRouter();
 
     const handleAuth = useCallback(
@@ -16,10 +19,16 @@ export const useHandleAuth = () => {
                 try {
                     const data = await authFunc({ email, password });
 
-                    localStorage.setItem("token", data.token);
+                    setAuthAction(AuthActionType.LOGIN_SUCCESS, data.token);
                     router.push(successRedirect);
                 } catch (err: any) {
-                    setError(err.message);
+                    if (err instanceof Error) {
+                        //setAuthAction(AuthActionType.LOGIN_FAILURE);
+                        const errorMessages = JSON.parse(err.message) as string[];
+                        setError(errorMessages);
+                    } else {
+                        setError(["Unexpected error occurred."]);
+                    }
                 } finally {
                     setLoading(false);
                 }

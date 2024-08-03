@@ -1,4 +1,5 @@
 import { LoginRequest, RegisterRequest, AuthResponse } from "@/interfaces/auth-api";
+import {handleApiError} from "@/lib/handleApiError";
 
 export const authRequest = async <T>(
     endpoint: string,
@@ -17,8 +18,7 @@ export const authRequest = async <T>(
     );
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Something went wrong");
+        await handleApiError(response);
     }
 
     return response.json();

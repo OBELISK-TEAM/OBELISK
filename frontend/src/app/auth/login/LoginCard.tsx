@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { googleAuth } from "@/lib/googleAuth";
-import { loginUser } from "@/lib/auth-api";
+import { loginUser } from "@/lib/authApi";
 import { useHandleAuth } from "@/hooks/auth-form/useHandleAuth";
 
 const LoginCard: React.FC = () => {
@@ -47,7 +47,16 @@ const LoginCard: React.FC = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {Array.isArray(error) && (
+                            <ol className="list-disc text-red-500 text-sm">
+                                {error.map((errMsg, index) => (
+                                    <li key={index}>{errMsg}</li>
+                                ))}
+                            </ol>
+                        )}
+
+
+
                         <Button type="submit" disabled={loading}>
                             {loading ? "Logging in..." : "Log in"}
                         </Button>

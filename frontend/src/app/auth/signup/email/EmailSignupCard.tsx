@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {registerUser} from "@/lib/auth-api";
+import {registerUser} from "@/lib/authApi";
 import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
 
 const EmailSignupCard: React.FC = () => {
@@ -32,7 +32,13 @@ const EmailSignupCard: React.FC = () => {
                             <Label htmlFor="password">Password</Label>
                             <Input id="password" placeholder="Your password" value={password} type="password" onChange={(e) => setPassword(e.target.value)}/>
                         </div>
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {error && (
+                            <ol className="list-disc text-red-500 text-sm">
+                                {error.map((errMsg, index) => (
+                                    <li key={index}>{errMsg}</li>
+                                ))}
+                            </ol>
+                        )}
                         <Button type="submit" disabled={loading}>
                          <span className="px-4 py-2 flex items-center">{loading ? "Creating account..." : "Create account"}</span>
                         </Button>

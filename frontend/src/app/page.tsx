@@ -1,6 +1,6 @@
-
 const Home = () => {
   return (
+
     <div className="flex">
       <div className="flex-grow p-10">
         <h1>Online Board for Effective Learning, Interaction and Sharing Knowledge</h1>
