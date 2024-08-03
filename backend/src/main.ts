@@ -6,12 +6,11 @@ import * as passport from 'passport';
 import * as session from 'express-session';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8080;
 const DEFAULT_CORS_ORIGIN = '*';
 const DEFAULT_SESSION_SECRET = 'default-session-secret';
-const DEFAULT_COOKIE_SESSION_MAX_AGE = 1000 * 60 * 60 * 24 * 7; // 7 days
+const DEFAULT_COOKIE_SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +20,7 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
   const host = configService.get<string>('BACKEND_HOST', DEFAULT_HOST);
   const port = configService.get<number>('BACKEND_PORT', DEFAULT_PORT);
-  
+
   const corsOrigin = configService.get<string>(
     'CORS_ORIGIN',
     DEFAULT_CORS_ORIGIN,
@@ -42,17 +41,14 @@ async function bootstrap() {
     }),
   );
 
-
   const passportSessionSecret = configService.get<string>(
     'SESSION_SECRET',
     DEFAULT_SESSION_SECRET,
   );
-  const passportCookieSessionMaxAge = configService.get<number>(
+  const passportCookieSessionMaxAgeMs = configService.get<number>(
     'COOKIE_SESSION_MAX_AGE',
-    DEFAULT_COOKIE_SESSION_MAX_AGE,
+    DEFAULT_COOKIE_SESSION_MAX_AGE_MS,
   );
-
-  console.log(host, port, passportSessionSecret, passportCookieSessionMaxAge);
 
   app.use(
     session({
@@ -60,7 +56,7 @@ async function bootstrap() {
       saveUninitialized: false,
       resave: false,
       cookie: {
-        maxAge: Number(passportCookieSessionMaxAge),
+        maxAge: Number(passportCookieSessionMaxAgeMs),
       },
     }),
   );
@@ -70,11 +66,11 @@ async function bootstrap() {
 
   // Swagger
   const swaggerConfig = new DocumentBuilder()
-  .setTitle('OBELISK')
-  .setDescription('OBELISK API description')
-  .setVersion('1.0')
-  .addTag('obelisk')
-  .build();
+    .setTitle('OBELISK')
+    .setDescription('OBELISK API description')
+    .setVersion('1.0')
+    .addTag('obelisk')
+    .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, swaggerDocument);
 
