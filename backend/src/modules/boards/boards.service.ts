@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
-import { Board } from '../../schemas/board.schema';
+import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../auth/users/users.service';
 import { Slide } from '../../schemas/slide.schema';
 
@@ -14,12 +14,15 @@ export class BoardsService {
     private readonly userService: UsersService,
   ) {}
 
-  async findAll(page: number = 1): Promise<Board[]> {
+  async findAll(page: number = 1): Promise<BoardDocument[]> {
     const skip = (page - 1) * this.pageSize;
     return this.boardModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
-  async create(userId: string, createBoardDto: CreateBoardDto): Promise<Board> {
+  async create(
+    userId: string,
+    createBoardDto: CreateBoardDto,
+  ): Promise<BoardDocument> {
     const { name } = createBoardDto;
     const owner = await this.userService.findOneById(userId);
     const createdBoard = new this.boardModel({ name, owner });
@@ -27,7 +30,7 @@ export class BoardsService {
     return createdBoard.save();
   }
 
-  async findOneById(boardId: string): Promise<Board> {
+  async findOneById(boardId: string): Promise<BoardDocument> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
     if (!existingBoard) throw new HttpException('Board not found', 404);
     return existingBoard;
@@ -36,7 +39,7 @@ export class BoardsService {
   async update(
     boardId: string,
     updateBoardDto: CreateBoardDto,
-  ): Promise<Board> {
+  ): Promise<BoardDocument> {
     const existingBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
@@ -44,7 +47,7 @@ export class BoardsService {
     return existingBoard;
   }
 
-  async delete(boardId: string): Promise<Board> {
+  async delete(boardId: string): Promise<BoardDocument> {
     const existingBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
