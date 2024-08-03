@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
+    "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toggle": "^1.0.3",
+    "axios": "^1.7.3",
     "canvas": "^2.11.2",
     "canvas2pdf": "^1.0.7",
     "class-variance-authority": "^0.7.0",
