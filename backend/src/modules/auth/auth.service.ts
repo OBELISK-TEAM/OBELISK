@@ -4,12 +4,12 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { UserDocument } from '../../schemas/user.schema';
 import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
-import { Payload } from '../../shared/interfaces/Payload';
 import { CreateUserDto } from './users/users.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
 import { GoogleUser } from '../../shared/interfaces/GoogleUser';
+import { AuthToken } from '../../shared/interfaces/AuthToken';
 
 @Injectable()
 export class AuthService {
@@ -57,22 +57,20 @@ export class AuthService {
     return await compare(attempt, hashedPassword);
   }
 
-  login(user: SafeUserDoc): string {
-    return this.generateToken({ _id: user._id as string, email: user.email });
+  login(user: SafeUserDoc): AuthToken {
+    return this.generateToken(user);
   }
 
-  async register(createUserDto: CreateUserDto): Promise<string> {
+  async register(createUserDto: CreateUserDto): Promise<AuthToken> {
     if (await this.usersService.emailExists(createUserDto.email))
       throw new HttpException('User already exists', 400);
     const newUser: UserDocument = await this.usersService.create(createUserDto);
-    return this.generateToken({
-      _id: newUser._id as string,
-      email: newUser.email,
-    });
+    return this.generateToken(newUser);
   }
 
-  generateToken(payload: Omit<Payload, 'iat' | 'exp'>): string {
-    return this.jwtService.sign(payload);
+  generateToken(user: UserDocument | SafeUserDoc): AuthToken {
+    const payload = { email: user.email, _id: user._id };
+    return { accessToken: this.jwtService.sign(payload) };
   }
 
   // Google OAuth
@@ -88,7 +86,7 @@ export class AuthService {
     res.send('<script>window.close()</script>');
   }
 
-  async googleLogin(req: Request): Promise<string> {
+  async googleLogin(req: Request): Promise<AuthToken> {
     const auth = req.get('Authorization');
     if (!auth) throw new HttpException('Unauthorized', 401);
     const userTempId = auth.split(' ')[1];
@@ -100,21 +98,18 @@ export class AuthService {
     return this.handleGoogleLogin(googleUser);
   }
 
-  async handleGoogleLogin(googleUser: GoogleUser): Promise<string> {
+  async handleGoogleLogin(googleUser: GoogleUser): Promise<AuthToken> {
     const email: string = googleUser.email;
     if (await this.usersService.emailExists(email)) {
       const user: UserDocument =
         await this.usersService.updateUserProvider(email);
-      return this.generateToken({ _id: user._id as string, email: email });
+      return this.generateToken(user);
     } else {
       const user: UserDocument =
         await this.usersService.createGoogleUser(email);
-      return this.generateToken({ _id: user._id as string, email: user.email });
+      return this.generateToken(user);
     }
   }
 
   // End of Google OAuth
 }
-
-// TODO - generate token using SafeUserDoc
-// { _id: user._id as string, email: user.email }); - too much casting and passing params

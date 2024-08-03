@@ -15,19 +15,20 @@ import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
 import { CreateUserDto } from './users/users.dto';
 import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
+import { AuthToken } from '../../shared/interfaces/AuthToken';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto): Promise<string> {
+  async register(@Body() createUserDto: CreateUserDto): Promise<AuthToken> {
     return this.authService.register(createUserDto);
   }
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  login(@User() user: SafeUserDoc): string {
+  login(@User() user: SafeUserDoc): AuthToken {
     return this.authService.login(user);
   }
 

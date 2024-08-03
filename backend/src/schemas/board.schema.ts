@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
+import {
+  Schema as MongooseSchema,
+  Document as MongooseDocument,
+} from 'mongoose';
 
-// TODO - add document type as in user.schema.ts
+export type BoardDocument = Board & MongooseDocument;
 
 @Schema({ timestamps: true })
 export class Board {
@@ -12,6 +15,8 @@ export class Board {
     type: String,
   })
   name: string;
+
+  // relations
 
   @Prop({
     required: false,
@@ -46,8 +51,6 @@ export class Board {
     view: User[];
     share: User[];
   };
-
-  // relations
 
   @Prop({
     required: true,
