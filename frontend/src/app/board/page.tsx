@@ -4,9 +4,9 @@ import BoardSidebar from "@/components/board/Sidebar";
 import ToolBar from "@/components/board/Toolbar";
 import { BoardPagination } from "@/components/board/Pagination";
 import HorizontalMenu from "@/components/board/HorizontalMenu";
-import useCanvas from "@/hooks/useCanvas";
-import useMenuData from "@/hooks/useMenuData";
-import useFileClick from "@/hooks/useFileClick";
+import useCanvas from "@/hooks/board/useCanvas";
+import useMenuData from "@/hooks/board/useMenuData";
+import useFileClick from "@/hooks/board/useFileClick";
 
 const Board: React.FC = () => {
   const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();

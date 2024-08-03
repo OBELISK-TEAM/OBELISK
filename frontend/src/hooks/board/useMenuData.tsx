@@ -1,9 +1,9 @@
-import useDrawingMode from "@/hooks/useDrawingMode";
-import useColorAndSize from "@/hooks/useColorAndSize";
-import useUndoRedo from "@/hooks/useUndoRedo";
-import useCanvasEventHandlers from "@/hooks/useCanvasEventHandlers";
-import useFileHandling from "@/hooks/useFileHandling";
-import useMenuActions from "@/hooks/useMenuActions";
+import useDrawingMode from "@/hooks/board/useDrawingMode";
+import useColorAndSize from "@/hooks/board/useColorAndSize";
+import useUndoRedo from "@/hooks/board/useUndoRedo";
+import useCanvasEventHandlers from "@/hooks/board/useCanvasEventHandlers";
+import useFileHandling from "@/hooks/board/useFileHandling";
+import useMenuActions from "@/hooks/board/useMenuActions";
 import { exportToPDF, handleSave } from "@/lib/fabricCanvasUtils";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
 import {
