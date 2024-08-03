@@ -39,7 +39,7 @@ const LoginCard: React.FC = () => {
                     </div>
                 </form>
                 <div className="flex justify-center">
-                    <p className="text-sm font-medium">Don't have an account?&ensp;</p>
+                    <p className="text-sm font-medium">Don&apos;t have an account?&ensp;</p>
                     <Link href="/auth/signup" className="text-sm font-medium underline">Sign up</Link>
                 </div>
                 <div className="flex items-center gap-1.5">
