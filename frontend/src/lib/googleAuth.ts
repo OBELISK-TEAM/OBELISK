@@ -59,7 +59,7 @@ export const googleAuth = () => {
                     newAuthWindow.postMessage("ping", "*");
                 }
             } catch (e) {
-               // console.log(e);
+                console.log(e);
             }
         }, 100);
     }

@@ -12,6 +12,7 @@ import {
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { Mail } from "lucide-react";
 import {googleAuth} from "@/lib/googleAuth";
+import GoogleLogin from "@/components/GoogleLogin/GoogleLogin";
 
 const SignupCard: React.FC = () => {
     return (
@@ -34,6 +35,7 @@ const SignupCard: React.FC = () => {
                 <Button variant="outline" className="flex-1" onClick={googleAuth}>
                     <GoogleIcon width={16} height={16} />&ensp;Google
                 </Button>
+                <GoogleLogin/>
             </CardContent>
         </Card>
     );
