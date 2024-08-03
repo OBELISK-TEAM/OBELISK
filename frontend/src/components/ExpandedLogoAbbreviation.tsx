@@ -1,5 +1,5 @@
 const ExpandedLogoAbbreviation: React.FC = () => {
-    let largeInitial = "text-6xl"
+    const largeInitial = "text-6xl"
 
     return (
         <div className="w-fit relative space-y-6 text-3xl tracking-widest" style={{ letterSpacing: "4px", whiteSpace: "nowrap" }}>
