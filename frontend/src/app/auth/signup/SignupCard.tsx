@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -10,6 +11,8 @@ import {
 } from "@/components/ui/card"
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { Mail } from "lucide-react";
+import {googleAuth} from "@/lib/googleAuth";
+import GoogleLogin from "@/components/GoogleLogin/GoogleLogin";
 
 const SignupCard: React.FC = () => {
     return (
@@ -29,11 +32,10 @@ const SignupCard: React.FC = () => {
                     <p className="text-muted-foreground font-medium" style={{ fontSize: "12px" }}>OR CONTINUE WITH</p>
                     <Separator className="flex-1" />
                 </div>
-                <Link href="/auth/signup/email" className="flex">
-                    <Button variant="outline" className="flex-1">
-                        <GoogleIcon width={16} height={16} />&ensp;Google
-                    </Button>
-                </Link>
+                <Button variant="outline" className="flex-1" onClick={googleAuth}>
+                    <GoogleIcon width={16} height={16} />&ensp;Google
+                </Button>
+                <GoogleLogin/>
             </CardContent>
         </Card>
     );

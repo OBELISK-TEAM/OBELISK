@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -12,6 +13,8 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import GoogleLogin from "@/components/GoogleLogin/GoogleLogin";
+import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
+import {googleAuth} from "@/lib/googleAuth";
 
 const LoginCard: React.FC = () => {
     return (
@@ -46,7 +49,7 @@ const LoginCard: React.FC = () => {
                     <p className="text-muted-foreground font-medium" style={{ fontSize: "12px" }}>OR LOG IN WITH</p>
                     <Separator className="flex-1" />
                 </div>
-                <GoogleLogin />
+                <Button variant="outline" onClick={googleAuth}><GoogleIcon width={16} height={16} /> &ensp;Google</Button>
             </CardContent>
         </Card>
     );

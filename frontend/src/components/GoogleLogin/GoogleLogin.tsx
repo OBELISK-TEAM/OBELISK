@@ -1,4 +1,5 @@
 "use client";
+
 import { redirect } from "next/navigation";
 import axios from "axios";
 import React from "react";
@@ -9,7 +10,7 @@ const GoogleLogin = () => {
     try {
       console.log("123123123");
       const response = await axios.post(
-          "http://localhost:4000/auth/google/login",
+          process.env.NEXT_LOGIN_GOOGLE_USER_ENDPOINT!,
           {},
           {
             headers: {
@@ -54,17 +55,13 @@ const GoogleLogin = () => {
     const state = crypto.randomUUID();
     const googleAuthEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 
-    const scope = [
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
-    ].join(" ");
+    const scope = process.env.NEXT_PUBLIC_GOOGLE_SCOPE?.split(",").map(scope => `https://www.googleapis.com/auth/userinfo.${scope}`).join(" ");
 
     const loginRequestParameters: { [key: string]: string } = {
       response_type: "code",
-      redirect_uri: "http://localhost:4000/auth/google/callback",
-      scope,
-      client_id:
-          "1023376529403-8vkrercdkg68t8v8ld9kqrtvt7emo24h.apps.googleusercontent.com",
+      redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
+      scope: scope!,
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
       state,
     };
 
@@ -76,7 +73,7 @@ const GoogleLogin = () => {
 
   return (
         <Button variant="outline"
-            onClick={googleAuth}
+            onClick={googleAuth} className="flex-1"
         >
           <img
               src="https://developers.google.com/identity/images/g-logo.png"
