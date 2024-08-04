@@ -6,7 +6,7 @@ import {Label} from "@/components/ui/label";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import {googleAuth} from "@/lib/googleAuth";
-import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
+import {useHandleAuth} from "@/hooks/auth/useHandleAuth";
 const LoginCard: React.FC = () => {
     const { email, password, error, loading, setEmail, setPassword, login } = useHandleAuth();
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import MessageReceiver from "@/app/MessageReceiver";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {

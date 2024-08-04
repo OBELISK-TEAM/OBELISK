@@ -2,7 +2,7 @@ import {FC} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import Image from "next/image";
 import HeaderLinks from "./HeaderLinks";
-import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
+import {useHandleAuth} from "@/hooks/auth/useHandleAuth";
 import {Button} from "@/components/ui/button";
 
 const Header: FC = () => {
