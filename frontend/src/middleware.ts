@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import {jwtDecode} from 'jwt-decode';
 function isAuthenticated(request: NextRequest): boolean {
-    const token = request.cookies.get('token')?.value;
+    const token = request.cookies.get('accessToken')?.value;
 
     if (!token) return false;
 
@@ -16,7 +16,6 @@ function isAuthenticated(request: NextRequest): boolean {
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-
     if (isAuthenticated(request)) {
         if (pathname.startsWith('/auth')) {
             return NextResponse.redirect(new URL('/user-boards', request.url));
