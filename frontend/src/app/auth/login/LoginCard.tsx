@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -9,6 +8,7 @@ import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { googleAuth } from "@/lib/googleAuth";
 import { loginUser } from "@/lib/authApi";
 import { useHandleAuth } from "@/hooks/auth-form/useHandleAuth";
+
 
 const LoginCard: React.FC = () => {
     const { email, password, error, loading, setEmail, setPassword, handleAuth } = useHandleAuth();

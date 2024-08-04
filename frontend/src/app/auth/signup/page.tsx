@@ -1,8 +1,10 @@
+'use client'
 import AuthHeaderButtons from "@/components/AuthHeaderButtons";
 import ExpandedLogoAbbreviation from "@/components/ExpandedLogoAbbreviation";
 import SignupCard from "./SignupCard"
 
 const SignupMethods: React.FC = () => {
+
     return (
         <div className="flex h-min-[100vh] h-[100vh]">
             <div className="w-full h-min-[100vh] h-[100vh] flex-1 bg-muted text-muted-foreground hidden lg:flex flex-row items-center justify-center">

@@ -1,7 +1,7 @@
+'use client'
 import AuthHeaderButtons from "@/components/AuthHeaderButtons";
 import ExpandedLogoAbbreviation from "@/components/ExpandedLogoAbbreviation";
 import LoginCard from "./LoginCard";
-
 
 const Login: React.FC = () => {
     return (

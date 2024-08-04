@@ -1,14 +1,18 @@
 import React, {createContext, useContext, useReducer} from "react";
 import {AuthMessage} from "@/interfaces/auth-message";
 import {AuthActionType, AuthMessageType} from "@/enums/AuthMessage";
+import {jwtDecode} from "jwt-decode";
+import { useRouter } from 'next/navigation';
+import Cookies from "js-cookie";
 
 interface AuthContextType {
     getAuthMessage: () => AuthMessage | null;
     setAuthAction: (actionType: AuthActionType, token?: string) => void;
     getToken: () => string | null;
     clearAuthMessage: () => void;
+    isTokenValid: () => boolean;
+    authRedirect: ({redirectPath,fallbackPath}:{redirectPath: string, fallbackPath: string}) => void;
 }
-
 const authMessageReducer = (state: AuthMessage | null, action: AuthActionType): AuthMessage | null => {
     switch (action) {
         case AuthActionType.LOGIN_SUCCESS:
@@ -38,16 +42,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [authMessage, dispatch] = useReducer(authMessageReducer, null);
+   const router = useRouter();
     const getToken = () => {
-        return localStorage.getItem("token");
+        return Cookies.get("token") || null;
     };
 
     const setToken = (newToken: string) => {
-        localStorage.setItem("token", newToken);
+        try {
+            const decoded: any = jwtDecode(newToken);
+            const expiryDate = new Date(decoded.exp * 1000);
+
+            Cookies.set("token", newToken, { expires: expiryDate });
+        } catch (error) {
+            console.error('Invalid token:', error);
+        }
     };
 
     const clearToken = () => {
-        localStorage.removeItem("token");
+        Cookies.remove("token");
     };
     const getAuthMessage = () => {
         return authMessage;
@@ -59,6 +71,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const clearAuthMessage = () => {
         dispatch(AuthActionType.AUTH_CLEAR);
+    };
+
+    const isTokenValid = (): boolean => {
+        const token = getToken();
+        if (!token) return false;
+
+        try {
+            const decoded: any = jwtDecode(token);
+            return decoded.exp && decoded.exp * 1000 > Date.now();
+        } catch (error) {
+            return false;
+        }
+    };
+
+    const authRedirect = ({ redirectPath, fallbackPath }: { redirectPath: string, fallbackPath: string }) => {
+        if (isTokenValid()) {
+            router.push(redirectPath);
+        } else {
+            router.push(fallbackPath);
+        }
     };
 
     const setAuthAction = (actionType: AuthActionType, token?: string) => {
@@ -87,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ getAuthMessage,getToken, setAuthAction,clearAuthMessage }}>
+        <AuthContext.Provider value={{ getAuthMessage,getToken, setAuthAction,clearAuthMessage,authRedirect,isTokenValid }}>
             {children}
         </AuthContext.Provider>
     );

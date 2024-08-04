@@ -15,6 +15,7 @@ import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
 const EmailSignupCard: React.FC = () => {
     const { email, password, error, loading, setEmail, setPassword, handleAuth } = useHandleAuth();
     const handleRegister = handleAuth(registerUser, "/user-boards");
+
     return (
         <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
             <CardHeader className="items-center">

@@ -37,6 +37,11 @@ export const useHandleAuth = () => {
         [email, password, setError, setLoading, router]
     );
 
+    const logout = useCallback(() => {
+        setAuthAction(AuthActionType.LOGOUT_SUCCESS);
+        router.push("/auth/login");
+    }, [setAuthAction, router]);
+
     return {
         email,
         password,
@@ -47,5 +52,6 @@ export const useHandleAuth = () => {
         setError,
         setLoading,
         handleAuth,
+        logout
     };
 };
