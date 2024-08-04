@@ -25,7 +25,7 @@ export const useHandleAuth = (): HandleAuth => {
                             await signup({ email, password });
                             break;
                         case AuthAction.LOGOUT:
-                            console.log("logout")
+                            //console.log("logout")
                             await logout();
                             break;
                         default:

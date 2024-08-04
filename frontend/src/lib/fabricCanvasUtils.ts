@@ -53,7 +53,7 @@ export const toggleDrawingMode = (canvas: fabric.Canvas | null, isDrawingMode: b
 export const handleSave = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
     const json = JSON.stringify(canvas.toJSON());
-    //console.log("Saved JSON:", json);
+    console.log("Saved JSON:", json);
   }
 };
 

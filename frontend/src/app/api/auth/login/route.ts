@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (response.ok) {
-        const { token } = await response.json();
+        const { accessToken } = await response.json();
         const res = NextResponse.json({ message: 'Login successful' });
-        setTokenCookie(token);
+        setTokenCookie(accessToken);
         return res;
     } else {
         const error = await response.json();
