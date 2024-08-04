@@ -1,18 +1,17 @@
-import React, {createContext, useContext, useReducer} from "react";
-import {AuthMessage} from "@/interfaces/auth-message";
-import {AuthActionType, AuthMessageType} from "@/enums/AuthMessage";
-import {jwtDecode} from "jwt-decode";
+import React, { createContext, useContext, useReducer } from "react";
+import { AuthMessage } from "@/interfaces/auth-message";
+import { AuthActionType, AuthMessageType } from "@/enums/AuthMessage";
 import { useRouter } from 'next/navigation';
-import Cookies from "js-cookie";
+import {handleApiError} from "@/lib/handleApiError";
 
 interface AuthContextType {
     getAuthMessage: () => AuthMessage | null;
-    setAuthAction: (actionType: AuthActionType, token?: string) => void;
-    getToken: () => string | null;
+    login: (credentials: { email: string, password: string }) => Promise<void>;
+    signup: (credentials: { email: string, password: string }) => Promise<void>;
+    logout: () => Promise<void>;
     clearAuthMessage: () => void;
-    isTokenValid: () => boolean;
-    authRedirect: ({redirectPath,fallbackPath}:{redirectPath: string, fallbackPath: string}) => void;
 }
+
 const authMessageReducer = (state: AuthMessage | null, action: AuthActionType): AuthMessage | null => {
     switch (action) {
         case AuthActionType.LOGIN_SUCCESS:
@@ -35,91 +34,67 @@ const authMessageReducer = (state: AuthMessage | null, action: AuthActionType): 
     }
 };
 
-
-
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [authMessage, dispatch] = useReducer(authMessageReducer, null);
-   const router = useRouter();
-    const getToken = () => {
-        return Cookies.get("token") || null;
-    };
+    const router = useRouter();
 
-    const setToken = (newToken: string) => {
-        try {
-            const decoded: any = jwtDecode(newToken);
-            const expiryDate = new Date(decoded.exp * 1000);
-
-            Cookies.set("token", newToken, { expires: expiryDate });
-        } catch (error) {
-            console.error('Invalid token:', error);
-        }
-    };
-
-    const clearToken = () => {
-        Cookies.remove("token");
-    };
     const getAuthMessage = () => {
         return authMessage;
-    };
-
-    const setAuthMessage = (actionType: AuthActionType) => {
-        dispatch(actionType);
     };
 
     const clearAuthMessage = () => {
         dispatch(AuthActionType.AUTH_CLEAR);
     };
 
-    const isTokenValid = (): boolean => {
-        const token = getToken();
-        if (!token) return false;
-
-        try {
-            const decoded: any = jwtDecode(token);
-            return decoded.exp && decoded.exp * 1000 > Date.now();
-        } catch (error) {
-            return false;
+    const login = async (credentials: { email: string, password: string }) => {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credentials),
+            });
+            if (response.ok) {
+                dispatch(AuthActionType.LOGIN_SUCCESS);
+                router.push('/user-boards');
+            } else {
+                dispatch(AuthActionType.LOGIN_FAILURE);
+                await handleApiError(response);
+            }
         }
+
+
+    const signup = async (credentials: { email: string, password: string }) => {
+
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credentials),
+            });
+
+            if (response.ok) {
+                dispatch(AuthActionType.REGISTER_SUCCESS);
+                router.push('/user-boards');
+            } else {
+                dispatch(AuthActionType.REGISTER_FAILURE);
+                await handleApiError(response);
+            }
     };
 
-    const authRedirect = ({ redirectPath, fallbackPath }: { redirectPath: string, fallbackPath: string }) => {
-        if (isTokenValid()) {
-            router.push(redirectPath);
-        } else {
-            router.push(fallbackPath);
-        }
-    };
+    const logout = async () => {
 
-    const setAuthAction = (actionType: AuthActionType, token?: string) => {
-        switch (actionType) {
-            case AuthActionType.LOGIN_SUCCESS:
-            case AuthActionType.REGISTER_SUCCESS:
-                if (token) {
-                    setToken(token);
-                    setAuthMessage(actionType);
-                } else{
-                    setAuthMessage(AuthActionType.AUTH_ERROR);
-                }
-                break;
-            case AuthActionType.LOGIN_FAILURE:
-            case AuthActionType.REGISTER_FAILURE:
-            case AuthActionType.LOGOUT_FAILURE:
-                setAuthMessage(actionType);
-                break;
-            case AuthActionType.LOGOUT_SUCCESS:
-                clearToken();
-                setAuthMessage(actionType);
-                break;
-            default:
-                clearAuthMessage();
-        }
+            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            if (response.ok) {
+                dispatch(AuthActionType.LOGOUT_SUCCESS);
+                router.push('/auth/login');
+            } else {
+                dispatch(AuthActionType.LOGOUT_FAILURE);
+            }
+
     };
 
     return (
-        <AuthContext.Provider value={{ getAuthMessage,getToken, setAuthAction,clearAuthMessage,authRedirect,isTokenValid }}>
+        <AuthContext.Provider value={{ getAuthMessage, login, signup, logout, clearAuthMessage }}>
             {children}
         </AuthContext.Provider>
     );

@@ -107,3 +107,33 @@ input[type=color]::-webkit-color-swatch-wrapper {
     border-radius: 50%;
     padding: 0;
 }
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-in forwards;
+}

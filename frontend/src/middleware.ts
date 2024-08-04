@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/user-boards', request.url));
         }
     } else {
-        if (pathname.startsWith('/user-boards') || pathname.startsWith('/board')) {
+        if ((pathname.startsWith('/user-boards') || pathname.startsWith('/board')) && !pathname.startsWith('/auth')) {
             return NextResponse.redirect(new URL('/auth/login', request.url));
         }
     }

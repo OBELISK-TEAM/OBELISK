@@ -1,21 +1,12 @@
 "use client"
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {registerUser} from "@/lib/authApi";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
 
 const EmailSignupCard: React.FC = () => {
-    const { email, password, error, loading, setEmail, setPassword, handleAuth } = useHandleAuth();
-    const handleRegister = handleAuth(registerUser, "/user-boards");
-
+    const { email, password, error, loading, setEmail, setPassword, signup } = useHandleAuth();
     return (
         <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
             <CardHeader className="items-center">
@@ -23,7 +14,7 @@ const EmailSignupCard: React.FC = () => {
                 <CardDescription>Enter your credentials below to create your account</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-                <form onSubmit={handleRegister}>
+                <form onSubmit={signup}>
                     <div className="grid w-full items-center gap-4">
                         <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="email">Email</Label>

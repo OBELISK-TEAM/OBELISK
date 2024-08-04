@@ -1,37 +1,21 @@
-import { LoginRequest, RegisterRequest, AuthResponse } from "@/interfaces/auth-api";
-import {handleApiError} from "@/lib/handleApiError";
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
-export const authRequest = async <T>(
-    endpoint: string,
-    method: string,
-    body: LoginRequest | RegisterRequest
-): Promise<T> => {
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
-        {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body)
-        }
-    );
 
-    if (!response.ok) {
-        await handleApiError(response);
-    }
-
-    return response.json();
+export const setTokenCookie = (token: string) => {
+    const decoded: any = jwt.decode(token);
+    const expiryDate = new Date(decoded.exp * 1000);
+    cookies().set('token', token, {
+        expires: expiryDate,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+    });
 };
 
-export const loginUser = async (
-    loginData: LoginRequest
-): Promise<AuthResponse> => {
-    return authRequest<AuthResponse>("/auth/login", "POST", loginData);
-};
+export async function clearCookie() {
+    const cookieStore = cookies();
+    cookieStore.set('token', '', { maxAge: 0, path: '/' });
+}
 
-export const registerUser = async (
-    registerData: RegisterRequest
-): Promise<AuthResponse> => {
-    return authRequest<AuthResponse>("/auth/register", "POST", registerData);
-};
+

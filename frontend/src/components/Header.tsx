@@ -1,11 +1,12 @@
-import { FC } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {FC} from "react";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import Image from "next/image";
 import HeaderLinks from "./HeaderLinks";
 import {useHandleAuth} from "@/hooks/auth-form/useHandleAuth";
 import {Button} from "@/components/ui/button";
+
 const Header: FC = () => {
-    const { logout } = useHandleAuth();
+    const {logout} = useHandleAuth();
 
     return (
     <div className="flex items-center justify-between h-[64px] h-min-[64px] x-4 bg-white border-b pl-0">

@@ -1,30 +1,43 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AuthRequestFunction } from "@/interfaces/auth-api";
 import { useAuthForm } from "@/hooks/auth-form/useAuthForm";
-import {useAuth} from "@/context/AuthContext";
-import {AuthActionType} from "@/enums/AuthMessage";
+import { useAuth } from "@/context/AuthContext";
+import {AuthAction} from "@/enums/AuthAction"
+import {HandleAuth} from "@/interfaces/handle-auth";
 
-export const useHandleAuth = () => {
+export const useHandleAuth = (): HandleAuth => {
     const authForm = useAuthForm();
     const { email, password, error, loading, setEmail, setPassword, setError, setLoading } = authForm;
-    const { setAuthAction } = useAuth();
+    const { login, signup,logout } = useAuth();
     const router = useRouter();
 
     const handleAuth = useCallback(
-        (authFunc: AuthRequestFunction, successRedirect: string) => {
+        (authFunc: AuthAction, successRedirect?: string) => {
             return async (e: React.FormEvent) => {
                 e.preventDefault();
                 setLoading(true);
                 try {
-                    const data = await authFunc({ email, password });
-
-                    setAuthAction(AuthActionType.LOGIN_SUCCESS, data.token);
-                    router.push(successRedirect);
+                    switch (authFunc) {
+                        case AuthAction.LOGIN:
+                            await login({ email, password });
+                            break;
+                        case AuthAction.SIGNUP:
+                            await signup({ email, password });
+                            break;
+                        case AuthAction.LOGOUT:
+                            console.log("logout")
+                            await logout();
+                            break;
+                        default:
+                            throw new Error("Invalid authentication action");
+                    }
+                    if(successRedirect){
+                        router.push(successRedirect);
+                    }
                 } catch (err: any) {
                     if (err instanceof Error) {
-                        //setAuthAction(AuthActionType.LOGIN_FAILURE);
                         const errorMessages = JSON.parse(err.message) as string[];
+                        //console.log("errorMessages", errorMessages)
                         setError(errorMessages);
                     } else {
                         setError(["Unexpected error occurred."]);
@@ -34,13 +47,9 @@ export const useHandleAuth = () => {
                 }
             };
         },
-        [email, password, setError, setLoading, router]
+        [email, password, setError, setLoading, login, signup, router]
     );
 
-    const logout = useCallback(() => {
-        setAuthAction(AuthActionType.LOGOUT_SUCCESS);
-        router.push("/auth/login");
-    }, [setAuthAction, router]);
 
     return {
         email,
@@ -51,7 +60,8 @@ export const useHandleAuth = () => {
         setPassword,
         setError,
         setLoading,
-        handleAuth,
-        logout
+        login:  handleAuth(AuthAction.LOGIN, '/user-boards'),
+        signup: handleAuth(AuthAction.SIGNUP, '/user-boards'),
+        logout: handleAuth(AuthAction.LOGOUT),
     };
 };
