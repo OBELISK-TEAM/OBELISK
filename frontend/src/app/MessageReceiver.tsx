@@ -9,7 +9,7 @@
                 //
 
 import React, { useEffect, useRef, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 const MessageReceiver: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { getAuthMessage, clearAuthMessage } = useAuth();

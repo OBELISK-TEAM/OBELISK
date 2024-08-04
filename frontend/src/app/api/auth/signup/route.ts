@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (response.ok) {
-        const { accessToken } = await response.json();
+        const { token } = await response.json();
         const res = NextResponse.json({ message: 'Signup successful' });
-        setTokenCookie(accessToken);
+        setTokenCookie(token);
         return res;
     } else {
         const error = await response.json();

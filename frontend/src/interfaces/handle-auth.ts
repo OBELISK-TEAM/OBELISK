@@ -1,4 +1,4 @@
-import React from "react";
+import {AuthAction} from "@/enums/AuthAction";
 
 export interface HandleAuth {
     email: string;
