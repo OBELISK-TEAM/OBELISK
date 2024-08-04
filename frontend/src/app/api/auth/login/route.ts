@@ -20,5 +20,7 @@ export async function POST(req: NextRequest) {
     } else {
         const error = await response.json();
         return NextResponse.json(error, { status: response.status });
+
+
     }
 }
