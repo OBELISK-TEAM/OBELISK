@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
@@ -10,16 +10,33 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 
+const DEFAULT_DB_HOST = 'localhost';
+
+function getMongoUri(
+  configService: ConfigService,
+): MongooseModuleFactoryOptions {
+  const dbName = configService.get<string>('DB_NAME');
+  const dbUser = configService.get<string>('DB_USER');
+  const dbPassword = configService.get<string>('DB_PASSWORD');
+  const dbHost = configService.get<string>('DB_HOST');
+  const dbPort = configService.get<string>('DB_PORT');
+
+  if (dbHost === DEFAULT_DB_HOST) {
+    return { uri: `mongodb://${DEFAULT_DB_HOST}/${dbName}` };
+  }
+
+  return {
+    uri: `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/`,
+    dbName: dbName,
+  };
+}
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: () => {
-        return {
-          uri: `mongodb://localhost/mongo_obelisk`,
-        };
-      },
+      useFactory: (configService: ConfigService) => getMongoUri(configService),
       inject: [ConfigService],
     }),
     PassportModule.register({ session: true }),
