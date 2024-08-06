@@ -73,8 +73,6 @@ export class AuthService {
     return { accessToken: this.jwtService.sign(payload) };
   }
 
-  // Google OAuth
-
   async googleRedirect(req: Request, res: Response): Promise<void> {
     if (!req.query['state']) throw new HttpException('Unauthorized', 401);
     const userTempId = req.query['state'] as string;
@@ -102,7 +100,7 @@ export class AuthService {
     const email: string = googleUser.email;
     if (await this.usersService.emailExists(email)) {
       const user: UserDocument =
-        await this.usersService.updateUserProvider(email);
+        await this.usersService.handleUserProvider(email);
       return this.generateToken(user);
     } else {
       const user: UserDocument =
@@ -110,6 +108,4 @@ export class AuthService {
       return this.generateToken(user);
     }
   }
-
-  // End of Google OAuth
 }
