@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthForm } from "@/hooks/auth/useAuthForm";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
+import { useAuthForm } from "@/hooks/auth/useAuthForm";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
