@@ -38,9 +38,6 @@ export class AuthController {
     return `You are authorized with id: ${userId}`;
   }
 
-  // GOOGLE AUTHENTICATION
-
-  // Google OAuth callback
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -48,7 +45,6 @@ export class AuthController {
   }
 
   @Post('google/login')
-  @UseGuards(GoogleAuthGuard)
   async googleLogin(@Req() req: Request) {
     return this.authService.googleLogin(req);
   }
