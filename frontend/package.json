@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "start-docker": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
+    "dev": "next dev",
     "lint": "next lint",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "start": "next start",
+    "start-docker": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.5",
@@ -22,6 +22,10 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toggle": "^1.0.3",
+    "@types/fabric": "^5.3.7",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "canvas": "^2.11.2",
     "canvas2pdf": "^1.0.7",
     "class-variance-authority": "^0.7.0",
@@ -34,16 +38,15 @@
     "jspdf": "^2.5.1",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
+    "postcss": "^8",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5"
   },
   "devDependencies": {
-    "@types/fabric": "^5.3.7",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.17.0",
     "@typescript-eslint/parser": "^7.17.0",
     "eslint": "^8.57.0",
@@ -52,9 +55,6 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "eslint-plugin-react-hooks": "^4.6.2"
   }
 }
