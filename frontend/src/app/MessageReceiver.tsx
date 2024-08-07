@@ -1,6 +1,5 @@
-"use client";
 import React, { useEffect, useRef, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MessageReceiver: React.FC<{ children: React.ReactNode }> = ({
   children,
