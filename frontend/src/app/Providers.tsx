@@ -1,17 +1,10 @@
 "use client";
 
-import React from 'react';
-import { AuthProvider } from '@/contexts/AuthContext';
-import MessageReceiver from "@/app/MessageReceiver";
+import React from "react";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <AuthProvider>
-            <MessageReceiver>
-            {children}
-            </MessageReceiver>
-        </AuthProvider>
-    );
+  return <AuthProvider>{children}</AuthProvider>;
 };
 
 export default Providers;

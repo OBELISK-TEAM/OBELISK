@@ -1,13 +1,4 @@
-//
-// <div
-//     className={`fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 z-50 w-full max-w-md p-4 rounded-md shadow-lg ${
-//         authMessage.type === "SUCCESS"
-//             ? "bg-green-100 border-green-500 text-green-700"
-//             : "bg-red-100 border-red-500 text-red-700"
-//
-//
-//
-
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
