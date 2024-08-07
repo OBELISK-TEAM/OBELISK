@@ -1,5 +1,3 @@
-import {AuthAction} from "@/enums/AuthAction";
-
 export interface HandleAuth {
   email: string;
   password: string;

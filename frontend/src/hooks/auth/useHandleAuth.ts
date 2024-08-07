@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
-import { useAuthForm } from "@/hooks/auth/useAuthForm";
+import { useAuthForm } from "./useAuthForm";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
