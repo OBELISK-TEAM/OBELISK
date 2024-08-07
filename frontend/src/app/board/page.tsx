@@ -9,14 +9,24 @@ import useMenuData from "@/hooks/board/useMenuData";
 import useFileClick from "@/hooks/board/useFileClick";
 
 const Board: React.FC = () => {
-  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();
+  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } =
+    useCanvas();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
   useFileClick(activeItem, setActiveItem, fileInputRef, fileJSONInputRef);
 
-  const { menuList, handleAddImageByUrl, handleFileChange, handleLoadImagesFromJson, color, size, setColor, setSize } = useMenuData(canvas);
+  const {
+    menuList,
+    handleAddImageByUrl,
+    handleFileChange,
+    handleLoadImagesFromJson,
+    color,
+    size,
+    setColor,
+    setSize,
+  } = useMenuData(canvas);
 
   const [addGroup, editGroup, fileGroup] = menuList;
 

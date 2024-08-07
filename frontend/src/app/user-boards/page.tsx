@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import BoardTable from "@/components/BoardTable";

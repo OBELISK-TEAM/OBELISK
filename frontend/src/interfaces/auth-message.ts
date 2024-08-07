@@ -1,6 +1,6 @@
-import {AuthMessageType} from "@/enums/AuthMessage";
+import { AuthMessageType } from "@/enums/AuthMessage";
 
 export interface AuthMessage {
-    type: AuthMessageType;
-    message: string;
+  type: AuthMessageType;
+  message: string;
 }
