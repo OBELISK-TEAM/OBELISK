@@ -61,9 +61,12 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async updateUserProvider(email: string): Promise<UserDocument> {
+  async handleUserProvider(email: string): Promise<UserDocument> {
     const existingUser = await this.findOneByEmail(email);
-    existingUser.userAuthProvider = UserAuthProvider.GOOGLE;
-    return existingUser.save();
+    if (existingUser.userAuthProvider === UserAuthProvider.INTERNAL) {
+      existingUser.userAuthProvider = UserAuthProvider.INTERNAL_AND_EXTERNAL;
+      await existingUser.save();
+    }
+    return existingUser;
   }
 }

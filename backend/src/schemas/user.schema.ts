@@ -19,7 +19,7 @@ export class User {
   email: string;
 
   @Prop({
-    required: true,
+    required: false,
     nullable: true, // user with external auth provider may not have password
   })
   password: string;

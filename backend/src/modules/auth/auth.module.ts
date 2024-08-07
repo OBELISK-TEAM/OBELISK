@@ -8,7 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
-import { SessionSerializer } from './serializers/session.serializer';
 import { CacheModule } from '@nestjs/cache-manager';
 
 const DEFAULT_JWT_SECRET = 'secret';
@@ -33,13 +32,7 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
     }),
     UsersModule,
   ],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    GoogleStrategy,
-    SessionSerializer,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

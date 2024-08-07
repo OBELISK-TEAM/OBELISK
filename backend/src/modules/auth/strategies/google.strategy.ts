@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Profile, Strategy } from 'passport-google-oauth20';
+import { GoogleUser } from '../../../shared/interfaces/GoogleUser';
 
 // TODO - add configService to get env variables
 
@@ -19,19 +20,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: VerifyCallback,
-  ): void {
-    const firstName = profile.name?.givenName || null;
-    const lastName = profile.name?.familyName || null;
-    const email = profile.emails?.[0].value || null;
-    const picture = profile.photos?.[0].value || null;
-    const user = {
+  ): GoogleUser {
+    const firstName = profile.name?.givenName;
+    const lastName = profile.name?.familyName;
+    const email = profile.emails?.[0].value;
+    const picture = profile.photos?.[0].value;
+    if (!email) {
+      throw new HttpException('No email provided', 400);
+    }
+    return {
       email,
       firstName,
       lastName,
       picture,
       accessToken,
     };
-    done(null, user);
   }
 }

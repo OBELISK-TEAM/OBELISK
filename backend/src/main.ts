@@ -2,15 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as passport from 'passport';
-import * as session from 'express-session';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8080;
-const DEFAULT_CORS_ORIGIN = '*';
-const DEFAULT_SESSION_SECRET = 'default-session-secret';
-const DEFAULT_COOKIE_SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7;
+const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,8 +23,9 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: [corsOrigin],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    origin: [corsOrigin], // 'true' for all origins, or an array of allowed origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
@@ -40,29 +37,6 @@ async function bootstrap() {
       transform: true, // automatically transforms input data to the expected types based on the DTO
     }),
   );
-
-  const passportSessionSecret = configService.get<string>(
-    'SESSION_SECRET',
-    DEFAULT_SESSION_SECRET,
-  );
-  const passportCookieSessionMaxAgeMs = configService.get<number>(
-    'COOKIE_SESSION_MAX_AGE',
-    DEFAULT_COOKIE_SESSION_MAX_AGE_MS,
-  );
-
-  app.use(
-    session({
-      secret: passportSessionSecret,
-      saveUninitialized: false,
-      resave: false,
-      cookie: {
-        maxAge: Number(passportCookieSessionMaxAgeMs),
-      },
-    }),
-  );
-
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   // Swagger
   const swaggerConfig = new DocumentBuilder()
