@@ -1,0 +1,43 @@
+name: docker
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: 
+        name: ci-env
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          echo "FRONTEND_HOST=${{ vars.FRONTEND_HOST }}" >> $GITHUB_ENV
+          echo "FRONTEND_PORT=${{ vars.FRONTEND_PORT }}" >> $GITHUB_ENV
+          echo "BACKEND_HOST=${{ vars.BACKEND_HOST }}" >> $GITHUB_ENV
+          echo "BACKEND_PORT=${{ vars.BACKEND_PORT }}" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ vars.JWT_SECRET }}" >> $GITHUB_ENV
+          echo "JWT_EXPIRES_IN=${{ vars.JWT_EXPIRES_IN }}" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=${{ vars.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "GOOGLE_CALLBACK_URL=${{ vars.GOOGLE_CALLBACK_URL }}" >> $GITHUB_ENV
+          echo "SESSION_SECRET=${{ vars.SESSION_SECRET }}" >> $GITHUB_ENV
+          echo "COOKIE_SESSION_MAX_AGE=${{ vars.COOKIE_SESSION_MAX_AGE }}" >> $GITHUB_ENV
+          echo "THROTTLE_TTL=${{ vars.THROTTLE_TTL }}" >> $GITHUB_ENV
+          echo "THROTTLE_LIMIT=${{ vars.THROTTLE_LIMIT }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ vars.DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ vars.DB_USER }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ vars.DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ vars.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ vars.DB_PORT }}" >> $GITHUB_ENV
+
+      - name: Build docker images
+        run: docker compose build
+  
