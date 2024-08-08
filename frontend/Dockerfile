@@ -1,19 +1,37 @@
-FROM node:20-alpine3.19
+FROM node:22-alpine3.19 AS deps
 
-ARG BACKEND_HOST=$BACKEND_HOST
-ARG BACKEND_PORT=$BACKEND_PORT
-
-RUN apk add --no-cache python3 make g++ pkgconf cairo-dev pango-dev giflib-dev libjpeg-turbo-dev
+RUN apk add --no-cache python3 make g++ pango-dev
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --omit dev
 
+FROM node:22-alpine3.19 AS build
+
+ARG BACKEND_HOST
+ARG BACKEND_PORT
+
+RUN apk add --no-cache python3 make g++ pango-dev
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules /app/node_modules
 COPY . .
 
 RUN npm run build
+
+FROM node:22-alpine3.19 AS run
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/.next /app/.next
+
+RUN npm prune --omit dev
 
 EXPOSE ${FRONTEND_PORT}
 
