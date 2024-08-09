@@ -30,15 +30,9 @@ services:
       - DB_PORT
       - JWT_SECRET
       - JWT_EXPIRES_IN
-      - GOOGLE_EMAIL
-      - GOOGLE_PASSWORD
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
       - GOOGLE_CALLBACK_URL
-      - SESSION_SECRET
-      - COOKIE_SESSION_MAX_AGE
-      - THROTTLE_TTL
-      - THROTTLE_LIMIT
 
   mongo:
     image: mongo:latest
