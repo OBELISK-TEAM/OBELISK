@@ -57,7 +57,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     dispatch(AuthActionType.AUTH_CLEAR);
   };
 
-  const login = async (credentials: { email: string; password: string }) => {
+  const login = async (
+    credentials: { email: string; password: string },
+    successRedirect?: string,
+  ) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,14 +68,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     if (response.ok) {
       dispatch(AuthActionType.LOGIN_SUCCESS);
-      router.push("/user-boards");
+      router.push(successRedirect || "/user-boards");
     } else {
       dispatch(AuthActionType.LOGIN_FAILURE);
       await handleApiError(response);
     }
   };
 
-  const signup = async (credentials: { email: string; password: string }) => {
+  const signup = async (
+    credentials: { email: string; password: string },
+    successRedirect?: string,
+  ) => {
     const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -81,24 +87,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (response.ok) {
       dispatch(AuthActionType.REGISTER_SUCCESS);
-      router.push("/user-boards");
+      router.push(successRedirect || "/user-boards");
     } else {
       dispatch(AuthActionType.REGISTER_FAILURE);
       await handleApiError(response);
     }
   };
 
-  const logout = async () => {
+  const logout = async (successRedirect?: string) => {
     const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
       dispatch(AuthActionType.LOGOUT_SUCCESS);
-      router.push("/auth/login");
+      router.push(successRedirect || "/auth/login");
     } else {
       dispatch(AuthActionType.LOGOUT_FAILURE);
     }
   };
 
-  const loginGoogleUser = async (userTempId: string) => {
+  const loginGoogleUser = async (
+    userTempId: string,
+    successRedirect?: string,
+  ) => {
     const response = await fetch("/api/auth/google", {
       method: "POST",
       headers: {
@@ -109,14 +118,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (response.ok) {
       dispatch(AuthActionType.LOGIN_SUCCESS);
-      router.push("/user-boards");
+      router.push(successRedirect || "/user-boards");
     } else {
       dispatch(AuthActionType.LOGIN_FAILURE);
-      try {
-        await handleApiError(response);
-      } catch (err) {
-        console.warn("Error logging in with Google", err);
-      }
+      await handleApiError(response);
     }
   };
 

@@ -3,6 +3,15 @@ import { setTokenCookie } from "@/lib/authApi";
 
 export async function POST(req: NextRequest) {
   const { state } = await req.json();
+  // console.log(
+  //   "endpoint",
+  //   `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`,
+  // );
+  // console.log("method", "POST");
+  // console.log("headers", {
+  //   "Content-Type": "application/json",
+  //   Authorization: `Bearer ${state}`,
+  // });
 
   const response = await fetch(
     `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`,

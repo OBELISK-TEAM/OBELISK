@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/card";
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { Mail } from "lucide-react";
-import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
+import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
+import ErrorList from "@/components/ErrorList/ErrorList";
+import React from "react";
 
 const SignupCard: React.FC = () => {
-  const { googleAuth } = useGoogleAuth();
+  const { googleAuth, loading, error } = useHandleAuth();
   return (
     <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
       <CardHeader className="items-center">
@@ -22,12 +24,17 @@ const SignupCard: React.FC = () => {
         <CardDescription>Choose a way to create an account</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <Link href="/auth/signup/email" className="flex">
-          <Button className="flex-1">
+        <Link
+          href="/auth/signup/email"
+          className="flex"
+          onClick={(e) => (loading ? e.preventDefault() : null)}
+        >
+          <Button className="flex-1" disabled={loading}>
             <Mail />
             &ensp;Sign up with email
           </Button>
         </Link>
+
         <div className="flex items-center gap-1.5">
           <Separator className="flex-1" />
           <p
@@ -38,7 +45,13 @@ const SignupCard: React.FC = () => {
           </p>
           <Separator className="flex-1" />
         </div>
-        <Button variant="outline" className="flex-1" onClick={googleAuth}>
+        {error && <ErrorList error={error} />}
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={googleAuth}
+          disabled={loading}
+        >
           <GoogleIcon width={16} height={16} />
           &ensp;Google
         </Button>

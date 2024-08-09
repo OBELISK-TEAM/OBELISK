@@ -1,3 +1,4 @@
+"use client";
 import AuthHeaderButtons from "@/components/AuthHeaderButtons";
 import ExpandedLogoAbbreviation from "@/components/ExpandedLogoAbbreviation";
 import EmailSignupCard from "./EmailSignupCard";

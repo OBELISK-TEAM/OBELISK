@@ -10,4 +10,5 @@ export interface HandleAuth {
   login: (e: React.FormEvent) => Promise<void>;
   signup: (e: React.FormEvent) => Promise<void>;
   logout: (e: React.FormEvent) => Promise<void>;
+  googleAuth: (e: React.FormEvent) => Promise<void>;
 }

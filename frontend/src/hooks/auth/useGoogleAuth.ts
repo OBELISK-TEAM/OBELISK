@@ -19,27 +19,36 @@ const getGoogleLoginUrl = () => {
   return { url: `${googleAuthEndpoint}?${paramsString}`, state };
 };
 
+//this hook is a special wrapper for loginGoogleUser, inside it uses loginGoogleUser from useAuth
 export const useGoogleAuth = () => {
   const { loginGoogleUser } = useAuth();
   const googleAuth = () => {
-    const { url, state } = getGoogleLoginUrl();
-    const newAuthWindow = window.open(
-      url,
-      "GoogleAuthPopup",
-      "width=600,height=600",
-    );
+    return new Promise<void>((resolve, reject) => {
+      const { url, state } = getGoogleLoginUrl();
+      const newAuthWindow = window.open(
+        url,
+        "GoogleAuthPopup",
+        "width=600,height=600",
+      );
 
-    if (newAuthWindow) {
-      const checkPopupWindow = setInterval(() => {
-        if (newAuthWindow.closed) {
-          clearInterval(checkPopupWindow);
-          console.log("Popup closed");
-          if (state) {
-            loginGoogleUser(state);
+      if (newAuthWindow) {
+        const checkPopupWindow = setInterval(async () => {
+          if (newAuthWindow.closed) {
+            clearInterval(checkPopupWindow);
+            try {
+              if (state) {
+                await loginGoogleUser(state);
+                resolve();
+              }
+            } catch (err) {
+              reject(err);
+            }
           }
-        }
-      }, 100);
-    }
+        }, 100);
+      } else {
+        reject(new Error("Unable to open the popup window"));
+      }
+    });
   };
 
   return {

@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
 import { useAuthForm } from "./useAuthForm";
+import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
@@ -18,10 +19,11 @@ export const useHandleAuth = (): HandleAuth => {
     setLoading,
   } = authForm;
   const { login, signup, logout } = useAuth();
+  const { googleAuth } = useGoogleAuth(); //special wrapper for google auth, inside it uses loginGoogleUser from useAuth
   const router = useRouter();
 
   const handleAuth = useCallback(
-    (authFunc: AuthAction, successRedirect?: string) => {
+    (authFunc: AuthAction) => {
       return async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -36,16 +38,17 @@ export const useHandleAuth = (): HandleAuth => {
             case AuthAction.LOGOUT:
               await logout();
               break;
+            case AuthAction.GOOGLE_LOGIN:
+              await googleAuth();
+              break;
             default:
               throw new Error("Invalid authentication action");
-          }
-          if (successRedirect) {
-            router.push(successRedirect);
           }
         } catch (err: any) {
           if (err instanceof Error) {
             const errorMessages = JSON.parse(err.message) as string[];
             setError(errorMessages);
+            console.warn(errorMessages);
           } else {
             setError(["Unexpected error occurred."]);
           }
@@ -66,8 +69,9 @@ export const useHandleAuth = (): HandleAuth => {
     setPassword,
     setError,
     setLoading,
-    login: handleAuth(AuthAction.LOGIN, "/user-boards"),
-    signup: handleAuth(AuthAction.SIGNUP, "/user-boards"),
+    login: handleAuth(AuthAction.LOGIN),
+    signup: handleAuth(AuthAction.SIGNUP),
     logout: handleAuth(AuthAction.LOGOUT),
+    googleAuth: handleAuth(AuthAction.GOOGLE_LOGIN),
   };
 };

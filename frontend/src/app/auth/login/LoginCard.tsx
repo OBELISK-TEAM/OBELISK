@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -11,12 +12,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
-import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
+import React from "react";
+import ErrorList from "@/components/ErrorList/ErrorList";
 const LoginCard: React.FC = () => {
-  const { email, password, error, loading, setEmail, setPassword, login } =
-    useHandleAuth();
-  const { googleAuth } = useGoogleAuth();
+  const {
+    email,
+    password,
+    error,
+    loading,
+    setEmail,
+    setPassword,
+    login,
+    googleAuth,
+  } = useHandleAuth();
+
   return (
     <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
       <CardHeader className="items-center">
@@ -55,13 +65,7 @@ const LoginCard: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {Array.isArray(error) && (
-              <ol className="list-disc text-red-500 text-sm">
-                {error.map((errMsg, index) => (
-                  <li key={index}>{errMsg}</li>
-                ))}
-              </ol>
-            )}
+            {error && <ErrorList error={error} />}
 
             <Button type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Log in"}
@@ -72,7 +76,11 @@ const LoginCard: React.FC = () => {
           <p className="text-sm font-medium">
             Don&apos;t have an account?&ensp;
           </p>
-          <Link href="/auth/signup" className="text-sm font-medium underline">
+          <Link
+            href="/auth/signup"
+            className="text-sm font-medium underline"
+            onClick={(e) => (loading ? e.preventDefault() : null)}
+          >
             Sign up
           </Link>
         </div>
@@ -86,7 +94,7 @@ const LoginCard: React.FC = () => {
           </p>
           <Separator className="flex-1" />
         </div>
-        <Button variant="outline" onClick={() => googleAuth()}>
+        <Button variant="outline" onClick={googleAuth} disabled={loading}>
           <GoogleIcon width={16} height={16} /> &ensp;Google
         </Button>
       </CardContent>
