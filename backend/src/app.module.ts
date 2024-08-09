@@ -12,31 +12,13 @@ import { PassportModule } from '@nestjs/passport';
 
 const DEFAULT_DB_HOST = 'localhost';
 
-function getMongoUri(
-  configService: ConfigService,
-): MongooseModuleFactoryOptions {
-  const dbName = configService.get<string>('DB_NAME');
-  const dbUser = configService.get<string>('DB_USER');
-  const dbPassword = configService.get<string>('DB_PASSWORD');
-  const dbHost = configService.get<string>('DB_HOST');
-  const dbPort = configService.get<string>('DB_PORT');
-
-  if (dbHost === DEFAULT_DB_HOST) {
-    return { uri: `mongodb://${DEFAULT_DB_HOST}/${dbName}` };
-  }
-
-  return {
-    uri: `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/`,
-    dbName: dbName,
-  };
-}
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => getMongoUri(configService),
+      useFactory: (configService: ConfigService) =>
+        getMongoConfig(configService),
       inject: [ConfigService],
     }),
     PassportModule.register({ session: true }),
@@ -58,3 +40,22 @@ function getMongoUri(
   controllers: [],
 })
 export class AppModule {}
+
+function getMongoConfig(
+  configService: ConfigService,
+): MongooseModuleFactoryOptions {
+  const dbName = configService.get<string>('DB_NAME');
+  const dbUser = configService.get<string>('DB_USER');
+  const dbPassword = configService.get<string>('DB_PASSWORD');
+  const dbHost = configService.get<string>('DB_HOST');
+  const dbPort = configService.get<string>('DB_PORT');
+
+  if (dbHost === DEFAULT_DB_HOST) {
+    return { uri: `mongodb://${DEFAULT_DB_HOST}/${dbName}` };
+  }
+
+  return {
+    uri: `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/`,
+    dbName: dbName,
+  };
+}

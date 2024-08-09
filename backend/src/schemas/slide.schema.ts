@@ -6,7 +6,7 @@ import {
   Document as MongooseDocument,
 } from 'mongoose';
 
-export type SlideDocument = Slide & MongooseDocument
+export type SlideDocument = Slide & MongooseDocument;
 
 @Schema({ timestamps: true })
 export class Slide {
@@ -22,7 +22,7 @@ export class Slide {
       {
         type: MongooseSchema.Types.ObjectId,
         required: true,
-        ref: 'SlideObject'
+        ref: 'SlideObject',
       },
     ],
   })
