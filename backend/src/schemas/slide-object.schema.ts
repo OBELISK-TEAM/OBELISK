@@ -2,10 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
 import { SlideObjectShadow } from 'src/shared/interfaces/SlideObjectShadow';
+import { SlideObjectPath } from 'src/shared/interfaces/SlideObjectPath';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
 } from 'mongoose';
+import { SlideObjectFilter } from 'src/shared/interfaces/SlideObjectFilter';
 
 export type SlideObjectDocument = SlideObject & MongooseDocument;
 
@@ -176,10 +178,10 @@ export class SlideObject {
   skewY: number;
 
   @Prop({
-    type: [[String, Number, Number]],
+    type: MongooseSchema.Types.Mixed,
     required: true,
   })
-  path: Array<[string, number, number]>;
+  path: Array<SlideObjectPath>;
 
   @Prop({
     type: Number,
@@ -286,6 +288,7 @@ export class SlideObject {
   })
   charSpacing?: number;
 
+  // todo: check if this is correct, export the type
   @Prop({
     type: MongooseSchema.Types.Mixed,
   })
@@ -333,10 +336,7 @@ export class SlideObject {
   @Prop({
     type: [{ type: MongooseSchema.Types.Mixed }],
   })
-  filters?: {
-    type: string;
-    value: number;
-  }[];
+  filters?: Array<SlideObjectFilter>;
 
   // relations
 
