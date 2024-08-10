@@ -15,8 +15,7 @@ services:
     environment:
       - FRONTEND_HOST
       - FRONTEND_PORT
-      - BACKEND_HOST=backend
-      - BACKEND_PORT
+
 
   backend:
     build: ./backend
