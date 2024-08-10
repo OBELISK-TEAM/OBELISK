@@ -4,11 +4,11 @@ const getGoogleLoginUrl = () => {
   const state = crypto.randomUUID();
   const googleAuthEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 
-  console.log(
-    "process.env.GOOGLE_CALLBACK_URL",
-    process.env.GOOGLE_CALLBACK_URL,
-  );
-  console.log("process.env.GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
+  // console.log(
+  //   "process.env.GOOGLE_CALLBACK_URL",
+  //   process.env.GOOGLE_CALLBACK_URL,
+  // );
+  // console.log("process.env.GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
 
   const loginRequestParameters: { [key: string]: string } = {
     response_type: "code",

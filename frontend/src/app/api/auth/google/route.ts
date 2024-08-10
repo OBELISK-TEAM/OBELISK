@@ -5,10 +5,10 @@ export async function POST(req: NextRequest) {
   try {
     const { state } = await req.json();
 
-    console.log(
-      "endpoint",
-      `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`,
-    );
+    // console.log(
+    //   "endpoint",
+    //   `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`,
+    // );
     // console.log("method", "POST");
     // console.log("headers", {
     //   "Content-Type": "application/json",
