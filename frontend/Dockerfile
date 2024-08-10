@@ -12,6 +12,9 @@ FROM node:22-alpine3.19 AS build
 
 ARG BACKEND_HOST
 ARG BACKEND_PORT
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG GOOGLE_CALLBACK_URL
 
 RUN apk add --no-cache python3 make g++ pango-dev
 

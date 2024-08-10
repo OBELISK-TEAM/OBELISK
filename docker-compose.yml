@@ -4,14 +4,19 @@ services:
     build:
       context: ./frontend
       args:
-        - BACKEND_HOST
+        - BACKEND_HOST=backend
         - BACKEND_PORT
+        - GOOGLE_CLIENT_ID
+        - GOOGLE_CLIENT_SECRET
+        - GOOGLE_CALLBACK_URL
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     container_name: obelisk_frontend_container
     environment:
       - FRONTEND_HOST
       - FRONTEND_PORT
+      - BACKEND_HOST=backend
+      - BACKEND_PORT
 
   backend:
     build: ./backend
