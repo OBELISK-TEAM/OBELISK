@@ -2,10 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
 import { SlideObjectShadow } from 'src/shared/interfaces/SlideObjectShadow';
+import { SlideObjectPath } from 'src/shared/interfaces/SlideObjectPath';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
 } from 'mongoose';
+import { SlideObjectFilter } from 'src/shared/interfaces/SlideObjectFilter';
+import { SlideObjectTextStyles } from 'src/shared/interfaces/SlideObjectTextStyles';
 
 export type SlideObjectDocument = SlideObject & MongooseDocument;
 
@@ -176,10 +179,10 @@ export class SlideObject {
   skewY: number;
 
   @Prop({
-    type: [[String, Number, Number]],
+    type: [MongooseSchema.Types.Mixed],
     required: true,
   })
-  path: Array<[string, number, number]>;
+  path: SlideObjectPath[];
 
   @Prop({
     type: Number,
@@ -287,13 +290,9 @@ export class SlideObject {
   charSpacing?: number;
 
   @Prop({
-    type: MongooseSchema.Types.Mixed,
+    type: [MongooseSchema.Types.Mixed],
   })
-  styles?: {
-    [key: string]: {
-      textDecoration: string;
-    };
-  }[];
+  styles?: SlideObjectTextStyles[];
 
   @Prop({
     enum: ['ltr', 'rtl'],
@@ -321,6 +320,11 @@ export class SlideObject {
   src?: string;
 
   @Prop({
+    enum: ['null', 'anonymous'],
+  })
+  crossOrigin?: 'null' | 'anonymous';
+
+  @Prop({
     type: Number,
   })
   cropX?: number;
@@ -331,12 +335,9 @@ export class SlideObject {
   cropY?: number;
 
   @Prop({
-    type: [{ type: MongooseSchema.Types.Mixed }],
+    type: [MongooseSchema.Types.Mixed],
   })
-  filters?: {
-    type: string;
-    value: number;
-  }[];
+  filters?: SlideObjectFilter[];
 
   // relations
 
