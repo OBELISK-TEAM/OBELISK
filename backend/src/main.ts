@@ -11,8 +11,6 @@ const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // app.setGlobalPrefix('api');
-
   const configService = app.get<ConfigService>(ConfigService);
   const host = configService.get<string>('BACKEND_HOST', DEFAULT_HOST);
   const port = configService.get<number>('BACKEND_PORT', DEFAULT_PORT);
