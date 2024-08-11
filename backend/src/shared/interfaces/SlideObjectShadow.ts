@@ -1,6 +1,6 @@
 export class SlideObjectShadow {
-  color: string;
-  blur: number;
-  offsetX: number;
-  offsetY: number;
+  color?: string;
+  blur?: number;
+  offsetX?: number;
+  offsetY?: number;
 }
