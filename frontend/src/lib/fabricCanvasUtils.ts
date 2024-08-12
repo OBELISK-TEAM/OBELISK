@@ -26,25 +26,29 @@ interface ImageData {
   angle: number | undefined;
 }
 
-
-export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
+export const initializeCanvas = (
+  canvasRef: CanvasRef,
+): fabric.Canvas | null => {
   if (canvasRef.current) {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
-      selection: true
+      selection: true,
     });
 
     newCanvas.freeDrawingBrush.color = "black";
     newCanvas.freeDrawingBrush.width = 5;
     newCanvas.freeDrawingBrush.decimate = 4;
-    newCanvas.on('before:render', () => newCanvas.selection = false);
-    newCanvas.on('after:render', () => newCanvas.selection = true);
+    newCanvas.on("before:render", () => (newCanvas.selection = false));
+    newCanvas.on("after:render", () => (newCanvas.selection = true));
 
     return newCanvas;
   }
   return null;
 };
 
-export const toggleDrawingMode = (canvas: fabric.Canvas | null, isDrawingMode: boolean): void => {
+export const toggleDrawingMode = (
+  canvas: fabric.Canvas | null,
+  isDrawingMode: boolean,
+): void => {
   if (canvas) {
     canvas.isDrawingMode = isDrawingMode;
   }
@@ -57,22 +61,28 @@ export const handleSave = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<void> => {
+export const handleLoadFromJSON = async (
+  canvas: fabric.Canvas | null,
+): Promise<void> => {
   const response = await fetch("/saved.json");
   const jsonData = await response.json();
   if (canvas) {
     canvas.loadFromJSON(jsonData, () => canvas.renderAll());
   }
-}
+};
 
 export const handleAddText = (
   canvas: fabric.Canvas | null,
   posX: number,
   posY: number,
-  options?: { text?: string; color?: string; fontSize?: number }
+  options?: { text?: string; color?: string; fontSize?: number },
 ): void => {
-  const { text = "Type here...", color = "#333", fontSize = 20 } = options || {};
-  
+  const {
+    text = "Type here...",
+    color = "#333",
+    fontSize = 20,
+  } = options || {};
+
   const newText = new fabric.IText(text, {
     left: posX,
     top: posY,
@@ -85,14 +95,12 @@ export const handleAddText = (
     lockSkewingY: true,
     lockScalingFlip: true,
   });
- 
+
   canvas?.add(newText);
   canvas?.setActiveObject(newText);
   newText.enterEditing();
   newText.selectAll();
 };
-
-
 
 export const handleRemoveSelected = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
@@ -107,7 +115,7 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
     const activeObjects = canvas.getActiveObjects();
     if (activeObjects.length) {
       const clonedObjects = activeObjects.map((obj) =>
-        fabric.util.object.clone(obj)
+        fabric.util.object.clone(obj),
       );
 
       const group = new fabric.Group(clonedObjects, {
@@ -123,7 +131,10 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string; strokeWidth?: number }): void => {
+export const addLine = (
+  canvas: fabric.Canvas | null,
+  options?: { color?: string; strokeWidth?: number },
+): void => {
   const { color = "black", strokeWidth = 5 } = options || {};
   const line = new fabric.Line([50, 100, 200, 200], {
     stroke: color,
@@ -134,7 +145,10 @@ export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string
   canvas?.setActiveObject(line);
 };
 
-export const addRectangle = (canvas: fabric.Canvas | null, options?: { fillColor?: string; width?: number; height?: number }): void => {
+export const addRectangle = (
+  canvas: fabric.Canvas | null,
+  options?: { fillColor?: string; width?: number; height?: number },
+): void => {
   const { fillColor = "red", width = 200, height = 100 } = options || {};
   const rect = new fabric.Rect({
     left: 100,
@@ -149,7 +163,10 @@ export const addRectangle = (canvas: fabric.Canvas | null, options?: { fillColor
   canvas?.setActiveObject(rect);
 };
 
-export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: string; radius?: number }): void => {
+export const addCircle = (
+  canvas: fabric.Canvas | null,
+  options?: { fillColor?: string; radius?: number },
+): void => {
   const { fillColor = "green", radius = 50 } = options || {};
   const circle = new fabric.Circle({
     radius: radius,
@@ -166,8 +183,8 @@ export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: 
  * @param canvas The canva to remove images from
  * @returns Removed images in a form of imagesData
  */
-const removeImagesFromCanvas = (canvas:fabric.Canvas | null) => {
-  const imageObjects = canvas?.getObjects('image') as fabric.Image[];
+const removeImagesFromCanvas = (canvas: fabric.Canvas | null) => {
+  const imageObjects = canvas?.getObjects("image") as fabric.Image[];
   const imagesData = imageObjects.map((imageObj) => ({
     src: imageObj.getSrc(),
     left: imageObj.left,
@@ -181,8 +198,11 @@ const removeImagesFromCanvas = (canvas:fabric.Canvas | null) => {
   return imagesData;
 };
 
-const restoreImagesToCanvas = (canvas:fabric.Canvas | null, imagesData:ImageData[]) => {
-  imagesData.forEach((imgData:ImageData) => {
+const restoreImagesToCanvas = (
+  canvas: fabric.Canvas | null,
+  imagesData: ImageData[],
+) => {
+  imagesData.forEach((imgData: ImageData) => {
     fabric.Image.fromURL(imgData.src, (img) => {
       img.set({
         left: imgData.left,
@@ -191,39 +211,41 @@ const restoreImagesToCanvas = (canvas:fabric.Canvas | null, imagesData:ImageData
         scaleY: imgData.scaleY,
         angle: imgData.angle,
       });
-      canvas?.add(img); 
-    }); 
+      canvas?.add(img);
+    });
   });
   canvas?.renderAll();
 };
 
-export const exportToPDF = async (canvas: fabric.Canvas | null): Promise<void> => {
+export const exportToPDF = async (
+  canvas: fabric.Canvas | null,
+): Promise<void> => {
   if (!canvas) return;
 
   const imagesData = removeImagesFromCanvas(canvas);
 
   const imgData = canvas.toDataURL({
-    format: 'png',
+    format: "png",
     quality: 1,
   });
 
   const pdf = new jsPDF({
-    orientation: 'landscape',
-    unit: 'px',
+    orientation: "landscape",
+    unit: "px",
     format: [canvas.getWidth(), canvas.getHeight()],
   });
 
-  pdf.addImage(imgData, 'PNG', 0, 0, canvas.getWidth(), canvas.getHeight());
-  pdf.save('canvas.pdf');
+  pdf.addImage(imgData, "PNG", 0, 0, canvas.getWidth(), canvas.getHeight());
+  pdf.save("canvas.pdf");
 
   restoreImagesToCanvas(canvas, imagesData);
 };
 
-
-
-
-
-export const addImage = (canvas: fabric.Canvas | null, imageUrl: string, options?: { scaleX?: number; scaleY?: number; left?: number; top?: number }): void => {
+export const addImage = (
+  canvas: fabric.Canvas | null,
+  imageUrl: string,
+  options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
+): void => {
   const { scaleX = 1, scaleY = 1, left = 0, top = 0 } = options || {};
   fabric.Image.fromURL(imageUrl, (img) => {
     img.set({
@@ -242,11 +264,16 @@ export const addImage = (canvas: fabric.Canvas | null, imageUrl: string, options
   });
 };
 
-export const fitImageByShrinking = (imageSrc: string, maxWidth: number, maxHeight: number, callback: (resizedImage: string) => void) => {
+export const fitImageByShrinking = (
+  imageSrc: string,
+  maxWidth: number,
+  maxHeight: number,
+  callback: (resizedImage: string) => void,
+) => {
   const img = new Image();
   img.src = imageSrc;
   img.onload = () => {
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     let width = img.width;
     let height = img.height;
 
@@ -264,7 +291,7 @@ export const fitImageByShrinking = (imageSrc: string, maxWidth: number, maxHeigh
 
     canvas.width = width;
     canvas.height = height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     ctx?.drawImage(img, 0, 0, width, height);
     const resizedImage = canvas.toDataURL();
     callback(resizedImage);
@@ -287,10 +314,10 @@ export const handleZoom = (opt: fabric.IEvent<WheelEvent>): void => {
 
 export const saveImagesToLocalFile = (canvas: fabric.Canvas | null) => {
   if (canvas) {
-    const images = canvas.getObjects('image').map((img) => {
+    const images = canvas.getObjects("image").map((img) => {
       const image = img as fabric.Image;
       return {
-        type: 'image',
+        type: "image",
         left: image.left,
         top: image.top,
         width: image.width,
@@ -303,11 +330,11 @@ export const saveImagesToLocalFile = (canvas: fabric.Canvas | null) => {
     });
 
     const jsonContent = JSON.stringify(images, null, 2);
-    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const blob = new Blob([jsonContent], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'canvas_data.json';
+    a.download = "canvas_data.json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -315,7 +342,10 @@ export const saveImagesToLocalFile = (canvas: fabric.Canvas | null) => {
   }
 };
 
-export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
+export const loadImagesFromJSON = (
+  canvas: fabric.Canvas | null,
+  json: string,
+) => {
   if (canvas) {
     const images: CanvasImage[] = JSON.parse(json);
 
@@ -336,8 +366,9 @@ export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) =
   }
 };
 
-
-export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
+export const getSelectedObjectStyles = (
+  canvas: fabric.Canvas | null,
+): object | null => {
   if (canvas) {
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
@@ -347,24 +378,28 @@ export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | 
   return null;
 };
 
-
-export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
-  if (!canvas) return
-    const activeObjects = canvas.getActiveObjects();
-    activeObjects.forEach((obj) => {
-      obj.set(styles);
-    });
-    canvas.requestRenderAll();
+export const setSelectedObjectStyles = (
+  canvas: fabric.Canvas | null,
+  styles: object,
+): void => {
+  if (!canvas) return;
+  const activeObjects = canvas.getActiveObjects();
+  activeObjects.forEach((obj) => {
+    obj.set(styles);
+  });
+  canvas.requestRenderAll();
 };
 
 export const updateDimensions = (obj: any) => {
   if (!obj) {
     return;
   }
-  if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
+  if (obj.type === "rect" || obj.type === "circle" || obj.type === "line") {
     const scaledWidth = Math.round(obj.width * obj.scaleX);
     const scaledHeight = Math.round(obj.height * obj.scaleY);
-    const scaledRadius = obj.radius ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY)) : undefined;
+    const scaledRadius = obj.radius
+      ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY))
+      : undefined;
 
     obj.set({
       width: scaledWidth,
@@ -376,4 +411,3 @@ export const updateDimensions = (obj: any) => {
   }
   obj.setCoords();
 };
-
