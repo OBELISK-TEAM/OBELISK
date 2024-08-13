@@ -5,7 +5,6 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   Max,
   Min,
@@ -19,262 +18,199 @@ export class CreateSlideObjectDto {
   // Fabric.js-specific properties
 
   @IsString()
-  @IsNotEmpty()
-  type: string;
+  type?: string;
 
   @IsString()
-  @IsNotEmpty()
-  version: string;
+  version?: string;
 
   @IsString()
-  @IsNotEmpty()
-  originX: string;
+  originX?: string;
 
   @IsString()
-  @IsNotEmpty()
-  originY: string;
+  originY?: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  left: number;
+  left?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  top: number;
+  top?: number;
 
   @IsNumber()
   @Min(0)
-  @IsNotEmpty()
-  width: number;
+  width?: number;
 
   @IsNumber()
   @Min(0)
-  @IsNotEmpty()
-  height: number;
-
-  @IsString()
-  @IsOptional()
-  fill: string | null;
-
-  @IsString()
-  @IsOptional()
-  stroke: string | null;
+  height?: number;
 
   @IsNumber()
   @Min(0)
-  @IsNotEmpty()
-  strokeWidth: number;
-
-  @IsArray()
-  @IsOptional()
-  strokeDashArray: number[] | null;
+  strokeWidth?: number;
 
   @IsIn(['butt', 'round', 'square'])
-  @IsNotEmpty()
-  strokeLineCap: 'butt' | 'round' | 'square';
+  strokeLineCap?: 'butt' | 'round' | 'square';
 
   @IsNumber()
-  @IsNotEmpty()
-  strokeDashOffset: number;
+  strokeDashOffset?: number;
 
   @IsIn(['miter', 'round', 'bevel'])
-  @IsNotEmpty()
-  strokeLineJoin: 'miter' | 'round' | 'bevel';
+  strokeLineJoin?: 'miter' | 'round' | 'bevel';
 
   @IsBoolean()
-  @IsNotEmpty()
-  strokeUniform: boolean;
+  strokeUniform?: boolean;
 
   @IsNumber()
   @Min(0)
-  @IsNotEmpty()
-  strokeMiterLimit: number;
+  strokeMiterLimit?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  scaleX: number;
+  scaleX?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  scaleY: number;
+  scaleY?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  angle: number;
+  angle?: number;
 
   @IsBoolean()
-  @IsNotEmpty()
-  flipX: boolean;
+  flipX?: boolean;
 
   @IsBoolean()
-  @IsNotEmpty()
-  flipY: boolean;
+  flipY?: boolean;
 
   @IsNumber()
   @Min(0)
   @Max(1)
-  @IsNotEmpty()
-  opacity: number;
-
-  @Type(() => SlideObjectShadow)
-  @IsOptional()
-  shadow: SlideObjectShadow | null;
+  opacity?: number;
 
   @IsBoolean()
-  @IsNotEmpty()
-  visible: boolean;
+  visible?: boolean;
 
   @IsString()
-  @IsOptional()
-  backgroundColor: string;
-
-  @IsString()
-  @IsOptional()
-  fillRule: string;
+  fillRule?: string;
 
   @IsIn(['fill', 'stroke'])
-  @IsNotEmpty()
-  paintFirst: 'fill' | 'stroke';
+  paintFirst?: 'fill' | 'stroke';
 
   @IsString()
-  @IsNotEmpty()
-  globalCompositeOperation: string;
+  globalCompositeOperation?: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  skewX: number;
+  skewX?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  skewY: number;
+  skewY?: number;
 
   @IsArray()
-  @IsNotEmpty()
-  path: SlideObjectPath;
+  path?: SlideObjectPath;
+
+  @Type(() => SlideObjectShadow)
+  shadow?: SlideObjectShadow | null;
+
+  @IsArray()
+  strokeDashArray?: number[] | null;
+
+  @IsString()
+  stroke?: string | null;
+
+  @IsString()
+  fill?: string | null;
+
+  @IsString()
+  backgroundColor?: string;
 
   @IsNumber()
-  @IsOptional()
   x1?: number;
 
   @IsNumber()
-  @IsOptional()
   x2?: number;
 
   @IsNumber()
-  @IsOptional()
   y1?: number;
 
   @IsNumber()
-  @IsOptional()
   y2?: number;
 
   @IsNumber()
-  @IsOptional()
   rx?: number;
 
   @IsNumber()
-  @IsOptional()
   ry?: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   radius?: number;
 
   @IsNumber()
-  @IsOptional()
   startAngle?: number;
 
   @IsNumber()
-  @IsOptional()
   endAngle?: number;
 
   @IsString()
-  @IsOptional()
   fontFamily?: string;
 
   @IsString()
-  @IsOptional()
   fontWeight?: string;
 
   @IsNumber()
-  @IsOptional()
   fontSize?: number;
 
   @IsString()
-  @IsOptional()
   text?: string;
 
   @IsBoolean()
-  @IsOptional()
   underline?: boolean;
 
   @IsBoolean()
-  @IsOptional()
   overline?: boolean;
 
   @IsBoolean()
-  @IsOptional()
   linethrough?: boolean;
 
   @IsIn(['left', 'center', 'right'])
-  @IsOptional()
   textAlign?: 'left' | 'center' | 'right';
 
   @IsIn(['normal', 'italic'])
-  @IsOptional()
   fontStyle?: 'normal' | 'italic';
 
   @IsNumber()
-  @IsOptional()
   lineHeight?: number;
 
   @IsString()
-  @IsOptional()
   textBackgroundColor?: string;
 
   @IsNumber()
-  @IsOptional()
   charSpacing?: number;
 
   @IsArray()
-  @IsOptional()
   styles?: SlideObjectTextStyles[];
 
   @IsIn(['ltr', 'rtl'])
-  @IsOptional()
   direction?: 'ltr' | 'rtl';
 
   @IsNumber()
-  @IsOptional()
   pathStartOffset?: number;
 
   @IsIn(['left', 'right', 'center'])
-  @IsOptional()
   pathSide?: 'left' | 'right' | 'center';
 
   @IsIn(['baseline', 'middle', 'top', 'bottom'])
-  @IsOptional()
   pathAlign?: 'baseline' | 'middle' | 'top' | 'bottom';
 
   @IsString()
-  @IsOptional()
   src?: string;
 
   @IsIn(['null', 'anonymous'])
-  @IsOptional()
   crossOrigin?: 'null' | 'anonymous';
 
   @IsNumber()
-  @IsOptional()
   cropX?: number;
 
   @IsNumber()
-  @IsOptional()
   cropY?: number;
 
   @IsArray()
-  @IsOptional()
   filters?: SlideObjectFilter[];
 
   // Relations
@@ -292,261 +228,198 @@ export class UpdateSlideObjectDto {
   // Fabric.js-specific properties
 
   @IsString()
-  @IsOptional()
   type?: string;
 
   @IsString()
-  @IsOptional()
   version?: string;
 
   @IsString()
-  @IsOptional()
   originX?: string;
 
   @IsString()
-  @IsOptional()
   originY?: string;
 
   @IsNumber()
-  @IsOptional()
   left?: number;
 
   @IsNumber()
-  @IsOptional()
   top?: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   width?: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   height?: number;
-
-  @IsString()
-  @IsOptional()
-  fill?: string | null;
-
-  @IsString()
-  @IsOptional()
-  stroke?: string | null;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   strokeWidth?: number;
 
-  @IsArray()
-  @IsOptional()
-  strokeDashArray?: number[] | null;
-
   @IsIn(['butt', 'round', 'square'])
-  @IsOptional()
   strokeLineCap?: 'butt' | 'round' | 'square';
 
   @IsNumber()
-  @IsOptional()
   strokeDashOffset?: number;
 
   @IsIn(['miter', 'round', 'bevel'])
-  @IsOptional()
   strokeLineJoin?: 'miter' | 'round' | 'bevel';
 
   @IsBoolean()
-  @IsOptional()
   strokeUniform?: boolean;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   strokeMiterLimit?: number;
 
   @IsNumber()
-  @IsOptional()
   scaleX?: number;
 
   @IsNumber()
-  @IsOptional()
   scaleY?: number;
 
   @IsNumber()
-  @IsOptional()
   angle?: number;
 
   @IsBoolean()
-  @IsOptional()
   flipX?: boolean;
 
   @IsBoolean()
-  @IsOptional()
   flipY?: boolean;
 
   @IsNumber()
   @Min(0)
   @Max(1)
-  @IsOptional()
   opacity?: number;
 
-  @Type(() => SlideObjectShadow)
-  @IsOptional()
-  shadow?: SlideObjectShadow | null;
-
   @IsBoolean()
-  @IsOptional()
   visible?: boolean;
 
   @IsString()
-  @IsOptional()
-  backgroundColor?: string;
-
-  @IsString()
-  @IsOptional()
   fillRule?: string;
 
   @IsIn(['fill', 'stroke'])
-  @IsOptional()
   paintFirst?: 'fill' | 'stroke';
 
   @IsString()
-  @IsOptional()
   globalCompositeOperation?: string;
 
   @IsNumber()
-  @IsOptional()
   skewX?: number;
 
   @IsNumber()
-  @IsOptional()
   skewY?: number;
 
   @IsArray()
-  @IsOptional()
   path?: SlideObjectPath[];
 
+  @Type(() => SlideObjectShadow)
+  shadow?: SlideObjectShadow | null;
+
+  @IsArray()
+  strokeDashArray?: number[] | null;
+
+  @IsString()
+  stroke?: string | null;
+
+  @IsString()
+  fill?: string | null;
+
+  @IsString()
+  backgroundColor?: string;
+
   @IsNumber()
-  @IsOptional()
   x1?: number;
 
   @IsNumber()
-  @IsOptional()
   x2?: number;
 
   @IsNumber()
-  @IsOptional()
   y1?: number;
 
   @IsNumber()
-  @IsOptional()
   y2?: number;
 
   @IsNumber()
-  @IsOptional()
   rx?: number;
 
   @IsNumber()
-  @IsOptional()
   ry?: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
   radius?: number;
 
   @IsNumber()
-  @IsOptional()
   startAngle?: number;
 
   @IsNumber()
-  @IsOptional()
   endAngle?: number;
 
   @IsString()
-  @IsOptional()
   fontFamily?: string;
 
   @IsString()
-  @IsOptional()
   fontWeight?: string;
 
   @IsNumber()
-  @IsOptional()
   fontSize?: number;
 
   @IsString()
-  @IsOptional()
   text?: string;
 
   @IsBoolean()
-  @IsOptional()
   underline?: boolean;
 
   @IsBoolean()
-  @IsOptional()
   overline?: boolean;
 
   @IsBoolean()
-  @IsOptional()
   linethrough?: boolean;
 
   @IsIn(['left', 'center', 'right'])
-  @IsOptional()
   textAlign?: 'left' | 'center' | 'right';
 
   @IsIn(['normal', 'italic'])
-  @IsOptional()
   fontStyle?: 'normal' | 'italic';
 
   @IsNumber()
-  @IsOptional()
   lineHeight?: number;
 
   @IsString()
-  @IsOptional()
   textBackgroundColor?: string;
 
   @IsNumber()
-  @IsOptional()
   charSpacing?: number;
 
   @IsArray()
-  @IsOptional()
   styles?: SlideObjectTextStyles[];
 
   @IsIn(['ltr', 'rtl'])
-  @IsOptional()
   direction?: 'ltr' | 'rtl';
 
   @IsNumber()
-  @IsOptional()
   pathStartOffset?: number;
 
   @IsIn(['left', 'right', 'center'])
-  @IsOptional()
   pathSide?: 'left' | 'right' | 'center';
 
   @IsIn(['baseline', 'middle', 'top', 'bottom'])
-  @IsOptional()
   pathAlign?: 'baseline' | 'middle' | 'top' | 'bottom';
 
   @IsString()
-  @IsOptional()
   src?: string;
 
   @IsIn(['null', 'anonymous'])
-  @IsOptional()
   crossOrigin?: 'null' | 'anonymous';
 
   @IsNumber()
-  @IsOptional()
   cropX?: number;
 
   @IsNumber()
-  @IsOptional()
   cropY?: number;
 
   @IsArray()
-  @IsOptional()
   filters?: SlideObjectFilter[];
 }

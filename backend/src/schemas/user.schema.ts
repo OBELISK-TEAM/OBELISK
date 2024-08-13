@@ -7,6 +7,7 @@ import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
 } from 'mongoose';
+import { SlideObject } from './slide-object.schema';
 
 export type UserDocument = User & MongooseDocument;
 
@@ -54,6 +55,14 @@ export class User {
     default: [],
   })
   boards: Board[];
+
+  @Prop({
+    required: false,
+    type: [MongooseSchema.Types.ObjectId],
+    ref: 'SlideObject',
+    default: [],
+  })
+  slideObjects: SlideObject[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

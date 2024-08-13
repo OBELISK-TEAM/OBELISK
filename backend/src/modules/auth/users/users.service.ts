@@ -5,6 +5,7 @@ import { CreateUserDto } from './users.dto';
 import { User, UserDocument } from '../../../schemas/user.schema';
 import { Board } from '../../../schemas/board.schema';
 import { UserAuthProvider } from '../../../enums/user.auth.provider';
+import { SlideObject } from 'src/schemas/slide-object.schema';
 
 @Injectable()
 export class UsersService {
@@ -68,5 +69,19 @@ export class UsersService {
       await existingUser.save();
     }
     return existingUser;
+  }
+
+  async addSlideObject(
+    userId: string,
+    slideObject: SlideObject,
+  ): Promise<void> {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $push: { slideObjects: slideObject } },
+        { new: true },
+      )
+      .exec();
+    if (!updatedUser) throw new HttpException('User not found', 404);
   }
 }

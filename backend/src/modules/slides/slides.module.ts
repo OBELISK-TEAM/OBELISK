@@ -17,5 +17,6 @@ import { BoardsModule } from '../boards/boards.module';
   ],
   controllers: [SlidesController],
   providers: [SlidesService],
+  exports: [SlidesService],
 })
 export class SlidesModule {}

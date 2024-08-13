@@ -5,6 +5,7 @@ import { Slide, SlideDocument } from '../../schemas/slide.schema';
 import { CreateSlideDto, UpdateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
+import { SlideObject } from 'src/schemas/slide-object.schema';
 
 @Injectable()
 export class SlidesService {
@@ -52,6 +53,21 @@ export class SlidesService {
       .exec();
     if (!existingSlide) throw new HttpException('Slide not found', 404);
     return existingSlide;
+  }
+
+  async addSlideObject(
+    slideId: string,
+    slideObject: SlideObject,
+  ): Promise<void> {
+    const updatedSlide = await this.slideModel
+      .findByIdAndUpdate(
+        slideId,
+        { $push: { objects: slideObject } },
+        { new: true },
+      )
+      .exec();
+    console.log(updatedSlide);
+    if (!updatedSlide) throw new HttpException('Slide not found', 404);
   }
 
   private validateSlidesLimit(board: BoardDocument): void {
