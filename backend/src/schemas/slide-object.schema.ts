@@ -17,172 +17,168 @@ export class SlideObject {
   // Fabric.js-specific properties
 
   @Prop({
-    required: true,
+    type: String,
   })
-  type: string;
-
-  @Prop({
-    required: true,
-  })
-  version: string;
-
-  @Prop({
-    required: true,
-  })
-  originX: string;
-
-  @Prop({
-    required: true,
-  })
-  originY: string;
-
-  @Prop({
-    required: true,
-  })
-  left: number;
-
-  @Prop({
-    required: true,
-  })
-  top: number;
-
-  @Prop({
-    required: true,
-  })
-  width: number;
-
-  @Prop({
-    required: true,
-  })
-  height: number;
+  type?: string;
 
   @Prop({
     type: String,
-    default: null,
   })
-  fill: string | null;
+  version?: string;
 
   @Prop({
     type: String,
-    default: null,
   })
-  stroke: string | null;
+  originX?: string;
 
   @Prop({
-    required: true,
+    type: String,
   })
-  strokeWidth: number;
+  originY?: string;
 
   @Prop({
-    type: [Number],
-    default: null,
+    type: Number,
   })
-  strokeDashArray: number[] | null;
+  left?: number;
 
   @Prop({
-    required: true,
+    type: Number,
+  })
+  top?: number;
+
+  @Prop({
+    type: Number,
+  })
+  width?: number;
+
+  @Prop({
+    type: Number,
+  })
+  height?: number;
+
+  @Prop({
+    type: Number,
+  })
+  strokeWidth?: number;
+
+  @Prop({
     enum: ['butt', 'round', 'square'],
   })
-  strokeLineCap: 'butt' | 'round' | 'square';
+  strokeLineCap?: 'butt' | 'round' | 'square';
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  strokeDashOffset: number;
+  strokeDashOffset?: number;
 
   @Prop({
-    required: true,
     enum: ['miter', 'round', 'bevel'],
   })
-  strokeLineJoin: 'miter' | 'round' | 'bevel';
+  strokeLineJoin?: 'miter' | 'round' | 'bevel';
 
   @Prop({
-    required: true,
+    type: Boolean,
   })
-  strokeUniform: boolean;
+  strokeUniform?: boolean;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  strokeMiterLimit: number;
+  strokeMiterLimit?: number;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  scaleX: number;
+  scaleX?: number;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  scaleY: number;
+  scaleY?: number;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  angle: number;
+  angle?: number;
 
   @Prop({
-    required: true,
+    type: Boolean,
   })
-  flipX: boolean;
+  flipX?: boolean;
 
   @Prop({
-    required: true,
+    type: Boolean,
   })
-  flipY: boolean;
+  flipY?: boolean;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  opacity: number;
+  opacity?: number;
 
   @Prop({
-    type: SlideObjectShadow,
-    default: null,
+    type: Boolean,
   })
-  shadow: SlideObjectShadow | null;
+  visible?: boolean;
 
   @Prop({
-    required: true,
+    type: String,
   })
-  visible: boolean;
+  fillRule?: string;
 
   @Prop({
-    required: true,
-  })
-  backgroundColor: string;
-
-  @Prop({
-    required: true,
-  })
-  fillRule: string;
-
-  @Prop({
-    required: true,
     enum: ['fill', 'stroke'],
   })
-  paintFirst: 'fill' | 'stroke';
+  paintFirst?: 'fill' | 'stroke';
 
   @Prop({
-    required: true,
+    type: String,
   })
-  globalCompositeOperation: string;
+  globalCompositeOperation?: string;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  skewX: number;
+  skewX?: number;
 
   @Prop({
-    required: true,
+    type: Number,
   })
-  skewY: number;
+  skewY?: number;
 
   @Prop({
     type: [MongooseSchema.Types.Mixed],
-    required: true,
   })
-  path: SlideObjectPath[];
+  path?: SlideObjectPath[];
+
+  @Prop({
+    default: null,
+    type: SlideObjectShadow,
+  })
+  shadow?: SlideObjectShadow | null;
+
+  @Prop({
+    default: null,
+    type: [Number],
+  })
+  strokeDashArray?: number[] | null;
+
+  @Prop({
+    default: null,
+    type: String,
+  })
+  stroke?: string | null;
+
+  @Prop({
+    default: null,
+    type: String,
+  })
+  fill?: string | null;
+
+  @Prop({
+    type: String,
+  })
+  backgroundColor?: string;
 
   @Prop({
     type: Number,
@@ -346,14 +342,14 @@ export class SlideObject {
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
   })
-  createdBy: User;
+  createdById: User;
 
   @Prop({
     required: true,
     type: MongooseSchema.Types.ObjectId,
     ref: 'Slide',
   })
-  slide: Slide;
+  slideId: Slide;
 }
 
 export const SlideObjectSchema = SchemaFactory.createForClass(SlideObject);
