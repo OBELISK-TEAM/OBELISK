@@ -16,7 +16,7 @@ import { CreateUserDto } from './users/users.dto';
 import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/AuthToken';
-import { Role } from './decorators/roles.decorator';
+import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
 import { UserRole } from '../../enums/user.role';
 
 @Controller('auth')
@@ -34,20 +34,6 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @Get('jwt-secured')
-  @UseGuards(JwtAuthGuard)
-  jwtSecured(@User('_id') userId: string): string {
-    return `You are authorized with id: ${userId}`;
-  }
-
-  @Get('jwt-and-role-secured')
-  @UseGuards(JwtAuthGuard)
-  @Role(UserRole.ADMIN)
-  @Role(UserRole.USER)
-  jwtAndRoleSecured(@User('_id') userId: string): string {
-    return `You are authorized with id: ${userId}`;
-  }
-
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -57,5 +43,28 @@ export class AuthController {
   @Post('google/login')
   async googleLogin(@Req() req: Request) {
     return this.authService.googleLogin(req);
+  }
+
+  // add @UseGuards(JwtAuthGuard) to secure the route with JWT
+  @Get('jwt-secured')
+  @UseGuards(JwtAuthGuard)
+  jwtSecured(@User('_id') userId: string): string {
+    return `You are authorized with id: ${userId}`;
+  }
+
+  // add @MinimumRole(UserRole.SOMETHING) to secure the route with a minimum role
+  @Get('min-role-secured')
+  @UseGuards(JwtAuthGuard)
+  @MinimumRole(UserRole.USER)
+  minimumRoleSecured(@User('_id') userId: string): string {
+    return `You are authorized with id: ${userId}`;
+  }
+
+  // add @RequiredRole(UserRole.SOMETHING) to secure the route with a required role
+  @Get('req-role-secured')
+  @UseGuards(JwtAuthGuard)
+  @RequiredRole(UserRole.ADMIN)
+  requiredRoleSecured(@User('_id') userId: string): string {
+    return `You are authorized with id: ${userId}`;
   }
 }
