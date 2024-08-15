@@ -16,6 +16,8 @@ import { CreateUserDto } from './users/users.dto';
 import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/AuthToken';
+import { Role } from './decorators/roles.decorator';
+import { UserRole } from '../../enums/user.role';
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +34,17 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @Get('secure')
+  @Get('jwt-secured')
   @UseGuards(JwtAuthGuard)
-  status(@User('_id') userId: string): string {
+  jwtSecured(@User('_id') userId: string): string {
+    return `You are authorized with id: ${userId}`;
+  }
+
+  @Get('jwt-and-role-secured')
+  @UseGuards(JwtAuthGuard)
+  @Role(UserRole.ADMIN)
+  @Role(UserRole.USER)
+  jwtAndRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
 
