@@ -20,8 +20,7 @@ jobs:
         with:
           path: backend/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-deps
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-
+          restore-keys: ${{ runner.os }}-node-${{ matrix.node-version }}-
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -29,19 +28,29 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: cd backend && npm install
+        run: npm install
+        working-directory: backend
+
+      - name: Verify dependencies
+        run: npm install -g depcheck && depcheck
+        working-directory: backend
 
       - name: Build
-        run: cd backend && npm run build
+        run: npm run build
+        working-directory: backend
 
       - name: Lint
-        run: cd backend && npm run lint
+        run: npm run lint
+        working-directory: backend
 
       - name: Unit tests
-        run: cd backend && npm run test
+        run: npm run test
+        working-directory: backend
 
 #      - name: e2e tests
-#        run: cd backend && npm run test:e2e
+#        run: npm run test:e2e
+#        working-directory: backend
 
 #      - name: Code coverage
-#        run: cd backend && npm run test:cov
+#        run: npm run test:cov
+#        working-directory: backend
