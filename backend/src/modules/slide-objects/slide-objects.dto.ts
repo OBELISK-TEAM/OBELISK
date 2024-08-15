@@ -10,10 +10,10 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { SlideObjectShadow } from 'src/shared/interfaces/SlideObjectShadow';
-import { SlideObjectPath } from 'src/shared/interfaces/SlideObjectPath';
-import { SlideObjectFilter } from 'src/shared/interfaces/SlideObjectFilter';
-import { SlideObjectTextStyles } from 'src/shared/interfaces/SlideObjectTextStyles';
+import { SlideObjectShadow } from '../../shared/interfaces/SlideObjectShadow';
+import { SlideObjectPath } from '../../shared/interfaces/SlideObjectPath';
+import { SlideObjectFilter } from '../../shared/interfaces/SlideObjectFilter';
+import { SlideObjectTextStyles } from '../../shared/interfaces/SlideObjectTextStyles';
 
 export class CreateSlideObjectDto {
   // Fabric.js-specific properties

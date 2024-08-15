@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Slide } from './slide.schema';
-import { SlideObjectShadow } from 'src/shared/interfaces/SlideObjectShadow';
-import { SlideObjectPath } from 'src/shared/interfaces/SlideObjectPath';
+import { SlideObjectShadow } from '../shared/interfaces/SlideObjectShadow';
+import { SlideObjectPath } from '../shared/interfaces/SlideObjectPath';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
 } from 'mongoose';
-import { SlideObjectFilter } from 'src/shared/interfaces/SlideObjectFilter';
-import { SlideObjectTextStyles } from 'src/shared/interfaces/SlideObjectTextStyles';
+import { SlideObjectFilter } from '../shared/interfaces/SlideObjectFilter';
+import { SlideObjectTextStyles } from '../shared/interfaces/SlideObjectTextStyles';
 
 export type SlideObjectDocument = SlideObject & MongooseDocument;
 
