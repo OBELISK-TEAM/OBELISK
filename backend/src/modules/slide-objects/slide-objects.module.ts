@@ -6,7 +6,7 @@ import {
 } from 'src/schemas/slide-object.schema';
 import { SlideObjectsController } from './slide-objects.controller';
 import { SlideObjectsService } from './slide-objects.service';
-import { UsersModule } from '../auth/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { SlidesModule } from '../slides/slides.module';
 
 @Module({

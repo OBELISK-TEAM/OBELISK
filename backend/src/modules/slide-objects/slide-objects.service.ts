@@ -9,7 +9,7 @@ import {
   SlideObject,
   SlideObjectDocument,
 } from 'src/schemas/slide-object.schema';
-import { UsersService } from '../auth/users/users.service';
+import { UsersService } from '../users/users.service';
 import { SlidesService } from '../slides/slides.service';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class SlideObjectsService {
       .exec();
 
     if (!existingSlideObject)
-      throw new HttpException("Slide Object not found", HttpStatus.NOT_FOUND);
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
 
     return existingSlideObject;
   }
@@ -57,7 +57,7 @@ export class SlideObjectsService {
       .exec();
 
     if (!existingSlideObject)
-      throw new HttpException("Slide Object not found", HttpStatus.NOT_FOUND);
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
 
     return existingSlideObject;
   }
@@ -68,7 +68,7 @@ export class SlideObjectsService {
       .exec();
 
     if (!existingslideObject)
-      throw new HttpException("Slide Object not found", HttpStatus.NOT_FOUND);
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
 
     return existingslideObject;
   }
