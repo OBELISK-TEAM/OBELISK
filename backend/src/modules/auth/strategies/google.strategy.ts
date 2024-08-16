@@ -2,16 +2,28 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { GoogleUser } from '../../../shared/interfaces/GoogleUser';
+import { ConfigService } from '@nestjs/config';
 
-// TODO - add configService to get env variables
+const DEFAULT_GOOGLE_CLIENT_ID = 'client';
+const DEFAULT_GOOGLE_CLIENT_SECRET = 'secret';
+const DEFAULT_GOOGLE_CALLBACK_URL = 'https://localhost:3000/sth';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      clientID: configService.get<string>(
+        'GOOGLE_CLIENT_ID',
+        DEFAULT_GOOGLE_CLIENT_ID,
+      ),
+      clientSecret: configService.get<string>(
+        'GOOGLE_CLIENT_SECRET',
+        DEFAULT_GOOGLE_CLIENT_SECRET,
+      ),
+      callbackURL: configService.get<string>(
+        'GOOGLE_CALLBACK_URL',
+        DEFAULT_GOOGLE_CALLBACK_URL,
+      ),
       scope: ['email', 'profile'],
     });
   }
