@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import useKeydownListener from "./useKeydownListener";
 import { MenuAction } from "@/enums/MenuActions";
-import { BaseBrush } from "fabric/fabric-impl";
+import { PencilBrush } from "fabric/fabric-impl";
 
 const useMenuData = (canvas: fabric.Canvas | null) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,7 +86,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            const eraserBrush: BaseBrush = new fabric.EraserBrush(canvas);
+            const eraserBrush: PencilBrush = new fabric.EraserBrush(canvas);
             eraserBrush.width = size;
             eraserBrush.decimate = 4;
             
