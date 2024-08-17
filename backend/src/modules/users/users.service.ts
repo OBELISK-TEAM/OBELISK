@@ -2,9 +2,9 @@ import { Model } from 'mongoose';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './users.dto';
-import { User, UserDocument } from '../../../schemas/user.schema';
-import { Board } from '../../../schemas/board.schema';
-import { UserAuthProvider } from '../../../enums/user.auth.provider';
+import { User, UserDocument } from '../../schemas/user.schema';
+import { Board } from '../../schemas/board.schema';
+import { UserAuthProvider } from '../../enums/user.auth.provider';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 
 @Injectable()

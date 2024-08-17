@@ -1,10 +1,10 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from './users/users.service';
+import { UsersService } from '../users/users.service';
 import { UserDocument } from '../../schemas/user.schema';
 import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
-import { CreateUserDto } from './users/users.dto';
+import { CreateUserDto } from '../users/users.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';

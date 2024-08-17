@@ -3,7 +3,7 @@ import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
-import { UsersModule } from './modules/auth/users/users.module';
+import { UsersModule } from './modules/users/users.module';
 import { BoardsModule } from './modules/boards/boards.module';
 import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';

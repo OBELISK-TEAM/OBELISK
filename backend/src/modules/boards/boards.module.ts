@@ -3,7 +3,7 @@ import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Board, BoardSchema } from '../../schemas/board.schema';
-import { UsersModule } from '../auth/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

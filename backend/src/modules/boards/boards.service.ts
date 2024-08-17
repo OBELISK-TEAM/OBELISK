@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
-import { UsersService } from '../auth/users/users.service';
+import { UsersService } from '../users/users.service';
 import { Slide } from '../../schemas/slide.schema';
 
 @Injectable()

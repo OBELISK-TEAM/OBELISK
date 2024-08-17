@@ -7,10 +7,11 @@ import { SafeUserDoc } from '../../../shared/interfaces/SafeUserDoc';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
-    super({ usernameField: 'email' });
+    super({
+      usernameField: 'email',
+    });
   }
 
-  // TODO - create class with email and password properties to validate
   async validate(email: string, password: string): Promise<SafeUserDoc> {
     const safeUser = await this.authService.validateUserByEmailAndPassword(
       email,
