@@ -387,17 +387,29 @@ export const setSelectedObjectStyles = (
   canvas.requestRenderAll();
 };
 
-export const updateDimensions = (obj: any) => {
+/**
+ * This function scales the passed `fabricjs` object.
+ * It reads the values of `scaleX` and `scaleY` properties and applies them to the `width` and `height` properties
+ * by simply multiplying them accordingly. As of result the `scaleX` and `scaleY` properties are set to 1.
+ * 
+ * This function supports partialy erased objects (takes into account the `eraser` property).
+ * @param obj 
+ */
+export const updateDimensions = (obj: any): void => {
   if (!obj) {
     return;
   }
   if (obj.type === "rect" || obj.type === "circle" || obj.type === "line") {
-    const scaledWidth = Math.round(obj.width * obj.scaleX);
-    const scaledHeight = Math.round(obj.height * obj.scaleY);
+    const initialObjScaleX = obj.scaleX;
+    const initialObjScaleY = obj.scaleY;
+
+    const scaledWidth = Math.round(obj.width * initialObjScaleX);
+    const scaledHeight = Math.round(obj.height * initialObjScaleY);
     const scaledRadius = obj.radius
       ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY))
       : undefined;
 
+    // scale the object itself
     obj.set({
       width: scaledWidth,
       height: scaledHeight,
@@ -405,6 +417,12 @@ export const updateDimensions = (obj: any) => {
       scaleX: 1,
       scaleY: 1,
     });
+
+    // scale the erased parts
+    if (obj.eraser) {
+      obj.eraser.scaleX *= initialObjScaleX;
+      obj.eraser.scaleY *= initialObjScaleY;
+    }
   }
   obj.setCoords();
 };
