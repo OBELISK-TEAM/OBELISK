@@ -37,21 +37,33 @@ export class SlideObjectsService {
   }
 
   async create(
-    createSlideObjectDto: CreateSlideObjectDto,
+    userId: string,
+    createSlideObjectDto: Partial<CreateSlideObjectDto>,
   ): Promise<SlideObjectDocument> {
-    const { createdById, slideId } = createSlideObjectDto;
-    const createdSlideObject = new this.slideObjectModel(createSlideObjectDto);
+    const { slideId, ...slideObject } = createSlideObjectDto;
+    if (!slideId)
+      throw new HttpException('Slide ID is required', HttpStatus.BAD_REQUEST);
 
-    await this.userService.addSlideObject(createdById, createdSlideObject);
+    const createdSlideObject = new this.slideObjectModel(slideObject);
+
+    await this.userService.addSlideObject(userId, createdSlideObject);
     await this.slideService.addSlideObject(slideId, createdSlideObject);
 
     return createdSlideObject.save();
   }
 
   async update(
+    userId: string,
     slideObjectId: string,
     updateSlideObjectDto: UpdateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
+    // I don't know if there is a point of checking existence of user
+    // since there is middleware (guard) that checks if user exists
+    // this comment refers to all the services
+    const existingUser = await this.userService.findOneById(userId);
+    if (!existingUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
     const existingSlideObject = await this.slideObjectModel
       .findByIdAndUpdate(slideObjectId, updateSlideObjectDto, { new: true })
       .exec();
@@ -63,13 +75,13 @@ export class SlideObjectsService {
   }
 
   async delete(slideObjectId: string): Promise<SlideObjectDocument> {
-    const existingslideObject = await this.slideObjectModel
+    const existingSlideObject = await this.slideObjectModel
       .findByIdAndDelete(slideObjectId)
       .exec();
 
-    if (!existingslideObject)
+    if (!existingSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
 
-    return existingslideObject;
+    return existingSlideObject;
   }
 }
