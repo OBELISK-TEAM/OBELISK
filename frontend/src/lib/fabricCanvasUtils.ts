@@ -34,9 +34,6 @@ export const initializeCanvas = (
       selection: true,
     });
 
-    newCanvas.freeDrawingBrush.color = "black";
-    newCanvas.freeDrawingBrush.width = 5;
-    newCanvas.freeDrawingBrush.decimate = 4;
     newCanvas.on("before:render", () => (newCanvas.selection = false));
     newCanvas.on("after:render", () => (newCanvas.selection = true));
 
