@@ -16,7 +16,7 @@ export const AppLogo: FC<AppLogoProps> = ({ width, height, alt }) => {
 
     // If the theme hasn't been resolved yet, don't render anything to prevent server-client mismatches during hydration
     if (!mounted) {
-        return null;
+        return <div style={{width: width, height: height}} />;
     }
 
     return (
