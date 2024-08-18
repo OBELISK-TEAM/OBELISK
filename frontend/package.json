@@ -7,6 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.js\" \"src/**/*.json\" \"src/**/*.css\"",
     "start": "next start",
     "start-docker": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
     "postinstall": "cd ./node_modules/fabric && node build.js modules=ALL exclude=gestures"
@@ -55,9 +56,12 @@
     "@typescript-eslint/parser": "^7.17.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.3",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.2"
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.6"
   }
 }
