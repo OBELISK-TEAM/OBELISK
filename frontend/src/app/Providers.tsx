@@ -2,12 +2,12 @@
 import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import MessageReceiver from "@/app/MessageReceiver";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ThemeProvider } from "next-themes";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider>
-      <ThemeProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <MessageReceiver>{children}</MessageReceiver>
       </ThemeProvider>
     </AuthProvider>
