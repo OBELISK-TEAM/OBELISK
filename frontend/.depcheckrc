@@ -1,2 +1,5 @@
-ignores: ["uglify-js"]
+ignores: [
+    "uglify-js",
+    "prettier-plugin-tailwindcss"
+]
 skip-missing: true
