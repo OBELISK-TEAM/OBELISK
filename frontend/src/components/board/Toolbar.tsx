@@ -5,6 +5,7 @@ import { Bold, Italic, Underline } from "lucide-react";
 import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
+
 interface ToolBarProps {
   selectedObjectStyles?: { [key: string]: any } | null;
   onStyleChange?: (styles: { [key: string]: any }) => void;
@@ -95,11 +96,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
       <div className="flex items-center space-x-2">
         <StyledLabel htmlFor="image-url">Image URL:</StyledLabel>
         <Input type="text" id="image-url" className="w-64" ref={urlRef} />
-        <Button
-          variant="mild"
-          className="p-2 bg-blue-500 text-white rounded"
-          onClick={handleAddUrlClick}
-        >
+        <Button onClick={handleAddUrlClick}>
           Add Image
         </Button>
       </div>
@@ -217,7 +214,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   };
 
   return (
-    <div className="flex items-center bg-white w-full justify-between h-[50px]">
+    <div className="flex items-center bg-background text-muted-foreground w-full justify-between h-[50px]">
       <div className="flex items-center p-2 space-x-4">
         {activeItem === "add-image-url" && renderUrlControl()}
 
