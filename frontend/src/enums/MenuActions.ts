@@ -1,7 +1,4 @@
 export enum MenuAction {
-  SelectionMode = "selection-mode",
-  DrawingMode = "drawing-mode",
-  EraserMode = "eraser-mode",
   ChangeColor = "change-color",
   ChangeSize = "change-size",
   AddLine = "add-line",

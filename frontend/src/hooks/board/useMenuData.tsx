@@ -4,7 +4,7 @@ import useUndoRedo from "@/hooks/board/useUndoRedo";
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventHandlers";
 import useFileHandling from "@/hooks/board/useFileHandling";
 import useMenuActions from "@/hooks/board/useMenuActions";
-import { exportToPDF, handleSave } from "@/lib/fabricCanvasUtils";
+import { exportToPDF, handleSave } from "@/utils/fabricCanvasUtils";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
 import { fabric } from "fabric";
 import {
@@ -49,11 +49,11 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       items: [
         {
           action: () => {
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
           },
           text: "Selection Mode",
           icon: <MousePointer />,
-          name: MenuAction.SelectionMode,
+          name: CanvasMode.Selection,
         },
         {
           action: () => {
@@ -68,11 +68,11 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
             canvas.freeDrawingBrush = pencilBrush;
 
-            setCanvasMode(CanvasMode.DRAW);
+            setCanvasMode(CanvasMode.SimpleDrawing);
           },
           text: "Drawing Mode",
           icon: <Pencil />,
-          name: MenuAction.DrawingMode,
+          name: CanvasMode.SimpleDrawing,
         },
         {
           action: () => {
@@ -88,11 +88,11 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
             canvas.freeDrawingBrush = eraserBrush;
 
-            setCanvasMode(CanvasMode.ERASE);
+            setCanvasMode(CanvasMode.Eraser);
           },
           text: "Eraser Mode",
           icon: <EraserIcon />,
-          name: MenuAction.EraserMode,
+          name: CanvasMode.Eraser,
         },
         {
           action: () => {},

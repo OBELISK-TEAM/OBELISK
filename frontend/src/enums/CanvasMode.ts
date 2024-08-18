@@ -1,5 +1,5 @@
 export enum CanvasMode {
-  SELECT = "select",
-  DRAW = "draw",
-  ERASE = "erase",
+  Selection = "selection-mode",
+  SimpleDrawing = "drawing-mode",
+  Eraser = "eraser-mode",
 }

@@ -8,7 +8,7 @@ import {
   handleGroupSelected,
   handleLoadFromJSON,
   handleRemoveSelected,
-} from "@/lib/fabricCanvasUtils";
+} from "@/utils/fabricCanvasUtils";
 import { CanvasActions } from "@/enums/CanvasActions";
 import { CanvasMode } from "@/enums/CanvasMode";
 
@@ -36,19 +36,19 @@ const useMenuActions = (
         switch (name) {
           case CanvasActions.ADD_LINE:
             addLine(canvas, properties);
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.ADD_RECTANGLE:
             addRectangle(canvas, properties);
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.ADD_CIRCLE:
             addCircle(canvas, properties);
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.ADD_TEXT:
             handleAddText(canvas, 50, 50, properties);
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.GROUP_SELECTED:
             handleGroupSelected(canvas);
@@ -61,17 +61,17 @@ const useMenuActions = (
             break;
           case CanvasActions.LOAD_CANVAS:
             handleLoadFromJSON(canvas);
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.ADD_IMAGE_URL:
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           case CanvasActions.ADD_IMAGE_DISK:
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
 
           case CanvasActions.LOAD_IMAGES_JSON:
-            setCanvasMode(CanvasMode.SELECT);
+            setCanvasMode(CanvasMode.Selection);
             break;
           default:
             break;

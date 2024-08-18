@@ -5,7 +5,7 @@ import {
   getSelectedObjectStyles as getSelectedObjectStylesUtil,
   setSelectedObjectStyles as setSelectedObjectStylesUtil,
   updateDimensions,
-} from "@/lib/fabricCanvasUtils";
+} from "@/utils/fabricCanvasUtils";
 
 const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

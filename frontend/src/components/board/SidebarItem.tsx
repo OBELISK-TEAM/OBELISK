@@ -1,6 +1,6 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
-import { MenuAction } from "@/enums/MenuActions";
+import {isActiveItem} from "@/utils/drawingMode";
 import { CanvasMode } from "@/enums/CanvasMode";
 
 interface SidebarItemProps {
@@ -29,10 +29,7 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({
     <div>
       <button
         className={`flex cursor-pointer items-center rounded p-2 text-left hover:bg-muted hover:text-primary ${
-          activeItem === item.name ||
-          (item.name === MenuAction.SelectionMode && canvasMode === CanvasMode.SELECT) ||
-          (item.name === MenuAction.DrawingMode && canvasMode === CanvasMode.DRAW) ||
-          (item.name === MenuAction.EraserMode && canvasMode === CanvasMode.ERASE)
+          isActiveItem(item.name, activeItem, canvasMode)
             ? "bg-muted text-primary"
             : "bg-background text-muted-foreground"
         }`}

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer } from "react";
 import { AuthMessage } from "@/interfaces/auth-message";
 import { AuthActionType, AuthMessageType } from "@/enums/AuthMessage";
 import { useRouter } from "next/navigation";
-import { handleApiError } from "@/lib/handleApiError";
+import { handleApiError } from "@/utils/handleApiError";
 
 interface AuthContextType {
   getAuthMessage: () => AuthMessage | null;

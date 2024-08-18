@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { fabric } from "fabric";
-import { loadImagesFromJSON, fitImageByShrinking, addImage, saveImagesToLocalFile } from "@/lib/fabricCanvasUtils";
+import { loadImagesFromJSON, fitImageByShrinking, addImage, saveImagesToLocalFile } from "@/utils/fabricCanvasUtils";
 
 const useFileHandling = (canvas: fabric.Canvas | null, saveState: () => void) => {
   const handleLoadImagesFromJson = useCallback(

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { fabric } from "fabric";
-import { toggleDrawingMode } from "@/lib/fabricCanvasUtils";
+import { toggleDrawingMode } from "@/utils/fabricCanvasUtils";
 import { CanvasMode } from "@/enums/CanvasMode";
 
 const useCanvasMode = (canvas: fabric.Canvas | null) => {
-  const [canvasMode, setCanvasMode] = useState<CanvasMode>(CanvasMode.SELECT);
+  const [canvasMode, setCanvasMode] = useState<CanvasMode>(CanvasMode.Selection);
 
   useEffect(() => {
     if (canvas) {
-      toggleDrawingMode(canvas, canvasMode !== CanvasMode.SELECT);
+      toggleDrawingMode(canvas, canvasMode !== CanvasMode.Selection);
     }
   }, [canvasMode, canvas]);
 
