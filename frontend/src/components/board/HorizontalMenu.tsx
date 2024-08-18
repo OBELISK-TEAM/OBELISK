@@ -8,6 +8,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import ThemeToggle from "../ThemeToggle";
 
 interface HorizontalMenuProps {
   menuItem: MenuGroup;
@@ -80,6 +81,7 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
+        <ThemeToggle />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import Image from "next/image";
 import HeaderLinks from "./HeaderLinks";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "./ThemeToggle";
 
 const Header: FC = () => {
   const { logout, loading } = useHandleAuth();
@@ -25,6 +26,7 @@ const Header: FC = () => {
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
+        <ThemeToggle />
         <Button onClick={logout} variant="outline" disabled={loading}>
           Logout
         </Button>
