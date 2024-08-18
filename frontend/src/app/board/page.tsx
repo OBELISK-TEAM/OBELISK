@@ -25,6 +25,7 @@ const Board: React.FC = () => {
     handleLoadImagesFromJson,
     color,
     size,
+    isDrawingMode,
     setColor,
     setSize,
   } = useMenuData(canvas);
@@ -51,6 +52,7 @@ const Board: React.FC = () => {
           menuGroup={addGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
+          isDrawingMode={isDrawingMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
@@ -61,6 +63,7 @@ const Board: React.FC = () => {
           menuGroup={editGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
+          isDrawingMode={isDrawingMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}

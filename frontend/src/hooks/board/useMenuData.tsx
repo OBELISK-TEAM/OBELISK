@@ -31,7 +31,6 @@ import { MenuAction } from "@/enums/MenuActions";
 import { PencilBrush } from "fabric/fabric-impl";
 
 const useMenuData = (canvas: fabric.Canvas | null) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isDrawingMode, setIsDrawingMode } = useDrawingMode(canvas);
   const { color, size, setColor, setSize } = useColorAndSize(canvas);
   const { saveState, undo, redo } = useUndoRedo(canvas);
@@ -234,6 +233,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     handleLoadImagesFromJson,
     color,
     size,
+    isDrawingMode,
     setColor,
     setSize,
   };
