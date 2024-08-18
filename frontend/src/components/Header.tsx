@@ -9,7 +9,7 @@ const Header: FC = () => {
   const { logout, loading } = useHandleAuth();
 
   return (
-    <div className="flex items-center justify-between h-[64px] h-min-[64px] x-4 bg-white border-b pl-0">
+    <div className="flex items-center justify-between h-[64px] h-min-[64px] x-4 bg-background border-b pl-0">
       <div className="flex ">
         <div className="border-r flex items-center justify-center h-[64px] h-min-[64px]   w-[3.5em]">
           <Image src="/best-logo-lite.png" alt="Logo" width={20} height={20} />
@@ -19,7 +19,7 @@ const Header: FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4 pr-2">
+      <div className="flex items-center space-x-4 pr-6">
         <span className="font-semibold">Anon Anno</span>
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
