@@ -1,11 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PaginationDemo } from "./PaginationDemo";
 
 const boards = [
@@ -55,12 +48,14 @@ const boards = [
 
 const BoardTable = () => {
   return (
-    <div className="bg-card border rounded-lg p-4">
-      <h1 className="font-bold text-card-foreground" style={{fontSize:'20px'}}>Boards</h1>
+    <div className="rounded-lg border bg-card p-4">
+      <h1 className="font-bold text-card-foreground" style={{ fontSize: "20px" }}>
+        Boards
+      </h1>
       <span className="text-muted-foreground" style={{ fontSize: "15px" }}>
-          Manage your boards
-        </span>
-      <Table className="w-full ">
+        Manage your boards
+      </span>
+      <Table className="w-full">
         <TableHeader className="text-muted-foreground">
           <TableRow className="border-b">
             <TableHead className="py-2 text-left"></TableHead>
@@ -75,7 +70,7 @@ const BoardTable = () => {
           {boards.map((board) => (
             <TableRow key={board.name} className="border-b text-card-foreground hover:bg-muted/50">
               <TableCell className="py-2">
-                <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                <div className="h-8 w-8 rounded bg-gray-200"></div>
               </TableCell>
               <TableCell className="py-2">{board.name}</TableCell>
               <TableCell className="py-2">{board.owner}</TableCell>
@@ -83,16 +78,14 @@ const BoardTable = () => {
               <TableCell className="py-2">{board.modifiedAt}</TableCell>
               <TableCell className="py-2">{board.createdAt}</TableCell>
               <TableCell className="py-2 text-right">
-                <button className="hover:text-muted-foreground">
-                  ...
-                </button>
+                <button className="hover:text-muted-foreground">...</button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-between items-center mt-4">
-        <span className="text-muted-foreground w-[18em] grow" style={{ fontSize: "15px" }}>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="w-[18em] grow text-muted-foreground" style={{ fontSize: "15px" }}>
           Showing 1-10 of 32 products
         </span>
         <PaginationDemo />

@@ -4,36 +4,19 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import React from "react";
 import ErrorList from "@/components/ErrorList/ErrorList";
 const LoginCard: React.FC = () => {
-  const {
-    email,
-    password,
-    error,
-    loading,
-    setEmail,
-    setPassword,
-    login,
-    googleAuth,
-  } = useHandleAuth();
+  const { email, password, error, loading, setEmail, setPassword, login, googleAuth } = useHandleAuth();
 
   return (
-    <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
+    <Card className="h-1/2 w-3/5 min-w-96 border-none shadow-none">
       <CardHeader className="items-center">
         <CardTitle>Login</CardTitle>
-        <CardDescription>
-          Enter your email and password below to log into the app
-        </CardDescription>
+        <CardDescription>Enter your email and password below to log into the app</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <form onSubmit={login}>
@@ -50,10 +33,7 @@ const LoginCard: React.FC = () => {
             <div className="flex flex-col space-y-1.5">
               <div className="flex justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link
-                  href="#"
-                  className="text-sm font-medium leading-none underline"
-                >
+                <Link href="#" className="text-sm font-medium leading-none underline">
                   Forgot your password?
                 </Link>
               </div>
@@ -73,9 +53,7 @@ const LoginCard: React.FC = () => {
           </div>
         </form>
         <div className="flex justify-center">
-          <p className="text-sm font-medium">
-            Don&apos;t have an account?&ensp;
-          </p>
+          <p className="text-sm font-medium">Don&apos;t have an account?&ensp;</p>
           <Link
             href="/auth/signup"
             className="text-sm font-medium underline"
@@ -86,10 +64,7 @@ const LoginCard: React.FC = () => {
         </div>
         <div className="flex items-center gap-1.5">
           <Separator className="flex-1" />
-          <p
-            className="text-muted-foreground font-medium"
-            style={{ fontSize: "12px" }}
-          >
+          <p className="font-medium text-muted-foreground" style={{ fontSize: "12px" }}>
             OR LOG IN WITH
           </p>
           <Separator className="flex-1" />

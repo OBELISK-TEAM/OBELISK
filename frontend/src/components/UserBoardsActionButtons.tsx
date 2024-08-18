@@ -5,15 +5,15 @@ const UserBoardsActionButtons = () => {
   return (
     <div className="flex space-x-2">
       <Button variant="outline">
-        <FilterIcon className="h-5 w-5 mr-2" />
+        <FilterIcon className="mr-2 h-5 w-5" />
         Filter
       </Button>
       <Button variant="outline">
-        <ViewIcon className="h-5 w-5 mr-2" />
+        <ViewIcon className="mr-2 h-5 w-5" />
         View
       </Button>
       <Button>
-        <PlusIcon className="h-5 w-5 mr-2" />
+        <PlusIcon className="mr-2 h-5 w-5" />
         Create new board
       </Button>
     </div>

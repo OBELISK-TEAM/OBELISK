@@ -2,25 +2,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 
 const EmailSignupCard: React.FC = () => {
-  const { email, password, error, loading, setEmail, setPassword, signup } =
-    useHandleAuth();
+  const { email, password, error, loading, setEmail, setPassword, signup } = useHandleAuth();
   return (
-    <Card className="h-1/2 w-3/5 min-w-96 shadow-none border-none">
+    <Card className="h-1/2 w-3/5 min-w-96 border-none shadow-none">
       <CardHeader className="items-center">
         <CardTitle>Create an account</CardTitle>
-        <CardDescription>
-          Enter your credentials below to create your account
-        </CardDescription>
+        <CardDescription>Enter your credentials below to create your account</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <form onSubmit={signup}>
@@ -45,16 +36,14 @@ const EmailSignupCard: React.FC = () => {
               />
             </div>
             {error && (
-              <ol className="list-disc text-red-500 text-sm">
+              <ol className="list-disc text-sm text-red-500">
                 {error.map((errMsg, index) => (
                   <li key={index}>{errMsg}</li>
                 ))}
               </ol>
             )}
             <Button type="submit" disabled={loading}>
-              <span className="px-4 py-2 flex items-center">
-                {loading ? "Creating account..." : "Create account"}
-              </span>
+              <span className="flex items-center px-4 py-2">{loading ? "Creating account..." : "Create account"}</span>
             </Button>
           </div>
         </form>

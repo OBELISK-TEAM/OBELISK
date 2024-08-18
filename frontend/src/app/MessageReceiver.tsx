@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
-const MessageReceiver: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const MessageReceiver: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { getAuthMessage, clearAuthMessage } = useAuth();
   const authMessage = getAuthMessage();
   const [visible, setVisible] = useState(false);
@@ -31,19 +29,17 @@ const MessageReceiver: React.FC<{ children: React.ReactNode }> = ({
     <div>
       {authMessage && (
         <div
-          className={`fixed top-2  transform -translate-x-1/2  mt-2 z-50 w-[80%] max-w-lg p-4 rounded-md shadow-lg transition-all duration-500 ${
+          className={`fixed top-2 z-50 mt-2 w-[80%] max-w-lg -translate-x-1/2 transform rounded-md p-4 shadow-lg transition-all duration-500 ${
             visible ? "slide-down" : "slide-up"
           } ${
-            authMessage.type === "SUCCESS"
-              ? "bg-green-100 border text-green-700"
-              : "bg-red-100 border text-red-700"
+            authMessage.type === "SUCCESS" ? "border bg-green-100 text-green-700" : "border bg-red-100 text-red-700"
           }`}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <span className="text-lg font-semibold">{authMessage.message}</span>
             <button
               onClick={() => setVisible(false)}
-              className={`ml-4 bg-transparent border-none text-lg font-semibold cursor-pointer ${
+              className={`ml-4 cursor-pointer border-none bg-transparent text-lg font-semibold ${
                 authMessage.type === "SUCCESS"
                   ? "text-green-700 hover:text-green-900"
                   : "text-red-500 hover:text-red-700"

@@ -22,8 +22,12 @@ const useCanvasEventHandlers = (canvas: fabric.Canvas | null, saveState: () => v
           const delta = evt.deltaY;
           let zoom = canvas.getZoom();
           zoom *= 0.999 ** delta;
-          if (zoom > 20) zoom = 20;
-          if (zoom < 0.01) zoom = 0.01;
+          if (zoom > 20) {
+            zoom = 20;
+          }
+          if (zoom < 0.01) {
+            zoom = 0.01;
+          }
           canvas.zoomToPoint({ x: evt.offsetX, y: evt.offsetY }, zoom);
           evt.preventDefault();
           evt.stopPropagation();

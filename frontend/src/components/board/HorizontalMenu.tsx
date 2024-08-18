@@ -1,11 +1,7 @@
 import { FC } from "react";
-import { MenuGroup , MenuItem } from "../../interfaces/canva-interfaces";
+import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
 import { AppLogo } from "../AppLogo";
 
@@ -39,42 +35,47 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
   };
 
   return (
-    <div
-      className={`flex items-center justify-between  px-4 bg-background border-b pl-0`}
-    >
+    <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
       <div className="flex">
-        <div className="border-r flex items-center justify-center h-[64px] h-min-[64px] w-[3.5em]">
+        <div className="h-min-[64px] flex h-[64px] w-[3.5em] items-center justify-center border-r">
           <AppLogo width={20} height={20} />
         </div>
-        <div className="flex-shrink-0  flex items-center border-r px-6">
+        <div className="flex flex-shrink-0 items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
-        <div className="flex items-center overflow-x-auto space-x-2 px-4">
+        <div className="flex items-center space-x-2 overflow-x-auto px-4">
           {menuItem.items.map((item: MenuItem, itemIndex: number) => {
-            if(!(activeCanvasObject && activeCanvasObject.type === 'activeSelection') && (item.name === 'group-selected')) return null;
-            else if(!(activeCanvasObject) && (item.name === 'remove-selected')) return null;
+            if (
+              !(activeCanvasObject && activeCanvasObject.type === "activeSelection") &&
+              item.name === "group-selected"
+            ) {
+              return null;
+            } else if (!activeCanvasObject && item.name === "remove-selected") {
+              return null;
+            }
             return (
-                <HoverCard key={itemIndex}>
-              <HoverCardTrigger asChild>
-                <button
-                  className={`flex items-center p-2 rounded ${
-                    activeItem === item.name
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-primary"
-                  }`}
-                  onClick={() => handleClick(item.name, item.action)}
-                >
-                  {item.icon}
-                </button>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-40">
-                <p>{item.text}</p>
-              </HoverCardContent>
-            </HoverCard>);
+              <HoverCard key={itemIndex}>
+                <HoverCardTrigger asChild>
+                  <button
+                    className={`flex items-center rounded p-2 ${
+                      activeItem === item.name
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-primary"
+                    }`}
+                    onClick={() => handleClick(item.name, item.action)}
+                  >
+                    {item.icon}
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-40">
+                  <p>{item.text}</p>
+                </HoverCardContent>
+              </HoverCard>
+            );
           })}
         </div>
       </div>
-      <div className="flex items-center space-x-4 border-l pr-2 pl-4 h-[64px]">
+      <div className="flex h-[64px] items-center space-x-4 border-l pl-4 pr-2">
         <span className="font-semibold">Anon Anno</span>
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />

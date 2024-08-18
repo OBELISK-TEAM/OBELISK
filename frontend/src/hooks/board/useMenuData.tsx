@@ -35,19 +35,11 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
   const { color, size, setColor, setSize } = useColorAndSize(canvas);
   const { saveState, undo, redo } = useUndoRedo(canvas);
   useCanvasEventHandlers(canvas, saveState);
-  const {
-    handleLoadImagesFromJson,
-    handleFileChange,
-    handleAddImageByUrl,
-    handleSaveImages,
-  } = useFileHandling(canvas, saveState);
-  const performAction = useMenuActions(
+  const { handleLoadImagesFromJson, handleFileChange, handleAddImageByUrl, handleSaveImages } = useFileHandling(
     canvas,
-    color,
-    size,
-    saveState,
-    setIsDrawingMode
+    saveState
   );
+  const performAction = useMenuActions(canvas, color, size, saveState, setIsDrawingMode);
   useKeydownListener(canvas, performAction, undo, redo);
 
   const menuList: MenuGroup[] = [
@@ -64,7 +56,9 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
         },
         {
           action: () => {
-            if (!canvas) return;
+            if (!canvas) {
+              return;
+            }
 
             const pencilBrush = new fabric.PencilBrush(canvas);
             pencilBrush.color = color;
@@ -81,14 +75,16 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
         },
         {
           action: () => {
-            if (!canvas) return;
+            if (!canvas) {
+              return;
+            }
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const eraserBrush: PencilBrush = new fabric.EraserBrush(canvas);
             eraserBrush.width = size;
             eraserBrush.decimate = 4;
-            
+
             canvas.freeDrawingBrush = eraserBrush;
 
             setIsDrawingMode(true);
@@ -98,13 +94,13 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           name: MenuAction.EraserMode,
         },
         {
-          action: () => { },
+          action: () => {},
           text: "Change Color",
           icon: <Color />,
           name: MenuAction.ChangeColor,
         },
         {
-          action: () => { },
+          action: () => {},
           text: "Change Size",
           icon: <Size />,
           name: MenuAction.ChangeSize,
@@ -224,7 +220,6 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       ],
     },
   ];
-
 
   return {
     menuList,

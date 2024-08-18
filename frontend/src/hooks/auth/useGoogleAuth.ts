@@ -31,11 +31,7 @@ export const useGoogleAuth = () => {
   const googleAuth = () => {
     return new Promise<void>((resolve, reject) => {
       const { url, state } = getGoogleLoginUrl();
-      const newAuthWindow = window.open(
-        url,
-        "GoogleAuthPopup",
-        "width=600,height=600",
-      );
+      const newAuthWindow = window.open(url, "GoogleAuthPopup", "width=600,height=600");
 
       if (newAuthWindow) {
         const checkPopupWindow = setInterval(async () => {

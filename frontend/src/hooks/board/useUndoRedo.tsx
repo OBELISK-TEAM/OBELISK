@@ -16,22 +16,17 @@ const useUndoRedo = (initialCanvas: fabric.Canvas | null) => {
 
   const saveState = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
     const state = canvas.toJSON();
-    if (
-      undoStack.current.length === 0 ||
-      !areStatesEqual(
-        state,
-        undoStack.current[undoStack.current.length - 1]
-      )
-    ) {
+    if (undoStack.current.length === 0 || !areStatesEqual(state, undoStack.current[undoStack.current.length - 1])) {
       undoStack.current.push(state);
       if (undoStack.current.length > 50) {
         undoStack.current.shift();
       }
       redoStack.current.length = 0;
     }
-
   }, []);
 
   const undo = useCallback(() => {
@@ -41,12 +36,13 @@ const useUndoRedo = (initialCanvas: fabric.Canvas | null) => {
       redoStack.current.push(currentState);
 
       const state = undoStack.current.pop();
-      if (!state) return
+      if (!state) {
+        return;
+      }
       canvas.loadFromJSON(state, () => {
         canvas.renderAll();
         canvas.calcOffset();
       });
-
     }
   }, []);
 
@@ -57,12 +53,13 @@ const useUndoRedo = (initialCanvas: fabric.Canvas | null) => {
       undoStack.current.push(currentState);
 
       const state = redoStack.current.pop();
-      if (!state) return;
+      if (!state) {
+        return;
+      }
       canvas.loadFromJSON(state, () => {
         canvas.renderAll();
         canvas.calcOffset();
       });
-
     }
   }, []);
 

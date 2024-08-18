@@ -52,7 +52,6 @@ const useCanvas = () => {
       setActiveItem(null);
     };
 
-
     newCanvas?.on("selection:created", handleSelectionCreated);
     newCanvas?.on("selection:cleared", handleSelectionCleared);
     newCanvas?.on("object:modified", handleObjectModified);

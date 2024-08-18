@@ -6,23 +6,19 @@ import UserBoardsActionButtons from "@/components/UserBoardsActionButtons";
 import TabButtons from "@/components/TabButtons";
 
 export default function UserBoards() {
-  const tabs = [
-    { label: "All" },
-    { label: "Shared by others" },
-    { label: "Archived" },
-  ];
+  const tabs = [{ label: "All" }, { label: "Shared by others" }, { label: "Archived" }];
 
   return (
-    <div className="flex flex-col h-min-[100vh]">
+    <div className="h-min-[100vh] flex flex-col">
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-6 bg-background">
-            <div className="flex justify-between items-center mb-2">
-              <TabButtons tabs={tabs} />
-              <UserBoardsActionButtons />
-            </div>
-            <BoardTable />
+        <main className="flex-1 bg-background p-6">
+          <div className="mb-2 flex items-center justify-between">
+            <TabButtons tabs={tabs} />
+            <UserBoardsActionButtons />
+          </div>
+          <BoardTable />
         </main>
       </div>
     </div>

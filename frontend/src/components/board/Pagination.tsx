@@ -12,7 +12,7 @@ import {
 
 export function BoardPagination() {
   return (
-    <Pagination className="flex items-center space-x-2 mt-[0.3em]">
+    <Pagination className="mt-[0.3em] flex items-center space-x-2">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious href="#" />

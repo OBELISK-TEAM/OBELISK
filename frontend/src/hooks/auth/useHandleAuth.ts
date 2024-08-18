@@ -8,16 +8,7 @@ import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
-  const {
-    email,
-    password,
-    error,
-    loading,
-    setEmail,
-    setPassword,
-    setError,
-    setLoading,
-  } = authForm;
+  const { email, password, error, loading, setEmail, setPassword, setError, setLoading } = authForm;
   const { login, signup, logout } = useAuth();
   const { googleAuth } = useGoogleAuth(); //special wrapper for google auth, inside it uses loginGoogleUser from useAuth
   const router = useRouter();
@@ -57,7 +48,7 @@ export const useHandleAuth = (): HandleAuth => {
         }
       };
     },
-    [email, password, setError, setLoading, login, signup, logout, router],
+    [email, password, setError, setLoading, login, signup, logout, router]
   );
 
   return {
