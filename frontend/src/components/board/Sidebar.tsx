@@ -48,7 +48,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col bg-white ${borderClass} group hover:w-60 w-[56px] transition-all duration-500 ease-in-out overflow-hidden`}
+      className={`relative flex flex-col bg-background ${borderClass} group hover:w-60 w-[56px] transition-all duration-500 ease-in-out overflow-hidden`}
       style={{ height: "calc(100vh - 64px)" }}
     >
       <div className="flex flex-col flex-1 p-2 space-y-4">
@@ -70,7 +70,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
         </div>
         {withSettings && (
           <div className="border-t pt-3">
-            <button className="flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded cursor-pointer hover:text-black">
+            <button className="flex items-center text-left text-muted-foreground hover:bg-muted p-2 rounded cursor-pointer hover:text-primary">
               <CogIcon className="h-5 w-5 flex-shrink-0 cursor-pointer" />
               <span
                 className="ml-8  group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:ml-2 whitespace-nowrap cursor-pointer text-sm font-medium"

@@ -55,13 +55,13 @@ const boards = [
 
 const BoardTable = () => {
   return (
-    <div className="bg-white border rounded-lg p-4">
-      <h1 className="font-bold" style={{fontSize:'20px'}}>Boards</h1>
-      <span className="text-gray-600" style={{ fontSize: "15px" }}>
+    <div className="bg-card border rounded-lg p-4">
+      <h1 className="font-bold text-card-foreground" style={{fontSize:'20px'}}>Boards</h1>
+      <span className="text-muted-foreground" style={{ fontSize: "15px" }}>
           Manage your boards
         </span>
       <Table className="w-full ">
-        <TableHeader>
+        <TableHeader className="text-muted-foreground">
           <TableRow className="border-b">
             <TableHead className="py-2 text-left"></TableHead>
             <TableHead className="py-2 text-left">Name</TableHead>
@@ -73,7 +73,7 @@ const BoardTable = () => {
         </TableHeader>
         <TableBody>
           {boards.map((board) => (
-            <TableRow key={board.name} className="border-b hover:bg-gray-50">
+            <TableRow key={board.name} className="border-b text-card-foreground hover:bg-muted/50">
               <TableCell className="py-2">
                 <div className="w-8 h-8 bg-gray-200 rounded"></div>
               </TableCell>
@@ -83,7 +83,7 @@ const BoardTable = () => {
               <TableCell className="py-2">{board.modifiedAt}</TableCell>
               <TableCell className="py-2">{board.createdAt}</TableCell>
               <TableCell className="py-2 text-right">
-                <button className="text-gray-500 hover:text-gray-700">
+                <button className="hover:text-muted-foreground">
                   ...
                 </button>
               </TableCell>
@@ -92,7 +92,7 @@ const BoardTable = () => {
         </TableBody>
       </Table>
       <div className="flex justify-between items-center mt-4">
-        <span className="text-gray-600 w-[18em] grow" style={{ fontSize: "15px" }}>
+        <span className="text-muted-foreground w-[18em] grow" style={{ fontSize: "15px" }}>
           Showing 1-10 of 32 products
         </span>
         <PaginationDemo />

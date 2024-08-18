@@ -9,14 +9,13 @@ interface ButtonLabelProps {
 }
 
 const StyledLabel: FC<ButtonLabelProps> = ({ children,className,htmlFor,label }) => {
-  let classes = "flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded relative group-hover:w-full hover:text-black cursor-pointer";
+  let classes = "flex items-center text-sm font-medium text-left text-muted-foreground hover:text-primary hover:bg-muted p-2 rounded relative group-hover:w-full cursor-pointer";
   if(className){
     classes += ` ${className}`;
   }
   return (
     <label
       className={classes}
-      style={{ fontSize: '14px', fontWeight: '500' }}
       htmlFor={htmlFor}
     >
       {label}

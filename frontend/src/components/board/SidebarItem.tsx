@@ -27,12 +27,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <div>
       <button
-        className={`flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded cursor-pointer ${
+        className={`flex items-center text-left hover:bg-muted hover:text-primary p-2 rounded cursor-pointer ${
           activeItem === item.name ||
           (item.name === MenuAction.SelectionMode && !isDrawingMode) ||
           (item.name === MenuAction.DrawingMode && isDrawingMode)
-            ? "bg-gray-200 text-black"
-            : ""
+            ? "bg-muted text-primary"
+            : "bg-background text-muted-foreground"
         }`}
         onClick={() =>
           !(item.name === "change-color" || item.name === "change-size") &&
@@ -60,7 +60,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
               type="number"
               value={size}
               onChange={handleSizeChange}
-              className="ml-2 w-20 p-2 border rounded cursor-pointer"
+              className="ml-2 w-20 p-2 border rounded bg-background text-muted-foreground cursor-pointer"
             />
           ) : (
             item.text

@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { MenuGroup , MenuItem } from "../../interfaces/canva-interfaces";
-
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import ThemeToggle from "../ThemeToggle";
+import { AppLogo } from "../AppLogo";
 
 interface HorizontalMenuProps {
   menuItem: MenuGroup;
@@ -40,11 +40,11 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-between  px-4 bg-white border-b pl-0`}
+      className={`flex items-center justify-between  px-4 bg-background border-b pl-0`}
     >
       <div className="flex">
         <div className="border-r flex items-center justify-center h-[64px] h-min-[64px] w-[3.5em]">
-          <Image src="/best-logo-lite.png" alt="Logo" width={20} height={20} />
+          <AppLogo width={20} height={20} />
         </div>
         <div className="flex-shrink-0  flex items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>
@@ -59,8 +59,8 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
                 <button
                   className={`flex items-center p-2 rounded ${
                     activeItem === item.name
-                      ? "bg-gray-200 text-black"
-                      : "text-gray-600 hover:bg-gray-200 hover:text-black"
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-primary"
                   }`}
                   onClick={() => handleClick(item.name, item.action)}
                 >
@@ -80,6 +80,7 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
+        <ThemeToggle />
       </div>
     </div>
   );

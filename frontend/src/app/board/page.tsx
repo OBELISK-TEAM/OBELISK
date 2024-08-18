@@ -71,7 +71,7 @@ const Board: React.FC = () => {
           handleSizeChange={(e) => setSize(Number(e.target.value))}
         />
         <div
-          className="flex flex-col items-center bg-[#F1F5F9]"
+          className="flex flex-col items-center bg-muted text-muted-foreground"
           style={{
             width: `calc(100% - ${2 * 56}px)`,
           }}
@@ -82,7 +82,7 @@ const Board: React.FC = () => {
             activeItem={activeItem}
             handleAddImageByUrl={handleAddImageByUrl}
           />
-          <div className="flex bg-white w-fit rounded-lg mt-4">
+          <div className="flex bg-white w-fit rounded-lg mt-4"> {/* color of the board itself should not be dependent on the chosen theme; it's always white */}
             <canvas
               ref={canvasRef}
               className="border rounded-lg"
