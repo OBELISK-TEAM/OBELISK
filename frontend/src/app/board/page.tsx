@@ -1,9 +1,9 @@
 "use client";
 import { useRef, useState } from "react";
 import BoardSidebar from "@/components/board/Sidebar";
-import ToolBar from "@/components/board/Toolbar";
+import BoardToolBar from "@/components/board/Toolbar";
 import { BoardPagination } from "@/components/board/Pagination";
-import HorizontalMenu from "@/components/board/HorizontalMenu";
+import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
 import useCanvas from "@/hooks/board/useCanvas";
 import useMenuData from "@/hooks/board/useMenuData";
 import useFileClick from "@/hooks/board/useFileClick";
@@ -24,7 +24,7 @@ const Board: React.FC = () => {
     handleLoadImagesFromJson,
     color,
     size,
-    isDrawingMode,
+    canvasMode,
     setColor,
     setSize,
   } = useMenuData(canvas);
@@ -37,7 +37,7 @@ const Board: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <HorizontalMenu
+      <BoardHorizontalMenu
         boardName="Board 1"
         menuItem={fileGroup}
         onIconClick={handleIconClick}
@@ -51,7 +51,7 @@ const Board: React.FC = () => {
           menuGroup={addGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
-          isDrawingMode={isDrawingMode}
+          canvasMode={canvasMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
@@ -62,7 +62,7 @@ const Board: React.FC = () => {
           menuGroup={editGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
-          isDrawingMode={isDrawingMode}
+          canvasMode={canvasMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
@@ -75,7 +75,7 @@ const Board: React.FC = () => {
             width: `calc(100% - ${2 * 56}px)`,
           }}
         >
-          <ToolBar
+          <BoardToolBar
             selectedObjectStyles={selectedObjectStyles}
             onStyleChange={handleStyleChange}
             activeItem={activeItem}

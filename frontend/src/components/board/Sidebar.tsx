@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
 import { CogIcon } from "lucide-react";
 
-import SidebarItem from "./SidebarItem";
+import BoardSidebarItem from "./SidebarItem";
+import { CanvasMode } from "@/enums/CanvasMode";
 
 interface BoardSidebarProps {
   menuGroup: MenuGroup;
@@ -11,7 +12,7 @@ interface BoardSidebarProps {
   fromRight?: boolean;
   onActiveItemChange?: (activeItem: string | null) => void;
   activeItem: string | null;
-  isDrawingMode: boolean;
+  canvasMode: CanvasMode;
   color: string;
   size: number;
   handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -25,7 +26,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
   fromRight = false,
   onActiveItemChange,
   activeItem,
-  isDrawingMode,
+  canvasMode,
   color,
   size,
   handleColorChange,
@@ -55,10 +56,10 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
         <div className="grow">
           {menuGroup.items.map((item: MenuItem, itemIndex: number) => (
             <div key={itemIndex}>
-              <SidebarItem
+              <BoardSidebarItem
                 item={item}
                 activeItem={activeItem}
-                isDrawingMode={isDrawingMode}
+                canvasMode={canvasMode}
                 color={color}
                 size={size}
                 handleColorChange={handleColorChange}

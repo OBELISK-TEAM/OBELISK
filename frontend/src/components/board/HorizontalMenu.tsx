@@ -16,7 +16,7 @@ interface HorizontalMenuProps {
   activeCanvasObject: { [key: string]: any } | null;
 }
 
-const HorizontalMenu: FC<HorizontalMenuProps> = ({
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({
   menuItem,
   onIconClick,
   boardName,
@@ -87,4 +87,4 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
   );
 };
 
-export default HorizontalMenu;
+export default BoardHorizontalMenu;

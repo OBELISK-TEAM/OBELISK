@@ -1,21 +1,23 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { fabric } from "fabric";
 import {
+  addCircle,
   addLine,
   addRectangle,
-  addCircle,
   handleAddText,
   handleGroupSelected,
-  handleRemoveSelected,
   handleLoadFromJSON,
+  handleRemoveSelected,
 } from "@/lib/fabricCanvasUtils";
 import { CanvasActions } from "@/enums/CanvasActions";
+import { CanvasMode } from "@/enums/CanvasMode";
+
 const useMenuActions = (
   canvas: fabric.Canvas | null,
   color: string,
   size: number,
   saveState: () => void,
-  setIsDrawingMode: Dispatch<SetStateAction<boolean>>
+  setCanvasMode: Dispatch<SetStateAction<CanvasMode>>
 ) => {
   const defaultFontSize = 20;
 
@@ -34,19 +36,19 @@ const useMenuActions = (
         switch (name) {
           case CanvasActions.ADD_LINE:
             addLine(canvas, properties);
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.ADD_RECTANGLE:
             addRectangle(canvas, properties);
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.ADD_CIRCLE:
             addCircle(canvas, properties);
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.ADD_TEXT:
             handleAddText(canvas, 50, 50, properties);
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.GROUP_SELECTED:
             handleGroupSelected(canvas);
@@ -59,17 +61,17 @@ const useMenuActions = (
             break;
           case CanvasActions.LOAD_CANVAS:
             handleLoadFromJSON(canvas);
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.ADD_IMAGE_URL:
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           case CanvasActions.ADD_IMAGE_DISK:
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
 
           case CanvasActions.LOAD_IMAGES_JSON:
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
             break;
           default:
             break;
@@ -78,7 +80,7 @@ const useMenuActions = (
         saveState();
       }
     },
-    [canvas, color, size, saveState, setIsDrawingMode]
+    [canvas, color, size, saveState, setCanvasMode]
   );
 
   return performAction;

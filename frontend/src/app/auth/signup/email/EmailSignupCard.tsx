@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
+import ErrorList from "@/components/ErrorList/ErrorList";
+import React from "react";
 
 const EmailSignupCard: React.FC = () => {
   const { email, password, error, loading, setEmail, setPassword, signup } = useHandleAuth();
@@ -35,13 +37,7 @@ const EmailSignupCard: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && (
-              <ol className="list-disc text-sm text-red-500">
-                {error.map((errMsg, index) => (
-                  <li key={index}>{errMsg}</li>
-                ))}
-              </ol>
-            )}
+            {error && <ErrorList error={error} />}
             <Button type="submit" disabled={loading}>
               <span className="flex items-center px-4 py-2">{loading ? "Creating account..." : "Create account"}</span>
             </Button>

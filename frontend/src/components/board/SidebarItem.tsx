@@ -1,11 +1,12 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
 import { MenuAction } from "@/enums/MenuActions";
+import { CanvasMode } from "@/enums/CanvasMode";
 
 interface SidebarItemProps {
   item: MenuItem;
   activeItem: string | null;
-  isDrawingMode: boolean;
+  canvasMode: CanvasMode;
   color: string;
   size: number;
   handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,10 +14,10 @@ interface SidebarItemProps {
   handleClick: (name: string, action?: () => void) => void;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({
+const BoardSidebarItem: React.FC<SidebarItemProps> = ({
   item,
   activeItem,
-  isDrawingMode,
+  canvasMode,
   color,
   size,
   handleColorChange,
@@ -29,8 +30,9 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       <button
         className={`flex cursor-pointer items-center rounded p-2 text-left hover:bg-muted hover:text-primary ${
           activeItem === item.name ||
-          (item.name === MenuAction.SelectionMode && !isDrawingMode) ||
-          (item.name === MenuAction.DrawingMode && isDrawingMode)
+          (item.name === MenuAction.SelectionMode && canvasMode === CanvasMode.SELECT) ||
+          (item.name === MenuAction.DrawingMode && canvasMode === CanvasMode.DRAW) ||
+          (item.name === MenuAction.EraserMode && canvasMode === CanvasMode.ERASE)
             ? "bg-muted text-primary"
             : "bg-background text-muted-foreground"
         }`}
@@ -70,4 +72,4 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   );
 };
 
-export default SidebarItem;
+export default BoardSidebarItem;

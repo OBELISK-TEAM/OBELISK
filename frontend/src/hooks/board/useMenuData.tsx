@@ -1,4 +1,4 @@
-import useDrawingMode from "@/hooks/board/useDrawingMode";
+import useCanvasMode from "@/hooks/board/useCanvasMode";
 import useColorAndSize from "@/hooks/board/useColorAndSize";
 import useUndoRedo from "@/hooks/board/useUndoRedo";
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventHandlers";
@@ -8,30 +8,31 @@ import { exportToPDF, handleSave } from "@/lib/fabricCanvasUtils";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
 import { fabric } from "fabric";
 import {
-  Pencil,
-  MousePointer,
-  Square,
-  Save,
-  Upload,
-  Trash,
-  Text,
-  Group,
   Circle,
-  Link as UrlIcon,
-  ImageIcon,
-  Palette as Color,
-  Scale3D as Size,
-  Redo,
-  Minus,
-  Undo,
   EraserIcon,
+  Group,
+  ImageIcon,
+  Link as UrlIcon,
+  Minus,
+  MousePointer,
+  Palette as Color,
+  Pencil,
+  Redo,
+  Save,
+  Scale3D as Size,
+  Square,
+  Text,
+  Trash,
+  Undo,
+  Upload,
 } from "lucide-react";
 import useKeydownListener from "./useKeydownListener";
 import { MenuAction } from "@/enums/MenuActions";
 import { PencilBrush } from "fabric/fabric-impl";
+import { CanvasMode } from "@/enums/CanvasMode";
 
 const useMenuData = (canvas: fabric.Canvas | null) => {
-  const { isDrawingMode, setIsDrawingMode } = useDrawingMode(canvas);
+  const { canvasMode, setCanvasMode } = useCanvasMode(canvas);
   const { color, size, setColor, setSize } = useColorAndSize(canvas);
   const { saveState, undo, redo } = useUndoRedo(canvas);
   useCanvasEventHandlers(canvas, saveState);
@@ -39,7 +40,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     canvas,
     saveState
   );
-  const performAction = useMenuActions(canvas, color, size, saveState, setIsDrawingMode);
+  const performAction = useMenuActions(canvas, color, size, saveState, setCanvasMode);
   useKeydownListener(canvas, performAction, undo, redo);
 
   const menuList: MenuGroup[] = [
@@ -48,7 +49,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
       items: [
         {
           action: () => {
-            setIsDrawingMode(false);
+            setCanvasMode(CanvasMode.SELECT);
           },
           text: "Selection Mode",
           icon: <MousePointer />,
@@ -67,7 +68,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
             canvas.freeDrawingBrush = pencilBrush;
 
-            setIsDrawingMode(true);
+            setCanvasMode(CanvasMode.DRAW);
           },
           text: "Drawing Mode",
           icon: <Pencil />,
@@ -87,7 +88,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
             canvas.freeDrawingBrush = eraserBrush;
 
-            setIsDrawingMode(true);
+            setCanvasMode(CanvasMode.ERASE);
           },
           text: "Eraser Mode",
           icon: <EraserIcon />,
@@ -228,7 +229,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     handleLoadImagesFromJson,
     color,
     size,
-    isDrawingMode,
+    canvasMode,
     setColor,
     setSize,
   };

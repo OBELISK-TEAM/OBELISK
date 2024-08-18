@@ -13,7 +13,12 @@ interface ToolBarProps {
   handleAddImageByUrl: (url: string) => void;
 }
 
-const ToolBar: React.FC<ToolBarProps> = ({ selectedObjectStyles, onStyleChange, activeItem, handleAddImageByUrl }) => {
+const BoardToolBar: React.FC<ToolBarProps> = ({
+  selectedObjectStyles,
+  onStyleChange,
+  activeItem,
+  handleAddImageByUrl,
+}) => {
   const urlRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -188,4 +193,4 @@ const ToolBar: React.FC<ToolBarProps> = ({ selectedObjectStyles, onStyleChange, 
   );
 };
 
-export default ToolBar;
+export default BoardToolBar;
