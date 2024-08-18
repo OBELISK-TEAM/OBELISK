@@ -6,6 +6,7 @@ import useFileHandling from "@/hooks/board/useFileHandling";
 import useMenuActions from "@/hooks/board/useMenuActions";
 import { exportToPDF, handleSave } from "@/lib/fabricCanvasUtils";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
+import { fabric } from "fabric";
 import {
   Pencil,
   MousePointer,
@@ -23,9 +24,12 @@ import {
   Redo,
   Minus,
   Undo,
+  EraserIcon,
 } from "lucide-react";
 import useKeydownListener from "./useKeydownListener";
-import {MenuAction} from "@/enums/MenuActions";
+import { MenuAction } from "@/enums/MenuActions";
+import { PencilBrush } from "fabric/fabric-impl";
+
 const useMenuData = (canvas: fabric.Canvas | null) => {
   const { isDrawingMode, setIsDrawingMode } = useDrawingMode(canvas);
   const { color, size, setColor, setSize } = useColorAndSize(canvas);
@@ -45,24 +49,62 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     setIsDrawingMode
   );
   useKeydownListener(canvas, performAction, undo, redo);
+
   const menuList: MenuGroup[] = [
     {
       group: "Drawing Tools",
       items: [
         {
-          action: () => setIsDrawingMode(!isDrawingMode),
-          text: isDrawingMode ? "Turn Selection Mode" : "Turn Drawing Mode",
-          icon: isDrawingMode ? <MousePointer /> : <Pencil />,
+          action: () => {
+            setIsDrawingMode(false);
+          },
+          text: "Selection Mode",
+          icon: <MousePointer />,
+          name: MenuAction.SelectionMode,
+        },
+        {
+          action: () => {
+            if (!canvas) return;
+
+            const pencilBrush = new fabric.PencilBrush(canvas);
+            pencilBrush.color = color;
+            pencilBrush.width = size;
+            pencilBrush.decimate = 4;
+
+            canvas.freeDrawingBrush = pencilBrush;
+
+            setIsDrawingMode(true);
+          },
+          text: "Drawing Mode",
+          icon: <Pencil />,
           name: MenuAction.DrawingMode,
         },
         {
-          action: () => {},
+          action: () => {
+            if (!canvas) return;
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const eraserBrush: PencilBrush = new fabric.EraserBrush(canvas);
+            eraserBrush.width = size;
+            eraserBrush.decimate = 4;
+            
+            canvas.freeDrawingBrush = eraserBrush;
+
+            setIsDrawingMode(true);
+          },
+          text: "Eraser Mode",
+          icon: <EraserIcon />,
+          name: MenuAction.EraserMode,
+        },
+        {
+          action: () => { },
           text: "Change Color",
           icon: <Color />,
           name: MenuAction.ChangeColor,
         },
         {
-          action: () => {},
+          action: () => { },
           text: "Change Size",
           icon: <Size />,
           name: MenuAction.ChangeSize,
@@ -191,6 +233,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     handleLoadImagesFromJson,
     color,
     size,
+    isDrawingMode,
     setColor,
     setSize,
   };

@@ -1,9 +1,11 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
+import { MenuAction } from "@/enums/MenuActions";
 
 interface SidebarItemProps {
   item: MenuItem;
   activeItem: string | null;
+  isDrawingMode: boolean,
   color: string;
   size: number;
   handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,6 +16,7 @@ interface SidebarItemProps {
 const SidebarItem: React.FC<SidebarItemProps> = ({
   item,
   activeItem,
+  isDrawingMode,
   color,
   size,
   handleColorChange,
@@ -25,7 +28,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     <div>
       <button
         className={`flex items-center text-left text-gray-600 hover:bg-gray-200 p-2 rounded cursor-pointer ${
-          activeItem === item.name ? "bg-gray-200 text-black" : ""
+          activeItem === item.name ||
+          (item.name === MenuAction.SelectionMode && !isDrawingMode) ||
+          (item.name === MenuAction.DrawingMode && isDrawingMode)
+            ? "bg-gray-200 text-black"
+            : ""
         }`}
         onClick={() =>
           !(item.name === "change-color" || item.name === "change-size") &&

@@ -11,6 +11,7 @@ interface BoardSidebarProps {
   fromRight?: boolean;
   onActiveItemChange?: (activeItem: string | null) => void;
   activeItem: string | null;
+  isDrawingMode: boolean;
   color: string;
   size: number;
   handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -24,6 +25,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
   fromRight = false,
   onActiveItemChange,
   activeItem,
+  isDrawingMode,
   color,
   size,
   handleColorChange,
@@ -56,6 +58,7 @@ const BoardSidebar: FC<BoardSidebarProps> = ({
               <SidebarItem
                 item={item}
                 activeItem={activeItem}
+                isDrawingMode={isDrawingMode}
                 color={color}
                 size={size}
                 handleColorChange={handleColorChange}

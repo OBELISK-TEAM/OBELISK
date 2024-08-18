@@ -7,13 +7,14 @@ import HorizontalMenu from "@/components/board/HorizontalMenu";
 import useCanvas from "@/hooks/board/useCanvas";
 import useMenuData from "@/hooks/board/useMenuData";
 import useFileClick from "@/hooks/board/useFileClick";
+import { MenuAction } from "@/enums/MenuActions";
 
 const Board: React.FC = () => {
   const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } =
     useCanvas();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [activeItem, setActiveItem] = useState<string | null>(MenuAction.SelectionMode);
 
   useFileClick(activeItem, setActiveItem, fileInputRef, fileJSONInputRef);
 
@@ -24,6 +25,7 @@ const Board: React.FC = () => {
     handleLoadImagesFromJson,
     color,
     size,
+    isDrawingMode,
     setColor,
     setSize,
   } = useMenuData(canvas);
@@ -50,6 +52,7 @@ const Board: React.FC = () => {
           menuGroup={addGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
+          isDrawingMode={isDrawingMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
@@ -60,6 +63,7 @@ const Board: React.FC = () => {
           menuGroup={editGroup}
           onIconClick={handleIconClick}
           activeItem={activeItem}
+          isDrawingMode={isDrawingMode}
           onActiveItemChange={setActiveItem}
           color={color}
           size={size}
