@@ -1,7 +1,5 @@
 import { FC } from "react";
 import { MenuGroup , MenuItem } from "../../interfaces/canva-interfaces";
-
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   HoverCard,
@@ -9,6 +7,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
+import { AppLogo } from "../AppLogo";
 
 interface HorizontalMenuProps {
   menuItem: MenuGroup;
@@ -45,7 +44,7 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
     >
       <div className="flex">
         <div className="border-r flex items-center justify-center h-[64px] h-min-[64px] w-[3.5em]">
-          <Image src="/best-logo-lite.png" alt="Logo" width={20} height={20} />
+          <AppLogo width={20} height={20} />
         </div>
         <div className="flex-shrink-0  flex items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>

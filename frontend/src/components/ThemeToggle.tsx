@@ -10,9 +10,7 @@ const ThemeToggle: FC = () => {
 	useEffect(() => setMounted(true), [])
 
 	if (!mounted) {
-		return (
-			<div className='w-7 h-7'></div>
-		);
+		return <div className='w-6 h-6 p-5 border' /> // a placeholder so that so that the toggle doesn't show up suddenly
 	}
 
 	if (resolvedTheme === "dark") {
