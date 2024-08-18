@@ -13,10 +13,7 @@ interface AuthContextType {
   loginGoogleUser: (userTempId: string) => Promise<void>;
 }
 
-const authMessageReducer = (
-  state: AuthMessage | null,
-  action: AuthActionType,
-): AuthMessage | null => {
+const authMessageReducer = (state: AuthMessage | null, action: AuthActionType): AuthMessage | null => {
   switch (action) {
     case AuthActionType.LOGIN_SUCCESS:
       return { type: AuthMessageType.SUCCESS, message: "Login successful" };
@@ -43,9 +40,7 @@ const authMessageReducer = (
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [authMessage, dispatch] = useReducer(authMessageReducer, null);
   const router = useRouter();
 
@@ -57,10 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     dispatch(AuthActionType.AUTH_CLEAR);
   };
 
-  const login = async (
-    credentials: { email: string; password: string },
-    successRedirect?: string,
-  ) => {
+  const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -75,10 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const signup = async (
-    credentials: { email: string; password: string },
-    successRedirect?: string,
-  ) => {
+  const signup = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,10 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const loginGoogleUser = async (
-    userTempId: string,
-    successRedirect?: string,
-  ) => {
+  const loginGoogleUser = async (userTempId: string, successRedirect?: string) => {
     const response = await fetch("/api/auth/google", {
       method: "POST",
       headers: {

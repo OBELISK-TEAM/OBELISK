@@ -4,7 +4,9 @@ import { jwtDecode } from "jwt-decode";
 function isAuthenticated(request: NextRequest): boolean {
   const token = request.cookies.get("accessToken")?.value;
 
-  if (!token) return false;
+  if (!token) {
+    return false;
+  }
 
   try {
     const decoded: any = jwtDecode(token);
@@ -21,10 +23,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/user-boards", request.url));
     }
   } else {
-    if (
-      (pathname.startsWith("/user-boards") || pathname.startsWith("/board")) &&
-      !pathname.startsWith("/auth")
-    ) {
+    if ((pathname.startsWith("/user-boards") || pathname.startsWith("/board")) && !pathname.startsWith("/auth")) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
   }

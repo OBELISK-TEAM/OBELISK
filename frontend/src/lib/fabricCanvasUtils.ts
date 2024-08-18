@@ -26,9 +26,7 @@ interface ImageData {
   angle: number | undefined;
 }
 
-export const initializeCanvas = (
-  canvasRef: CanvasRef,
-): fabric.Canvas | null => {
+export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
   if (canvasRef.current) {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       selection: true,
@@ -42,10 +40,7 @@ export const initializeCanvas = (
   return null;
 };
 
-export const toggleDrawingMode = (
-  canvas: fabric.Canvas | null,
-  isDrawingMode: boolean,
-): void => {
+export const toggleDrawingMode = (canvas: fabric.Canvas | null, isDrawingMode: boolean): void => {
   if (canvas) {
     canvas.isDrawingMode = isDrawingMode;
   }
@@ -58,9 +53,7 @@ export const handleSave = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const handleLoadFromJSON = async (
-  canvas: fabric.Canvas | null,
-): Promise<void> => {
+export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<void> => {
   const response = await fetch("/saved.json");
   const jsonData = await response.json();
   if (canvas) {
@@ -72,13 +65,9 @@ export const handleAddText = (
   canvas: fabric.Canvas | null,
   posX: number,
   posY: number,
-  options?: { text?: string; color?: string; fontSize?: number },
+  options?: { text?: string; color?: string; fontSize?: number }
 ): void => {
-  const {
-    text = "Type here...",
-    color = "#333",
-    fontSize = 20,
-  } = options || {};
+  const { text = "Type here...", color = "#333", fontSize = 20 } = options || {};
 
   const newText = new fabric.IText(text, {
     left: posX,
@@ -111,9 +100,7 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
     const activeObjects = canvas.getActiveObjects();
     if (activeObjects.length) {
-      const clonedObjects = activeObjects.map((obj) =>
-        fabric.util.object.clone(obj),
-      );
+      const clonedObjects = activeObjects.map((obj) => fabric.util.object.clone(obj));
 
       const group = new fabric.Group(clonedObjects, {
         originX: "center",
@@ -128,10 +115,7 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const addLine = (
-  canvas: fabric.Canvas | null,
-  options?: { color?: string; strokeWidth?: number },
-): void => {
+export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string; strokeWidth?: number }): void => {
   const { color = "black", strokeWidth = 5 } = options || {};
   const line = new fabric.Line([50, 100, 200, 200], {
     stroke: color,
@@ -144,7 +128,7 @@ export const addLine = (
 
 export const addRectangle = (
   canvas: fabric.Canvas | null,
-  options?: { fillColor?: string; width?: number; height?: number },
+  options?: { fillColor?: string; width?: number; height?: number }
 ): void => {
   const { fillColor = "red", width = 200, height = 100 } = options || {};
   const rect = new fabric.Rect({
@@ -160,10 +144,7 @@ export const addRectangle = (
   canvas?.setActiveObject(rect);
 };
 
-export const addCircle = (
-  canvas: fabric.Canvas | null,
-  options?: { fillColor?: string; radius?: number },
-): void => {
+export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: string; radius?: number }): void => {
   const { fillColor = "green", radius = 50 } = options || {};
   const circle = new fabric.Circle({
     radius: radius,
@@ -195,10 +176,7 @@ const removeImagesFromCanvas = (canvas: fabric.Canvas | null) => {
   return imagesData;
 };
 
-const restoreImagesToCanvas = (
-  canvas: fabric.Canvas | null,
-  imagesData: ImageData[],
-) => {
+const restoreImagesToCanvas = (canvas: fabric.Canvas | null, imagesData: ImageData[]) => {
   imagesData.forEach((imgData: ImageData) => {
     fabric.Image.fromURL(imgData.src, (img) => {
       img.set({
@@ -214,10 +192,10 @@ const restoreImagesToCanvas = (
   canvas?.renderAll();
 };
 
-export const exportToPDF = async (
-  canvas: fabric.Canvas | null,
-): Promise<void> => {
-  if (!canvas) return;
+export const exportToPDF = async (canvas: fabric.Canvas | null): Promise<void> => {
+  if (!canvas) {
+    return;
+  }
 
   const imagesData = removeImagesFromCanvas(canvas);
 
@@ -241,7 +219,7 @@ export const exportToPDF = async (
 export const addImage = (
   canvas: fabric.Canvas | null,
   imageUrl: string,
-  options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
+  options?: { scaleX?: number; scaleY?: number; left?: number; top?: number }
 ): void => {
   const { scaleX = 1, scaleY = 1, left = 0, top = 0 } = options || {};
   fabric.Image.fromURL(imageUrl, (img) => {
@@ -265,7 +243,7 @@ export const fitImageByShrinking = (
   imageSrc: string,
   maxWidth: number,
   maxHeight: number,
-  callback: (resizedImage: string) => void,
+  callback: (resizedImage: string) => void
 ) => {
   const img = new Image();
   img.src = imageSrc;
@@ -339,10 +317,7 @@ export const saveImagesToLocalFile = (canvas: fabric.Canvas | null) => {
   }
 };
 
-export const loadImagesFromJSON = (
-  canvas: fabric.Canvas | null,
-  json: string,
-) => {
+export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
     const images: CanvasImage[] = JSON.parse(json);
 
@@ -363,9 +338,7 @@ export const loadImagesFromJSON = (
   }
 };
 
-export const getSelectedObjectStyles = (
-  canvas: fabric.Canvas | null,
-): object | null => {
+export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
   if (canvas) {
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
@@ -375,11 +348,10 @@ export const getSelectedObjectStyles = (
   return null;
 };
 
-export const setSelectedObjectStyles = (
-  canvas: fabric.Canvas | null,
-  styles: object,
-): void => {
-  if (!canvas) return;
+export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
+  if (!canvas) {
+    return;
+  }
   const activeObjects = canvas.getActiveObjects();
   activeObjects.forEach((obj) => {
     obj.set(styles);
@@ -391,9 +363,9 @@ export const setSelectedObjectStyles = (
  * This function scales the passed `fabricjs` object.
  * It reads the values of `scaleX` and `scaleY` properties and applies them to the `width` and `height` properties
  * by simply multiplying them accordingly. As of result the `scaleX` and `scaleY` properties are set to 1.
- * 
+ *
  * This function supports partialy erased objects (takes into account the `eraser` property).
- * @param obj 
+ * @param obj
  */
 export const updateDimensions = (obj: any): void => {
   if (!obj) {
@@ -405,9 +377,7 @@ export const updateDimensions = (obj: any): void => {
 
     const scaledWidth = Math.round(obj.width * initialObjScaleX);
     const scaledHeight = Math.round(obj.height * initialObjScaleY);
-    const scaledRadius = obj.radius
-      ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY))
-      : undefined;
+    const scaledRadius = obj.radius ? Math.round(obj.radius * Math.max(obj.scaleX, obj.scaleY)) : undefined;
 
     // scale the object itself
     obj.set({

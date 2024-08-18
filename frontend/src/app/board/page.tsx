@@ -10,8 +10,7 @@ import useFileClick from "@/hooks/board/useFileClick";
 import { MenuAction } from "@/enums/MenuActions";
 
 const Board: React.FC = () => {
-  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } =
-    useCanvas();
+  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(MenuAction.SelectionMode);
@@ -82,23 +81,19 @@ const Board: React.FC = () => {
             activeItem={activeItem}
             handleAddImageByUrl={handleAddImageByUrl}
           />
-          <div className="flex bg-white w-fit rounded-lg mt-4"> {/* color of the board itself should not be dependent on the chosen theme; it's always white */}
+          <div className="mt-4 flex w-fit rounded-lg bg-white">
+            {" "}
+            {/* color of the board itself should not be dependent on the chosen theme; it's always white */}
             <canvas
               ref={canvasRef}
-              className="border rounded-lg"
+              className="rounded-lg border"
               width={1000}
               height={550}
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
           <BoardPagination />
-          <input
-            type="file"
-            id="file-input1"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
+          <input type="file" id="file-input1" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
           <input
             type="file"
             id="file-input2"

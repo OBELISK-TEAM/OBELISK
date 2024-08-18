@@ -13,30 +13,17 @@ interface ToolBarProps {
   handleAddImageByUrl: (url: string) => void;
 }
 
-const ToolBar: React.FC<ToolBarProps> = ({
-  selectedObjectStyles,
-  onStyleChange,
-  activeItem,
-  handleAddImageByUrl,
-}) => {
+const ToolBar: React.FC<ToolBarProps> = ({ selectedObjectStyles, onStyleChange, activeItem, handleAddImageByUrl }) => {
   const urlRef = useRef<HTMLInputElement>(null);
 
-  const handleChange =
-    (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-      const value =
-        event.target.type === "number"
-          ? parseInt(event.target.value, 10)
-          : event.target.value;
-      if (onStyleChange) {
-        onStyleChange({ [key]: value });
-      }
-    };
+  const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
+    if (onStyleChange) {
+      onStyleChange({ [key]: value });
+    }
+  };
 
-  const ToolbarInput = (
-    styleKey: string,
-    labelText: string,
-    inputType: string = "text"
-  ) => {
+  const ToolbarInput = (styleKey: string, labelText: string, inputType: string = "text") => {
     const isColor = inputType === "color";
     let inputClasses = "w-[5.5em]";
     if (isColor) {
@@ -49,9 +36,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
           type={inputType}
           id={styleKey}
           className={inputClasses}
-          value={
-            selectedObjectStyles ? selectedObjectStyles[styleKey] || "" : ""
-          }
+          value={selectedObjectStyles ? selectedObjectStyles[styleKey] || "" : ""}
           onChange={handleChange(styleKey)}
         />
       </div>
@@ -61,8 +46,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const onBoldClick = () => {
     if (onStyleChange) {
       onStyleChange({
-        fontWeight:
-          selectedObjectStyles?.fontWeight === "bold" ? "normal" : "bold",
+        fontWeight: selectedObjectStyles?.fontWeight === "bold" ? "normal" : "bold",
       });
     }
   };
@@ -70,8 +54,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   const onItalicClick = () => {
     if (onStyleChange) {
       onStyleChange({
-        fontStyle:
-          selectedObjectStyles?.fontStyle === "italic" ? "normal" : "italic",
+        fontStyle: selectedObjectStyles?.fontStyle === "italic" ? "normal" : "italic",
       });
     }
   };
@@ -96,19 +79,15 @@ const ToolBar: React.FC<ToolBarProps> = ({
       <div className="flex items-center space-x-2">
         <StyledLabel htmlFor="image-url">Image URL:</StyledLabel>
         <Input type="text" id="image-url" className="w-64" ref={urlRef} />
-        <Button onClick={handleAddUrlClick}>
-          Add Image
-        </Button>
+        <Button onClick={handleAddUrlClick}>Add Image</Button>
       </div>
     );
   };
 
   const renderTextControls = () => (
     <>
-      {selectedObjectStyles?.fill !== undefined &&
-        ToolbarInput("fill", "Color", "color")}
-      {selectedObjectStyles?.fontSize !== undefined &&
-        ToolbarInput("fontSize", "Font Size", "number")}
+      {selectedObjectStyles?.fill !== undefined && ToolbarInput("fill", "Color", "color")}
+      {selectedObjectStyles?.fontSize !== undefined && ToolbarInput("fontSize", "Font Size", "number")}
       <div className="flex items-center space-x-2">
         <StyledLabel>Font styles</StyledLabel>
         <Toggle
@@ -138,65 +117,50 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
   const renderRectangleControls = () => (
     <>
-      {selectedObjectStyles?.fill !== undefined &&
-        ToolbarInput("fill", "Color", "color")}
+      {selectedObjectStyles?.fill !== undefined && ToolbarInput("fill", "Color", "color")}
 
-      {selectedObjectStyles?.stroke !== undefined &&
-        ToolbarInput("stroke", "Stroke Color", "color")}
+      {selectedObjectStyles?.stroke !== undefined && ToolbarInput("stroke", "Stroke Color", "color")}
 
-      {selectedObjectStyles?.strokeWidth !== undefined &&
-        ToolbarInput("strokeWidth", "Stroke Width", "number")}
-      {selectedObjectStyles?.width !== undefined &&
-        ToolbarInput("width", "Width", "number")}
-      {selectedObjectStyles?.height !== undefined &&
-        ToolbarInput("height", "Height", "number")}
+      {selectedObjectStyles?.strokeWidth !== undefined && ToolbarInput("strokeWidth", "Stroke Width", "number")}
+      {selectedObjectStyles?.width !== undefined && ToolbarInput("width", "Width", "number")}
+      {selectedObjectStyles?.height !== undefined && ToolbarInput("height", "Height", "number")}
 
-      {selectedObjectStyles?.angle !== undefined &&
-        ToolbarInput("angle", "Angle", "number")}
+      {selectedObjectStyles?.angle !== undefined && ToolbarInput("angle", "Angle", "number")}
     </>
   );
 
   const renderCircleControls = () => (
     <>
-      {selectedObjectStyles?.fill !== undefined &&
-        ToolbarInput("fill", "Color", "color")}
+      {selectedObjectStyles?.fill !== undefined && ToolbarInput("fill", "Color", "color")}
 
-      {selectedObjectStyles?.stroke !== undefined &&
-        ToolbarInput("stroke", "Stroke Color", "color")}
+      {selectedObjectStyles?.stroke !== undefined && ToolbarInput("stroke", "Stroke Color", "color")}
 
-      {selectedObjectStyles?.strokeWidth !== undefined &&
-        ToolbarInput("strokeWidth", "Stroke Width", "number")}
-      {selectedObjectStyles?.radius !== undefined &&
-        ToolbarInput("radius", "Radius", "number")}
-      {selectedObjectStyles?.angle !== undefined &&
-        ToolbarInput("angle", "Angle", "number")}
+      {selectedObjectStyles?.strokeWidth !== undefined && ToolbarInput("strokeWidth", "Stroke Width", "number")}
+      {selectedObjectStyles?.radius !== undefined && ToolbarInput("radius", "Radius", "number")}
+      {selectedObjectStyles?.angle !== undefined && ToolbarInput("angle", "Angle", "number")}
     </>
   );
 
   const renderPathControls = () => (
     <>
-      {selectedObjectStyles?.stroke !== undefined &&
-        ToolbarInput("stroke", "Stroke Color", "color")}
-      {selectedObjectStyles?.strokeWidth !== undefined &&
-        ToolbarInput("strokeWidth", "Stroke Width", "number")}
+      {selectedObjectStyles?.stroke !== undefined && ToolbarInput("stroke", "Stroke Color", "color")}
+      {selectedObjectStyles?.strokeWidth !== undefined && ToolbarInput("strokeWidth", "Stroke Width", "number")}
     </>
   );
 
   const renderLineControls = () => (
     <>
-      {selectedObjectStyles?.stroke !== undefined &&
-        ToolbarInput("stroke", "Stroke Color", "color")}
-        {selectedObjectStyles?.width !== undefined &&
-        ToolbarInput("width", "Width", "number")}
-      {selectedObjectStyles?.height !== undefined &&
-        ToolbarInput("height", "Height", "number")}
-      {selectedObjectStyles?.angle !== undefined &&
-          ToolbarInput("angle", "Angle", "number")}
+      {selectedObjectStyles?.stroke !== undefined && ToolbarInput("stroke", "Stroke Color", "color")}
+      {selectedObjectStyles?.width !== undefined && ToolbarInput("width", "Width", "number")}
+      {selectedObjectStyles?.height !== undefined && ToolbarInput("height", "Height", "number")}
+      {selectedObjectStyles?.angle !== undefined && ToolbarInput("angle", "Angle", "number")}
     </>
   );
 
   const renderControls = () => {
-    if (!selectedObjectStyles) return null;
+    if (!selectedObjectStyles) {
+      return null;
+    }
     switch (selectedObjectStyles.type) {
       case "i-text":
         return renderTextControls();
@@ -214,8 +178,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
   };
 
   return (
-    <div className="flex items-center bg-background text-muted-foreground w-full justify-between h-[50px]">
-      <div className="flex items-center p-2 space-x-4">
+    <div className="flex h-[50px] w-full items-center justify-between bg-background text-muted-foreground">
+      <div className="flex items-center space-x-4 p-2">
         {activeItem === "add-image-url" && renderUrlControl()}
 
         {!(activeItem === "add-image-url") && renderControls()}

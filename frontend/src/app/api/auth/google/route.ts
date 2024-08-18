@@ -15,16 +15,13 @@ export async function POST(req: NextRequest) {
     //   Authorization: `Bearer ${state}`,
     // });
 
-    const response = await fetch(
-      `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state}`,
-        },
+    const response = await fetch(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state}`,
       },
-    );
+    });
 
     if (response.ok) {
       const { accessToken } = await response.json();
@@ -39,9 +36,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     console.error("Promise rejected", error);
-    return NextResponse.json(
-      { message: "An unexpected error occurred" },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: "An unexpected error occurred" }, { status: 500 });
   }
 }

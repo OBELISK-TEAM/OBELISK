@@ -10,7 +10,7 @@ const ErrorList: React.FC<ErrorListProps> = ({ error }) => {
   }
 
   return (
-    <ol className="list-disc text-red-500 text-sm">
+    <ol className="list-disc text-sm text-red-500">
       {error.map((errMsg, index) => (
         <li key={index}>{errMsg}</li>
       ))}

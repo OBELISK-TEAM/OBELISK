@@ -15,16 +15,13 @@ export async function POST(req: NextRequest) {
     // });
     //console.log("body", JSON.stringify({ email, password }));
 
-    const response = await fetch(
-      `http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+    const response = await fetch(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ email, password }),
+    });
 
     if (response.ok) {
       const { accessToken } = await response.json();
@@ -40,9 +37,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     console.error("Promise rejected", error);
-    return NextResponse.json(
-      { message: "An unexpected error occurred" },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: "An unexpected error occurred" }, { status: 500 });
   }
 }

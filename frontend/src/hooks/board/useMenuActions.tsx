@@ -9,7 +9,7 @@ import {
   handleRemoveSelected,
   handleLoadFromJSON,
 } from "@/lib/fabricCanvasUtils";
-import {CanvasActions } from "@/enums/CanvasActions";
+import { CanvasActions } from "@/enums/CanvasActions";
 const useMenuActions = (
   canvas: fabric.Canvas | null,
   color: string,

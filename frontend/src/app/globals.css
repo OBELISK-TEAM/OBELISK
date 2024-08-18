@@ -1,82 +1,81 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%; /* base/white */
-      --foreground: 229 84% 5%; /* slate/950 */
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* base/white */
+    --foreground: 229 84% 5%; /* slate/950 */
 
-      --card: 0 0% 100%; /* base/white */
-      --card-foreground: 229 84% 5%; /* slate/950 */
+    --card: 0 0% 100%; /* base/white */
+    --card-foreground: 229 84% 5%; /* slate/950 */
 
-      --popover: 0 0% 100%; /* base/white */
-      --popover-foreground: 229 84% 5%; /* slate/950 */
+    --popover: 0 0% 100%; /* base/white */
+    --popover-foreground: 229 84% 5%; /* slate/950 */
 
-      --primary: 222 47% 11%; /* slate/900 */
-      --primary-foreground: 210 40% 98%; /* slate/50 */
+    --primary: 222 47% 11%; /* slate/900 */
+    --primary-foreground: 210 40% 98%; /* slate/50 */
 
-      --secondary: 210 40% 96%; /* slate/100 */
-      --secondary-foreground: 222 47% 11%; /* slate/900 */
+    --secondary: 210 40% 96%; /* slate/100 */
+    --secondary-foreground: 222 47% 11%; /* slate/900 */
 
-      --muted: 210 40% 96%; /* slate/100 */
-      --muted-foreground: 215 16% 47%; /* slate/500 */
+    --muted: 210 40% 96%; /* slate/100 */
+    --muted-foreground: 215 16% 47%; /* slate/500 */
 
-      --accent: 210 40% 96%; /* slate/100 */
-      --accent-foreground: 222 47% 11%; /* slate/900 */
+    --accent: 210 40% 96%; /* slate/100 */
+    --accent-foreground: 222 47% 11%; /* slate/900 */
 
-      --destructive: 0 84% 60%; /* red/500 */
-      --destructive-foreground: 210 40% 98%; /* slate/50 */
+    --destructive: 0 84% 60%; /* red/500 */
+    --destructive-foreground: 210 40% 98%; /* slate/50 */
 
-      --border: 214 32% 91%; /* slate/200 */
-      --input: 214 32% 91%; /* slate/200 */
-      --ring: 215 16% 47%; /* slate/500 */
+    --border: 214 32% 91%; /* slate/200 */
+    --input: 214 32% 91%; /* slate/200 */
+    --ring: 215 16% 47%; /* slate/500 */
 
-      --radius: 0.5rem; 
-    }
-
-    .dark {
-      --background: 229 84% 5%; /* slate/950 */
-      --foreground: 210 40% 98%; /* slate/50 */
-
-      --card: 229 84% 5%; /* slate/950 */
-      --card-foreground: 210 40% 98%; /* slate/50 */
-
-      --popover: 229 84% 5%; /* slate/950 */
-      --popover-foreground: 210 40% 98%; /* slate/50 */
-
-      --primary: 210 40% 98%; /* slate/50 */
-      --primary-foreground: 222 47% 11%; /* slate/900 */
-
-      --secondary: 217 33% 17%; /* slate/800 */
-      --secondary-foreground: 210 40% 98%; /* slate/50 */
-
-      --muted: 217 33% 17%; /* slate/800 */
-      --muted-foreground: 215 20% 65%; /* slate/400 */
-
-      --accent: 217 33% 17%; /* slate/800 */
-      --accent-foreground: 210 40% 98%; /* slate/50 */
-
-      --destructive: 0 63% 31%; /* red/900 */
-      --destructive-foreground: 210 40% 98%; /* slate/50 */
-
-      --border: 215 25% 27%; /* slate/700 */
-      --input: 215 25% 27%; /* slate/700 */
-      --ring: 215 20% 65%; /* slate/400 */
-    }
+    --radius: 0.5rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .dark {
+    --background: 229 84% 5%; /* slate/950 */
+    --foreground: 210 40% 98%; /* slate/50 */
+
+    --card: 229 84% 5%; /* slate/950 */
+    --card-foreground: 210 40% 98%; /* slate/50 */
+
+    --popover: 229 84% 5%; /* slate/950 */
+    --popover-foreground: 210 40% 98%; /* slate/50 */
+
+    --primary: 210 40% 98%; /* slate/50 */
+    --primary-foreground: 222 47% 11%; /* slate/900 */
+
+    --secondary: 217 33% 17%; /* slate/800 */
+    --secondary-foreground: 210 40% 98%; /* slate/50 */
+
+    --muted: 217 33% 17%; /* slate/800 */
+    --muted-foreground: 215 20% 65%; /* slate/400 */
+
+    --accent: 217 33% 17%; /* slate/800 */
+    --accent-foreground: 210 40% 98%; /* slate/50 */
+
+    --destructive: 0 63% 31%; /* red/900 */
+    --destructive-foreground: 210 40% 98%; /* slate/50 */
+
+    --border: 215 25% 27%; /* slate/700 */
+    --input: 215 25% 27%; /* slate/700 */
+    --ring: 215 20% 65%; /* slate/400 */
   }
+}
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
-  /* Custom scrollbar styles */
+/* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -95,17 +94,16 @@
   border-radius: 4px;
 }
 
-
-input[type=color]::-webkit-color-swatch {
+input[type="color"]::-webkit-color-swatch {
   border: none;
   border-radius: 50%;
   padding: 0;
 }
 
-input[type=color]::-webkit-color-swatch-wrapper {
-    border: none;
-    border-radius: 50%;
-    padding: 0;
+input[type="color"]::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 50%;
+  padding: 0;
 }
 
 @keyframes slideDown {

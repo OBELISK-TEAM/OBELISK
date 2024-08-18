@@ -1,6 +1,4 @@
-
 /* IMPORTANT: Please retain this file. It serves as a critical fallback in case of future issues or bugs. */
-
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
@@ -56,13 +54,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     (canvas: fabric.Canvas | null) => {
       if (canvas) {
         const state = canvas.toJSON();
-        if (
-          undoStack.current.length === 0 ||
-          !areStatesEqual(
-            state,
-            undoStack.current[undoStack.current.length - 1]
-          )
-        ) {
+        if (undoStack.current.length === 0 || !areStatesEqual(state, undoStack.current[undoStack.current.length - 1])) {
           undoStack.current.push(state);
           if (undoStack.current.length > 50) {
             undoStack.current.shift(); // Limit the stack size to 50 states
@@ -132,8 +124,12 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           const delta = evt.deltaY;
           let zoom = canvas.getZoom();
           zoom *= 0.999 ** delta;
-          if (zoom > 20) zoom = 20;
-          if (zoom < 0.01) zoom = 0.01;
+          if (zoom > 20) {
+            zoom = 20;
+          }
+          if (zoom < 0.01) {
+            zoom = 0.01;
+          }
           canvas.zoomToPoint({ x: evt.offsetX, y: evt.offsetY }, zoom);
           evt.preventDefault();
           evt.stopPropagation();
@@ -154,73 +150,76 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     }
   }, [isDrawingMode, color, size, canvas, saveState]);
 
-  
-  const handleLoadImagesFromJson = useCallback((
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file && canvas) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result;
-        if (result) {
-          loadImagesFromJSON(canvas, result as string);
-          saveState(canvas);
-        }
-      };
-      reader.readAsText(file);
-    }
-  },[canvas, saveState]);
-
-  const performAction = useCallback((name: string) => {
-    const properties = {
-      color,
-      strokeWidth: size,
-      fillColor: color,
-      fontSize: defaultFontSize,
-      width: size * 10,
-      height: size * 5,
-      radius: size * 5,
-    };
-    if (name) {
-      switch (name) {
-        case "add-line":
-          addLine(canvas, properties);
-          setIsDrawingMode(false);
-          break;
-        case "add-rectangle":
-          addRectangle(canvas, properties);
-          setIsDrawingMode(false);
-          break;
-        case "add-circle":
-          addCircle(canvas, properties);
-          setIsDrawingMode(false);
-          break;
-        case "add-text":
-          handleAddText(canvas, 50, 50, properties);
-          setIsDrawingMode(false);
-          break;
-        case "group-selected":
-          handleGroupSelected(canvas);
-          break;
-        case "remove-selected":
-          handleRemoveSelected(canvas);
-          break;
-        case "clear-canvas":
-          canvas?.clear();
-          break;
-        case "load-canvas":
-          handleLoadFromJSON(canvas);
-          break;
-        case "load-images-json":
-          handleLoadImagesFromJson; // eslint-disable-line no-unused-expressions
-          break;
-        default:
-          break;
+  const handleLoadImagesFromJson = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file && canvas) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result;
+          if (result) {
+            loadImagesFromJSON(canvas, result as string);
+            saveState(canvas);
+          }
+        };
+        reader.readAsText(file);
       }
-      saveState(canvas);
-    }
-  },[canvas, color, size, saveState, handleLoadImagesFromJson]);
+    },
+    [canvas, saveState]
+  );
+
+  const performAction = useCallback(
+    (name: string) => {
+      const properties = {
+        color,
+        strokeWidth: size,
+        fillColor: color,
+        fontSize: defaultFontSize,
+        width: size * 10,
+        height: size * 5,
+        radius: size * 5,
+      };
+      if (name) {
+        switch (name) {
+          case "add-line":
+            addLine(canvas, properties);
+            setIsDrawingMode(false);
+            break;
+          case "add-rectangle":
+            addRectangle(canvas, properties);
+            setIsDrawingMode(false);
+            break;
+          case "add-circle":
+            addCircle(canvas, properties);
+            setIsDrawingMode(false);
+            break;
+          case "add-text":
+            handleAddText(canvas, 50, 50, properties);
+            setIsDrawingMode(false);
+            break;
+          case "group-selected":
+            handleGroupSelected(canvas);
+            break;
+          case "remove-selected":
+            handleRemoveSelected(canvas);
+            break;
+          case "clear-canvas":
+            canvas?.clear();
+            break;
+          case "load-canvas":
+            handleLoadFromJSON(canvas);
+            break;
+          case "load-images-json":
+            handleLoadImagesFromJson; // eslint-disable-line no-unused-expressions
+            break;
+          default:
+            break;
+        }
+        saveState(canvas);
+      }
+    },
+    [canvas, color, size, saveState, handleLoadImagesFromJson]
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -267,8 +266,6 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     }
   };
 
-  
-
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColor(event.target.value);
   };
@@ -288,8 +285,6 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     saveImagesToLocalFile(canvas);
     saveState(canvas);
   };
-
-  
 
   const menuList: MenuGroup[] = [
     {
@@ -342,7 +337,6 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     {
       group: "Object Manipulation",
       items: [
-
         {
           action: () => performAction("clear-canvas"),
           text: "Clear Canvas",
