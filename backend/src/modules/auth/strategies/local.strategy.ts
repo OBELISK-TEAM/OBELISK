@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { SafeUserDoc } from '../../../shared/interfaces/SafeUserDoc';
 
@@ -17,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       email,
       password,
     );
-    if (!safeUser) throw new HttpException('Invalid credentials', 401);
+    if (!safeUser) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     return safeUser;
   }
 }

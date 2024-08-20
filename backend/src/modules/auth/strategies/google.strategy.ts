@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { GoogleUser } from '../../../shared/interfaces/GoogleUser';
@@ -38,7 +38,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const email = profile.emails?.[0].value;
     const picture = profile.photos?.[0].value;
     if (!email) {
-      throw new HttpException('No email provided', 400);
+      throw new HttpException('No email provided', HttpStatus.BAD_REQUEST);
     }
     return {
       email,

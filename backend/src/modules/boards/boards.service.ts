@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
@@ -32,7 +32,7 @@ export class BoardsService {
 
   async findOneById(boardId: string): Promise<BoardDocument> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard) throw new HttpException('Board not found', 404);
+    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
   }
 
@@ -43,7 +43,7 @@ export class BoardsService {
     const existingBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', 404);
+    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
   }
 
@@ -51,7 +51,7 @@ export class BoardsService {
     const existingBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', 404);
+    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
   }
 
@@ -59,6 +59,6 @@ export class BoardsService {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, { $push: { slides: slide } }, { new: true })
       .exec();
-    if (!updatedBoard) throw new HttpException('Board not found', 404);
+    if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
   }
 }
