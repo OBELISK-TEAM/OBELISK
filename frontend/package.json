@@ -24,16 +24,10 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toggle": "^1.0.3",
-    "@types/fabric": "^5.3.7",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/jwt-decode": "^3.1.0",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
     "canvas": "^2.11.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "dotenv": "^16.4.5",
     "embla-carousel-react": "^8.1.7",
     "fabric": "^5.3.0",
     "html2canvas": "^1.4.1",
@@ -48,8 +42,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5",
-    "uglify-js": "3.19.2"
+    "uglify-js": "3.19.2",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.17.0",
@@ -62,6 +56,12 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.6"
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "@types/fabric": "^5.3.7",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/jwt-decode": "^3.1.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
   }
 }
