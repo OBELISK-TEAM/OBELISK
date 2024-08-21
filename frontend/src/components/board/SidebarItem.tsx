@@ -52,7 +52,7 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
             <input
               type="number"
               value={size}
-              onChange={(e) => setSize(e.target.value as number)}
+              onChange={(e) => setSize(e.target.value as unknown as number)}
               className="ml-2 w-20 cursor-pointer rounded border bg-background p-2 text-muted-foreground"
             />
           ) : (
