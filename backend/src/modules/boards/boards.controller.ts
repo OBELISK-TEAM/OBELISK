@@ -11,6 +11,7 @@ import {
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { BoardDocument } from '../../schemas/board.schema';
+import { User } from '../auth/decorators/users.decorator';
 
 @Controller('boards')
 export class BoardsController {
@@ -22,11 +23,11 @@ export class BoardsController {
   }
 
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto): Promise<BoardDocument> {
-    return this.boardsService.create(
-      '668eb2f055ba82226a6027a6',
-      createBoardDto,
-    );
+  create(
+    @User('_id') userId: string,
+    @Body() createBoardDto: CreateBoardDto,
+  ): Promise<BoardDocument> {
+    return this.boardsService.create(userId, createBoardDto);
   }
 
   @Get(':id')

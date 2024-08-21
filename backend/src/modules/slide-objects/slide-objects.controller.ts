@@ -6,8 +6,6 @@ import {
   Delete,
   Param,
   Body,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { SlideObjectsService } from './slide-objects.service';
 import {
@@ -15,6 +13,7 @@ import {
   UpdateSlideObjectDto,
 } from './slide-objects.dto';
 import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
+import { User } from '../auth/decorators/users.decorator';
 
 @Controller('slide-objects')
 export class SlideObjectsController {
@@ -34,25 +33,23 @@ export class SlideObjectsController {
 
   @Post()
   async create(
-    @Body() partialCreateSlideObjectDto: Partial<CreateSlideObjectDto>,
+    @User('_id') userId: string,
+    @Body() createSlideObjectDto: Partial<CreateSlideObjectDto>,
   ): Promise<SlideObjectDocument> {
-    if (!partialCreateSlideObjectDto.createdById) {
-      throw new HttpException("'createdById' property is required", HttpStatus.BAD_REQUEST);
-    }
-
-    if (!partialCreateSlideObjectDto.slideId) {
-      throw new HttpException("'slideId' property is required", HttpStatus.BAD_REQUEST);
-    }
-
-    return await this.slideObjectsService.create(partialCreateSlideObjectDto as CreateSlideObjectDto);
+    return await this.slideObjectsService.create(userId, createSlideObjectDto);
   }
 
   @Put(':id')
   async update(
-    @Param('id') id: string,
-    @Body() partialUpdateSlideObjectDto: Partial<UpdateSlideObjectDto>,
+    @User('_id') userId: string,
+    @Param('id') slideObjectId: string,
+    @Body() updateSlideObjectDto: Partial<UpdateSlideObjectDto>,
   ): Promise<SlideObjectDocument> {
-    return await this.slideObjectsService.update(id, partialUpdateSlideObjectDto);
+    return await this.slideObjectsService.update(
+      userId,
+      slideObjectId,
+      updateSlideObjectDto,
+    );
   }
 
   @Delete(':id')
