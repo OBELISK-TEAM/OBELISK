@@ -37,22 +37,25 @@ export class BoardsService {
   }
 
   async update(
+    userId: string,
     boardId: string,
     updateBoardDto: CreateBoardDto,
   ): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel
+    await this.verifyBoardOwner(userId, boardId);
+    const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
+    if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
   }
 
-  async delete(boardId: string): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel
+  async delete(userId: string, boardId: string): Promise<BoardDocument> {
+    await this.verifyBoardOwner(userId, boardId);
+    const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
+    if (!deletedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return deletedBoard;
   }
 
   async addSlide(boardId: string, slide: Slide): Promise<void> {
@@ -60,5 +63,12 @@ export class BoardsService {
       .findByIdAndUpdate(boardId, { $push: { slides: slide } }, { new: true })
       .exec();
     if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+  }
+
+  async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
+    const owner = await this.userService.findOneById(userId);
+    const board = await this.findOneById(boardId);
+    if (board.owner.toString() !== (owner._id as string).toString())
+      throw new HttpException('You are not the owner of this board', 403);
   }
 }

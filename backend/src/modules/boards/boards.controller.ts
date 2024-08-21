@@ -7,11 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { BoardDocument } from '../../schemas/board.schema';
 import { User } from '../auth/decorators/users.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 
 @Controller('boards')
 export class BoardsController {
@@ -23,6 +25,7 @@ export class BoardsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(
     @User('_id') userId: string,
     @Body() createBoardDto: CreateBoardDto,
@@ -36,15 +39,21 @@ export class BoardsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   Update(
+    @User('_id') userId: string,
     @Param('id') boardId: string,
     @Body() createBoardDto: CreateBoardDto,
   ): Promise<BoardDocument> {
-    return this.boardsService.update(boardId, createBoardDto);
+    return this.boardsService.update(userId, boardId, createBoardDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') boardId: string): Promise<BoardDocument> {
-    return this.boardsService.delete(boardId);
+  @UseGuards(JwtAuthGuard)
+  async delete(
+    @User('_id') userId: string,
+    @Param('id') boardId: string,
+  ): Promise<BoardDocument> {
+    return this.boardsService.delete(userId, boardId);
   }
 }
