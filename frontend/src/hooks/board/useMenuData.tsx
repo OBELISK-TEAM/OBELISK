@@ -42,7 +42,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
     saveState
   );
   const performAction = useMenuActions(canvas, color, size, saveState, setCanvasMode);
-  useKeydownListener(canvas, performAction, undo, redo);
+  useKeydownListener(performAction, undo, redo);
 
   const menuList: MenuGroup[] = [
     {

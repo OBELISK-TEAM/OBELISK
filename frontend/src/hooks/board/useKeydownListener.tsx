@@ -1,12 +1,7 @@
 import { useEffect } from "react";
-import { fabric } from "fabric";
+import { MenuActions } from "@/enums/MenuActions";
 
-const useKeydownListener = (
-  canvas: fabric.Canvas | null,
-  performAction: (name: string, canvas: fabric.Canvas | null) => void,
-  undo: () => void,
-  redo: () => void
-) => {
+const useKeydownListener = (performAction: (name: MenuActions) => void, undo: () => void, redo: () => void) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey) {
@@ -24,7 +19,7 @@ const useKeydownListener = (
             break;
         }
       } else if (event.key === "Delete") {
-        performAction("remove-selected", canvas);
+        performAction(MenuActions.RemoveSelected);
       }
     };
 
@@ -32,7 +27,7 @@ const useKeydownListener = (
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [canvas, performAction, undo, redo]);
+  }, [performAction, undo, redo]);
 };
 
 export default useKeydownListener;
