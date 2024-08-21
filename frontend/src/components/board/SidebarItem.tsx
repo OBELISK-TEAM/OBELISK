@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
 import { isActiveItem } from "@/utils/isActiveItem";
 import { useSlideContext } from "@/contexts/SlideContext";
+import { MenuActions } from "@/enums/MenuActions";
 
 interface SidebarItemProps {
   item: MenuItem;
@@ -26,10 +28,11 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
             : "bg-background text-muted-foreground"
         }`}
         onClick={() =>
-          !(item.name === "change-color" || item.name === "change-size") && handleClick(item.name, item.action)
+          !(item.name === MenuActions.ChangeColor || item.name === MenuActions.ChangeSize) &&
+          handleClick(item.name, item.action)
         }
       >
-        {item.name === "change-color" ? (
+        {item.name === MenuActions.ChangeColor ? (
           <input
             type="color"
             value={color}
@@ -44,8 +47,8 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
           htmlFor={item.name}
           className="ml-8 cursor-pointer whitespace-nowrap text-sm font-medium transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:opacity-100"
         >
-          {item.name === "change-size" ? "Size" : ""}
-          {item.name === "change-size" ? (
+          {item.name === MenuActions.ChangeSize ? "Size" : ""}
+          {item.name === MenuActions.ChangeSize ? (
             <input
               type="number"
               value={size}

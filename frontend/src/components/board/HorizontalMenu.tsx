@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -5,6 +6,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import ThemeToggle from "../ThemeToggle";
 import { AppLogo } from "../AppLogo";
 import { useSlideContext } from "@/contexts/SlideContext";
+import { MenuActions } from "@/enums/MenuActions";
 
 interface HorizontalMenuProps {
   boardName: string;
@@ -35,10 +37,10 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
           {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
             if (
               !(activeCanvasObject && activeCanvasObject.type === "activeSelection") &&
-              item.name === "group-selected"
+              item.name === MenuActions.GroupSelected
             ) {
               return null;
-            } else if (!activeCanvasObject && item.name === "remove-selected") {
+            } else if (!activeCanvasObject && item.name === MenuActions.RemoveSelected) {
               return null;
             }
             return (

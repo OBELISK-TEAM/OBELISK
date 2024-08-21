@@ -1,4 +1,3 @@
-"use client";
 import BoardSidebar from "@/components/board/Sidebar";
 import BoardToolBar from "@/components/board/Toolbar";
 import { BoardPagination } from "@/components/board/Pagination";

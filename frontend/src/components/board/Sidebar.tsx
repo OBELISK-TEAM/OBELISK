@@ -1,5 +1,5 @@
+"use client";
 import { FC } from "react";
-import { MenuItem } from "../../interfaces/canva-interfaces";
 import { CogIcon } from "lucide-react";
 import BoardSidebarItem from "./SidebarItem";
 import { useSlideContext } from "@/contexts/SlideContext";

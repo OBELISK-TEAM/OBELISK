@@ -115,11 +115,16 @@ export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
   }
 };
 
-export const addLine = (canvas: fabric.Canvas | null, options?: { color?: string; strokeWidth?: number }): void => {
-  const { color = "black", strokeWidth = 5 } = options || {};
+export const addLine = (
+  canvas: fabric.Canvas | null,
+  options?: { color?: string; width?: number; height?: number }
+): void => {
+  const { color = "black", width, height } = options || {};
   const line = new fabric.Line([50, 100, 200, 200], {
     stroke: color,
-    strokeWidth: strokeWidth,
+    width: width,
+    strokeWidth: 5,
+    height: height,
     selectable: true,
   });
   canvas?.add(line);

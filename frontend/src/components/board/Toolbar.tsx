@@ -1,3 +1,4 @@
+"use client";
 import React, { ChangeEvent, useRef } from "react";
 import { Input } from "@/components/ui/input";
 
@@ -6,6 +7,7 @@ import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
 import { useSlideContext } from "@/contexts/SlideContext";
+import { MenuActions } from "@/enums/MenuActions";
 
 const BoardToolBar: React.FC = () => {
   const { activeItem, selectedObjectStyles, handleStyleChange, handleAddImageByUrl } = useSlideContext();
@@ -176,9 +178,9 @@ const BoardToolBar: React.FC = () => {
   return (
     <div className="flex h-[50px] w-full items-center justify-between bg-background text-muted-foreground">
       <div className="flex items-center space-x-4 p-2">
-        {activeItem === "add-image-url" && renderUrlControl()}
+        {activeItem === MenuActions.AddImageUrl && renderUrlControl()}
 
-        {!(activeItem === "add-image-url") && renderControls()}
+        {!(activeItem === MenuActions.AddImageUrl) && renderControls()}
       </div>
     </div>
   );

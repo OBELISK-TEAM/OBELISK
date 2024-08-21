@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useSlideContext } from "@/contexts/SlideContext";
 
