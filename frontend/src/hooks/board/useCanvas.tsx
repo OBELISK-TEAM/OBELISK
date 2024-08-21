@@ -1,11 +1,27 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { fabric } from "fabric";
-import {
-  initializeCanvas,
-  getSelectedObjectStyles as getSelectedObjectStylesUtil,
-  setSelectedObjectStyles as setSelectedObjectStylesUtil,
-  updateDimensions,
-} from "@/utils/fabricCanvasUtils";
+import { initializeCanvas, updateDimensions } from "@/utils/fabricCanvasUtils";
+
+export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
+  if (canvas) {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      return activeObject.toObject();
+    }
+  }
+  return null;
+};
+
+export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
+  if (!canvas) {
+    return;
+  }
+  const activeObjects = canvas.getActiveObjects();
+  activeObjects.forEach((obj) => {
+    obj.set(styles);
+  });
+  canvas.requestRenderAll();
+};
 
 const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -13,23 +29,14 @@ const useCanvas = () => {
   const [selectedObjectStylesState, setSelectedObjectStylesState] = useState<{
     [key: string]: any;
   } | null>(null);
+  console.log("selectedObjectStylesState", selectedObjectStylesState);
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     setCanvas(newCanvas);
-
-    // the function is used nowhere, but I don't know, if I can remove it
-    //
-    // const handleSelectionUpdated = (e:any) => {
-    //   setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
-    //   const obj = e.target;
-    //   updateDimensions(obj);
-    //   setActiveItem(null);
-    // };
-
     const handleSelectionCreated = () => {
-      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
+      setSelectedObjectStylesState(getSelectedObjectStyles(newCanvas));
       setActiveItem(null);
     };
 
@@ -39,14 +46,14 @@ const useCanvas = () => {
     };
 
     const handleObjectModified = (e: any) => {
-      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
+      setSelectedObjectStylesState(getSelectedObjectStyles(newCanvas));
       const obj = e.target;
       updateDimensions(obj);
       setActiveItem(null);
     };
 
     const handleMouse = (e: any) => {
-      setSelectedObjectStylesState(getSelectedObjectStylesUtil(newCanvas));
+      setSelectedObjectStylesState(getSelectedObjectStyles(newCanvas));
       const obj = e.target;
       updateDimensions(obj);
       setActiveItem(null);
@@ -64,9 +71,10 @@ const useCanvas = () => {
 
   const handleStyleChange = useCallback(
     (styles: object) => {
+      console.log("styles", styles);
       if (canvas) {
-        setSelectedObjectStylesUtil(canvas, styles);
-        setSelectedObjectStylesState(getSelectedObjectStylesUtil(canvas));
+        setSelectedObjectStyles(canvas, styles);
+        setSelectedObjectStylesState(getSelectedObjectStyles(canvas));
       }
     },
     [canvas]

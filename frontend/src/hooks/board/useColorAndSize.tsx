@@ -10,7 +10,7 @@ const useColorAndSize = (canvas: fabric.Canvas | null) => {
       canvas.freeDrawingBrush.color = color;
       canvas.freeDrawingBrush.width = size;
     }
-  }, [color, size, canvas]);
+  }, [color, size]);
 
   return { color, size, setColor, setSize };
 };

@@ -27,9 +27,10 @@ import {
   Upload,
 } from "lucide-react";
 import useKeydownListener from "./useKeydownListener";
-import { MenuAction } from "@/enums/MenuActions";
+import { MenuActions } from "@/enums/MenuActions";
 import { PencilBrush } from "fabric/fabric-impl";
 import { CanvasMode } from "@/enums/CanvasMode";
+import { MenuGroups } from "@/enums/MenuGroups";
 
 const useMenuData = (canvas: fabric.Canvas | null) => {
   const { canvasMode, setCanvasMode } = useCanvasMode(canvas);
@@ -45,7 +46,8 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
 
   const menuList: MenuGroup[] = [
     {
-      group: "Drawing Tools",
+      groupName: "Drawing Tools",
+      groupId: MenuGroups.drawingTools,
       items: [
         {
           action: () => {
@@ -98,71 +100,73 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
           action: () => {},
           text: "Change Color",
           icon: <Color />,
-          name: MenuAction.ChangeColor,
+          name: MenuActions.ChangeColor,
         },
         {
           action: () => {},
           text: "Change Size",
           icon: <Size />,
-          name: MenuAction.ChangeSize,
+          name: MenuActions.ChangeSize,
         },
         {
           text: "Add Line",
           icon: <Minus />,
-          name: MenuAction.AddLine,
-          action: () => performAction(MenuAction.AddLine),
+          name: MenuActions.AddLine,
+          action: () => performAction(MenuActions.AddLine),
         },
         {
           text: "Add Rectangle",
           icon: <Square />,
-          name: MenuAction.AddRectangle,
-          action: () => performAction(MenuAction.AddRectangle),
+          name: MenuActions.AddRectangle,
+          action: () => performAction(MenuActions.AddRectangle),
         },
         {
           text: "Add Circle",
           icon: <Circle />,
-          name: MenuAction.AddCircle,
-          action: () => performAction(MenuAction.AddCircle),
+          name: MenuActions.AddCircle,
+          action: () => performAction(MenuActions.AddCircle),
         },
         {
           text: "Add Text",
           icon: <Text />,
-          name: MenuAction.AddText,
-          action: () => performAction(MenuAction.AddText),
+          name: MenuActions.AddText,
+          action: () => performAction(MenuActions.AddText),
         },
       ],
     },
     {
-      group: "Object Manipulation",
+      groupName: "Object Manipulation",
+      groupId: MenuGroups.objectManipulation,
       items: [
         {
-          action: () => performAction(MenuAction.ClearCanvas),
+          action: () => performAction(MenuActions.ClearCanvas),
           text: "Clear Canvas",
           icon: <Trash />,
-          name: MenuAction.ClearCanvas,
+          name: MenuActions.ClearCanvas,
         },
         {
           text: "Add Image from URL",
           icon: <UrlIcon />,
-          name: MenuAction.AddImageUrl,
-          action: () => performAction(MenuAction.AddImageUrl),
+          name: MenuActions.AddImageUrl,
+          action: () => performAction(MenuActions.AddImageUrl),
         },
         {
           text: "Add Image from disk",
           icon: <ImageIcon />,
-          name: MenuAction.AddImageDisk,
-          action: () => performAction(MenuAction.AddImageDisk),
+          name: MenuActions.AddImageDisk,
+          action: () => performAction(MenuActions.AddImageDisk),
         },
       ],
     },
     {
-      group: "File and Canvas Operations",
+      groupName: "File and Canvas Operations",
+      groupId: MenuGroups.fileAndCanvasOperations,
       items: [
         {
           action: () => exportToPDF(canvas),
           text: "Export to PDF",
           icon: <Save />,
-          name: MenuAction.ExportPdf,
+          name: MenuActions.ExportPdf,
         },
         {
           text: "Undo",
@@ -171,7 +175,7 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
             e?.preventDefault();
             undo();
           },
-          name: MenuAction.Undo,
+          name: MenuActions.Undo,
         },
         {
           text: "Redo",
@@ -180,43 +184,43 @@ const useMenuData = (canvas: fabric.Canvas | null) => {
             e?.preventDefault();
             redo();
           },
-          name: MenuAction.Redo,
+          name: MenuActions.Redo,
         },
         {
-          action: () => performAction(MenuAction.LoadCanvas),
+          action: () => performAction(MenuActions.LoadCanvas),
           text: "Load Canvas",
           icon: <Upload />,
-          name: MenuAction.LoadCanvas,
+          name: MenuActions.LoadCanvas,
         },
         {
           action: () => handleSave(canvas),
           text: "Save Canvas",
           icon: <Save />,
-          name: MenuAction.SaveCanvas,
+          name: MenuActions.SaveCanvas,
         },
         {
           action: () => handleSaveImages(),
           text: "Save Images",
           icon: <Save />,
-          name: MenuAction.SaveImages,
+          name: MenuActions.SaveImages,
         },
         {
-          action: () => performAction(MenuAction.LoadImagesJson),
+          action: () => performAction(MenuActions.LoadImagesJson),
           text: "Load Images from JSON",
           icon: <Upload />,
-          name: MenuAction.LoadImagesJson,
+          name: MenuActions.LoadImagesJson,
         },
         {
-          action: () => performAction(MenuAction.GroupSelected),
+          action: () => performAction(MenuActions.GroupSelected),
           text: "Group Selected Objects",
           icon: <Group />,
-          name: MenuAction.GroupSelected,
+          name: MenuActions.GroupSelected,
         },
         {
-          action: () => performAction(MenuAction.RemoveSelected),
+          action: () => performAction(MenuActions.RemoveSelected),
           text: "Remove Selected Objects",
           icon: <Trash />,
-          name: MenuAction.RemoveSelected,
+          name: MenuActions.RemoveSelected,
         },
       ],
     },

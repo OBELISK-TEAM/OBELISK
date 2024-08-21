@@ -338,27 +338,6 @@ export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) =
   }
 };
 
-export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
-  if (canvas) {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      return activeObject.toObject();
-    }
-  }
-  return null;
-};
-
-export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
-  if (!canvas) {
-    return;
-  }
-  const activeObjects = canvas.getActiveObjects();
-  activeObjects.forEach((obj) => {
-    obj.set(styles);
-  });
-  canvas.requestRenderAll();
-};
-
 /**
  * This function scales the passed `fabricjs` object.
  * It reads the values of `scaleX` and `scaleY` properties and applies them to the `width` and `height` properties

@@ -1,4 +1,4 @@
-export enum MenuAction {
+export enum MenuActions {
   ChangeColor = "change-color",
   ChangeSize = "change-size",
   AddLine = "add-line",

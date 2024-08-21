@@ -1,37 +1,25 @@
 import { FC } from "react";
-import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
+import { MenuItem } from "../../interfaces/canva-interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
 import { AppLogo } from "../AppLogo";
+import { useSlideContext } from "@/contexts/SlideContext";
 
 interface HorizontalMenuProps {
-  menuItem: MenuGroup;
-  onIconClick: (name: string) => void;
-  withSettings?: boolean;
-  fromRight?: boolean;
   boardName: string;
-  onActiveItemChange?: (activeItem: string | null) => void;
-  activeItem: string | null;
-  activeCanvasObject: { [key: string]: any } | null;
+  groupId: string;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({
-  menuItem,
-  onIconClick,
-  boardName,
-  onActiveItemChange,
-  activeItem,
-  activeCanvasObject,
-}) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
+  const { activeItem, menuList, canvas } = useSlideContext();
+  const menuItems = menuList.find((group) => group.groupId === groupId);
+  const activeCanvasObject = canvas?.getActiveObject();
+
   const handleClick = (name: string, action?: () => void) => {
-    if (onActiveItemChange) {
-      onActiveItemChange(name);
-    }
     if (action) {
       action();
     }
-    onIconClick(name);
   };
 
   return (
@@ -44,7 +32,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
-          {menuItem.items.map((item: MenuItem, itemIndex: number) => {
+          {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
             if (
               !(activeCanvasObject && activeCanvasObject.type === "activeSelection") &&
               item.name === "group-selected"

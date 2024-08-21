@@ -16,6 +16,7 @@ const useCanvasEventHandlers = (canvas: fabric.Canvas | null, saveState: () => v
         saveState();
       };
 
+      //todo implement zoom in/out on canvas
       const handleMouseWheel = (opt: any) => {
         const evt = opt.e;
         if (canvas) {

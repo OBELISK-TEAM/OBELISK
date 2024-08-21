@@ -9,7 +9,7 @@ import {
   handleLoadFromJSON,
   handleRemoveSelected,
 } from "@/utils/fabricCanvasUtils";
-import { CanvasActions } from "@/enums/CanvasActions";
+import { MenuActions } from "@/enums/MenuActions";
 import { CanvasMode } from "@/enums/CanvasMode";
 
 const useMenuActions = (
@@ -22,7 +22,7 @@ const useMenuActions = (
   const defaultFontSize = 20;
 
   const performAction = useCallback(
-    (name: string) => {
+    (name: MenuActions) => {
       const properties = {
         color,
         strokeWidth: size,
@@ -34,43 +34,43 @@ const useMenuActions = (
       };
       if (name) {
         switch (name) {
-          case CanvasActions.ADD_LINE:
+          case MenuActions.AddLine:
             addLine(canvas, properties);
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.ADD_RECTANGLE:
+          case MenuActions.AddRectangle:
             addRectangle(canvas, properties);
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.ADD_CIRCLE:
+          case MenuActions.AddCircle:
             addCircle(canvas, properties);
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.ADD_TEXT:
+          case MenuActions.AddText:
             handleAddText(canvas, 50, 50, properties);
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.GROUP_SELECTED:
+          case MenuActions.GroupSelected:
             handleGroupSelected(canvas);
             break;
-          case CanvasActions.REMOVE_SELECTED:
+          case MenuActions.RemoveSelected:
             handleRemoveSelected(canvas);
             break;
-          case CanvasActions.CLEAR_CANVAS:
+          case MenuActions.ClearCanvas:
             canvas?.clear();
             break;
-          case CanvasActions.LOAD_CANVAS:
+          case MenuActions.LoadCanvas:
             handleLoadFromJSON(canvas);
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.ADD_IMAGE_URL:
+          case MenuActions.AddImageUrl:
             setCanvasMode(CanvasMode.Selection);
             break;
-          case CanvasActions.ADD_IMAGE_DISK:
+          case MenuActions.AddImageDisk:
             setCanvasMode(CanvasMode.Selection);
             break;
 
-          case CanvasActions.LOAD_IMAGES_JSON:
+          case MenuActions.LoadImagesJson:
             setCanvasMode(CanvasMode.Selection);
             break;
           default:

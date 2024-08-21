@@ -1,30 +1,22 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
-import {isActiveItem} from "@/utils/drawingMode";
-import { CanvasMode } from "@/enums/CanvasMode";
+import { isActiveItem } from "@/utils/isActiveItem";
+import { useSlideContext } from "@/contexts/SlideContext";
 
 interface SidebarItemProps {
   item: MenuItem;
-  activeItem: string | null;
-  canvasMode: CanvasMode;
-  color: string;
-  size: number;
-  handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSizeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClick: (name: string, action?: () => void) => void;
 }
 
-const BoardSidebarItem: React.FC<SidebarItemProps> = ({
-  item,
-  activeItem,
-  canvasMode,
-  color,
-  size,
-  handleColorChange,
-  handleSizeChange,
-  handleClick,
-}) => {
-  const id = item.name;
+const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
+  const { setActiveItem, activeItem, color, size, canvasMode, setColor, setSize } = useSlideContext();
+  const handleClick = (name: string, action?: () => void) => {
+    if (setActiveItem) {
+      setActiveItem(name);
+    }
+    if (action) {
+      action();
+    }
+  };
   return (
     <div>
       <button
@@ -41,15 +33,15 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({
           <input
             type="color"
             value={color}
-            id={id}
-            onChange={handleColorChange}
+            id={item.name}
+            onChange={(e) => setColor(e.target.value)}
             className="h-6 w-6 cursor-pointer rounded-full border"
           />
         ) : (
           <div className="flex h-6 w-6 items-center justify-center">{item.icon}</div>
         )}
         <label
-          htmlFor={id}
+          htmlFor={item.name}
           className="ml-8 cursor-pointer whitespace-nowrap text-sm font-medium transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:opacity-100"
         >
           {item.name === "change-size" ? "Size" : ""}
@@ -57,7 +49,7 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({
             <input
               type="number"
               value={size}
-              onChange={handleSizeChange}
+              onChange={(e) => setSize(e.target.value as number)}
               className="ml-2 w-20 cursor-pointer rounded border bg-background p-2 text-muted-foreground"
             />
           ) : (

@@ -4,7 +4,7 @@ import { toggleDrawingMode } from "@/utils/fabricCanvasUtils";
 import { CanvasMode } from "@/enums/CanvasMode";
 
 const useCanvasMode = (canvas: fabric.Canvas | null) => {
-  const [canvasMode, setCanvasMode] = useState<CanvasMode>(CanvasMode.Selection);
+  const [canvasMode, setCanvasMode] = useState<CanvasMode | null>(CanvasMode.Selection);
 
   useEffect(() => {
     if (canvas) {

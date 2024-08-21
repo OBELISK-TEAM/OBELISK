@@ -5,26 +5,17 @@ import { Bold, Italic, Underline } from "lucide-react";
 import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
+import { useSlideContext } from "@/contexts/SlideContext";
 
-interface ToolBarProps {
-  selectedObjectStyles?: { [key: string]: any } | null;
-  onStyleChange?: (styles: { [key: string]: any }) => void;
-  activeItem: string | null;
-  handleAddImageByUrl: (url: string) => void;
-}
+const BoardToolBar: React.FC = () => {
+  const { activeItem, selectedObjectStyles, handleStyleChange, handleAddImageByUrl } = useSlideContext();
 
-const BoardToolBar: React.FC<ToolBarProps> = ({
-  selectedObjectStyles,
-  onStyleChange,
-  activeItem,
-  handleAddImageByUrl,
-}) => {
-  const urlRef = useRef<HTMLInputElement>(null);
+  const urlRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
-    if (onStyleChange) {
-      onStyleChange({ [key]: value });
+    if (handleStyleChange) {
+      handleStyleChange({ [key]: value });
     }
   };
 
@@ -49,31 +40,31 @@ const BoardToolBar: React.FC<ToolBarProps> = ({
   };
 
   const onBoldClick = () => {
-    if (onStyleChange) {
-      onStyleChange({
+    if (handleStyleChange) {
+      handleStyleChange({
         fontWeight: selectedObjectStyles?.fontWeight === "bold" ? "normal" : "bold",
       });
     }
   };
 
   const onItalicClick = () => {
-    if (onStyleChange) {
-      onStyleChange({
+    if (handleStyleChange) {
+      handleStyleChange({
         fontStyle: selectedObjectStyles?.fontStyle === "italic" ? "normal" : "italic",
       });
     }
   };
 
   const onUnderlineClick = () => {
-    if (onStyleChange) {
-      onStyleChange({
+    if (handleStyleChange) {
+      handleStyleChange({
         underline: selectedObjectStyles?.underline === false,
       });
     }
   };
 
   const handleAddUrlClick = () => {
-    if (urlRef.current) {
+    if (urlRef.current && "value" in urlRef.current) {
       handleAddImageByUrl(urlRef.current.value);
       urlRef.current.value = "";
     }

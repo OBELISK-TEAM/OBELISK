@@ -8,7 +8,8 @@ export interface MenuItem {
 }
 
 export interface MenuGroup {
-  group: string;
+  groupName: string;
+  groupId: string;
   items: MenuItem[];
 }
 
