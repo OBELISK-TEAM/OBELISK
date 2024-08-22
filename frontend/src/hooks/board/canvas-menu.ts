@@ -35,7 +35,7 @@
 //   saveImagesToLocalFile,
 //   loadImagesFromJSON,
 //   toggleDrawingMode,
-// } from "@/utils/fabricCanvasUtils";
+// } from "@/lib/fabricCanvasUtils";
 //
 // const useMenuData = (canvas: fabric.Canvas | null) => {
 //   const [isDrawingMode, setIsDrawingMode] = useState(false);
