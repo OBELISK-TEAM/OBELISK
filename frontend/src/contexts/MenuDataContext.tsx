@@ -1,7 +1,16 @@
 "use client";
-import useUndoRedo from "@/hooks/board/useUndoRedo";
-import useCanvasEventHandlers from "@/hooks/board/useCanvasEventHandlers";
-import { exportToPDF, handleSave, saveImagesToLocalFile } from "@/utils/fabricCanvasUtils";
+import {
+  addCircle,
+  addLine,
+  addRectangle,
+  exportToPDF,
+  handleAddText,
+  handleGroupSelected,
+  handleLoadFromJSON,
+  handleRemoveSelected,
+  handleSave,
+  saveImagesToLocalFile,
+} from "@/utils/fabricCanvasUtils";
 import { MenuGroup } from "@/interfaces/canva-interfaces";
 import { fabric } from "fabric";
 import {
@@ -28,17 +37,14 @@ import { MenuActions } from "@/enums/MenuActions";
 import { PencilBrush } from "fabric/fabric-impl";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuGroups } from "@/enums/MenuGroups";
-import useMenuActions from "@/hooks/board/useMenuActions";
-import useFileHandling from "@/hooks/board/useFileHandling";
+
 import { useCanvas } from "@/contexts/CanvasContext";
-import { createContext, useContext } from "react";
-import useKeydownListener from "@/hooks/board/useKeydownListener";
+import { createContext, useCallback, useContext } from "react";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 interface MenuDataContextType {
   menuList: MenuGroup[];
-  handleAddImageByUrl: (url: string) => void;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleLoadImagesFromJson: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  performAction: (name: MenuActions) => void;
 }
 
 const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined);
@@ -48,12 +54,64 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     state: { canvas, color, size },
     setCanvasMode,
   } = useCanvas();
+  const { saveState, undo, redo } = useUndoRedo();
 
-  const { saveState, undo, redo } = useUndoRedo(canvas);
-  useCanvasEventHandlers(canvas, saveState);
-  const { handleLoadImagesFromJson, handleFileChange, handleAddImageByUrl } = useFileHandling(canvas, saveState);
-  const performAction = useMenuActions(canvas, color, size, saveState, setCanvasMode);
-  useKeydownListener(performAction, undo, redo);
+  const performAction = useCallback(
+    (name: MenuActions) => {
+      const properties = {
+        color,
+        strokeWidth: size,
+        fillColor: color,
+        fontSize: 20,
+        width: size * 10,
+        height: size * 5,
+        radius: size * 5,
+      };
+      if (name) {
+        switch (name) {
+          case MenuActions.AddLine:
+            addLine(canvas, properties);
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          case MenuActions.AddRectangle:
+            addRectangle(canvas, properties);
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          case MenuActions.AddCircle:
+            addCircle(canvas, properties);
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          case MenuActions.AddText:
+            handleAddText(canvas, 50, 50, properties);
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          case MenuActions.GroupSelected:
+            handleGroupSelected(canvas);
+            break;
+          case MenuActions.RemoveSelected:
+            handleRemoveSelected(canvas);
+            break;
+          case MenuActions.ClearCanvas:
+            canvas?.clear();
+            break;
+          case MenuActions.LoadCanvas:
+            handleLoadFromJSON(canvas);
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          case MenuActions.AddImageUrl:
+          case MenuActions.AddImageDisk:
+          case MenuActions.LoadImagesJson:
+            setCanvasMode(CanvasMode.Selection);
+            break;
+          default:
+            break;
+        }
+
+        saveState();
+      }
+    },
+    [canvas, color, size, saveState, setCanvasMode]
+  );
 
   const menuList: MenuGroup[] = [
     {
@@ -241,9 +299,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     <MenuDataContext.Provider
       value={{
         menuList,
-        handleAddImageByUrl,
-        handleFileChange,
-        handleLoadImagesFromJson,
+        performAction,
       }}
     >
       {children}
@@ -254,7 +310,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 export const useMenuData = () => {
   const context = useContext(MenuDataContext);
   if (!context) {
-    throw new Error("useMenuDataContext must be used within a MenuDataProvider");
+    throw new Error("useMenuData must be used within a MenuDataProvider");
   }
   return context;
 };

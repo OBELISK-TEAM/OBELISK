@@ -1,7 +1,13 @@
-import { useEffect } from "react";
+"use client";
+import React, { useEffect } from "react";
 import { MenuActions } from "@/enums/MenuActions";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
 
-const useKeydownListener = (performAction: (name: MenuActions) => void, undo: () => void, redo: () => void) => {
+const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { undo, redo } = useUndoRedo();
+  const { performAction } = useMenuData();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey) {
@@ -28,6 +34,8 @@ const useKeydownListener = (performAction: (name: MenuActions) => void, undo: ()
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [performAction, undo, redo]);
+
+  return <>{children}</>;
 };
 
-export default useKeydownListener;
+export default KeydownListenerWrapper;

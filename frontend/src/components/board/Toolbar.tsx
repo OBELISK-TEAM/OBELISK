@@ -6,9 +6,9 @@ import { Bold, Italic, Underline } from "lucide-react";
 import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
-import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
+import { useFile } from "@/contexts/FileContext";
 
 const BoardToolBar: React.FC = () => {
   const {
@@ -16,7 +16,7 @@ const BoardToolBar: React.FC = () => {
 
     handleStyleChange,
   } = useCanvas();
-  const { handleAddImageByUrl } = useMenuData();
+  const { handleAddImageByUrl } = useFile();
   const urlRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {

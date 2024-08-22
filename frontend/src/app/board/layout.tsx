@@ -1,6 +1,8 @@
 import { MenuDataProvider } from "@/contexts/MenuDataContext";
 import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
+import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
+import KeydownListenerWrapper from "@/components/board/KeydownListenerWrapper";
 
 const SliderLayout = ({
   children,
@@ -9,9 +11,13 @@ const SliderLayout = ({
 }>) => {
   return (
     <CanvasProvider>
-      <MenuDataProvider>
-        <FileProvider>{children}</FileProvider>
-      </MenuDataProvider>
+      <UndoRedoProvider>
+        <MenuDataProvider>
+          <FileProvider>
+            <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+          </FileProvider>
+        </MenuDataProvider>
+      </UndoRedoProvider>
     </CanvasProvider>
   );
 };
