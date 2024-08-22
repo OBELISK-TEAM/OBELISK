@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { CogIcon } from "lucide-react";
 import BoardSidebarItem from "./SidebarItem";
-import { useSlideContext } from "@/contexts/SlideContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
 
 interface BoardSidebarProps {
   groupId: string;
@@ -11,7 +11,7 @@ interface BoardSidebarProps {
 }
 
 const BoardSidebar: FC<BoardSidebarProps> = ({ withSettings = false, groupId, fromRight = false }) => {
-  const { menuList } = useSlideContext();
+  const { menuList } = useMenuData();
   const borderClass = fromRight ? "border-l" : "border-r";
   const menuGroup = menuList.find((group) => group.groupId === groupId);
   return (

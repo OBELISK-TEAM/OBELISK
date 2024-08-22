@@ -6,12 +6,17 @@ import { Bold, Italic, Underline } from "lucide-react";
 import StyledLabel from "@/components/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "../ui/button";
-import { useSlideContext } from "@/contexts/SlideContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuActions } from "@/enums/MenuActions";
+import { useCanvas } from "@/contexts/CanvasContext";
 
 const BoardToolBar: React.FC = () => {
-  const { activeItem, selectedObjectStyles, handleStyleChange, handleAddImageByUrl } = useSlideContext();
+  const {
+    state: { activeItem, selectedObjectStyles },
 
+    handleStyleChange,
+  } = useCanvas();
+  const { handleAddImageByUrl } = useMenuData();
   const urlRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {

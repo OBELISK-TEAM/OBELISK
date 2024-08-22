@@ -17,7 +17,7 @@ const useMenuActions = (
   color: string,
   size: number,
   saveState: () => void,
-  setCanvasMode: Dispatch<SetStateAction<CanvasMode | null>>
+  setCanvasMode: (mode: CanvasMode) => void
 ) => {
   const defaultFontSize = 20;
 

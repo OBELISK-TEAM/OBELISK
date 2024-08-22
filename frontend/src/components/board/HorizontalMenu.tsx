@@ -5,8 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
 import { AppLogo } from "../AppLogo";
-import { useSlideContext } from "@/contexts/SlideContext";
 import { MenuActions } from "@/enums/MenuActions";
+import { useCanvas } from "@/contexts/CanvasContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
 
 interface HorizontalMenuProps {
   boardName: string;
@@ -14,7 +15,10 @@ interface HorizontalMenuProps {
 }
 
 const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
-  const { activeItem, menuList, canvas } = useSlideContext();
+  const {
+    state: { activeItem, canvas },
+  } = useCanvas();
+  const { menuList } = useMenuData();
   const menuItems = menuList.find((group) => group.groupId === groupId);
   const activeCanvasObject = canvas?.getActiveObject();
 

@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import { useSlideContext } from "@/contexts/SlideContext";
+import { useCanvas } from "@/contexts/CanvasContext";
 
 const SlideCanvas: React.FC = () => {
-  const { canvasRef } = useSlideContext();
+  const { canvasRef } = useCanvas();
   return (
     <div className="mt-4 flex w-fit rounded-lg bg-white">
       {/* Kolor płótna nie powinien zależeć od wybranego motywu; zawsze jest biały */}

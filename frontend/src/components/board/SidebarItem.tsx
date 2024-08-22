@@ -2,15 +2,20 @@
 import React from "react";
 import { MenuItem } from "../../interfaces/canva-interfaces";
 import { isActiveItem } from "@/utils/isActiveItem";
-import { useSlideContext } from "@/contexts/SlideContext";
 import { MenuActions } from "@/enums/MenuActions";
+import { useCanvas } from "@/contexts/CanvasContext";
 
 interface SidebarItemProps {
   item: MenuItem;
 }
 
 const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
-  const { setActiveItem, activeItem, color, size, canvasMode, setColor, setSize } = useSlideContext();
+  const {
+    setActiveItem,
+    state: { activeItem, color, size, canvasMode },
+    setColor,
+    setSize,
+  } = useCanvas();
   const handleClick = (name: string, action?: () => void) => {
     if (setActiveItem) {
       setActiveItem(name);
