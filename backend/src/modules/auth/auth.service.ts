@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -29,7 +29,7 @@ export class AuthService {
         return this.extractUserWithoutPassword(user);
       }
     } catch (error) {
-      throw new HttpException('Invalid credentials', 401);
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
     return null;
   }
@@ -39,7 +39,7 @@ export class AuthService {
       const user: UserDocument = await this.usersService.findOneById(userId);
       if (user) return this.extractUserWithoutPassword(user);
     } catch (error) {
-      throw new HttpException('Invalid token', 401);
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }
     return null;
   }
@@ -63,7 +63,7 @@ export class AuthService {
 
   async register(createUserDto: CreateUserDto): Promise<AuthToken> {
     if (await this.usersService.emailExists(createUserDto.email))
-      throw new HttpException('User already exists', 400);
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     const newUser: UserDocument = await this.usersService.create(createUserDto);
     return this.generateToken(newUser);
   }
@@ -74,7 +74,7 @@ export class AuthService {
   }
 
   async googleRedirect(req: Request, res: Response): Promise<void> {
-    if (!req.query['state']) throw new HttpException('Unauthorized', 401);
+    if (!req.query['state']) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const userTempId = req.query['state'] as string;
     await this.cacheManager.set(
       `google_temp_id_${userTempId}`,
@@ -86,13 +86,13 @@ export class AuthService {
 
   async googleLogin(req: Request): Promise<AuthToken> {
     const auth = req.get('Authorization');
-    if (!auth) throw new HttpException('Unauthorized', 401);
+    if (!auth) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const userTempId = auth.split(' ')[1];
-    if (!userTempId) throw new HttpException('Unauthorized', 401);
+    if (!userTempId) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const googleUser = await this.cacheManager.get<GoogleUser>(
       `google_temp_id_${userTempId}`,
     );
-    if (!googleUser) throw new HttpException('Unauthorized', 401);
+    if (!googleUser) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return this.handleGoogleLogin(googleUser);
   }
 

@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './users.dto';
 import { User, UserDocument } from '../../schemas/user.schema';
@@ -19,20 +19,20 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     if (await this.emailExists(createUserDto.email))
-      throw new HttpException('User already exists', 400);
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
 
   async findOneById(userId: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findById(userId).exec();
-    if (!existingUser) throw new HttpException('User not found', 404);
+    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
   }
 
   async findOneByEmail(email: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findOne({ email }).exec();
-    if (!existingUser) throw new HttpException('User not found', 404);
+    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
   }
 
@@ -43,7 +43,7 @@ export class UsersService {
 
   async delete(userId: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findByIdAndDelete(userId).exec();
-    if (!existingUser) throw new HttpException('User not found', 404);
+    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
   }
 
@@ -51,7 +51,7 @@ export class UsersService {
     const updatedUser = await this.userModel
       .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
       .exec();
-    if (!updatedUser) throw new HttpException('User not found', 404);
+    if (!updatedUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
   async createGoogleUser(email: string): Promise<UserDocument> {
@@ -82,6 +82,6 @@ export class UsersService {
         { new: true },
       )
       .exec();
-    if (!updatedUser) throw new HttpException('User not found', 404);
+    if (!updatedUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 }

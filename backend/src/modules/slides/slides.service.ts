@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Slide, SlideDocument } from '../../schemas/slide.schema';
@@ -32,7 +32,7 @@ export class SlidesService {
 
   async findOneById(slideId: string): Promise<SlideDocument> {
     const existingSlide = await this.slideModel.findById(slideId).exec();
-    if (!existingSlide) throw new HttpException('Slide not found', 404);
+    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
   }
 
@@ -43,7 +43,7 @@ export class SlidesService {
     const existingSlide = await this.slideModel
       .findByIdAndUpdate(slideId, updateSlideDto, { new: true })
       .exec();
-    if (!existingSlide) throw new HttpException('Slide not found', 404);
+    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
   }
 
@@ -51,7 +51,7 @@ export class SlidesService {
     const existingSlide = await this.slideModel
       .findByIdAndDelete(slideId)
       .exec();
-    if (!existingSlide) throw new HttpException('Slide not found', 404);
+    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
   }
 
@@ -67,12 +67,12 @@ export class SlidesService {
       )
       .exec();
     console.log(updatedSlide);
-    if (!updatedSlide) throw new HttpException('Slide not found', 404);
+    if (!updatedSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
   private validateSlidesLimit(board: BoardDocument): void {
     const slidesCount = board.slides.length;
     if (slidesCount >= this.slidesLimitPerBoard)
-      throw new HttpException('Slides limit reached', 400);
+      throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
 }
