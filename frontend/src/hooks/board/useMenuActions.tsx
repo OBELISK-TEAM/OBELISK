@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 import { fabric } from "fabric";
 import {
   addCircle,
