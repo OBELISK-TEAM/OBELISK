@@ -68,7 +68,11 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.userService.findOneById(userId);
     const board = await this.findOneById(boardId);
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     if (board.owner.toString() !== (owner._id as string).toString())
-      throw new HttpException('You are not the owner of this board', 403);
+      throw new HttpException(
+        'You are not the owner of this board',
+        HttpStatus.FORBIDDEN,
+      );
   }
 }
