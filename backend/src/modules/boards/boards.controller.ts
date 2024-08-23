@@ -20,7 +20,7 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  async findAll(@Query('page') page: number): Promise<BoardDocument[]> {
+  async findAll(@Query('page') page: number = 1): Promise<BoardDocument[]> {
     return this.boardsService.findAll(page);
   }
 

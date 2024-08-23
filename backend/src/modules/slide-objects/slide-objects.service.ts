@@ -34,17 +34,21 @@ export class SlideObjectsService {
     return existingSlideObject;
   }
 
+  // TODO - adding only if user has board permissions
   async create(
     userId: string,
-    createSlideObjectDto: Partial<CreateSlideObjectDto>,
-  ): Promise<SlideObjectDocument> {
+    createSlideObjectDto: CreateSlideObjectDto,
+  ): Promise<any> {
     const { slideId, ...slideObject } = createSlideObjectDto;
-    if (!slideId)
-      throw new HttpException('Slide ID is required', HttpStatus.BAD_REQUEST);
-    const createdSlideObject = new this.slideObjectModel(slideObject);
-    await this.userService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slideService.addSlideObject(slideId, createdSlideObject);
-    return createdSlideObject.save();
+
+    const slide = await this.slideService.findOneById(slideId);
+    // const board = await this.boardService.findOneById(slide.board._id);
+    // const user = await this.userService.findOneById(slide.board.owner);
+    console.log(slide);
+    // const createdSlideObject = new this.slideObjectModel(slideObject);
+    // await this.userService.addSlideObjectToUser(userId, createdSlideObject);
+    // await this.slideService.addSlideObject(slideId, createdSlideObject);
+    // return createdSlideObject.save();
   }
 
   async update(

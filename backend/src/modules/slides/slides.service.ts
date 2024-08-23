@@ -2,18 +2,23 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Slide, SlideDocument } from '../../schemas/slide.schema';
-import { CreateSlideDto, UpdateSlideDto } from './slides.dto';
+import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
+import { UsersService } from '../users/users.service';
+import { UserDocument } from '../../schemas/user.schema';
+
+// TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
 @Injectable()
 export class SlidesService {
-  private readonly pageSize = 1;
+  private readonly pageSize = 5;
   private readonly slidesLimitPerBoard = 10;
   constructor(
     @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
-    private readonly boardService: BoardsService,
+    private readonly boardsService: BoardsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async findAll(page: number = 1): Promise<SlideDocument[]> {
@@ -28,25 +33,30 @@ export class SlidesService {
     return existingSlide;
   }
 
-  async create(createSlideDto: CreateSlideDto): Promise<SlideDocument> {
+  async create(userId: string, createSlideDto: CreateSlideDto): Promise<any> {
     const { boardId, ...rest } = createSlideDto;
-    const board: BoardDocument = await this.boardService.findOneById(boardId);
+
+    const user = await this.usersService.findOneById(userId);
+    const board = await this.boardsService.findOneById(boardId);
+
+    // export to func
+    // @ts-ignore
+    const isOwner = board.owner.toString() === user._id.toString();
+    const hasEditPermission = board.permissions.edit.some(
+      // @ts-ignore
+      id => id.toString() === user._id.toString(),
+    );
+
+    if (!isOwner && !hasEditPermission)
+      throw new HttpException(
+        'User does not have permission to create slides',
+        HttpStatus.FORBIDDEN,
+      );
+
     this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });
-    await this.boardService.addSlideToBoard(boardId, createdSlide);
+    await this.boardsService.addSlideToBoard(boardId, createdSlide);
     return createdSlide.save();
-  }
-
-  async update(
-    slideId: string,
-    updateSlideDto: UpdateSlideDto,
-  ): Promise<SlideDocument> {
-    const updatedSlide = await this.slideModel
-      .findByIdAndUpdate(slideId, updateSlideDto, { new: true })
-      .exec();
-    if (!updatedSlide)
-      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-    return updatedSlide;
   }
 
   async delete(slideId: string): Promise<SlideDocument> {
@@ -78,4 +88,8 @@ export class SlidesService {
     if (slidesCount >= this.slidesLimitPerBoard)
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
+
+  // TODO
+  // async verifyPermissions(user: UserDocument, slide: SlideDocument): void{
+  // }
 }

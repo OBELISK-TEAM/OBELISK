@@ -5,6 +5,7 @@ import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
 import { Slide } from '../../schemas/slide.schema';
+import { UserDocument } from '../../schemas/user.schema';
 
 @Injectable()
 export class BoardsService {
@@ -79,4 +80,9 @@ export class BoardsService {
         HttpStatus.FORBIDDEN,
       );
   }
+
+  // verify if user can create slide to board or add slide object to slide
+  // async verifyEditPermission(user: UserDocument, board:BoardDocument): Promise<void>{
+  //   if(board.owner !== user._id || board.permissions.edit)
+  // }
 }

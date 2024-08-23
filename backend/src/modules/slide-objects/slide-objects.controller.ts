@@ -37,7 +37,7 @@ export class SlideObjectsController {
   @UseGuards(JwtAuthGuard)
   async create(
     @User('_id') userId: string,
-    @Body() createSlideObjectDto: Partial<CreateSlideObjectDto>,
+    @Body() createSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
     return await this.slideObjectsService.create(userId, createSlideObjectDto);
   }

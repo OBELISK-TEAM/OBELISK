@@ -5,6 +5,7 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Max,
   Min,
@@ -15,209 +16,264 @@ import { SlideObjectFilter } from '../../shared/interfaces/SlideObjectFilter';
 import { SlideObjectTextStyles } from '../../shared/interfaces/SlideObjectTextStyles';
 
 export class CreateSlideObjectDto {
-  // Fabric.js-specific properties
+  @IsString({
+    message: 'The slideId must be a string',
+  })
+  @IsNotEmpty({
+    message: 'The slideId is required',
+  })
+  slideId: string;
 
+  @IsOptional()
   @IsString()
-  type?: string;
+  type: string;
 
+  @IsOptional()
   @IsString()
-  version?: string;
+  version: string;
 
+  @IsOptional()
   @IsString()
-  originX?: string;
+  originX: string;
 
+  @IsOptional()
   @IsString()
-  originY?: string;
+  originY: string;
 
+  @IsOptional()
   @IsNumber()
-  left?: number;
+  left: number;
 
+  @IsOptional()
   @IsNumber()
-  top?: number;
+  top: number;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  width?: number;
+  width: number;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  height?: number;
+  height: number;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  strokeWidth?: number;
+  strokeWidth: number;
 
+  @IsOptional()
   @IsIn(['butt', 'round', 'square'])
-  strokeLineCap?: 'butt' | 'round' | 'square';
+  strokeLineCap: 'butt' | 'round' | 'square';
 
+  @IsOptional()
   @IsNumber()
-  strokeDashOffset?: number;
+  strokeDashOffset: number;
 
+  @IsOptional()
   @IsIn(['miter', 'round', 'bevel'])
-  strokeLineJoin?: 'miter' | 'round' | 'bevel';
+  strokeLineJoin: 'miter' | 'round' | 'bevel';
 
+  @IsOptional()
   @IsBoolean()
-  strokeUniform?: boolean;
+  strokeUniform: boolean;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  strokeMiterLimit?: number;
+  strokeMiterLimit: number;
 
+  @IsOptional()
   @IsNumber()
-  scaleX?: number;
+  scaleX: number;
 
+  @IsOptional()
   @IsNumber()
-  scaleY?: number;
+  scaleY: number;
 
+  @IsOptional()
   @IsNumber()
-  angle?: number;
+  angle: number;
 
+  @IsOptional()
   @IsBoolean()
-  flipX?: boolean;
+  flipX: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  flipY?: boolean;
+  flipY: boolean;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(1)
-  opacity?: number;
+  opacity: number;
 
+  @IsOptional()
   @IsBoolean()
-  visible?: boolean;
+  visible: boolean;
 
+  @IsOptional()
   @IsString()
-  fillRule?: string;
+  fillRule: string;
 
+  @IsOptional()
   @IsIn(['fill', 'stroke'])
-  paintFirst?: 'fill' | 'stroke';
+  paintFirst: 'fill' | 'stroke';
 
+  @IsOptional()
   @IsString()
-  globalCompositeOperation?: string;
+  globalCompositeOperation: string;
 
+  @IsOptional()
   @IsNumber()
-  skewX?: number;
+  skewX: number;
 
+  @IsOptional()
   @IsNumber()
-  skewY?: number;
+  skewY: number;
 
+  @IsOptional()
   @IsArray()
-  path?: SlideObjectPath;
+  path: SlideObjectPath;
 
+  @IsOptional()
   @Type(() => SlideObjectShadow)
-  shadow?: SlideObjectShadow | null;
+  shadow: SlideObjectShadow | null;
 
+  @IsOptional()
   @IsArray()
-  strokeDashArray?: number[] | null;
+  strokeDashArray: number[] | null;
 
+  @IsOptional()
   @IsString()
-  stroke?: string | null;
+  stroke: string | null;
 
+  @IsOptional()
   @IsString()
-  fill?: string | null;
+  fill: string | null;
 
+  @IsOptional()
   @IsString()
-  backgroundColor?: string;
+  backgroundColor: string;
 
+  @IsOptional()
   @IsNumber()
-  x1?: number;
+  x1: number;
 
+  @IsOptional()
   @IsNumber()
-  x2?: number;
+  x2: number;
 
+  @IsOptional()
   @IsNumber()
-  y1?: number;
+  y1: number;
 
+  @IsOptional()
   @IsNumber()
-  y2?: number;
+  y2: number;
 
-  @IsNumber()
-  rx?: number;
-
-  @IsNumber()
-  ry?: number;
-
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  radius?: number;
+  radius: number;
 
+  @IsOptional()
   @IsNumber()
-  startAngle?: number;
+  startAngle: number;
 
+  @IsOptional()
   @IsNumber()
-  endAngle?: number;
+  endAngle: number;
 
+  @IsOptional()
   @IsString()
-  fontFamily?: string;
+  fontFamily: string;
 
+  @IsOptional()
   @IsString()
-  fontWeight?: string;
+  fontWeight: string;
 
+  @IsOptional()
   @IsNumber()
-  fontSize?: number;
+  fontSize: number;
 
+  @IsOptional()
   @IsString()
-  text?: string;
+  text: string;
 
+  @IsOptional()
   @IsBoolean()
-  underline?: boolean;
+  underline: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  overline?: boolean;
+  overline: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  linethrough?: boolean;
+  linethrough: boolean;
 
+  @IsOptional()
   @IsIn(['left', 'center', 'right'])
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign: 'left' | 'center' | 'right';
 
+  @IsOptional()
   @IsIn(['normal', 'italic'])
-  fontStyle?: 'normal' | 'italic';
+  fontStyle: 'normal' | 'italic';
 
+  @IsOptional()
   @IsNumber()
-  lineHeight?: number;
+  lineHeight: number;
 
+  @IsOptional()
   @IsString()
-  textBackgroundColor?: string;
+  textBackgroundColor: string;
 
+  @IsOptional()
   @IsNumber()
-  charSpacing?: number;
+  charSpacing: number;
 
+  @IsOptional()
   @IsArray()
-  styles?: SlideObjectTextStyles[];
+  styles: SlideObjectTextStyles[];
 
+  @IsOptional()
   @IsIn(['ltr', 'rtl'])
-  direction?: 'ltr' | 'rtl';
+  direction: 'ltr' | 'rtl';
 
+  @IsOptional()
   @IsNumber()
-  pathStartOffset?: number;
+  pathStartOffset: number;
 
+  @IsOptional()
   @IsIn(['left', 'right', 'center'])
-  pathSide?: 'left' | 'right' | 'center';
+  pathSide: 'left' | 'right' | 'center';
 
+  @IsOptional()
   @IsIn(['baseline', 'middle', 'top', 'bottom'])
-  pathAlign?: 'baseline' | 'middle' | 'top' | 'bottom';
+  pathAlign: 'baseline' | 'middle' | 'top' | 'bottom';
 
+  @IsOptional()
   @IsString()
-  src?: string;
+  src: string;
 
+  @IsOptional()
   @IsIn(['null', 'anonymous'])
-  crossOrigin?: 'null' | 'anonymous';
+  crossOrigin: 'null' | 'anonymous';
 
+  @IsOptional()
   @IsNumber()
-  cropX?: number;
+  cropX: number;
 
+  @IsOptional()
   @IsNumber()
-  cropY?: number;
+  cropY: number;
 
+  @IsOptional()
   @IsArray()
-  filters?: SlideObjectFilter[];
-
-  // Relations
-
-  @IsString()
-  @IsNotEmpty()
-  slideId: string;
+  filters: SlideObjectFilter[];
 }
 
 export class UpdateSlideObjectDto {
