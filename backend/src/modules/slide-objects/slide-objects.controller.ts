@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { SlideObjectsService } from './slide-objects.service';
 import {
@@ -14,6 +15,7 @@ import {
 } from './slide-objects.dto';
 import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
 import { User } from '../auth/decorators/users.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 
 @Controller('slide-objects')
 export class SlideObjectsController {
@@ -32,6 +34,7 @@ export class SlideObjectsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(
     @User('_id') userId: string,
     @Body() createSlideObjectDto: Partial<CreateSlideObjectDto>,
@@ -40,6 +43,7 @@ export class SlideObjectsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @User('_id') userId: string,
     @Param('id') slideObjectId: string,
@@ -53,7 +57,11 @@ export class SlideObjectsController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<SlideObjectDocument> {
-    return await this.slideObjectsService.delete(id);
+  @UseGuards(JwtAuthGuard)
+  async delete(
+    @User('_id') userId: string,
+    @Param('id') slideObjectId: string,
+  ): Promise<SlideObjectDocument> {
+    return await this.slideObjectsService.delete(userId, slideObjectId);
   }
 }

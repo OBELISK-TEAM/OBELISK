@@ -24,6 +24,11 @@ export class BoardsController {
     return this.boardsService.findAll(page);
   }
 
+  @Get(':id')
+  async findOne(@Param('id') boardId: string): Promise<BoardDocument> {
+    return this.boardsService.findOneById(boardId);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   create(
@@ -31,11 +36,6 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
   ): Promise<BoardDocument> {
     return this.boardsService.create(userId, createBoardDto);
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') boardId: string): Promise<BoardDocument> {
-    return this.boardsService.findOneById(boardId);
   }
 
   @Put(':id')

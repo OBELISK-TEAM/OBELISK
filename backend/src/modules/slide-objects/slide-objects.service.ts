@@ -29,10 +29,8 @@ export class SlideObjectsService {
     const existingSlideObject = await this.slideObjectModel
       .findById(slideObjectId)
       .exec();
-
     if (!existingSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
     return existingSlideObject;
   }
 
@@ -43,12 +41,9 @@ export class SlideObjectsService {
     const { slideId, ...slideObject } = createSlideObjectDto;
     if (!slideId)
       throw new HttpException('Slide ID is required', HttpStatus.BAD_REQUEST);
-
     const createdSlideObject = new this.slideObjectModel(slideObject);
-
-    await this.userService.addSlideObject(userId, createdSlideObject);
+    await this.userService.addSlideObjectToUser(userId, createdSlideObject);
     await this.slideService.addSlideObject(slideId, createdSlideObject);
-
     return createdSlideObject.save();
   }
 
@@ -57,31 +52,23 @@ export class SlideObjectsService {
     slideObjectId: string,
     updateSlideObjectDto: UpdateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
-    // I don't know if there is a point of checking existence of user
-    // since there is middleware (guard) that checks if user exists
-    // this comment refers to all the services
-    const existingUser = await this.userService.findOneById(userId);
-    if (!existingUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-
-    const existingSlideObject = await this.slideObjectModel
+    const updatedSlideObject = await this.slideObjectModel
       .findByIdAndUpdate(slideObjectId, updateSlideObjectDto, { new: true })
       .exec();
-
-    if (!existingSlideObject)
+    if (!updatedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
-    return existingSlideObject;
+    return updatedSlideObject;
   }
 
-  async delete(slideObjectId: string): Promise<SlideObjectDocument> {
-    const existingSlideObject = await this.slideObjectModel
+  async delete(
+    userId: string,
+    slideObjectId: string,
+  ): Promise<SlideObjectDocument> {
+    const deletedSlideObject = await this.slideObjectModel
       .findByIdAndDelete(slideObjectId)
       .exec();
-
-    if (!existingSlideObject)
+    if (!deletedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
-    return existingSlideObject;
+    return deletedSlideObject;
   }
 }

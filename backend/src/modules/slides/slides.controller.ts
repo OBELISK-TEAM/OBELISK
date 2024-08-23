@@ -21,14 +21,14 @@ export class SlidesController {
     return this.slidesService.findAll(page);
   }
 
-  @Post()
-  create(@Body() createSlideDto: CreateSlideDto): Promise<SlideDocument> {
-    return this.slidesService.create(createSlideDto);
-  }
-
   @Get(':id')
   async findOne(@Param('id') slideId: string): Promise<SlideDocument> {
     return this.slidesService.findOneById(slideId);
+  }
+
+  @Post()
+  create(@Body() createSlideDto: CreateSlideDto): Promise<SlideDocument> {
+    return this.slidesService.create(createSlideDto);
   }
 
   @Put(':id')

@@ -19,6 +19,13 @@ export class BoardsService {
     return this.boardModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
+  async findOneById(boardId: string): Promise<BoardDocument> {
+    const existingBoard = await this.boardModel.findById(boardId).exec();
+    if (!existingBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return existingBoard;
+  }
+
   async create(
     userId: string,
     createBoardDto: CreateBoardDto,
@@ -26,14 +33,8 @@ export class BoardsService {
     const { name } = createBoardDto;
     const owner = await this.userService.findOneById(userId);
     const createdBoard = new this.boardModel({ name, owner });
-    await this.userService.addBoard(userId, createdBoard);
+    await this.userService.addBoardToUser(userId, createdBoard);
     return createdBoard.save();
-  }
-
-  async findOneById(boardId: string): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
   }
 
   async update(
@@ -45,7 +46,8 @@ export class BoardsService {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
-    if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return updatedBoard;
   }
 
@@ -54,15 +56,17 @@ export class BoardsService {
     const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
-    if (!deletedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    if (!deletedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return deletedBoard;
   }
 
-  async addSlide(boardId: string, slide: Slide): Promise<void> {
+  async addSlideToBoard(boardId: string, slide: Slide): Promise<void> {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, { $push: { slides: slide } }, { new: true })
       .exec();
-    if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
   }
 
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
