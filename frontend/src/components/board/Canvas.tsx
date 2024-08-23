@@ -6,7 +6,6 @@ const SlideCanvas: React.FC = () => {
   const { canvasRef } = useCanvas();
   return (
     <div className="mt-4 flex w-fit rounded-lg bg-white">
-      {/* Kolor płótna nie powinien zależeć od wybranego motywu; zawsze jest biały */}
       <canvas
         ref={canvasRef}
         className="rounded-lg border"

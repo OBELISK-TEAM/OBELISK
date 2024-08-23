@@ -1,6 +1,5 @@
 "use client";
 import { FC } from "react";
-import { MenuItem } from "../../interfaces/canva-interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
@@ -8,6 +7,7 @@ import { AppLogo } from "../AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
+import { MenuItem } from "@/interfaces/menu-data-context";
 
 interface HorizontalMenuProps {
   boardName: string;
@@ -16,11 +16,10 @@ interface HorizontalMenuProps {
 
 const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
   const {
-    state: { activeItem, canvas },
+    state: { activeItem, selectedObjectStyles },
   } = useCanvas();
   const { menuList } = useMenuData();
   const menuItems = menuList.find((group) => group.groupId === groupId);
-  const activeCanvasObject = canvas?.getActiveObject();
 
   const handleClick = (name: string, action?: () => void) => {
     if (action) {
@@ -40,11 +39,11 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
           {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
             if (
-              !(activeCanvasObject && activeCanvasObject.type === "activeSelection") &&
+              !(selectedObjectStyles && selectedObjectStyles.type === "activeSelection") &&
               item.name === MenuActions.GroupSelected
             ) {
               return null;
-            } else if (!activeCanvasObject && item.name === MenuActions.RemoveSelected) {
+            } else if (!selectedObjectStyles && item.name === MenuActions.RemoveSelected) {
               return null;
             }
             return (

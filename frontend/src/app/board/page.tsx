@@ -9,7 +9,7 @@ import SlideFileInputs from "@/components/board/SlideFileInputs";
 const Board: React.FC = () => {
   return (
     <div className="flex flex-col">
-      <BoardHorizontalMenu boardName="Board 1" groupId={MenuGroups.fileAndCanvasOperations} />
+      <BoardHorizontalMenu boardName={"Board 1"} groupId={MenuGroups.fileAndCanvasOperations} />
       <div className="flex">
         <BoardSidebar withSettings={true} groupId={MenuGroups.drawingTools} />
         <BoardSidebar groupId={MenuGroups.objectManipulation} />

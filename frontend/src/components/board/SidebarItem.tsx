@@ -1,9 +1,13 @@
 "use client";
 import React from "react";
-import { MenuItem } from "../../interfaces/canva-interfaces";
-import { isActiveItem } from "@/utils/isActiveItem";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
+import { CanvasMode } from "@/enums/CanvasMode";
+import { MenuItem } from "@/interfaces/menu-data-context";
+
+const isActiveItem = (itemName: string, activeItem: string | null, canvasMode: CanvasMode): boolean => {
+  return itemName === activeItem || itemName === canvasMode.toString();
+};
 
 interface SidebarItemProps {
   item: MenuItem;

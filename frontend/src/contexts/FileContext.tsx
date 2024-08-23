@@ -2,19 +2,11 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { addImage, fitImageByShrinking, loadImagesFromJSON, saveImagesToLocalFile } from "@/utils/fabricCanvasUtils";
+import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board/fileUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { IFileContext } from "@/interfaces/file-context";
 
-interface FileContextType {
-  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
-  fileJSONInputRef: React.MutableRefObject<HTMLInputElement | null>;
-  handleLoadImagesFromJson: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAddImageByUrl: (url: string) => void;
-  handleSaveImages: () => void;
-}
-
-const FileContext = createContext<FileContextType | undefined>(undefined);
+const FileContext = createContext<IFileContext | undefined>(undefined);
 
 export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -74,10 +66,6 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const handleSaveImages = () => {
-    saveImagesToLocalFile(canvas);
-  };
-
   return (
     <FileContext.Provider
       value={{
@@ -86,7 +74,6 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
         handleLoadImagesFromJson,
         handleFileChange,
         handleAddImageByUrl,
-        handleSaveImages,
       }}
     >
       {children}

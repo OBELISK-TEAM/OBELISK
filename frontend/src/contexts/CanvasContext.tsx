@@ -1,41 +1,18 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef, MutableRefObject } from "react";
-import { ActionTypes, canvasReducer, initialState, State } from "@/reducers/canvasReducer";
-import { initializeCanvas, toggleDrawingMode } from "@/utils/fabricCanvasUtils";
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from "react";
+import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { fabric } from "fabric";
+import { CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
+import { ICanvasContext } from "@/interfaces/canvas-context";
+import {
+  getSelectedObjectStyles,
+  initializeCanvas,
+  setSelectedObjectStyles,
+  toggleDrawingMode,
+  updateDimensions,
+} from "@/utils/board/canvasUtils";
 
-export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
-  if (canvas) {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      return activeObject.toObject();
-    }
-  }
-  return null;
-};
-
-export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
-  if (!canvas) {
-    return;
-  }
-  const activeObjects = canvas.getActiveObjects();
-  activeObjects.forEach((obj) => {
-    obj.set(styles);
-  });
-  canvas.requestRenderAll();
-};
-interface CanvasContextType {
-  state: State;
-  canvasRef: MutableRefObject<HTMLCanvasElement | null>;
-  setCanvasMode: (mode: CanvasMode) => void;
-  setColor: (color: string) => void;
-  setSize: (size: number) => void;
-  handleStyleChange: (styles: object) => void;
-  setActiveItem: (activeItem: string | null) => void;
-}
-
-const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
+const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
 export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
@@ -43,33 +20,45 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
-    dispatch({ type: ActionTypes.SET_CANVAS, canvas: newCanvas });
+    dispatch({ type: CanvasReducerActionEnum.SET_CANVAS, canvas: newCanvas });
 
     const handleSelectionCreated = () => {
-      dispatch({ type: ActionTypes.SET_SELECTED_OBJECT_STYLES, styles: getSelectedObjectStyles(newCanvas) });
-      dispatch({ type: ActionTypes.SET_ACTIVE_ITEM, activeItem: null });
+      //toolbar appear
+      dispatch({
+        type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+        styles: getSelectedObjectStyles(newCanvas),
+      });
+      // activeItem can be cleared here
+      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
     };
 
     const handleSelectionCleared = () => {
-      dispatch({ type: ActionTypes.SET_SELECTED_OBJECT_STYLES, styles: null });
-      dispatch({ type: ActionTypes.SET_ACTIVE_ITEM, activeItem: null });
+      //toolbar disappear
+      dispatch({ type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES, styles: null });
+      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
     };
 
-    const handleObjectModified = () => {
-      dispatch({ type: ActionTypes.SET_SELECTED_OBJECT_STYLES, styles: getSelectedObjectStyles(newCanvas) });
-      dispatch({ type: ActionTypes.SET_ACTIVE_ITEM, activeItem: null });
-    };
-
-    const handleMouse = () => {
-      dispatch({ type: ActionTypes.SET_SELECTED_OBJECT_STYLES, styles: getSelectedObjectStyles(newCanvas) });
-      dispatch({ type: ActionTypes.SET_ACTIVE_ITEM, activeItem: null });
+    const handleObjectModified = (e: fabric.IEvent) => {
+      if (!e.target) {
+        return;
+      }
+      //toolbar is updating
+      dispatch({
+        type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+        styles: getSelectedObjectStyles(newCanvas),
+      });
+      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
+      const obj = e.target;
+      // ensure the object is scaled properly
+      updateDimensions(obj);
     };
 
     newCanvas?.on("selection:created", handleSelectionCreated);
     newCanvas?.on("selection:cleared", handleSelectionCleared);
     newCanvas?.on("object:modified", handleObjectModified);
-    newCanvas?.on("mouse:down", handleMouse);
-    newCanvas?.on("mouse:up", handleMouse);
+
+    newCanvas?.on("mouse:down", handleObjectModified);
+    newCanvas?.on("mouse:up", handleObjectModified);
 
     return () => {
       newCanvas?.dispose();
@@ -85,26 +74,29 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [state.canvasMode, state.color, state.size, state.canvas]);
 
   const setCanvasMode = (mode: CanvasMode) => {
-    dispatch({ type: ActionTypes.SET_CANVAS_MODE, canvasMode: mode });
+    dispatch({ type: CanvasReducerActionEnum.SET_CANVAS_MODE, canvasMode: mode });
   };
 
   const setColor = (color: string) => {
-    dispatch({ type: ActionTypes.SET_COLOR, color });
+    dispatch({ type: CanvasReducerActionEnum.SET_COLOR, color });
   };
 
   const setSize = (size: number) => {
-    dispatch({ type: ActionTypes.SET_SIZE, size });
+    dispatch({ type: CanvasReducerActionEnum.SET_SIZE, size });
   };
 
   const setActiveItem = (activeItem: string | null) => {
-    dispatch({ type: ActionTypes.SET_ACTIVE_ITEM, activeItem });
+    dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem });
   };
 
   const handleStyleChange = useCallback(
     (styles: object) => {
       if (state.canvas) {
         setSelectedObjectStyles(state.canvas, styles);
-        dispatch({ type: ActionTypes.SET_SELECTED_OBJECT_STYLES, styles: getSelectedObjectStyles(state.canvas) });
+        dispatch({
+          type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+          styles: getSelectedObjectStyles(state.canvas),
+        });
       }
     },
     [state.canvas]

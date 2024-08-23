@@ -10,8 +10,8 @@ import {
   handleRemoveSelected,
   handleSave,
   saveImagesToLocalFile,
-} from "@/utils/fabricCanvasUtils";
-import { MenuGroup } from "@/interfaces/canva-interfaces";
+} from "@/utils/board/menuDataUtils";
+
 import { fabric } from "fabric";
 import {
   Circle,
@@ -41,13 +41,9 @@ import { MenuGroups } from "@/enums/MenuGroups";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { createContext, useCallback, useContext } from "react";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { IMenuDataContext, MenuGroup } from "@/interfaces/menu-data-context";
 
-interface MenuDataContextType {
-  menuList: MenuGroup[];
-  performAction: (name: MenuActions) => void;
-}
-
-const MenuDataContext = createContext<MenuDataContextType | undefined>(undefined);
+const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
