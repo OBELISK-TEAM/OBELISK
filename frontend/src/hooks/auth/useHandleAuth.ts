@@ -5,10 +5,12 @@ import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
 import { useAuthForm } from "./useAuthForm";
 import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
+import { toastAuthorizationResult } from "@/contexts/toastAuthorizationResult";
+import { ToastTypes } from "@/enums/ToastType";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
-  const { email, password, error, loading, setEmail, setPassword, setError, setLoading } = authForm;
+  const { email, password, loading, setEmail, setPassword, setLoading } = authForm;
   const { login, signup, logout } = useAuth();
   const { googleAuth } = useGoogleAuth(); //special wrapper for google auth, inside it uses loginGoogleUser from useAuth
   const router = useRouter();
@@ -36,29 +38,27 @@ export const useHandleAuth = (): HandleAuth => {
               throw new Error("Invalid authentication action");
           }
         } catch (err: any) {
-          if (err instanceof Error) {
-            const errorMessages = JSON.parse(err.message) as string[];
-            setError(errorMessages);
-            console.warn(errorMessages);
-          } else {
-            setError(["Unexpected error occurred."]);
-          }
+            if (err instanceof Error) {
+              const errorMessages = JSON.parse(err.message) as string[];
+              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, errorMessages);
+              console.warn(errorMessages);
+            } else {
+              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error occured");
+            }
         } finally {
           setLoading(false);
         }
       };
     },
-    [email, password, setError, setLoading, login, signup, logout, router]
+    [email, password, setLoading, login, signup, logout, router]
   );
 
   return {
     email,
     password,
-    error,
     loading,
     setEmail,
     setPassword,
-    setError,
     setLoading,
     login: handleAuth(AuthAction.LOGIN),
     signup: handleAuth(AuthAction.SIGNUP),

@@ -1,56 +1,20 @@
-import React, { createContext, useContext, useReducer } from "react";
-import { AuthMessage } from "@/interfaces/auth-message";
-import { AuthActionType, AuthMessageType } from "@/enums/AuthMessage";
+import React, { createContext, useContext } from "react";
+import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
-import { handleApiError } from "@/lib/handleApiError";
+import { toastAuthorizationResult } from "./toastAuthorizationResult";
+import { extractMessagesFromApiError } from "../lib/toastsUtils";
 
 interface AuthContextType {
-  getAuthMessage: () => AuthMessage | null;
   login: (credentials: { email: string; password: string }) => Promise<void>;
   signup: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
-  clearAuthMessage: () => void;
   loginGoogleUser: (userTempId: string) => Promise<void>;
 }
-
-const authMessageReducer = (state: AuthMessage | null, action: AuthActionType): AuthMessage | null => {
-  switch (action) {
-    case AuthActionType.LOGIN_SUCCESS:
-      return { type: AuthMessageType.SUCCESS, message: "Login successful" };
-    case AuthActionType.LOGIN_FAILURE:
-      return { type: AuthMessageType.FAILURE, message: "Login failed" };
-    case AuthActionType.REGISTER_SUCCESS:
-      return {
-        type: AuthMessageType.SUCCESS,
-        message: "Registration successful",
-      };
-    case AuthActionType.AUTH_ERROR:
-      return { type: AuthMessageType.FAILURE, message: "Authentication error" };
-    case AuthActionType.REGISTER_FAILURE:
-      return { type: AuthMessageType.FAILURE, message: "Registration failed" };
-    case AuthActionType.LOGOUT_SUCCESS:
-      return { type: AuthMessageType.SUCCESS, message: "Logout successful" };
-    case AuthActionType.LOGOUT_FAILURE:
-      return { type: AuthMessageType.FAILURE, message: "Logout failed" };
-    case AuthActionType.AUTH_CLEAR:
-    default:
-      return null;
-  }
-};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authMessage, dispatch] = useReducer(authMessageReducer, null);
   const router = useRouter();
-
-  const getAuthMessage = () => {
-    return authMessage;
-  };
-
-  const clearAuthMessage = () => {
-    dispatch(AuthActionType.AUTH_CLEAR);
-  };
 
   const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/login", {
@@ -59,11 +23,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       body: JSON.stringify(credentials),
     });
     if (response.ok) {
-      dispatch(AuthActionType.LOGIN_SUCCESS);
+      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged in succesfully");
       router.push(successRedirect || "/user-boards");
     } else {
-      dispatch(AuthActionType.LOGIN_FAILURE);
-      await handleApiError(response);
+      const reasons = await extractMessagesFromApiError(response);
+      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
     }
   };
 
@@ -75,21 +39,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     if (response.ok) {
-      dispatch(AuthActionType.REGISTER_SUCCESS);
+      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Registered successfully");
       router.push(successRedirect || "/user-boards");
     } else {
-      dispatch(AuthActionType.REGISTER_FAILURE);
-      await handleApiError(response);
+      const reasons = await extractMessagesFromApiError(response);
+      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
     }
   };
 
   const logout = async (successRedirect?: string) => {
     const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
-      dispatch(AuthActionType.LOGOUT_SUCCESS);
+      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged out successfully");
       router.push(successRedirect || "/auth/login");
     } else {
-      dispatch(AuthActionType.LOGOUT_FAILURE);
+      const reasons = await extractMessagesFromApiError(response);
+      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
     }
   };
 
@@ -103,22 +68,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     if (response.ok) {
-      dispatch(AuthActionType.LOGIN_SUCCESS);
+      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged in with Google successfully");
       router.push(successRedirect || "/user-boards");
     } else {
-      dispatch(AuthActionType.LOGIN_FAILURE);
-      await handleApiError(response);
+      const reasons = await extractMessagesFromApiError(response);
+      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
+      await extractMessagesFromApiError(response);
     }
   };
 
   return (
     <AuthContext.Provider
       value={{
-        getAuthMessage,
         login,
         signup,
         logout,
-        clearAuthMessage,
         loginGoogleUser,
       }}
     >
