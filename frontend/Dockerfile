@@ -1,4 +1,4 @@
-FROM node:22-alpine3.19 AS deps
+FROM node:21-alpine3.19 AS deps
 
 RUN apk add --no-cache python3 make g++ pango-dev
 
@@ -8,7 +8,7 @@ COPY package*.json ./
 
 RUN npm install
 
-FROM node:22-alpine3.19 AS build
+FROM node:21-alpine3.19 AS build
 
 ARG BACKEND_HOST
 ARG BACKEND_PORT
@@ -25,7 +25,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:22-alpine3.19 AS run
+FROM node:21-alpine3.19 AS run
 
 WORKDIR /app
 
