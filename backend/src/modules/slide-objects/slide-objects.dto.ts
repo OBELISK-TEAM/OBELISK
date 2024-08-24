@@ -217,10 +217,6 @@ export class CreateSlideObjectDto {
 
   @IsString()
   @IsNotEmpty()
-  createdById: string;
-
-  @IsString()
-  @IsNotEmpty()
   slideId: string;
 }
 

@@ -8,9 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import React from "react";
-import ErrorList from "@/components/ErrorList/ErrorList";
+
 const LoginCard: React.FC = () => {
-  const { email, password, error, loading, setEmail, setPassword, login, googleAuth } = useHandleAuth();
+  const { email, password, loading, setEmail, setPassword, login, googleAuth } = useHandleAuth();
 
   return (
     <Card className="h-1/2 w-3/5 min-w-96 border-none shadow-none">
@@ -45,8 +45,6 @@ const LoginCard: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && <ErrorList error={error} />}
-
             <Button type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Log in"}
             </Button>

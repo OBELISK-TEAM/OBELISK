@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { Payload } from '../../../shared/interfaces/Payload';
 import { SafeUserDoc } from '../../../shared/interfaces/SafeUserDoc';
@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: Payload): Promise<SafeUserDoc> {
     const safeUser = await this.authService.validateUserById(payload._id);
-    if (!safeUser) throw new HttpException('Invalid token', 401);
+    if (!safeUser) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     return safeUser;
   }
 }
