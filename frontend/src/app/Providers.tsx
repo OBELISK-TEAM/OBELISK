@@ -1,14 +1,24 @@
 "use client";
+
 import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
-import MessageReceiver from "@/app/MessageReceiver";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/toaster";
+import { ToasterProps } from "sonner";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
+  const toastsConfig: ToasterProps = {
+    position: "bottom-center",
+    richColors: true,
+    visibleToasts: 5,
+    closeButton: true,
+  };
+
   return (
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <MessageReceiver>{children}</MessageReceiver>
+        <Toaster {...toastsConfig} />
+        {children}
       </ThemeProvider>
     </AuthProvider>
   );
