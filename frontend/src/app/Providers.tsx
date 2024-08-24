@@ -3,21 +3,13 @@
 import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/toaster";
-import { ToasterProps } from "sonner";
+import ToasterWrapper from "@/providers/ToasterWrapper";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-  const toastsConfig: ToasterProps = {
-    position: "bottom-center",
-    richColors: true,
-    visibleToasts: 5,
-    closeButton: true,
-  };
-
   return (
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Toaster {...toastsConfig} />
+        <ToasterWrapper />
         {children}
       </ThemeProvider>
     </AuthProvider>

@@ -41,15 +41,14 @@ export const useHandleAuth = (): HandleAuth => {
           try {
             if (err instanceof Error) {
               const errorMessages = JSON.parse(err.message) as string[];
-              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, errorMessages);
+              toastAuthorizationResult(ToastTypes.ERROR, errorMessages);
               console.warn(errorMessages);
             } else {
-              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error");
+              toastAuthorizationResult(ToastTypes.ERROR, "Unexpected error");
             }
           } catch (err2: any) {
-            toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error");
+            toastAuthorizationResult(ToastTypes.ERROR, "Unexpected error");
           }
-          
         } finally {
           setLoading(false);
         }

@@ -1,11 +1,19 @@
 import { ToastTypes } from "@/enums/ToastType";
 import React from "react";
-import { toast } from "sonner";
+import { ToasterProps, toast } from "sonner";
 
+/**
+ * The function show the user a notification / toast / sonner.
+ * @param toastType
+ * @param toastDescription Toast notification content
+ * @param toasterProps Properties passed into the toast further
+ * @param toastTitle If this argument is undefined, the `toastType` value serves as a title
+ */
 export const toastAuthorizationResult = (
   toastType: ToastTypes,
-  toastTitle: string,
-  toastDescription: string | string[]
+  toastDescription: string | string[],
+  toasterProps?: ToasterProps,
+  toastTitle?: string
 ): void => {
   const description: string | React.JSX.Element =
     typeof toastDescription === "string" ? (
@@ -18,20 +26,20 @@ export const toastAuthorizationResult = (
       </ul>
     );
 
+  const title = toastTitle ? toastTitle : toastType;
+
   switch (toastType) {
     case ToastTypes.SUCCESS:
-      toast.success(toastTitle, { description: description });
+      toast.success(title, { ...toasterProps, description: description });
       break;
     case ToastTypes.ERROR:
-      toast.error(toastTitle, { description: description });
+      toast.error(title, { ...toasterProps, description: description });
       break;
     case ToastTypes.INFO:
-      toast.info(toastTitle, { description: description });
+      toast.info(title, { ...toasterProps, description: description });
       break;
     case ToastTypes.WARNING:
-      toast.warning(toastTitle, { description: description });
+      toast.warning(title, { ...toasterProps, description: description });
       break;
   }
 };
-
-

@@ -3,6 +3,7 @@ import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
 import { toastAuthorizationResult } from "./toastAuthorizationResult";
 import { extractMessagesFromApiError } from "../lib/toastsUtils";
+import { toast } from "sonner";
 
 interface AuthContextType {
   login: (credentials: { email: string; password: string }) => Promise<void>;
@@ -23,11 +24,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       body: JSON.stringify(credentials),
     });
     if (response.ok) {
-      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged in succesfully");
+      toast.dismiss();
+      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged in succesfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
+      toastAuthorizationResult(ToastTypes.ERROR, reasons);
     }
   };
 
@@ -39,22 +41,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     if (response.ok) {
-      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Registered successfully");
+      toast.dismiss();
+      toastAuthorizationResult(ToastTypes.SUCCESS, "Registered successfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
+      toastAuthorizationResult(ToastTypes.ERROR, reasons, { duration: Infinity });
     }
   };
 
   const logout = async (successRedirect?: string) => {
     const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
-      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged out successfully");
+      toast.dismiss();
+      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged out successfully");
       router.push(successRedirect || "/auth/login");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
+      toastAuthorizationResult(ToastTypes.ERROR, reasons);
     }
   };
 
@@ -68,11 +72,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     if (response.ok) {
-      toastAuthorizationResult(ToastTypes.SUCCESS, ToastTypes.SUCCESS, "Logged in with Google successfully");
+      toast.dismiss();
+      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged in with Google successfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, reasons);
+      toastAuthorizationResult(ToastTypes.ERROR, reasons);
       await extractMessagesFromApiError(response);
     }
   };
