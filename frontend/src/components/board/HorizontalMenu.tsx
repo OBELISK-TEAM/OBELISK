@@ -22,7 +22,6 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
   const menuItems = menuList.find((group) => group.groupId === groupId);
 
   const handleClick = (action?: () => void) => {
-    //console.log("wykonuje sie teraz");
     if (action) {
       action();
     }

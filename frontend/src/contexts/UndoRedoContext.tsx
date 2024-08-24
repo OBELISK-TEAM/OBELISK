@@ -51,7 +51,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       canvas.loadFromJSON(state, () => {
         canvas.renderAll();
         canvas.calcOffset();
-        console.log("wykonuje sie 5");
       });
     }
   }, []);
@@ -76,17 +75,14 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     if (canvas) {
       const handleMouseDown = () => {
-        console.log("zapisane");
         saveState();
       };
 
       const handleMouseUp = () => {
-        console.log("zapisane");
         saveState();
       };
 
       const handlePathCreated = () => {
-        console.log("zapisane");
         saveState();
       };
 
