@@ -38,13 +38,18 @@ export const useHandleAuth = (): HandleAuth => {
               throw new Error("Invalid authentication action");
           }
         } catch (err: any) {
+          try {
             if (err instanceof Error) {
               const errorMessages = JSON.parse(err.message) as string[];
               toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, errorMessages);
               console.warn(errorMessages);
             } else {
-              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error occured");
+              toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error");
             }
+          } catch (err2: any) {
+            toastAuthorizationResult(ToastTypes.ERROR, ToastTypes.ERROR, "Unexpected error");
+          }
+          
         } finally {
           setLoading(false);
         }
