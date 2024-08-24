@@ -1,18 +1,5 @@
 "use client";
-import {
-  addCircle,
-  addLine,
-  addRectangle,
-  exportToPDF,
-  handleAddText,
-  handleGroupSelected,
-  handleLoadFromJSON,
-  handleRemoveSelected,
-  handleSave,
-  saveImagesToLocalFile,
-} from "@/utils/board/menuDataUtils";
 
-import { fabric } from "fabric";
 import {
   Circle,
   EraserIcon,
@@ -34,168 +21,76 @@ import {
 } from "lucide-react";
 
 import { MenuActions } from "@/enums/MenuActions";
-import { PencilBrush } from "fabric/fabric-impl";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuGroups } from "@/enums/MenuGroups";
-
-import { useCanvas } from "@/contexts/CanvasContext";
-import { createContext, useCallback, useContext } from "react";
-import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { createContext, useContext } from "react";
 import { IMenuDataContext, MenuGroup } from "@/interfaces/menu-data-context";
+import { useMenuActions } from "@/hooks/board/useMenuActions";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const {
-    state: { canvas, color, size },
-    setCanvasMode,
-  } = useCanvas();
-  const { saveState, undo, redo } = useUndoRedo();
-
-  const performAction = useCallback(
-    (name: MenuActions) => {
-      const properties = {
-        color,
-        strokeWidth: size,
-        fillColor: color,
-        fontSize: 20,
-        width: size * 10,
-        height: size * 5,
-        radius: size * 5,
-      };
-      if (name) {
-        switch (name) {
-          case MenuActions.AddLine:
-            addLine(canvas, properties);
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          case MenuActions.AddRectangle:
-            addRectangle(canvas, properties);
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          case MenuActions.AddCircle:
-            addCircle(canvas, properties);
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          case MenuActions.AddText:
-            handleAddText(canvas, 50, 50, properties);
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          case MenuActions.GroupSelected:
-            handleGroupSelected(canvas);
-            break;
-          case MenuActions.RemoveSelected:
-            handleRemoveSelected(canvas);
-            break;
-          case MenuActions.ClearCanvas:
-            canvas?.clear();
-            break;
-          case MenuActions.LoadCanvas:
-            handleLoadFromJSON(canvas);
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          case MenuActions.AddImageUrl:
-          case MenuActions.AddImageDisk:
-          case MenuActions.LoadImagesJson:
-            setCanvasMode(CanvasMode.Selection);
-            break;
-          default:
-            break;
-        }
-
-        saveState();
-      }
-    },
-    [canvas, color, size, saveState, setCanvasMode]
-  );
-
+  const { performAction } = useMenuActions();
+  const { undo, redo } = useUndoRedo();
   const menuList: MenuGroup[] = [
     {
       groupName: "Drawing Tools",
       groupId: MenuGroups.drawingTools,
       items: [
         {
-          action: () => {
-            setCanvasMode(CanvasMode.Selection);
-          },
+          action: () => performAction(CanvasMode.Selection),
           text: "Selection Mode",
           icon: <MousePointer />,
           name: CanvasMode.Selection,
         },
         {
-          action: () => {
-            if (!canvas) {
-              return;
-            }
-
-            const pencilBrush = new fabric.PencilBrush(canvas);
-            pencilBrush.color = color;
-            pencilBrush.width = size;
-            pencilBrush.decimate = 4;
-
-            canvas.freeDrawingBrush = pencilBrush;
-
-            setCanvasMode(CanvasMode.SimpleDrawing);
-          },
+          action: () => performAction(CanvasMode.SimpleDrawing),
           text: "Drawing Mode",
           icon: <Pencil />,
           name: CanvasMode.SimpleDrawing,
         },
         {
-          action: () => {
-            if (!canvas) {
-              return;
-            }
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const eraserBrush: PencilBrush = new fabric.EraserBrush(canvas);
-            eraserBrush.width = size;
-            eraserBrush.decimate = 4;
-
-            canvas.freeDrawingBrush = eraserBrush;
-
-            setCanvasMode(CanvasMode.Eraser);
-          },
+          action: () => performAction(CanvasMode.Eraser),
           text: "Eraser Mode",
           icon: <EraserIcon />,
           name: CanvasMode.Eraser,
         },
         {
-          action: () => {},
+          action: () => performAction(MenuActions.ChangeColor),
           text: "Change Color",
           icon: <Color />,
           name: MenuActions.ChangeColor,
         },
         {
-          action: () => {},
+          action: () => performAction(MenuActions.ChangeSize),
           text: "Change Size",
           icon: <Size />,
           name: MenuActions.ChangeSize,
         },
         {
+          action: () => performAction(MenuActions.AddLine),
           text: "Add Line",
           icon: <Minus />,
           name: MenuActions.AddLine,
-          action: () => performAction(MenuActions.AddLine),
         },
         {
+          action: () => performAction(MenuActions.AddRectangle),
           text: "Add Rectangle",
           icon: <Square />,
           name: MenuActions.AddRectangle,
-          action: () => performAction(MenuActions.AddRectangle),
         },
         {
+          action: () => performAction(MenuActions.AddCircle),
           text: "Add Circle",
           icon: <Circle />,
           name: MenuActions.AddCircle,
-          action: () => performAction(MenuActions.AddCircle),
         },
         {
+          action: () => performAction(MenuActions.AddText),
           text: "Add Text",
           icon: <Text />,
           name: MenuActions.AddText,
-          action: () => performAction(MenuActions.AddText),
         },
       ],
     },
@@ -210,16 +105,16 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           name: MenuActions.ClearCanvas,
         },
         {
+          action: () => performAction(MenuActions.AddImageUrl),
           text: "Add Image from URL",
           icon: <UrlIcon />,
           name: MenuActions.AddImageUrl,
-          action: () => performAction(MenuActions.AddImageUrl),
         },
         {
+          action: () => performAction(MenuActions.AddImageDisk),
           text: "Add Image from disk",
           icon: <ImageIcon />,
           name: MenuActions.AddImageDisk,
-          action: () => performAction(MenuActions.AddImageDisk),
         },
       ],
     },
@@ -228,43 +123,38 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       groupId: MenuGroups.fileAndCanvasOperations,
       items: [
         {
-          action: () => exportToPDF(canvas),
+          action: () => performAction(MenuActions.ExportPdf),
           text: "Export to PDF",
           icon: <Save />,
           name: MenuActions.ExportPdf,
         },
         {
+          action: () => undo(),
           text: "Undo",
           icon: <Undo />,
-          action: (e?: any) => {
-            e?.preventDefault();
-            undo();
-          },
           name: MenuActions.Undo,
         },
         {
+          action: () => redo(),
           text: "Redo",
           icon: <Redo />,
-          action: (e?: any) => {
-            e?.preventDefault();
-            redo();
-          },
           name: MenuActions.Redo,
         },
         {
           action: () => performAction(MenuActions.LoadCanvas),
+
           text: "Load Canvas",
           icon: <Upload />,
           name: MenuActions.LoadCanvas,
         },
         {
-          action: () => handleSave(canvas),
+          action: () => performAction(MenuActions.SaveCanvas),
           text: "Save Canvas",
           icon: <Save />,
           name: MenuActions.SaveCanvas,
         },
         {
-          action: () => saveImagesToLocalFile(canvas),
+          action: () => performAction(MenuActions.SaveImages),
           text: "Save Images",
           icon: <Save />,
           name: MenuActions.SaveImages,

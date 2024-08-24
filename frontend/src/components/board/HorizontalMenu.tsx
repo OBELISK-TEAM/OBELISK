@@ -21,7 +21,8 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
   const { menuList } = useMenuData();
   const menuItems = menuList.find((group) => group.groupId === groupId);
 
-  const handleClick = (name: string, action?: () => void) => {
+  const handleClick = (action?: () => void) => {
+    //console.log("wykonuje sie teraz");
     if (action) {
       action();
     }
@@ -55,7 +56,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
                         ? "bg-muted text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-primary"
                     }`}
-                    onClick={() => handleClick(item.name, item.action)}
+                    onClick={() => handleClick(item.action)}
                   >
                     {item.icon}
                   </button>

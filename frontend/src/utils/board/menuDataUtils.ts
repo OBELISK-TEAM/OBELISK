@@ -1,6 +1,52 @@
 import { fabric } from "fabric";
 import { jsPDF } from "jspdf";
 import { ImageData } from "@/interfaces/menu-data-context";
+import { CanvasMode } from "@/enums/CanvasMode";
+import { BrushOptions } from "@/enums/BrushOptions";
+
+const configureBrush = (brush: fabric.BaseBrush, size: number, color?: string) => {
+  brush.width = size;
+  brush.decimate = BrushOptions.Decimate;
+  if (color) {
+    brush.color = color;
+  }
+};
+export const setSelectionMode = (setCanvasMode: (mode: CanvasMode) => void) => {
+  setCanvasMode(CanvasMode.Selection);
+};
+
+export const setDrawingMode = (
+  canvas: fabric.Canvas | null,
+  color: string,
+  size: number,
+  setCanvasMode: (mode: CanvasMode) => void
+) => {
+  if (!canvas) {
+    return;
+  }
+  const pencilBrush = new fabric.PencilBrush(canvas);
+  configureBrush(pencilBrush, size, color);
+  canvas.freeDrawingBrush = pencilBrush;
+  setCanvasMode(CanvasMode.SimpleDrawing);
+};
+
+export const setEraserMode = (
+  canvas: fabric.Canvas | null,
+  size: number,
+  setCanvasMode: (mode: CanvasMode) => void
+) => {
+  if (!canvas) {
+    return;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const eraserBrush = new fabric.EraserBrush(canvas);
+  configureBrush(eraserBrush, size);
+  canvas.freeDrawingBrush = eraserBrush;
+  setCanvasMode(CanvasMode.Eraser);
+};
+
 export const handleSave = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
     const json = JSON.stringify(canvas.toJSON());
@@ -9,8 +55,10 @@ export const handleSave = (canvas: fabric.Canvas | null): void => {
 };
 
 export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<void> => {
+  console.log("WYKONUJE SIE");
   const response = await fetch("/saved.json");
   const jsonData = await response.json();
+  console.log("Loaded JSON:", jsonData);
   if (canvas) {
     canvas.loadFromJSON(jsonData, () => canvas.renderAll());
   }
