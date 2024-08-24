@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 
 const EmailSignupCard: React.FC = () => {
-  const { email, password, error, loading, setEmail, setPassword, signup } = useHandleAuth();
+  const { email, password, loading, setEmail, setPassword, signup } = useHandleAuth();
   return (
     <Card className="h-1/2 w-3/5 min-w-96 border-none shadow-none">
       <CardHeader className="items-center">
@@ -35,13 +35,6 @@ const EmailSignupCard: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && (
-              <ol className="list-disc text-sm text-red-500">
-                {error.map((errMsg, index) => (
-                  <li key={index}>{errMsg}</li>
-                ))}
-              </ol>
-            )}
             <Button type="submit" disabled={loading}>
               <span className="flex items-center px-4 py-2">{loading ? "Creating account..." : "Create account"}</span>
             </Button>

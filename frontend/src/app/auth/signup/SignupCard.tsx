@@ -6,11 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
 import { Mail } from "lucide-react";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
-import ErrorList from "@/components/ErrorList/ErrorList";
 import React from "react";
 
 const SignupCard: React.FC = () => {
-  const { googleAuth, loading, error } = useHandleAuth();
+  const { googleAuth, loading } = useHandleAuth();
   return (
     <Card className="h-1/2 w-3/5 min-w-96 border-none shadow-none">
       <CardHeader className="items-center">
@@ -32,7 +31,6 @@ const SignupCard: React.FC = () => {
           </p>
           <Separator className="flex-1" />
         </div>
-        {error && <ErrorList error={error} />}
         <Button variant="outline" className="flex-1" onClick={googleAuth} disabled={loading}>
           <GoogleIcon width={16} height={16} />
           &ensp;Google
