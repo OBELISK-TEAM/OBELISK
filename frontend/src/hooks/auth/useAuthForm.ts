@@ -14,8 +14,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return { ...state, email: action.payload };
     case "SET_PASSWORD":
       return { ...state, password: action.payload };
-    case "SET_ERROR":
-      return { ...state, error: action.payload };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
     case "RESET":
@@ -36,10 +34,6 @@ export const useAuthForm = () => {
     dispatch({ type: "SET_PASSWORD", payload: password });
   }, []);
 
-  const setError = useCallback((error: string[] | null) => {
-    dispatch({ type: "SET_ERROR", payload: error });
-  }, []);
-
   const setLoading = useCallback((loading: boolean) => {
     dispatch({ type: "SET_LOADING", payload: loading });
   }, []);
@@ -52,7 +46,6 @@ export const useAuthForm = () => {
     ...state,
     setEmail,
     setPassword,
-    setError,
     setLoading,
     resetForm,
   };

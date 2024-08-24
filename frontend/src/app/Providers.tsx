@@ -1,14 +1,16 @@
 "use client";
+
 import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
-import MessageReceiver from "@/app/MessageReceiver";
 import { ThemeProvider } from "next-themes";
+import ToasterWrapper from "@/providers/ToasterWrapper";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <MessageReceiver>{children}</MessageReceiver>
+        <ToasterWrapper />
+        {children}
       </ThemeProvider>
     </AuthProvider>
   );
