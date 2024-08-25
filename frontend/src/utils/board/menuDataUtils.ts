@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { jsPDF } from "jspdf";
-import { ImageDataI } from "@/interfaces/menu-data-context";
+import { ImageData } from "@/interfaces/menu-data-context";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { BrushOptions } from "@/enums/BrushOptions";
 
@@ -208,8 +208,8 @@ const removeImagesFromCanvas = (canvas: fabric.Canvas | null) => {
   return imagesData;
 };
 
-const restoreImagesToCanvas = (canvas: fabric.Canvas | null, imagesData: ImageDataI[]) => {
-  imagesData.forEach((imgData: ImageDataI) => {
+const restoreImagesToCanvas = (canvas: fabric.Canvas | null, imagesData: ImageData[]) => {
+  imagesData.forEach((imgData: ImageData) => {
     fabric.Image.fromURL(imgData.src, (img) => {
       img.set({
         left: imgData.left,

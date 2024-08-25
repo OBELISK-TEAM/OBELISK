@@ -2,8 +2,8 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from "react";
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
-import { CanvasContextI } from "@/interfaces/canvas-context";
+import { CanvasReducerAction } from "@/enums/CanvasReducerAction";
+import { CanvasContext as ICanvasContext } from "@/interfaces/canvas-context";
 import {
   getSelectedObjectStyles,
   initializeCanvas,
@@ -12,7 +12,7 @@ import {
   updateDimensions,
 } from "@/utils/board/canvasUtils";
 
-const CanvasContext = createContext<CanvasContextI | undefined>(undefined);
+const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
 export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
@@ -20,22 +20,22 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
-    dispatch({ type: CanvasReducerActionEnum.SET_CANVAS, canvas: newCanvas });
+    dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
 
     const handleSelectionCreated = () => {
       //toolbar appear
       dispatch({
-        type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+        type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
         styles: getSelectedObjectStyles(newCanvas),
       });
       // activeItem can be cleared here
-      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
+      dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem: null });
     };
 
     const handleSelectionCleared = () => {
       //toolbar disappear
-      dispatch({ type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES, styles: null });
-      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
+      dispatch({ type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES, styles: null });
+      dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem: null });
     };
 
     const handleObjectModified = (e: fabric.IEvent) => {
@@ -44,10 +44,10 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
       //toolbar is updating
       dispatch({
-        type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+        type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
         styles: getSelectedObjectStyles(newCanvas),
       });
-      dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem: null });
+      dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem: null });
       const obj = e.target;
       // ensure the object is scaled properly
       updateDimensions(obj);
@@ -74,19 +74,19 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [state.canvasMode, state.color, state.size, state.canvas]);
 
   const setCanvasMode = (mode: CanvasMode) => {
-    dispatch({ type: CanvasReducerActionEnum.SET_CANVAS_MODE, canvasMode: mode });
+    dispatch({ type: CanvasReducerAction.SET_CANVAS_MODE, canvasMode: mode });
   };
 
   const setColor = (color: string) => {
-    dispatch({ type: CanvasReducerActionEnum.SET_COLOR, color });
+    dispatch({ type: CanvasReducerAction.SET_COLOR, color });
   };
 
   const setSize = (size: number) => {
-    dispatch({ type: CanvasReducerActionEnum.SET_SIZE, size });
+    dispatch({ type: CanvasReducerAction.SET_SIZE, size });
   };
 
   const setActiveItem = (activeItem: string | null) => {
-    dispatch({ type: CanvasReducerActionEnum.SET_ACTIVE_ITEM, activeItem });
+    dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem });
   };
 
   const handleStyleChange = useCallback(
@@ -94,7 +94,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (state.canvas) {
         setSelectedObjectStyles(state.canvas, styles);
         dispatch({
-          type: CanvasReducerActionEnum.SET_SELECTED_OBJECT_STYLES,
+          type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
           styles: getSelectedObjectStyles(state.canvas),
         });
       }

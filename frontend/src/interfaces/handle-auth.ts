@@ -1,4 +1,4 @@
-export interface HandleAuthI {
+export interface HandleAuth {
   email: string;
   password: string;
   loading: boolean;

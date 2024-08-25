@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import StyledLabel from "@/components/board/Toolbar/ToolbarLabel";
 
-interface ToolbarInputPropsI {
+interface ToolbarInputProps {
   styleKey: string;
   labelText: string;
   inputType?: string;
@@ -10,7 +10,7 @@ interface ToolbarInputPropsI {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ToolbarInput: React.FC<ToolbarInputPropsI> = ({ styleKey, labelText, inputType = "text", value, onChange }) => (
+const ToolbarInput: React.FC<ToolbarInputProps> = ({ styleKey, labelText, inputType = "text", value, onChange }) => (
   <div className={`flex items-center space-x-2 border-r pr-4`}>
     <StyledLabel htmlFor={styleKey}>{labelText}</StyledLabel>
     <Input

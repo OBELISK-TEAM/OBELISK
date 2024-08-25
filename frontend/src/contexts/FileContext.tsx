@@ -4,9 +4,9 @@ import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board/fileUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
-import { FileContextI } from "@/interfaces/file-context";
+import { FileContext as IFileContext } from "@/interfaces/file-context";
 
-const FileContext = createContext<FileContextI | undefined>(undefined);
+const FileContext = createContext<IFileContext | undefined>(undefined);
 
 export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {

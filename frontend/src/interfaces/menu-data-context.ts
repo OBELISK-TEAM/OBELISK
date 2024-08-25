@@ -1,25 +1,25 @@
 import { MenuActions } from "@/enums/MenuActions";
 import { ReactNode } from "react";
 
-export interface IMenuDataContext {
-  menuList: MenuGroupI[];
+export interface MenuDataContext {
+  menuList: MenuGroup[];
   performAction: (name: MenuActions) => void;
 }
 
-export interface MenuItemI {
+export interface MenuItem {
   action: () => void;
   text: string;
   icon: ReactNode;
   name: string;
 }
 
-export interface MenuGroupI {
+export interface MenuGroup {
   groupName: string;
   groupId: string;
-  items: MenuItemI[];
+  items: MenuItem[];
 }
 
-export interface ImageDataI {
+export interface ImageData {
   src: string;
   left: number | undefined;
   top: number | undefined;

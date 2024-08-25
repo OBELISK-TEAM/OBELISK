@@ -7,14 +7,14 @@ import { AppLogo } from "../AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
-import { MenuItemI } from "@/interfaces/menu-data-context";
+import { MenuItem } from "@/interfaces/menu-data-context";
 
-interface HorizontalMenuPropsI {
+interface HorizontalMenuProps {
   boardName: string;
   groupId: string;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuPropsI> = ({ boardName, groupId }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
   const {
     state: { activeItem, selectedObjectStyles },
   } = useCanvas();
@@ -31,7 +31,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuPropsI> = ({ boardName, groupId }) =
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
-          {menuItems?.items.map((item: MenuItemI, itemIndex: number) => {
+          {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
             if (
               !(selectedObjectStyles && selectedObjectStyles.type === "activeSelection") &&
               item.name === MenuActions.GROUP_SELECTED

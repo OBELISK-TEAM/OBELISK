@@ -1,4 +1,4 @@
-export interface AuthStateI {
+export interface AuthState {
   email: string;
   password: string;
   error: string[] | null;

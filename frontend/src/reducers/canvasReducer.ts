@@ -1,6 +1,6 @@
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerState, CanvasReducerAction } from "@/types/CanvasReducer";
-import { CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
+import { CanvasReducerAction as CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
 
 export const initialState: CanvasReducerState = {
   canvas: null,

@@ -1,9 +1,9 @@
 import { fabric } from "fabric";
-import { CanvasImageI } from "@/interfaces/file-context";
+import { CanvasImage } from "@/interfaces/file-context";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
-    const images: CanvasImageI[] = JSON.parse(json);
+    const images: CanvasImage[] = JSON.parse(json);
 
     images.forEach((imgData) => {
       fabric.Image.fromURL(imgData.src, (img) => {

@@ -1,4 +1,4 @@
-export enum CanvasReducerActionEnum {
+export enum CanvasReducerAction {
   SET_CANVAS = "SET_CANVAS",
   SET_CANVAS_MODE = "SET_CANVAS_MODE",
   SET_COLOR = "SET_COLOR",

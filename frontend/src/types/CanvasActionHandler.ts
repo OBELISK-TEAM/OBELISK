@@ -1,9 +1,9 @@
 import { CanvasMode } from "@/enums/CanvasMode";
-import { CanvasActionPropertiesI } from "@/interfaces/canvas-action-properties";
+import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
 
 export type CanvasActionHandler = (args: {
   canvas?: fabric.Canvas | null;
-  properties?: CanvasActionPropertiesI;
+  properties?: CanvasActionProperties;
   setCanvasMode?: (mode: CanvasMode) => void;
   undo?: () => void;
   redo?: () => void;

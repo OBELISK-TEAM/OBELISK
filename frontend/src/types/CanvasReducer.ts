@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
+import { CanvasReducerAction as CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
 
 export type CanvasReducerState = {
   canvas: fabric.Canvas | null;

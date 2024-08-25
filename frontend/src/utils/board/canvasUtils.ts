@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { CanvasRefI } from "@/interfaces/canvas-context";
+import { CanvasRef } from "@/interfaces/canvas-context";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 
 export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
@@ -23,7 +23,7 @@ export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: ob
   canvas.requestRenderAll();
 };
 
-export const initializeCanvas = (canvasRef: CanvasRefI): fabric.Canvas | null => {
+export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
   if (canvasRef.current) {
     return new fabric.Canvas(canvasRef.current, {
       selection: true,

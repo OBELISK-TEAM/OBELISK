@@ -3,17 +3,10 @@ import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
 import { toastAuthorizationResult } from "./toastAuthorizationResult";
 import { extractMessagesFromApiError } from "../lib/toastsUtils";
+import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
 
-
-interface AuthContextType {
-  login: (credentials: { email: string; password: string }) => Promise<void>;
-  signup: (credentials: { email: string; password: string }) => Promise<void>;
-  logout: () => Promise<void>;
-  loginGoogleUser: (userTempId: string) => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();

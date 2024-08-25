@@ -2,13 +2,13 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthAction } from "@/enums/AuthAction";
-import { HandleAuthI } from "@/interfaces/handle-auth";
+import { HandleAuth } from "@/interfaces/handle-auth";
 import { useAuthForm } from "./useAuthForm";
 import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 import { toastAuthorizationResult } from "@/contexts/toastAuthorizationResult";
 import { ToastTypes } from "@/enums/ToastType";
 
-export const useHandleAuth = (): HandleAuthI => {
+export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
   const { email, password, loading, setEmail, setPassword, setLoading } = authForm;
   const { login, signup, logout } = useAuth();

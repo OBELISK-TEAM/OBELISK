@@ -19,9 +19,9 @@ import {
   setEraserMode,
   setSelectionMode,
 } from "@/utils/board/menuDataUtils";
-import { CanvasActionPropertiesI } from "@/interfaces/canvas-action-properties";
+import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
 
-const getProperties = (color: string, size: number): CanvasActionPropertiesI => ({
+const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
   strokeWidth: size,
   fillColor: color,

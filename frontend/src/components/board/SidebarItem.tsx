@@ -3,17 +3,17 @@ import React from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { MenuItemI } from "@/interfaces/menu-data-context";
+import { MenuItem } from "@/interfaces/menu-data-context";
 
 const isActiveItem = (itemName: string, activeItem: string | null, canvasMode: CanvasMode): boolean => {
   return itemName === activeItem || itemName === canvasMode.toString();
 };
 
-interface SidebarItemPropsI {
-  item: MenuItemI;
+interface SidebarItemProps {
+  item: MenuItem;
 }
 
-const BoardSidebarItem: React.FC<SidebarItemPropsI> = ({ item }) => {
+const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
   const {
     setActiveItem,
     state: { activeItem, color, size, canvasMode },
