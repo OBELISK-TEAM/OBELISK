@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { useZoom } from "@/contexts/ZoomContext";
+import { useZoom } from "@/contexts/ZoomUIContext";
 
 const SlideCanvas: React.FC = () => {
   const { canvasRef } = useCanvas();

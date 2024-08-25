@@ -12,7 +12,7 @@ import {
   updateDimensions,
 } from "@/utils/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
-import { useZoom } from "./ZoomContext";
+import { useZoom } from "./ZoomUIContext";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 

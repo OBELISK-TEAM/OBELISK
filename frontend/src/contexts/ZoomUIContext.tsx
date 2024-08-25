@@ -8,9 +8,9 @@ interface ZoomContextProps {
   handleZoom: (newZoom: number) => void;
 }
 
-const ZoomContext = createContext<ZoomContextProps | undefined>(undefined);
+const ZoomUIContext = createContext<ZoomContextProps | undefined>(undefined);
 
-export const ZoomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ZoomUIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [zoomValue, setZoomValue] = useState<number>(0); // Track zoom percentage
   const [showZoomBadge, setShowZoomBadge] = useState<boolean>(false); // Control visibility of badge
   const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to store the timeout
@@ -36,11 +36,11 @@ export const ZoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  return <ZoomContext.Provider value={{ zoomValue, showZoomBadge, handleZoom }}>{children}</ZoomContext.Provider>;
+  return <ZoomUIContext.Provider value={{ zoomValue, showZoomBadge, handleZoom }}>{children}</ZoomUIContext.Provider>;
 };
 
 export const useZoom = () => {
-  const context = useContext(ZoomContext);
+  const context = useContext(ZoomUIContext);
   if (!context) {
     throw new Error("useZoom must be used within a ZoomProvider");
   }
