@@ -3,6 +3,7 @@ import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
 import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
+import { ZoomProvider } from "@/contexts/ZoomContext";
 
 const SliderLayout = ({
   children,
@@ -10,15 +11,17 @@ const SliderLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <CanvasProvider>
-      <UndoRedoProvider>
-        <MenuDataProvider>
-          <FileProvider>
-            <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
-          </FileProvider>
-        </MenuDataProvider>
-      </UndoRedoProvider>
-    </CanvasProvider>
+    <ZoomProvider>
+      <CanvasProvider>
+        <UndoRedoProvider>
+          <MenuDataProvider>
+            <FileProvider>
+              <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+            </FileProvider>
+          </MenuDataProvider>
+        </UndoRedoProvider>
+      </CanvasProvider>
+    </ZoomProvider>
   );
 };
 
