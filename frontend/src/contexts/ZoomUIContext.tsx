@@ -14,7 +14,7 @@ export const ZoomUIProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [zoomValue, setZoomValue] = useState<number>(0); // Track zoom percentage
   const [showZoomBadge, setShowZoomBadge] = useState<boolean>(false); // Control visibility of badge
   const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to store the timeout
-
+  // comment
   const handleZoom = (newZoom: number) => {
     const zoomPercentage = ((newZoom - 1) / (ZoomOptions.MAX_ZOOM - 1)) * 100;
     setZoomValue(zoomPercentage);
