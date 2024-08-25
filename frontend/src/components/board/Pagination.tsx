@@ -1,4 +1,4 @@
-// PaginationDemo.tsx
+"use client";
 import React from "react";
 import {
   Pagination,

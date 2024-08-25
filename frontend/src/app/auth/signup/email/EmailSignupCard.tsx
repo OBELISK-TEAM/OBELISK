@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
+import React from "react";
 
 const EmailSignupCard: React.FC = () => {
   const { email, password, loading, setEmail, setPassword, signup } = useHandleAuth();

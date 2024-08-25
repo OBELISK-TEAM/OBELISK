@@ -54,7 +54,7 @@ export const useHandleAuth = (): HandleAuth => {
         }
       };
     },
-    [email, password, setLoading, login, signup, logout, router]
+    [email, password, setLoading, login, signup, logout, router, googleAuth]
   );
 
   return {

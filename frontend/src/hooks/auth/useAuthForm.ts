@@ -1,5 +1,6 @@
 import { useReducer, useCallback } from "react";
-import { AuthAction, AuthState } from "@/interfaces/auth-form";
+import { AuthState } from "@/interfaces/auth-form";
+import { AuthAction } from "@/types/AuthActionReducer";
 
 export const initialState: AuthState = {
   email: "",

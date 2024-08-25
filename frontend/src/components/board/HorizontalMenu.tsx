@@ -1,38 +1,25 @@
+"use client";
 import { FC } from "react";
-import { MenuGroup, MenuItem } from "../../interfaces/canva-interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import ThemeToggle from "../ThemeToggle";
 import { AppLogo } from "../AppLogo";
+import { MenuActions } from "@/enums/MenuActions";
+import { useCanvas } from "@/contexts/CanvasContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
+import { MenuItem } from "@/interfaces/menu-data-context";
 
 interface HorizontalMenuProps {
-  menuItem: MenuGroup;
-  onIconClick: (name: string) => void;
-  withSettings?: boolean;
-  fromRight?: boolean;
   boardName: string;
-  onActiveItemChange?: (activeItem: string | null) => void;
-  activeItem: string | null;
-  activeCanvasObject: { [key: string]: any } | null;
+  groupId: string;
 }
 
-const HorizontalMenu: FC<HorizontalMenuProps> = ({
-  menuItem,
-  onIconClick,
-  boardName,
-  onActiveItemChange,
-  activeItem,
-  activeCanvasObject,
-}) => {
-  const handleClick = (name: string, action?: () => void) => {
-    if (onActiveItemChange) {
-      onActiveItemChange(name);
-    }
-    if (action) {
-      action();
-    }
-    onIconClick(name);
-  };
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
+  const {
+    state: { activeItem, selectedObjectStyles },
+  } = useCanvas();
+  const { menuList } = useMenuData();
+  const menuItems = menuList.find((group) => group.groupId === groupId);
 
   return (
     <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
@@ -44,13 +31,13 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
-          {menuItem.items.map((item: MenuItem, itemIndex: number) => {
+          {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
             if (
-              !(activeCanvasObject && activeCanvasObject.type === "activeSelection") &&
-              item.name === "group-selected"
+              !(selectedObjectStyles && selectedObjectStyles.type === "activeSelection") &&
+              item.name === MenuActions.GROUP_SELECTED
             ) {
               return null;
-            } else if (!activeCanvasObject && item.name === "remove-selected") {
+            } else if (!selectedObjectStyles && item.name === MenuActions.REMOVE_SELECTED) {
               return null;
             }
             return (
@@ -62,7 +49,7 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
                         ? "bg-muted text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-primary"
                     }`}
-                    onClick={() => handleClick(item.name, item.action)}
+                    onClick={() => item.action()}
                   >
                     {item.icon}
                   </button>
@@ -87,4 +74,4 @@ const HorizontalMenu: FC<HorizontalMenuProps> = ({
   );
 };
 
-export default HorizontalMenu;
+export default BoardHorizontalMenu;

@@ -1,12 +1,13 @@
-import { useEffect } from "react";
-import { fabric } from "fabric";
+"use client";
+import React, { useEffect } from "react";
+import { MenuActions } from "@/enums/MenuActions";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useMenuData } from "@/contexts/MenuDataContext";
 
-const useKeydownListener = (
-  canvas: fabric.Canvas | null,
-  performAction: (name: string, canvas: fabric.Canvas | null) => void,
-  undo: () => void,
-  redo: () => void
-) => {
+const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { undo, redo } = useUndoRedo();
+  const { performAction } = useMenuData();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey) {
@@ -24,7 +25,7 @@ const useKeydownListener = (
             break;
         }
       } else if (event.key === "Delete") {
-        performAction("remove-selected", canvas);
+        performAction(MenuActions.REMOVE_SELECTED);
       }
     };
 
@@ -32,7 +33,9 @@ const useKeydownListener = (
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [canvas, performAction, undo, redo]);
+  }, [performAction, undo, redo]);
+
+  return <>{children}</>;
 };
 
-export default useKeydownListener;
+export default KeydownListenerWrapper;

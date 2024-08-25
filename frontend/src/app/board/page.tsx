@@ -1,106 +1,28 @@
-"use client";
-import { useRef, useState } from "react";
 import BoardSidebar from "@/components/board/Sidebar";
-import ToolBar from "@/components/board/Toolbar";
+import BoardToolBar from "@/components/board/Toolbar/Toolbar";
 import { BoardPagination } from "@/components/board/Pagination";
-import HorizontalMenu from "@/components/board/HorizontalMenu";
-import useCanvas from "@/hooks/board/useCanvas";
-import useMenuData from "@/hooks/board/useMenuData";
-import useFileClick from "@/hooks/board/useFileClick";
-import { MenuAction } from "@/enums/MenuActions";
+import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
+import { MenuGroups } from "@/enums/MenuGroups";
+import SlideCanvas from "@/components/board/Canvas";
+import SlideFileInputs from "@/components/board/SlideFileInputs";
 
 const Board: React.FC = () => {
-  const { canvasRef, canvas, selectedObjectStyles, handleStyleChange } = useCanvas();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
-  const [activeItem, setActiveItem] = useState<string | null>(MenuAction.SelectionMode);
-
-  useFileClick(activeItem, setActiveItem, fileInputRef, fileJSONInputRef);
-
-  const {
-    menuList,
-    handleAddImageByUrl,
-    handleFileChange,
-    handleLoadImagesFromJson,
-    color,
-    size,
-    isDrawingMode,
-    setColor,
-    setSize,
-  } = useMenuData(canvas);
-
-  const [addGroup, editGroup, fileGroup] = menuList;
-
-  const handleIconClick = (name: string) => {
-    setActiveItem(name);
-  };
-
   return (
     <div className="flex flex-col">
-      <HorizontalMenu
-        boardName="Board 1"
-        menuItem={fileGroup}
-        onIconClick={handleIconClick}
-        activeItem={activeItem}
-        onActiveItemChange={setActiveItem}
-        activeCanvasObject={selectedObjectStyles}
-      />
+      <BoardHorizontalMenu boardName={"Board 1"} groupId={MenuGroups.FILE_AND_CANVAS_OPERATIONS} />
       <div className="flex">
-        <BoardSidebar
-          withSettings={true}
-          menuGroup={addGroup}
-          onIconClick={handleIconClick}
-          activeItem={activeItem}
-          isDrawingMode={isDrawingMode}
-          onActiveItemChange={setActiveItem}
-          color={color}
-          size={size}
-          handleColorChange={(e) => setColor(e.target.value)}
-          handleSizeChange={(e) => setSize(Number(e.target.value))}
-        />
-        <BoardSidebar
-          menuGroup={editGroup}
-          onIconClick={handleIconClick}
-          activeItem={activeItem}
-          isDrawingMode={isDrawingMode}
-          onActiveItemChange={setActiveItem}
-          color={color}
-          size={size}
-          handleColorChange={(e) => setColor(e.target.value)}
-          handleSizeChange={(e) => setSize(Number(e.target.value))}
-        />
+        <BoardSidebar withSettings={true} groupId={MenuGroups.DRAWING_TOOLS} />
+        <BoardSidebar groupId={MenuGroups.OBJECT_MANIPULATION} />
         <div
           className="flex flex-col items-center bg-muted text-muted-foreground"
           style={{
             width: `calc(100% - ${2 * 56}px)`,
           }}
         >
-          <ToolBar
-            selectedObjectStyles={selectedObjectStyles}
-            onStyleChange={handleStyleChange}
-            activeItem={activeItem}
-            handleAddImageByUrl={handleAddImageByUrl}
-          />
-          <div className="mt-4 flex w-fit rounded-lg bg-white">
-            {" "}
-            {/* color of the board itself should not be dependent on the chosen theme; it's always white */}
-            <canvas
-              ref={canvasRef}
-              className="rounded-lg border"
-              width={1000}
-              height={550}
-              onContextMenu={(e) => e.preventDefault()}
-            />
-          </div>
+          <BoardToolBar />
+          <SlideCanvas />
           <BoardPagination />
-          <input type="file" id="file-input1" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-          <input
-            type="file"
-            id="file-input2"
-            className="hidden"
-            ref={fileJSONInputRef}
-            onChange={handleLoadImagesFromJson}
-          />
+          <SlideFileInputs />
         </div>
       </div>
     </div>

@@ -1,64 +1,67 @@
+"use client";
 import React from "react";
-import { MenuItem } from "../../interfaces/canva-interfaces";
-import { MenuAction } from "@/enums/MenuActions";
+import { MenuActions } from "@/enums/MenuActions";
+import { useCanvas } from "@/contexts/CanvasContext";
+import { CanvasMode } from "@/enums/CanvasMode";
+import { MenuItem } from "@/interfaces/menu-data-context";
+
+const isActiveItem = (itemName: string, activeItem: string | null, canvasMode: CanvasMode): boolean => {
+  return itemName === activeItem || itemName === canvasMode.toString();
+};
 
 interface SidebarItemProps {
   item: MenuItem;
-  activeItem: string | null;
-  isDrawingMode: boolean;
-  color: string;
-  size: number;
-  handleColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSizeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClick: (name: string, action?: () => void) => void;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({
-  item,
-  activeItem,
-  isDrawingMode,
-  color,
-  size,
-  handleColorChange,
-  handleSizeChange,
-  handleClick,
-}) => {
-  const id = item.name;
+const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
+  const {
+    setActiveItem,
+    state: { activeItem, color, size, canvasMode },
+    setColor,
+    setSize,
+  } = useCanvas();
+  const handleClick = (name: string, action?: () => void) => {
+    if (setActiveItem) {
+      setActiveItem(name);
+    }
+    if (action) {
+      action();
+    }
+  };
   return (
     <div>
       <button
         className={`flex cursor-pointer items-center rounded p-2 text-left hover:bg-muted hover:text-primary ${
-          activeItem === item.name ||
-          (item.name === MenuAction.SelectionMode && !isDrawingMode) ||
-          (item.name === MenuAction.DrawingMode && isDrawingMode)
+          isActiveItem(item.name, activeItem, canvasMode)
             ? "bg-muted text-primary"
             : "bg-background text-muted-foreground"
         }`}
         onClick={() =>
-          !(item.name === "change-color" || item.name === "change-size") && handleClick(item.name, item.action)
+          !(item.name === MenuActions.CHANGE_COLOR || item.name === MenuActions.CHANGE_SIZE) &&
+          handleClick(item.name, item.action)
         }
       >
-        {item.name === "change-color" ? (
+        {item.name === MenuActions.CHANGE_COLOR ? (
           <input
             type="color"
             value={color}
-            id={id}
-            onChange={handleColorChange}
+            id={item.name}
+            onChange={(e) => setColor(e.target.value)}
             className="h-6 w-6 cursor-pointer rounded-full border"
           />
         ) : (
           <div className="flex h-6 w-6 items-center justify-center">{item.icon}</div>
         )}
         <label
-          htmlFor={id}
+          htmlFor={item.name}
           className="ml-8 cursor-pointer whitespace-nowrap text-sm font-medium transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:opacity-100"
         >
-          {item.name === "change-size" ? "Size" : ""}
-          {item.name === "change-size" ? (
+          {item.name === MenuActions.CHANGE_SIZE ? "Size" : ""}
+          {item.name === MenuActions.CHANGE_SIZE ? (
             <input
               type="number"
               value={size}
-              onChange={handleSizeChange}
+              onChange={(e) => setSize(e.target.value as unknown as number)}
               className="ml-2 w-20 cursor-pointer rounded border bg-background p-2 text-muted-foreground"
             />
           ) : (
@@ -70,4 +73,4 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   );
 };
 
-export default SidebarItem;
+export default BoardSidebarItem;
