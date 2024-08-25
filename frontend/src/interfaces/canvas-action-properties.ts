@@ -1,4 +1,4 @@
-export interface CanvasActionProperties {
+export interface CanvasActionPropertiesI {
   color: string;
   strokeWidth: number;
   fillColor: string;

@@ -24,7 +24,7 @@ import { MenuActions } from "@/enums/MenuActions";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuGroups } from "@/enums/MenuGroups";
 import { createContext, useContext } from "react";
-import { IMenuDataContext, MenuGroup } from "@/interfaces/menu-data-context";
+import { IMenuDataContext, MenuGroupI } from "@/interfaces/menu-data-context";
 import { useMenuActions } from "@/hooks/board/useMenuActions";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
@@ -33,10 +33,10 @@ const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { performAction } = useMenuActions();
   const { undo, redo } = useUndoRedo();
-  const menuList: MenuGroup[] = [
+  const menuList: MenuGroupI[] = [
     {
       groupName: "Drawing Tools",
-      groupId: MenuGroups.drawingTools,
+      groupId: MenuGroups.DRAWING_TOOLS,
       items: [
         {
           action: () => performAction(CanvasMode.Selection),
@@ -57,125 +57,125 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           name: CanvasMode.Eraser,
         },
         {
-          action: () => performAction(MenuActions.ChangeColor),
+          action: () => performAction(MenuActions.CHANGE_COLOR),
           text: "Change Color",
           icon: <Color />,
-          name: MenuActions.ChangeColor,
+          name: MenuActions.CHANGE_COLOR,
         },
         {
-          action: () => performAction(MenuActions.ChangeSize),
+          action: () => performAction(MenuActions.CHANGE_SIZE),
           text: "Change Size",
           icon: <Size />,
-          name: MenuActions.ChangeSize,
+          name: MenuActions.CHANGE_SIZE,
         },
         {
-          action: () => performAction(MenuActions.AddLine),
+          action: () => performAction(MenuActions.ADD_LINE),
           text: "Add Line",
           icon: <Minus />,
-          name: MenuActions.AddLine,
+          name: MenuActions.ADD_LINE,
         },
         {
-          action: () => performAction(MenuActions.AddRectangle),
+          action: () => performAction(MenuActions.ADD_RECTANGLE),
           text: "Add Rectangle",
           icon: <Square />,
-          name: MenuActions.AddRectangle,
+          name: MenuActions.ADD_RECTANGLE,
         },
         {
-          action: () => performAction(MenuActions.AddCircle),
+          action: () => performAction(MenuActions.ADD_CIRCLE),
           text: "Add Circle",
           icon: <Circle />,
-          name: MenuActions.AddCircle,
+          name: MenuActions.ADD_CIRCLE,
         },
         {
-          action: () => performAction(MenuActions.AddText),
+          action: () => performAction(MenuActions.ADD_TEXT),
           text: "Add Text",
           icon: <Text />,
-          name: MenuActions.AddText,
+          name: MenuActions.ADD_TEXT,
         },
       ],
     },
     {
       groupName: "Object Manipulation",
-      groupId: MenuGroups.objectManipulation,
+      groupId: MenuGroups.OBJECT_MANIPULATION,
       items: [
         {
-          action: () => performAction(MenuActions.ClearCanvas),
+          action: () => performAction(MenuActions.CLEAR_CANVAS),
           text: "Clear Canvas",
           icon: <Trash />,
-          name: MenuActions.ClearCanvas,
+          name: MenuActions.CLEAR_CANVAS,
         },
         {
-          action: () => performAction(MenuActions.AddImageUrl),
+          action: () => performAction(MenuActions.ADD_IMAGE_URL),
           text: "Add Image from URL",
           icon: <UrlIcon />,
-          name: MenuActions.AddImageUrl,
+          name: MenuActions.ADD_IMAGE_URL,
         },
         {
-          action: () => performAction(MenuActions.AddImageDisk),
+          action: () => performAction(MenuActions.ADD_IMAGE_DISK),
           text: "Add Image from disk",
           icon: <ImageIcon />,
-          name: MenuActions.AddImageDisk,
+          name: MenuActions.ADD_IMAGE_DISK,
         },
       ],
     },
     {
       groupName: "File and Canvas Operations",
-      groupId: MenuGroups.fileAndCanvasOperations,
+      groupId: MenuGroups.FILE_AND_CANVAS_OPERATIONS,
       items: [
         {
-          action: () => performAction(MenuActions.ExportPdf),
+          action: () => performAction(MenuActions.EXPORT_PDF),
           text: "Export to PDF",
           icon: <Save />,
-          name: MenuActions.ExportPdf,
+          name: MenuActions.EXPORT_PDF,
         },
         {
           action: () => undo(),
           text: "Undo",
           icon: <Undo />,
-          name: MenuActions.Undo,
+          name: MenuActions.UNDO,
         },
         {
           action: () => redo(),
           text: "Redo",
           icon: <Redo />,
-          name: MenuActions.Redo,
+          name: MenuActions.REDO,
         },
         {
-          action: () => performAction(MenuActions.LoadCanvas),
+          action: () => performAction(MenuActions.LOAD_CANVAS),
 
           text: "Load Canvas",
           icon: <Upload />,
-          name: MenuActions.LoadCanvas,
+          name: MenuActions.LOAD_CANVAS,
         },
         {
-          action: () => performAction(MenuActions.SaveCanvas),
+          action: () => performAction(MenuActions.SAVE_CANVAS),
           text: "Save Canvas",
           icon: <Save />,
-          name: MenuActions.SaveCanvas,
+          name: MenuActions.SAVE_CANVAS,
         },
         {
-          action: () => performAction(MenuActions.SaveImages),
+          action: () => performAction(MenuActions.SAVE_IMAGES),
           text: "Save Images",
           icon: <Save />,
-          name: MenuActions.SaveImages,
+          name: MenuActions.SAVE_IMAGES,
         },
         {
-          action: () => performAction(MenuActions.LoadImagesJson),
+          action: () => performAction(MenuActions.LOAD_IMAGES_JSON),
           text: "Load Images from JSON",
           icon: <Upload />,
-          name: MenuActions.LoadImagesJson,
+          name: MenuActions.LOAD_IMAGES_JSON,
         },
         {
-          action: () => performAction(MenuActions.GroupSelected),
+          action: () => performAction(MenuActions.GROUP_SELECTED),
           text: "Group Selected Objects",
           icon: <Group />,
-          name: MenuActions.GroupSelected,
+          name: MenuActions.GROUP_SELECTED,
         },
         {
-          action: () => performAction(MenuActions.RemoveSelected),
+          action: () => performAction(MenuActions.REMOVE_SELECTED),
           text: "Remove Selected Objects",
           icon: <Trash />,
-          name: MenuActions.RemoveSelected,
+          name: MenuActions.REMOVE_SELECTED,
         },
       ],
     },

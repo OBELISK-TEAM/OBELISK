@@ -21,7 +21,7 @@ const ObjectSpecificControls: React.FC = () => {
   };
 
   const controlsMap: Record<string, ReactElement[]> = {
-    [CanvasObjectTypes.IText]: [
+    [CanvasObjectTypes.I_TEXT]: [
       <ToolbarInput
         key="color"
         styleKey="fill"
@@ -40,7 +40,7 @@ const ObjectSpecificControls: React.FC = () => {
       />,
       <FontStyleControls key="fontStyles" />,
     ],
-    [CanvasObjectTypes.Rect]: [
+    [CanvasObjectTypes.RECT]: [
       <ToolbarInput
         key="fill"
         styleKey="fill"
@@ -90,7 +90,7 @@ const ObjectSpecificControls: React.FC = () => {
         onChange={handleChange("angle")}
       />,
     ],
-    [CanvasObjectTypes.Circle]: [
+    [CanvasObjectTypes.CIRCLE]: [
       <ToolbarInput
         key="fill"
         styleKey="fill"
@@ -132,7 +132,7 @@ const ObjectSpecificControls: React.FC = () => {
         onChange={handleChange("angle")}
       />,
     ],
-    [CanvasObjectTypes.Path]: [
+    [CanvasObjectTypes.PATH]: [
       <ToolbarInput
         key="stroke"
         styleKey="stroke"
@@ -150,7 +150,7 @@ const ObjectSpecificControls: React.FC = () => {
         onChange={handleChange("strokeWidth")}
       />,
     ],
-    [CanvasObjectTypes.Line]: [
+    [CanvasObjectTypes.LINE]: [
       <ToolbarInput
         key="stroke"
         styleKey="stroke"

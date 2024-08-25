@@ -1,7 +1,7 @@
-import { ApiError } from "@/interfaces/api-error";
+import { ApiErrorI } from "@/interfaces/api-error";
 
 export const handleApiError = async (response: Response): Promise<never> => {
-  const errorData: ApiError = await response.json();
+  const errorData: ApiErrorI = await response.json();
   //console.log("errorData", errorData);
   let errorMessages: string[] = [];
 

@@ -2,24 +2,24 @@ import { MenuActions } from "@/enums/MenuActions";
 import { ReactNode } from "react";
 
 export interface IMenuDataContext {
-  menuList: MenuGroup[];
+  menuList: MenuGroupI[];
   performAction: (name: MenuActions) => void;
 }
 
-export interface MenuItem {
+export interface MenuItemI {
   action: () => void;
   text: string;
   icon: ReactNode;
   name: string;
 }
 
-export interface MenuGroup {
+export interface MenuGroupI {
   groupName: string;
   groupId: string;
-  items: MenuItem[];
+  items: MenuItemI[];
 }
 
-export interface ImageData {
+export interface ImageDataI {
   src: string;
   left: number | undefined;
   top: number | undefined;

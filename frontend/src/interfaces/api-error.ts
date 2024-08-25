@@ -1,4 +1,4 @@
-export interface ApiError {
+export interface ApiErrorI {
   code: number;
   path: string;
   method: string;

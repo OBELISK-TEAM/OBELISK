@@ -2,9 +2,9 @@
 import React, { createContext, useContext, useRef, useCallback, useEffect } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { IUndoRedoContext } from "@/interfaces/undo-redo-context";
+import { UndoRedoContextI } from "@/interfaces/undo-redo-context";
 
-const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
+const UndoRedoContext = createContext<UndoRedoContextI | undefined>(undefined);
 
 export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {

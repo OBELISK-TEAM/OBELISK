@@ -1,3 +1,3 @@
 export enum BrushOptions {
-  Decimate = 4,
+  DECIMATE = 4,
 }

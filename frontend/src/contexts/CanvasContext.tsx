@@ -3,7 +3,7 @@ import React, { createContext, useContext, useReducer, useEffect, useCallback, u
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerActionEnum } from "@/enums/CanvasReducerAction";
-import { ICanvasContext } from "@/interfaces/canvas-context";
+import { CanvasContextI } from "@/interfaces/canvas-context";
 import {
   getSelectedObjectStyles,
   initializeCanvas,
@@ -12,7 +12,7 @@ import {
   updateDimensions,
 } from "@/utils/board/canvasUtils";
 
-const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
+const CanvasContext = createContext<CanvasContextI | undefined>(undefined);
 
 export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);

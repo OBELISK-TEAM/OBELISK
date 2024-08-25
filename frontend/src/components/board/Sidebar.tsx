@@ -4,13 +4,13 @@ import { CogIcon } from "lucide-react";
 import BoardSidebarItem from "./SidebarItem";
 import { useMenuData } from "@/contexts/MenuDataContext";
 
-interface BoardSidebarProps {
+interface BoardSidebarPropsI {
   groupId: string;
   withSettings?: boolean;
   fromRight?: boolean;
 }
 
-const BoardSidebar: FC<BoardSidebarProps> = ({ withSettings = false, groupId, fromRight = false }) => {
+const BoardSidebar: FC<BoardSidebarPropsI> = ({ withSettings = false, groupId, fromRight = false }) => {
   const { menuList } = useMenuData();
   const borderClass = fromRight ? "border-l" : "border-r";
   const menuGroup = menuList.find((group) => group.groupId === groupId);

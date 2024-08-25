@@ -2,13 +2,13 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 
-interface AppLogoProps {
+interface AppLogoPropsI {
   width: number;
   height: number;
   alt?: string;
 }
 
-export const AppLogo: FC<AppLogoProps> = ({ width, height, alt }) => {
+export const AppLogo: FC<AppLogoPropsI> = ({ width, height, alt }) => {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
 

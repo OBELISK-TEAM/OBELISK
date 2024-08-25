@@ -25,7 +25,7 @@ const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ child
             break;
         }
       } else if (event.key === "Delete") {
-        performAction(MenuActions.RemoveSelected);
+        performAction(MenuActions.REMOVE_SELECTED);
       }
     };
 

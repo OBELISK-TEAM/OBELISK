@@ -4,9 +4,9 @@ import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board/fileUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
-import { IFileContext } from "@/interfaces/file-context";
+import { FileContextI } from "@/interfaces/file-context";
 
-const FileContext = createContext<IFileContext | undefined>(undefined);
+const FileContext = createContext<FileContextI | undefined>(undefined);
 
 export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -18,10 +18,10 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (activeItem === MenuActions.AddImageDisk) {
+    if (activeItem === MenuActions.ADD_IMAGE_DISK) {
       fileInputRef.current?.click();
       setActiveItem(null);
-    } else if (activeItem === MenuActions.LoadImagesJson) {
+    } else if (activeItem === MenuActions.LOAD_IMAGES_JSON) {
       fileJSONInputRef.current?.click();
       setActiveItem(null);
     }

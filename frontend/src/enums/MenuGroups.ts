@@ -1,5 +1,5 @@
 export enum MenuGroups {
-  drawingTools = "Drawing Tools",
-  objectManipulation = "Object Manipulation",
-  fileAndCanvasOperations = "File and Canvas Operations",
+  DRAWING_TOOLS = "Drawing Tools",
+  OBJECT_MANIPULATION = "Object Manipulation",
+  FILE_AND_CANVAS_OPERATIONS = "File and Canvas Operations",
 }

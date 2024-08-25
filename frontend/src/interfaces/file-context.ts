@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface IFileContext {
+export interface FileContextI {
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   fileJSONInputRef: React.MutableRefObject<HTMLInputElement | null>;
   handleLoadImagesFromJson: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -8,7 +8,7 @@ export interface IFileContext {
   handleAddImageByUrl: (url: string) => void;
 }
 
-export interface CanvasImage {
+export interface CanvasImageI {
   type: string;
   left: number;
   top: number;

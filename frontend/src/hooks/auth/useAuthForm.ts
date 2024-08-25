@@ -1,14 +1,15 @@
 import { useReducer, useCallback } from "react";
-import { AuthAction, AuthState } from "@/interfaces/auth-form";
+import { AuthStateI } from "@/interfaces/auth-form";
+import { AuthAction } from "@/types/AuthActionReducer";
 
-export const initialState: AuthState = {
+export const initialState: AuthStateI = {
   email: "",
   password: "",
   error: null,
   loading: false,
 };
 
-const authReducer = (state: AuthState, action: AuthAction): AuthState => {
+const authReducer = (state: AuthStateI, action: AuthAction): AuthStateI => {
   switch (action.type) {
     case "SET_EMAIL":
       return { ...state, email: action.payload };

@@ -1,12 +1,12 @@
 import { fabric } from "fabric";
 import { jsPDF } from "jspdf";
-import { ImageData } from "@/interfaces/menu-data-context";
+import { ImageDataI } from "@/interfaces/menu-data-context";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { BrushOptions } from "@/enums/BrushOptions";
 
 const configureBrush = (brush: fabric.BaseBrush, size: number, color?: string) => {
   brush.width = size;
-  brush.decimate = BrushOptions.Decimate;
+  brush.decimate = BrushOptions.DECIMATE;
   if (color) {
     brush.color = color;
   }
@@ -208,8 +208,8 @@ const removeImagesFromCanvas = (canvas: fabric.Canvas | null) => {
   return imagesData;
 };
 
-const restoreImagesToCanvas = (canvas: fabric.Canvas | null, imagesData: ImageData[]) => {
-  imagesData.forEach((imgData: ImageData) => {
+const restoreImagesToCanvas = (canvas: fabric.Canvas | null, imagesData: ImageDataI[]) => {
+  imagesData.forEach((imgData: ImageDataI) => {
     fabric.Image.fromURL(imgData.src, (img) => {
       img.set({
         left: imgData.left,

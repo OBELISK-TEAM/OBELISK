@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
 
-interface TabButtonProps {
+interface TabButtonPropsI {
   tabs: { label: string }[];
 }
-const TabButtons: React.FC<TabButtonProps> = ({ tabs }) => {
+const TabButtons: React.FC<TabButtonPropsI> = ({ tabs }) => {
   const [activeTab, setActiveTab] = useState(tabs[0]?.label || "");
 
   const tabClasses =

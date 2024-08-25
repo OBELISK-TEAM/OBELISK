@@ -2,7 +2,7 @@ import { CanvasReducerState } from "@/types/CanvasReducer";
 import { MutableRefObject } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
 
-export interface ICanvasContext {
+export interface CanvasContextI {
   state: CanvasReducerState;
   canvasRef: MutableRefObject<HTMLCanvasElement | null>;
   setCanvasMode: (mode: CanvasMode) => void;
@@ -12,6 +12,6 @@ export interface ICanvasContext {
   setActiveItem: (activeItem: string | null) => void;
 }
 
-export interface CanvasRef {
+export interface CanvasRefI {
   current: HTMLCanvasElement | null;
 }

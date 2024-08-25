@@ -2,7 +2,7 @@ import { MenuDataProvider } from "@/contexts/MenuDataContext";
 import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
-import KeydownListenerWrapper from "@/components/board/KeydownListenerWrapper";
+import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 
 const SliderLayout = ({
   children,

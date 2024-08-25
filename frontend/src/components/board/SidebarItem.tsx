@@ -3,17 +3,17 @@ import React from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { MenuItem } from "@/interfaces/menu-data-context";
+import { MenuItemI } from "@/interfaces/menu-data-context";
 
 const isActiveItem = (itemName: string, activeItem: string | null, canvasMode: CanvasMode): boolean => {
   return itemName === activeItem || itemName === canvasMode.toString();
 };
 
-interface SidebarItemProps {
-  item: MenuItem;
+interface SidebarItemPropsI {
+  item: MenuItemI;
 }
 
-const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
+const BoardSidebarItem: React.FC<SidebarItemPropsI> = ({ item }) => {
   const {
     setActiveItem,
     state: { activeItem, color, size, canvasMode },
@@ -37,11 +37,11 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
             : "bg-background text-muted-foreground"
         }`}
         onClick={() =>
-          !(item.name === MenuActions.ChangeColor || item.name === MenuActions.ChangeSize) &&
+          !(item.name === MenuActions.CHANGE_COLOR || item.name === MenuActions.CHANGE_SIZE) &&
           handleClick(item.name, item.action)
         }
       >
-        {item.name === MenuActions.ChangeColor ? (
+        {item.name === MenuActions.CHANGE_COLOR ? (
           <input
             type="color"
             value={color}
@@ -56,8 +56,8 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
           htmlFor={item.name}
           className="ml-8 cursor-pointer whitespace-nowrap text-sm font-medium transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:opacity-100"
         >
-          {item.name === MenuActions.ChangeSize ? "Size" : ""}
-          {item.name === MenuActions.ChangeSize ? (
+          {item.name === MenuActions.CHANGE_SIZE ? "Size" : ""}
+          {item.name === MenuActions.CHANGE_SIZE ? (
             <input
               type="number"
               value={size}

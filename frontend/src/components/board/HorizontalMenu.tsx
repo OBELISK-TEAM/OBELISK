@@ -7,25 +7,19 @@ import { AppLogo } from "../AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
-import { MenuItem } from "@/interfaces/menu-data-context";
+import { MenuItemI } from "@/interfaces/menu-data-context";
 
-interface HorizontalMenuProps {
+interface HorizontalMenuPropsI {
   boardName: string;
   groupId: string;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuPropsI> = ({ boardName, groupId }) => {
   const {
     state: { activeItem, selectedObjectStyles },
   } = useCanvas();
   const { menuList } = useMenuData();
   const menuItems = menuList.find((group) => group.groupId === groupId);
-
-  const handleClick = (action?: () => void) => {
-    if (action) {
-      action();
-    }
-  };
 
   return (
     <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
@@ -37,13 +31,13 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
-          {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
+          {menuItems?.items.map((item: MenuItemI, itemIndex: number) => {
             if (
               !(selectedObjectStyles && selectedObjectStyles.type === "activeSelection") &&
-              item.name === MenuActions.GroupSelected
+              item.name === MenuActions.GROUP_SELECTED
             ) {
               return null;
-            } else if (!selectedObjectStyles && item.name === MenuActions.RemoveSelected) {
+            } else if (!selectedObjectStyles && item.name === MenuActions.REMOVE_SELECTED) {
               return null;
             }
             return (
@@ -55,7 +49,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
                         ? "bg-muted text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-primary"
                     }`}
-                    onClick={() => handleClick(item.action)}
+                    onClick={() => item.action()}
                   >
                     {item.icon}
                   </button>

@@ -13,7 +13,7 @@ const BoardToolBar: React.FC = () => {
   return (
     <div className="flex h-[50px] w-full items-center justify-between bg-background text-muted-foreground">
       <div className="flex items-center space-x-4 p-2">
-        {activeItem === MenuActions.AddImageUrl ? <UrlControl /> : <ObjectSpecificControls />}
+        {activeItem === MenuActions.ADD_IMAGE_URL ? <UrlControl /> : <ObjectSpecificControls />}
       </div>
     </div>
   );

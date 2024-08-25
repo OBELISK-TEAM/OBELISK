@@ -1,9 +1,9 @@
 export enum CanvasObjectTypes {
-  Rect = "rect",
-  Circle = "circle",
-  Line = "line",
-  Path = "path",
-  Image = "image",
-  IText = "i-text",
-  ActiveSelection = "activeSelection",
+  RECT = "rect",
+  CIRCLE = "circle",
+  LINE = "line",
+  PATH = "path",
+  IMAGE = "image",
+  I_TEXT = "i-text",
+  ACTIVE_SELECTION = "activeSelection",
 }
