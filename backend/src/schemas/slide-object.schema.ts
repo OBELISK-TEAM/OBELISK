@@ -342,14 +342,14 @@ export class SlideObject {
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
   })
-  createdById: User;
+  createdBy: User;
 
   @Prop({
     required: true,
     type: MongooseSchema.Types.ObjectId,
     ref: 'Slide',
   })
-  slideId: Slide;
+  slide: Slide;
 }
 
 export const SlideObjectSchema = SchemaFactory.createForClass(SlideObject);

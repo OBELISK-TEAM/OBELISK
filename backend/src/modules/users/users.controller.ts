@@ -20,14 +20,14 @@ export class UsersController {
     return this.usersService.findAll(page);
   }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<UserDocument> {
-    return this.usersService.create(createUserDto);
-  }
-
   @Get(':id')
   async findOne(@Param('id') userId: string): Promise<UserDocument> {
     return this.usersService.findOneById(userId);
+  }
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto): Promise<UserDocument> {
+    return this.usersService.create(createUserDto);
   }
 
   @Delete(':id')

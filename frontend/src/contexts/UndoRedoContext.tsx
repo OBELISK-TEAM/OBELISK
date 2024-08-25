@@ -89,11 +89,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       canvas.on("mouse:down", handleMouseDown);
       canvas.on("mouse:up", handleMouseUp);
       canvas.on("path:created", handlePathCreated);
-
+      
       return () => {
         canvas.off("mouse:down", handleMouseDown);
         canvas.off("mouse:up", handleMouseUp);
         canvas.off("path:created", handlePathCreated);
+
       };
     }
   }, [canvas, saveState]);

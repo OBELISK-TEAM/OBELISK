@@ -2,18 +2,22 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Slide, SlideDocument } from '../../schemas/slide.schema';
-import { CreateSlideDto, UpdateSlideDto } from './slides.dto';
+import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
+import { UsersService } from '../users/users.service';
+
+// TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
 @Injectable()
 export class SlidesService {
-  private readonly pageSize = 1;
+  private readonly pageSize = 5;
   private readonly slidesLimitPerBoard = 10;
   constructor(
     @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
-    private readonly boardService: BoardsService,
+    private readonly boardsService: BoardsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async findAll(page: number = 1): Promise<SlideDocument[]> {
@@ -21,38 +25,36 @@ export class SlidesService {
     return this.slideModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
-  async create(createSlideDto: CreateSlideDto): Promise<SlideDocument> {
+  async findOneById(slideId: string): Promise<SlideDocument> {
+    const existingSlide = await this.slideModel.findById(slideId).exec();
+    if (!existingSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+    return existingSlide;
+  }
+
+  // TODO - check permissions before creating (for edit) - there is a method in boards.service
+  async create(
+    userId: string,
+    createSlideDto: CreateSlideDto,
+  ): Promise<SlideDocument> {
     const { boardId, ...rest } = createSlideDto;
-    const board: BoardDocument = await this.boardService.findOneById(boardId);
+
+    // const user = await this.usersService.findOneById(userId);
+    const board = await this.boardsService.findOneById(boardId);
+
     this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });
-    await this.boardService.addSlide(boardId, createdSlide);
+    await this.boardsService.addSlideToBoard(boardId, createdSlide);
     return createdSlide.save();
   }
 
-  async findOneById(slideId: string): Promise<SlideDocument> {
-    const existingSlide = await this.slideModel.findById(slideId).exec();
-    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-    return existingSlide;
-  }
-
-  async update(
-    slideId: string,
-    updateSlideDto: UpdateSlideDto,
-  ): Promise<SlideDocument> {
-    const existingSlide = await this.slideModel
-      .findByIdAndUpdate(slideId, updateSlideDto, { new: true })
-      .exec();
-    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-    return existingSlide;
-  }
-
   async delete(slideId: string): Promise<SlideDocument> {
-    const existingSlide = await this.slideModel
+    const deletedSlide = await this.slideModel
       .findByIdAndDelete(slideId)
       .exec();
-    if (!existingSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-    return existingSlide;
+    if (!deletedSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+    return deletedSlide;
   }
 
   async addSlideObject(
@@ -66,8 +68,8 @@ export class SlidesService {
         { new: true },
       )
       .exec();
-    console.log(updatedSlide);
-    if (!updatedSlide) throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+    if (!updatedSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
   private validateSlidesLimit(board: BoardDocument): void {

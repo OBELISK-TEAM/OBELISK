@@ -11,8 +11,10 @@ import {
   toggleDrawingMode,
   updateDimensions,
 } from "@/utils/board/canvasUtils";
+
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
+
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -55,6 +57,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       updateDimensions(obj);
     };
 
+
     const handleMouseWheel = (opt: any) => {
       const evt = opt.e;
       if (newCanvas) {
@@ -83,7 +86,6 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     newCanvas?.on("mouse:wheel", handleMouseWheel);
-
     newCanvas?.on("selection:created", handleSelectionCreated);
     newCanvas?.on("selection:cleared", handleSelectionCleared);
     newCanvas?.on("object:modified", handleObjectModified);

@@ -6,6 +6,7 @@ import { useZoom } from "@/contexts/ZoomUIContext";
 const SlideCanvas: React.FC = () => {
   const { canvasRef } = useCanvas();
   const { zoomValue, showZoomBadge } = useZoom();
+
   return (
     <div className="mt-4 flex w-fit rounded-lg bg-white">
       <canvas
@@ -15,7 +16,6 @@ const SlideCanvas: React.FC = () => {
         height={550}
         onContextMenu={(e) => e.preventDefault()}
       />
-
       <div className={`zoom-badge ${showZoomBadge ? "show" : "hide"}`}>Zoom: {zoomValue.toFixed(2)}%</div>
     </div>
   );

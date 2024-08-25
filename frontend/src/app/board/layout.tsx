@@ -5,6 +5,7 @@ import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
 import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 
+
 const SliderLayout = ({
   children,
 }: Readonly<{
