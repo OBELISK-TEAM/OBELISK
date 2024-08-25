@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto } from './users.dto';
+import { CreateUserDto, UpdateUserDto } from './users.dto';
 import { User, UserDocument } from '../../schemas/user.schema';
 import { BoardDocument } from '../../schemas/board.schema';
 import { UserAuthProvider } from '../../enums/user.auth.provider';
@@ -36,6 +36,21 @@ export class UsersService {
     if (!existingUser)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
+  }
+
+  async update(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserDocument> {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, updateUserDto, { new: true })
+      .exec();
+
+    if (!updatedUser) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return updatedUser;
   }
 
   async emailExists(email: string): Promise<boolean> {

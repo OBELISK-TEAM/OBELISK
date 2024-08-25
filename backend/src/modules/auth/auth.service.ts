@@ -4,12 +4,13 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { UserDocument } from '../../schemas/user.schema';
 import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
-import { CreateUserDto } from '../users/users.dto';
+import { CreateUserDto, UpdateUserDto } from '../users/users.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
 import { GoogleUser } from '../../shared/interfaces/GoogleUser';
 import { AuthToken } from '../../shared/interfaces/AuthToken';
+import { UserAuthProvider } from 'src/enums/user.auth.provider';
 
 @Injectable()
 export class AuthService {
@@ -62,10 +63,36 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto): Promise<AuthToken> {
-    if (await this.usersService.emailExists(createUserDto.email))
+    let user: UserDocument;
+
+    if (await this.usersService.emailExists(createUserDto.email)) {
+      user = await this.handleRegisterWhenEmailExists(createUserDto);
+    } else {
+      user = await this.usersService.create(createUserDto);
+    }
+
+    return this.generateToken(user);
+  }
+
+  private async handleRegisterWhenEmailExists(
+    createUserDto: CreateUserDto,
+  ): Promise<UserDocument> {
+    const user = await this.usersService.findOneByEmail(createUserDto.email);
+
+    if (
+      user.userAuthProvider == UserAuthProvider.INTERNAL ||
+      user.userAuthProvider == UserAuthProvider.INTERNAL_AND_EXTERNAL
+    ) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    const newUser: UserDocument = await this.usersService.create(createUserDto);
-    return this.generateToken(newUser);
+    }
+
+    const updateUserDto = {
+      email: createUserDto.email,
+      password: createUserDto.password,
+      userAuthProvider: UserAuthProvider.INTERNAL_AND_EXTERNAL,
+    } as UpdateUserDto;
+
+    return await this.usersService.update(user._id as string, updateUserDto);
   }
 
   generateToken(user: UserDocument | SafeUserDoc): AuthToken {
