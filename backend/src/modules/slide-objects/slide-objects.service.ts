@@ -1,10 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  CreateSlideObjectDto,
-  UpdateSlideObjectDto,
-} from './slide-objects.dto';
+import { CreateSlideObjectDto } from './slide-objects.dto';
 import {
   SlideObject,
   SlideObjectDocument,
@@ -29,59 +26,64 @@ export class SlideObjectsService {
     const existingSlideObject = await this.slideObjectModel
       .findById(slideObjectId)
       .exec();
-
     if (!existingSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
     return existingSlideObject;
   }
 
+  // TODO - check permissions before creating (for edit) - there is a method in boards.service
   async create(
     userId: string,
-    createSlideObjectDto: Partial<CreateSlideObjectDto>,
+    createSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
     const { slideId, ...slideObject } = createSlideObjectDto;
-    if (!slideId)
-      throw new HttpException('Slide ID is required', HttpStatus.BAD_REQUEST);
 
-    const createdSlideObject = new this.slideObjectModel(slideObject);
+    const slide = await this.slideService.findOneById(slideId);
+    const user = await this.userService.findOneById(userId);
 
-    await this.userService.addSlideObject(userId, createdSlideObject);
+    const createdSlideObject = new this.slideObjectModel({
+      ...slideObject,
+      createdBy: user,
+      slide,
+    });
+
+    await this.userService.addSlideObjectToUser(userId, createdSlideObject);
     await this.slideService.addSlideObject(slideId, createdSlideObject);
-
     return createdSlideObject.save();
   }
 
+  // TODO - again - check user-board permissions
   async update(
     userId: string,
     slideObjectId: string,
-    updateSlideObjectDto: UpdateSlideObjectDto,
+    updateSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
-    // I don't know if there is a point of checking existence of user
-    // since there is middleware (guard) that checks if user exists
-    // this comment refers to all the services
-    const existingUser = await this.userService.findOneById(userId);
-    if (!existingUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const { slideId, ...slideObject } = updateSlideObjectDto;
 
-    const existingSlideObject = await this.slideObjectModel
-      .findByIdAndUpdate(slideObjectId, updateSlideObjectDto, { new: true })
+    // const slide = await this.slideService.findOneById(slideId);
+    // const user = await this.userService.findOneById(userId);
+
+    const updatedSlideObject = await this.slideObjectModel
+      .findByIdAndUpdate(slideObjectId, slideObject, { new: true })
       .exec();
-
-    if (!existingSlideObject)
+    if (!updatedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
-    return existingSlideObject;
+    return updatedSlideObject;
   }
 
-  async delete(slideObjectId: string): Promise<SlideObjectDocument> {
-    const existingSlideObject = await this.slideObjectModel
+  // TODO - here also
+  async delete(
+    userId: string,
+    slideObjectId: string,
+  ): Promise<SlideObjectDocument> {
+    // const slide = await this.slideService.findOneById(slideId);
+    // const user = await this.userService.findOneById(userId);
+
+    const deletedSlideObject = await this.slideObjectModel
       .findByIdAndDelete(slideObjectId)
       .exec();
-
-    if (!existingSlideObject)
+    if (!deletedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
-    return existingSlideObject;
+    return deletedSlideObject;
   }
 }

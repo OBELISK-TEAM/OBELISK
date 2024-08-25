@@ -19,6 +19,13 @@ export class BoardsService {
     return this.boardModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
+  async findOneById(boardId: string): Promise<BoardDocument> {
+    const existingBoard = await this.boardModel.findById(boardId).exec();
+    if (!existingBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return existingBoard;
+  }
+
   async create(
     userId: string,
     createBoardDto: CreateBoardDto,
@@ -26,39 +33,54 @@ export class BoardsService {
     const { name } = createBoardDto;
     const owner = await this.userService.findOneById(userId);
     const createdBoard = new this.boardModel({ name, owner });
-    await this.userService.addBoard(userId, createdBoard);
+    await this.userService.addBoardToUser(userId, createdBoard);
     return createdBoard.save();
   }
 
-  async findOneById(boardId: string): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
-  }
-
   async update(
+    userId: string,
     boardId: string,
     updateBoardDto: CreateBoardDto,
   ): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel
+    await this.verifyBoardOwner(userId, boardId);
+    const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
   }
 
-  async delete(boardId: string): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel
+  async delete(userId: string, boardId: string): Promise<BoardDocument> {
+    await this.verifyBoardOwner(userId, boardId);
+    const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
-    if (!existingBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
+    if (!deletedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return deletedBoard;
   }
 
-  async addSlide(boardId: string, slide: Slide): Promise<void> {
+  async addSlideToBoard(boardId: string, slide: Slide): Promise<void> {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, { $push: { slides: slide } }, { new: true })
       .exec();
-    if (!updatedBoard) throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
   }
+
+  async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
+    const owner = await this.userService.findOneById(userId);
+    const board = await this.findOneById(boardId);
+    // TODO - ugly - make it better
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    if (board.owner.toString() !== (owner._id as string).toString())
+      throw new HttpException(
+        'You are not the owner of this board',
+        HttpStatus.FORBIDDEN,
+      );
+  }
+
+  // TODO - implement
+  // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
 }

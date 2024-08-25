@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './users.dto';
 import { User, UserDocument } from '../../schemas/user.schema';
-import { Board } from '../../schemas/board.schema';
+import { BoardDocument } from '../../schemas/board.schema';
 import { UserAuthProvider } from '../../enums/user.auth.provider';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 
@@ -17,6 +17,13 @@ export class UsersService {
     return this.userModel.find().skip(skip).limit(this.pageSize).exec();
   }
 
+  async findOneById(userId: string): Promise<UserDocument> {
+    const existingUser = await this.userModel.findById(userId).exec();
+    if (!existingUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return existingUser;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     if (await this.emailExists(createUserDto.email))
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
@@ -24,15 +31,10 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async findOneById(userId: string): Promise<UserDocument> {
-    const existingUser = await this.userModel.findById(userId).exec();
-    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    return existingUser;
-  }
-
   async findOneByEmail(email: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findOne({ email }).exec();
-    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (!existingUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
   }
 
@@ -42,16 +44,33 @@ export class UsersService {
   }
 
   async delete(userId: string): Promise<UserDocument> {
-    const existingUser = await this.userModel.findByIdAndDelete(userId).exec();
-    if (!existingUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    return existingUser;
+    const deletedUser = await this.userModel.findByIdAndDelete(userId).exec();
+    if (!deletedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return deletedUser;
   }
 
-  async addBoard(userId: string, board: Board): Promise<void> {
+  async addBoardToUser(userId: string, board: BoardDocument): Promise<void> {
     const updatedUser = await this.userModel
       .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
       .exec();
-    if (!updatedUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (!updatedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  }
+
+  async addSlideObjectToUser(
+    userId: string,
+    slideObject: SlideObject,
+  ): Promise<void> {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $push: { slideObjects: slideObject } },
+        { new: true },
+      )
+      .exec();
+    if (!updatedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
   async createGoogleUser(email: string): Promise<UserDocument> {
@@ -69,19 +88,5 @@ export class UsersService {
       await existingUser.save();
     }
     return existingUser;
-  }
-
-  async addSlideObject(
-    userId: string,
-    slideObject: SlideObject,
-  ): Promise<void> {
-    const updatedUser = await this.userModel
-      .findByIdAndUpdate(
-        userId,
-        { $push: { slideObjects: slideObject } },
-        { new: true },
-      )
-      .exec();
-    if (!updatedUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 }
