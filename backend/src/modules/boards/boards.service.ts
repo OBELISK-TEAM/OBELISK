@@ -5,7 +5,6 @@ import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
 import { Slide } from '../../schemas/slide.schema';
-import { UserDocument } from '../../schemas/user.schema';
 
 @Injectable()
 export class BoardsService {
@@ -73,6 +72,7 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.userService.findOneById(userId);
     const board = await this.findOneById(boardId);
+    // TODO - ugly - make it better
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     if (board.owner.toString() !== (owner._id as string).toString())
       throw new HttpException(
@@ -81,8 +81,6 @@ export class BoardsService {
       );
   }
 
-  // verify if user can create slide to board or add slide object to slide
-  // async verifyEditPermission(user: UserDocument, board:BoardDocument): Promise<void>{
-  //   if(board.owner !== user._id || board.permissions.edit)
-  // }
+  // TODO - implement
+  // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
 }

@@ -7,7 +7,6 @@ import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
-import { UserDocument } from '../../schemas/user.schema';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
@@ -33,25 +32,15 @@ export class SlidesService {
     return existingSlide;
   }
 
-  async create(userId: string, createSlideDto: CreateSlideDto): Promise<any> {
+  // TODO - check permissions before creating (for edit) - there is a method in boards.service
+  async create(
+    userId: string,
+    createSlideDto: CreateSlideDto,
+  ): Promise<SlideDocument> {
     const { boardId, ...rest } = createSlideDto;
 
-    const user = await this.usersService.findOneById(userId);
+    // const user = await this.usersService.findOneById(userId);
     const board = await this.boardsService.findOneById(boardId);
-
-    // export to func
-    // @ts-ignore
-    const isOwner = board.owner.toString() === user._id.toString();
-    const hasEditPermission = board.permissions.edit.some(
-      // @ts-ignore
-      id => id.toString() === user._id.toString(),
-    );
-
-    if (!isOwner && !hasEditPermission)
-      throw new HttpException(
-        'User does not have permission to create slides',
-        HttpStatus.FORBIDDEN,
-      );
 
     this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });
@@ -88,8 +77,4 @@ export class SlidesService {
     if (slidesCount >= this.slidesLimitPerBoard)
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
-
-  // TODO
-  // async verifyPermissions(user: UserDocument, slide: SlideDocument): void{
-  // }
 }

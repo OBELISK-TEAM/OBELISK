@@ -1,10 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  CreateSlideObjectDto,
-  UpdateSlideObjectDto,
-} from './slide-objects.dto';
+import { CreateSlideObjectDto } from './slide-objects.dto';
 import {
   SlideObject,
   SlideObjectDocument,
@@ -34,40 +31,54 @@ export class SlideObjectsService {
     return existingSlideObject;
   }
 
-  // TODO - adding only if user has board permissions
+  // TODO - check permissions before creating (for edit) - there is a method in boards.service
   async create(
     userId: string,
     createSlideObjectDto: CreateSlideObjectDto,
-  ): Promise<any> {
+  ): Promise<SlideObjectDocument> {
     const { slideId, ...slideObject } = createSlideObjectDto;
 
     const slide = await this.slideService.findOneById(slideId);
-    // const board = await this.boardService.findOneById(slide.board._id);
-    // const user = await this.userService.findOneById(slide.board.owner);
-    console.log(slide);
-    // const createdSlideObject = new this.slideObjectModel(slideObject);
-    // await this.userService.addSlideObjectToUser(userId, createdSlideObject);
-    // await this.slideService.addSlideObject(slideId, createdSlideObject);
-    // return createdSlideObject.save();
+    const user = await this.userService.findOneById(userId);
+
+    const createdSlideObject = new this.slideObjectModel({
+      ...slideObject,
+      createdBy: user,
+      slide,
+    });
+
+    await this.userService.addSlideObjectToUser(userId, createdSlideObject);
+    await this.slideService.addSlideObject(slideId, createdSlideObject);
+    return createdSlideObject.save();
   }
 
+  // TODO - again - check user-board permissions
   async update(
     userId: string,
     slideObjectId: string,
-    updateSlideObjectDto: UpdateSlideObjectDto,
+    updateSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
+    const { slideId, ...slideObject } = updateSlideObjectDto;
+
+    // const slide = await this.slideService.findOneById(slideId);
+    // const user = await this.userService.findOneById(userId);
+
     const updatedSlideObject = await this.slideObjectModel
-      .findByIdAndUpdate(slideObjectId, updateSlideObjectDto, { new: true })
+      .findByIdAndUpdate(slideObjectId, slideObject, { new: true })
       .exec();
     if (!updatedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
     return updatedSlideObject;
   }
 
+  // TODO - here also
   async delete(
     userId: string,
     slideObjectId: string,
   ): Promise<SlideObjectDocument> {
+    // const slide = await this.slideService.findOneById(slideId);
+    // const user = await this.userService.findOneById(userId);
+
     const deletedSlideObject = await this.slideObjectModel
       .findByIdAndDelete(slideObjectId)
       .exec();

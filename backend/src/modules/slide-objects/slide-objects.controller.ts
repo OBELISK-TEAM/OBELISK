@@ -9,10 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SlideObjectsService } from './slide-objects.service';
-import {
-  CreateSlideObjectDto,
-  UpdateSlideObjectDto,
-} from './slide-objects.dto';
+import { CreateSlideObjectDto } from './slide-objects.dto';
 import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
@@ -47,7 +44,7 @@ export class SlideObjectsController {
   async update(
     @User('_id') userId: string,
     @Param('id') slideObjectId: string,
-    @Body() updateSlideObjectDto: Partial<UpdateSlideObjectDto>,
+    @Body() updateSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectDocument> {
     return await this.slideObjectsService.update(
       userId,
