@@ -135,3 +135,28 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 .slide-up {
   animation: slideUp 0.5s ease-in forwards;
 }
+
+
+.zoom-badge {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  background-color: rgba(55, 65, 81, 0.9);
+  color: white;
+  padding: 0.5rem 1rem;
+  width:10em;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  pointer-events: none
+}
+
+.zoom-badge.show {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.zoom-badge.hide {
+  opacity: 0;
+  filter: blur(5px);
+}
