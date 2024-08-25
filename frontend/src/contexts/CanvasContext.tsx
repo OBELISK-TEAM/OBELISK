@@ -67,7 +67,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     if (state.canvas) {
-      toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.Selection);
+      toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);
       state.canvas.freeDrawingBrush.color = state.color;
       state.canvas.freeDrawingBrush.width = state.size;
     }

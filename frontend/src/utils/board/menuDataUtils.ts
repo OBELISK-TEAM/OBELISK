@@ -12,7 +12,7 @@ const configureBrush = (brush: fabric.BaseBrush, size: number, color?: string) =
   }
 };
 export const setSelectionMode = (setCanvasMode: (mode: CanvasMode) => void) => {
-  setCanvasMode(CanvasMode.Selection);
+  setCanvasMode(CanvasMode.SELECTION);
 };
 
 export const setDrawingMode = (
@@ -27,7 +27,7 @@ export const setDrawingMode = (
   const pencilBrush = new fabric.PencilBrush(canvas);
   configureBrush(pencilBrush, size, color);
   canvas.freeDrawingBrush = pencilBrush;
-  setCanvasMode(CanvasMode.SimpleDrawing);
+  setCanvasMode(CanvasMode.SIMPLE_DRAWING);
 };
 
 export const setEraserMode = (
@@ -44,7 +44,7 @@ export const setEraserMode = (
   const eraserBrush = new fabric.EraserBrush(canvas);
   configureBrush(eraserBrush, size);
   canvas.freeDrawingBrush = eraserBrush;
-  setCanvasMode(CanvasMode.Eraser);
+  setCanvasMode(CanvasMode.ERASER);
 };
 
 export const handleSave = (canvas: fabric.Canvas | null): void => {

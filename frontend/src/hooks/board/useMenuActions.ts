@@ -32,19 +32,19 @@ const getProperties = (color: string, size: number): CanvasActionPropertiesI => 
 });
 
 const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
-  [CanvasMode.Selection]: ({ setCanvasMode }) => {
+  [CanvasMode.SELECTION]: ({ setCanvasMode }) => {
     if (!setCanvasMode) {
       return;
     }
     setSelectionMode(setCanvasMode);
   },
-  [CanvasMode.SimpleDrawing]: ({ canvas, color, size, setCanvasMode }) => {
+  [CanvasMode.SIMPLE_DRAWING]: ({ canvas, color, size, setCanvasMode }) => {
     if (!canvas || !setCanvasMode) {
       return;
     }
     setDrawingMode(canvas, color as string, size as number, setCanvasMode);
   },
-  [CanvasMode.Eraser]: ({ canvas, size, setCanvasMode }) => {
+  [CanvasMode.ERASER]: ({ canvas, size, setCanvasMode }) => {
     if (!canvas || !setCanvasMode) {
       return;
     }
@@ -55,28 +55,28 @@ const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
       return;
     }
     addLine(canvas, properties);
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.ADD_RECTANGLE]: ({ canvas, properties, setCanvasMode }) => {
     if (!canvas || !properties || !setCanvasMode) {
       return;
     }
     addRectangle(canvas, properties);
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.ADD_CIRCLE]: ({ canvas, properties, setCanvasMode }) => {
     if (!canvas || !properties || !setCanvasMode) {
       return;
     }
     addCircle(canvas, properties);
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.ADD_TEXT]: ({ canvas, properties, setCanvasMode }) => {
     if (!canvas || !properties || !setCanvasMode) {
       return;
     }
     handleAddText(canvas, 50, 50, properties);
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.GROUP_SELECTED]: ({ canvas }) => {
     if (!canvas) {
@@ -101,31 +101,33 @@ const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
       return;
     }
     handleLoadFromJSON(canvas);
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.ADD_IMAGE_URL]: ({ setCanvasMode }) => {
     if (!setCanvasMode) {
       return;
     }
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.ADD_IMAGE_DISK]: ({ setCanvasMode }) => {
     if (!setCanvasMode) {
       return;
     }
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.LOAD_IMAGES_JSON]: ({ setCanvasMode }) => {
     if (!setCanvasMode) {
       return;
     }
-    setCanvasMode(CanvasMode.Selection);
+    setCanvasMode(CanvasMode.SELECTION);
   },
   [MenuActions.CHANGE_COLOR]: () => {
     // No-op: handled by color picker UI
+    throw new Error("Change () => performAction(MenuActions.CHANGE_COLOR) to () => {} in MenuDataContext - no effect");
   },
   [MenuActions.CHANGE_SIZE]: () => {
     // No-op: handled by size picker UI
+    throw new Error("Change () => performAction(MenuActions.CHANGE_SIZE) to () => {} in MenuDataContext - no effect");
   },
   [MenuActions.EXPORT_PDF]: ({ canvas }) => {
     if (!canvas) {
@@ -135,9 +137,15 @@ const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
   },
   [MenuActions.UNDO]: () => {
     // No-op: handled directly in MenuDataContext
+    throw new Error(
+      "Change () => performAction(MenuActions.UNDO) to undo() - it should be called directly in MenuDataContext"
+    );
   },
   [MenuActions.REDO]: () => {
     // No-op: handled directly in MenuDataContext
+    throw new Error(
+      "Change () => performAction(MenuActions.REDO) to redo() - it should be called directly in MenuDataContext"
+    );
   },
   [MenuActions.SAVE_CANVAS]: ({ canvas }) => {
     if (!canvas) {
