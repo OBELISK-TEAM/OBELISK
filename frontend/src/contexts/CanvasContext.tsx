@@ -57,29 +57,30 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const handleMouseWheel = (opt: any) => {
       const evt = opt.e;
-      if (newCanvas) {
-        const delta = evt.deltaY;
-        let zoom = newCanvas.getZoom();
-        zoom *= ZoomOptions.ZOOM_SMOOTHICITY ** delta;
-        if (zoom > ZoomOptions.MAX_ZOOM) {
-          zoom = ZoomOptions.MAX_ZOOM;
-        }
-        if (zoom < 1) {
-          zoom = 1;
-        }
-        newCanvas.zoomToPoint({ x: evt.offsetX, y: evt.offsetY }, zoom);
-        handleZoom(zoom);
-
-        const vpt = newCanvas.viewportTransform;
-        if (vpt) {
-          vpt[4] = Math.min(0, Math.max(vpt[4], newCanvas.getWidth() - newCanvas.getWidth() * zoom));
-          vpt[5] = Math.min(0, Math.max(vpt[5], newCanvas.getHeight() - newCanvas.getHeight() * zoom));
-          newCanvas.setViewportTransform(vpt);
-        }
-
-        evt.preventDefault();
-        evt.stopPropagation();
+      if (!newCanvas) {
+        return;
       }
+      const delta = evt.deltaY;
+      let zoom = newCanvas.getZoom();
+      zoom *= ZoomOptions.ZOOM_SMOOTHICITY ** delta;
+      if (zoom > ZoomOptions.MAX_ZOOM) {
+        zoom = ZoomOptions.MAX_ZOOM;
+      }
+      if (zoom < 1) {
+        zoom = 1;
+      }
+      newCanvas.zoomToPoint({ x: evt.offsetX, y: evt.offsetY }, zoom);
+      handleZoom(zoom);
+
+      const vpt = newCanvas.viewportTransform;
+      if (vpt) {
+        vpt[4] = Math.min(0, Math.max(vpt[4], newCanvas.getWidth() - newCanvas.getWidth() * zoom));
+        vpt[5] = Math.min(0, Math.max(vpt[5], newCanvas.getHeight() - newCanvas.getHeight() * zoom));
+        newCanvas.setViewportTransform(vpt);
+      }
+
+      evt.preventDefault();
+      evt.stopPropagation();
     };
 
     newCanvas?.on("mouse:wheel", handleMouseWheel);
@@ -94,7 +95,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => {
       newCanvas?.dispose();
     };
-  }, []);
+  }, [handleZoom]);
 
   useEffect(() => {
     if (state.canvas) {
