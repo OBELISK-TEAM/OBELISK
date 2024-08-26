@@ -11,6 +11,7 @@ import { Request, Response } from 'express';
 import { GoogleUser } from '../../shared/interfaces/GoogleUser';
 import { AuthToken } from '../../shared/interfaces/AuthToken';
 import { UserAuthProvider } from 'src/enums/user.auth.provider';
+import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 
 @Injectable()
 export class AuthService {
@@ -63,12 +64,12 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto): Promise<AuthToken> {
-    let user: UserDocument;
+    let user: UserDocument | UserResponseObject;
 
     if (await this.usersService.emailExists(createUserDto.email)) {
       user = await this.handleRegisterWhenEmailExists(createUserDto);
     } else {
-      user = await this.usersService.create(createUserDto);
+      user = await this.usersService.createUser(createUserDto);
     }
 
     return this.generateToken(user);
@@ -98,7 +99,9 @@ export class AuthService {
     );
   }
 
-  generateToken(user: UserDocument | SafeUserDoc): AuthToken {
+  generateToken(
+    user: UserDocument | SafeUserDoc | UserResponseObject,
+  ): AuthToken {
     const payload = { email: user.email, _id: user._id };
     return { accessToken: this.jwtService.sign(payload) };
   }
