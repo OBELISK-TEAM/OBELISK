@@ -114,7 +114,12 @@ export class BoardsService {
     showSlides: boolean = false,
   ): BoardResponseObject {
     const { _id, name, owner, permissions, slides } = board;
-    const responseObject: any = { _id, name, owner, permissions };
+    const responseObject: BoardResponseObject = {
+      _id: _id as string,
+      name,
+      owner,
+      permissions,
+    };
     if (showSlides) responseObject.slides = slides;
     return responseObject;
   }

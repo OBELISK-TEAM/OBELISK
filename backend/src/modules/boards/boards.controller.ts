@@ -9,11 +9,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BoardResponseObject, BoardsService } from './boards.service';
+import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
-import { BoardDocument } from '../../schemas/board.schema';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 
 @Controller('boards')
 export class BoardsController {
