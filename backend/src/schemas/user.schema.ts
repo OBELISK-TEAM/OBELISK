@@ -6,6 +6,7 @@ import { hashSync } from 'bcrypt';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
+  UpdateQuery,
 } from 'mongoose';
 import { SlideObject } from './slide-object.schema';
 
@@ -70,5 +71,13 @@ export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.pre('save', function (next) {
   if (!this.isModified('password')) return next();
   this.password = hashSync(this.password, 10);
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', function (next) {
+  const update = this.getUpdate() as UpdateQuery<User>;
+  if (update && update.password && typeof update.password == 'string') {
+    update.password = hashSync(update.password, 10);
+  }
   next();
 });
