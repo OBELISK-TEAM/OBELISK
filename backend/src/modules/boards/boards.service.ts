@@ -31,7 +31,7 @@ export class BoardsService {
     createBoardDto: CreateBoardDto,
   ): Promise<BoardDocument> {
     const { name } = createBoardDto;
-    const owner = await this.userService.findOneById(userId);
+    const owner = await this.userService.findUserById(userId);
     const createdBoard = new this.boardModel({ name, owner });
     await this.userService.addBoardToUser(userId, createdBoard);
     return createdBoard.save();
@@ -70,7 +70,7 @@ export class BoardsService {
   }
 
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
-    const owner = await this.userService.findOneById(userId);
+    const owner = await this.userService.findUserById(userId);
     const board = await this.findOneById(boardId);
     // TODO - ugly - make it better
     // eslint-disable-next-line @typescript-eslint/no-base-to-string

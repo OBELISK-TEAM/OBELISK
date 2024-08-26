@@ -8,8 +8,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './users.dto';
-import { UserResponseObject, UsersService } from './users.service';
-import { UserDocument } from '../../schemas/user.schema';
+import { UsersService } from './users.service';
+import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 
 @Controller('users')
 export class UsersController {
@@ -26,12 +26,14 @@ export class UsersController {
   }
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto): Promise<UserDocument> {
-    return this.usersService.create(createUserDto);
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserResponseObject> {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') userId: string): Promise<UserDocument> {
-    return this.usersService.delete(userId);
+  async deleteUser(@Param('id') userId: string): Promise<UserResponseObject> {
+    return this.usersService.deleteUser(userId);
   }
 }

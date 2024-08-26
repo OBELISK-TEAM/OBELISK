@@ -37,7 +37,7 @@ export class AuthService {
 
   async validateUserById(userId: string): Promise<SafeUserDoc | null> {
     try {
-      const user: UserDocument = await this.usersService.findOneById(userId);
+      const user: UserDocument = await this.usersService.findUserById(userId);
       if (user) return this.extractUserWithoutPassword(user);
     } catch (error) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
@@ -92,7 +92,10 @@ export class AuthService {
       userAuthProvider: UserAuthProvider.INTERNAL_AND_EXTERNAL,
     } as UpdateUserDto;
 
-    return await this.usersService.update(user._id as string, updateUserDto);
+    return await this.usersService.updateUserById(
+      user._id as string,
+      updateUserDto,
+    );
   }
 
   generateToken(user: UserDocument | SafeUserDoc): AuthToken {
@@ -101,7 +104,8 @@ export class AuthService {
   }
 
   async googleRedirect(req: Request, res: Response): Promise<void> {
-    if (!req.query['state']) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    if (!req.query['state'])
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const userTempId = req.query['state'] as string;
     await this.cacheManager.set(
       `google_temp_id_${userTempId}`,
@@ -115,11 +119,13 @@ export class AuthService {
     const auth = req.get('Authorization');
     if (!auth) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const userTempId = auth.split(' ')[1];
-    if (!userTempId) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    if (!userTempId)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     const googleUser = await this.cacheManager.get<GoogleUser>(
       `google_temp_id_${userTempId}`,
     );
-    if (!googleUser) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    if (!googleUser)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return this.handleGoogleLogin(googleUser);
   }
 

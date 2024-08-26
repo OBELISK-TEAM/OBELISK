@@ -5,7 +5,8 @@ import { CreateUserDto, UpdateUserDto } from './users.dto';
 import { User, UserDocument } from '../../schemas/user.schema';
 import { BoardDocument } from '../../schemas/board.schema';
 import { UserAuthProvider } from '../../enums/user.auth.provider';
-import { SlideObject } from 'src/schemas/slide-object.schema';
+import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
+import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 
 @Injectable()
 export class UsersService {
@@ -14,31 +15,41 @@ export class UsersService {
 
   async getUsers(page: number = 1): Promise<UserResponseObject[]> {
     const skip = (page - 1) * this.pageSize;
-    return await this.userModel
-      .find()
-      .skip(skip)
-      .limit(this.pageSize)
-      .exec()
-      .then(users => Promise.all(users.map(user => this.toResponseUser(user))));
+    return this.findUsers(skip, this.pageSize).then(users =>
+      Promise.all(users.map(user => this.toResponseUser(user))),
+    );
   }
 
   async getUserById(userId: string): Promise<UserResponseObject> {
-    return this.findOneById(userId).then(user => this.toResponseUser(user));
+    return this.findUserById(userId).then(user =>
+      this.toResponseUser(user, true, true),
+    );
   }
 
-  async findOneById(userId: string): Promise<UserDocument> {
+  async createUser(createUserDto: CreateUserDto): Promise<UserResponseObject> {
+    if (await this.emailExists(createUserDto.email))
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save().then(user => this.toResponseUser(user));
+  }
+
+  async deleteUser(userId: string): Promise<UserResponseObject> {
+    return this.deleteUserById(userId).then(user =>
+      this.toResponseUser(user, true, true, true),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  async findUsers(skip: number, limit: number): Promise<UserDocument[]> {
+    return this.userModel.find().skip(skip).limit(limit).exec();
+  }
+
+  async findUserById(userId: string): Promise<UserDocument> {
     const existingUser = await this.userModel.findById(userId).exec();
     if (!existingUser)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return existingUser;
-  }
-
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    if (await this.emailExists(createUserDto.email))
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser;
-    // return createdUser.save().then(user => this.toResponseUser(user));
   }
 
   async findOneByEmail(email: string): Promise<UserDocument> {
@@ -48,31 +59,29 @@ export class UsersService {
     return existingUser;
   }
 
-  async update(
+  async updateUserById(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserDocument> {
     const updatedUser = await this.userModel
       .findByIdAndUpdate(userId, updateUserDto, { new: true })
       .exec();
-
     if (!updatedUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
     return updatedUser;
+  }
+
+  async deleteUserById(userId: string): Promise<UserDocument> {
+    const deletedUser = await this.userModel.findByIdAndDelete(userId).exec();
+    if (!deletedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return deletedUser;
   }
 
   async emailExists(email: string): Promise<boolean> {
     const existingUser = await this.userModel.findOne({ email }).exec();
     return !!existingUser;
-  }
-
-  async delete(userId: string): Promise<UserDocument> {
-    const deletedUser = await this.userModel.findByIdAndDelete(userId).exec();
-    if (!deletedUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    return deletedUser;
   }
 
   async addBoardToUser(userId: string, board: BoardDocument): Promise<void> {
@@ -85,7 +94,7 @@ export class UsersService {
 
   async addSlideObjectToUser(
     userId: string,
-    slideObject: SlideObject,
+    slideObject: SlideObjectDocument,
   ): Promise<void> {
     const updatedUser = await this.userModel
       .findByIdAndUpdate(
@@ -115,11 +124,11 @@ export class UsersService {
     return existingUser;
   }
 
-  async toResponseUser(
+  private async toResponseUser(
     user: UserDocument,
     showBoards: boolean = false,
     showSlideObjects: boolean = false,
-    showTimestamps: boolean = false, // we can separate into last active and created/updated at
+    showTimestamps: boolean = false,
   ) {
     const { _id, email, userRole, userAuthProvider } = user;
     const responseObject: any = {
@@ -137,13 +146,4 @@ export class UsersService {
     }
     return responseObject;
   }
-}
-
-export interface UserResponseObject {
-  _id: string;
-  email: string;
-  userRole: number;
-  userAuthProvider: number;
-  boards?: string[];
-  slideObjects?: string[];
 }
