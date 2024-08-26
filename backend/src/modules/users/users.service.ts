@@ -84,14 +84,17 @@ export class UsersService {
     return !!existingUser;
   }
 
-  async addBoardToUser(userId: string, board: BoardDocument): Promise<void> {
+  async addBoardToUser(userId: string, boardId: string): Promise<void> {
     const updatedUser = await this.userModel
-      // .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
-      .findByIdAndUpdate(
-        userId,
-        { $push: { boards: board._id } },
-        { new: true },
-      )
+      .findByIdAndUpdate(userId, { $push: { boards: boardId } }, { new: true })
+      .exec();
+    if (!updatedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  }
+
+  async deleteBoardFromUser(userId: string, boardId: string): Promise<void> {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, { $pull: { boards: boardId } }, { new: true })
       .exec();
     if (!updatedUser)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -134,7 +137,7 @@ export class UsersService {
     showBoards: boolean = false,
     showSlideObjects: boolean = false,
     showTimestamps: boolean = false,
-  ) {
+  ): UserResponseObject {
     const { _id, email, userRole, userAuthProvider } = user;
     const responseObject: UserResponseObject = {
       _id: _id as string,

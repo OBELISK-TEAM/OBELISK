@@ -5,6 +5,7 @@ import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
 import { Slide } from '../../schemas/slide.schema';
+import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 
 @Injectable()
 export class BoardsService {
@@ -14,45 +15,72 @@ export class BoardsService {
     private readonly userService: UsersService,
   ) {}
 
-  async findAll(page: number = 1): Promise<BoardDocument[]> {
+  async getBoards(page: number = 1): Promise<BoardResponseObject[]> {
     const skip = (page - 1) * this.pageSize;
-    return this.boardModel.find().skip(skip).limit(this.pageSize).exec();
+    return this.findBoards(skip, this.pageSize).then(boards =>
+      Promise.all(boards.map(board => this.toResponseBoard(board))),
+    );
   }
 
-  async findOneById(boardId: string): Promise<BoardDocument> {
-    const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
+  async getBoardById(boardId: string): Promise<BoardResponseObject> {
+    return this.findBoardById(boardId).then(board =>
+      this.toResponseBoard(board, true),
+    );
   }
 
-  async create(
+  async createBoard(
     userId: string,
     createBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
+  ): Promise<BoardResponseObject> {
     const { name } = createBoardDto;
     const owner = await this.userService.findUserById(userId);
-    const createdBoard = new this.boardModel({ name, owner });
-    await this.userService.addBoardToUser(userId, createdBoard);
-    return createdBoard.save();
+    const createdBoard = new this.boardModel({ name, owner: owner._id });
+    await this.userService.addBoardToUser(userId, createdBoard._id.toString());
+    return createdBoard.save().then(board => this.toResponseBoard(board));
   }
 
-  async update(
+  async updateBoard(
     userId: string,
     boardId: string,
     updateBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
+  ): Promise<BoardResponseObject> {
     await this.verifyBoardOwner(userId, boardId);
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
     if (!updatedBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return updatedBoard;
+    return this.toResponseBoard(updatedBoard, true);
   }
 
-  async delete(userId: string, boardId: string): Promise<BoardDocument> {
+  async deleteBoard(
+    userId: string,
+    boardId: string,
+  ): Promise<BoardResponseObject> {
     await this.verifyBoardOwner(userId, boardId);
+    await this.userService.deleteBoardFromUser(userId, boardId);
+    return this.deleteBoardById(boardId).then(board =>
+      this.toResponseBoard(board),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  private async findBoards(
+    skip: number,
+    limit: number,
+  ): Promise<BoardDocument[]> {
+    return this.boardModel.find().skip(skip).limit(limit).exec();
+  }
+
+  async findBoardById(boardId: string): Promise<BoardDocument> {
+    const existingBoard = await this.boardModel.findById(boardId).exec();
+    if (!existingBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return existingBoard;
+  }
+
+  private async deleteBoardById(boardId: string): Promise<BoardDocument> {
     const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
@@ -71,7 +99,7 @@ export class BoardsService {
 
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.userService.findUserById(userId);
-    const board = await this.findOneById(boardId);
+    const board = await this.findBoardById(boardId);
     // TODO - ugly - make it better
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     if (board.owner.toString() !== (owner._id as string).toString())
@@ -79,6 +107,16 @@ export class BoardsService {
         'You are not the owner of this board',
         HttpStatus.FORBIDDEN,
       );
+  }
+
+  private toResponseBoard(
+    board: BoardDocument,
+    showSlides: boolean = false,
+  ): BoardResponseObject {
+    const { _id, name, owner, permissions, slides } = board;
+    const responseObject: any = { _id, name, owner, permissions };
+    if (showSlides) responseObject.slides = slides;
+    return responseObject;
   }
 
   // TODO - implement

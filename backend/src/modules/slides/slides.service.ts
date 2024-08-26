@@ -40,7 +40,7 @@ export class SlidesService {
     const { boardId, ...rest } = createSlideDto;
 
     // const user = await this.usersService.findOneById(userId);
-    const board = await this.boardsService.findOneById(boardId);
+    const board = await this.boardsService.findBoardById(boardId);
 
     this.validateSlidesLimit(board);
     const createdSlide = new this.slideModel({ ...rest, board });

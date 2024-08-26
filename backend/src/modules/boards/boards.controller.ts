@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BoardsService } from './boards.service';
+import { BoardResponseObject, BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { BoardDocument } from '../../schemas/board.schema';
 import { User } from '../auth/decorators/users.decorator';
@@ -20,40 +20,44 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  async findAll(@Query('page') page: number = 1): Promise<BoardDocument[]> {
-    return this.boardsService.findAll(page);
+  async getBoards(
+    @Query('page') page: number = 1,
+  ): Promise<BoardResponseObject[]> {
+    return this.boardsService.getBoards(page);
   }
 
   @Get(':id')
-  async findOne(@Param('id') boardId: string): Promise<BoardDocument> {
-    return this.boardsService.findOneById(boardId);
+  async getBoardById(
+    @Param('id') boardId: string,
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.getBoardById(boardId);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
+  createBoard(
     @User('_id') userId: string,
     @Body() createBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
-    return this.boardsService.create(userId, createBoardDto);
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.createBoard(userId, createBoardDto);
   }
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
-  Update(
+  updateBoard(
     @User('_id') userId: string,
     @Param('id') boardId: string,
     @Body() createBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
-    return this.boardsService.update(userId, boardId, createBoardDto);
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.updateBoard(userId, boardId, createBoardDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async delete(
+  async deleteBoard(
     @User('_id') userId: string,
     @Param('id') boardId: string,
-  ): Promise<BoardDocument> {
-    return this.boardsService.delete(userId, boardId);
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.deleteBoard(userId, boardId);
   }
 }
