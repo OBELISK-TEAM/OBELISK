@@ -12,9 +12,18 @@ export class UsersService {
   private readonly pageSize = 10;
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async findAll(page: number = 1): Promise<UserDocument[]> {
+  async getUsers(page: number = 1): Promise<UserResponseObject[]> {
     const skip = (page - 1) * this.pageSize;
-    return this.userModel.find().skip(skip).limit(this.pageSize).exec();
+    return await this.userModel
+      .find()
+      .skip(skip)
+      .limit(this.pageSize)
+      .exec()
+      .then(users => Promise.all(users.map(user => this.toResponseUser(user))));
+  }
+
+  async getUserById(userId: string): Promise<UserResponseObject> {
+    return this.findOneById(userId).then(user => this.toResponseUser(user));
   }
 
   async findOneById(userId: string): Promise<UserDocument> {
@@ -28,7 +37,8 @@ export class UsersService {
     if (await this.emailExists(createUserDto.email))
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+    return createdUser;
+    // return createdUser.save().then(user => this.toResponseUser(user));
   }
 
   async findOneByEmail(email: string): Promise<UserDocument> {
@@ -104,4 +114,36 @@ export class UsersService {
     }
     return existingUser;
   }
+
+  async toResponseUser(
+    user: UserDocument,
+    showBoards: boolean = false,
+    showSlideObjects: boolean = false,
+    showTimestamps: boolean = false, // we can separate into last active and created/updated at
+  ) {
+    const { _id, email, userRole, userAuthProvider } = user;
+    const responseObject: any = {
+      _id,
+      email,
+      userRole,
+      userAuthProvider,
+    };
+    if (showBoards) responseObject.boards = user.boards;
+    if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
+    if (showTimestamps) {
+      responseObject.lastActive = user.lastActive;
+      responseObject.createdAt = user.createdAt;
+      responseObject.updatedAt = user.updatedAt;
+    }
+    return responseObject;
+  }
+}
+
+export interface UserResponseObject {
+  _id: string;
+  email: string;
+  userRole: number;
+  userAuthProvider: number;
+  boards?: string[];
+  slideObjects?: string[];
 }

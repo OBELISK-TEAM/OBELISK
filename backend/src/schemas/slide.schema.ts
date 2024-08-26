@@ -4,11 +4,16 @@ import { SlideObject } from './slide-object.schema';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
+  SchemaTimestampsConfig,
 } from 'mongoose';
 
-export type SlideDocument = Slide & MongooseDocument;
+export type SlideDocument = Slide & MongooseDocument & SchemaTimestampsConfig;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class Slide {
   @Prop({
     required: true,
