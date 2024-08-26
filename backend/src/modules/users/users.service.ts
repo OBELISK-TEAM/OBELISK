@@ -86,7 +86,12 @@ export class UsersService {
 
   async addBoardToUser(userId: string, board: BoardDocument): Promise<void> {
     const updatedUser = await this.userModel
-      .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
+      // .findByIdAndUpdate(userId, { $push: { boards: board } }, { new: true })
+      .findByIdAndUpdate(
+        userId,
+        { $push: { boards: board._id } },
+        { new: true },
+      )
       .exec();
     if (!updatedUser)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -124,15 +129,15 @@ export class UsersService {
     return existingUser;
   }
 
-  private async toResponseUser(
+  private toResponseUser(
     user: UserDocument,
     showBoards: boolean = false,
     showSlideObjects: boolean = false,
     showTimestamps: boolean = false,
   ) {
     const { _id, email, userRole, userAuthProvider } = user;
-    const responseObject: any = {
-      _id,
+    const responseObject: UserResponseObject = {
+      _id: _id as string,
       email,
       userRole,
       userAuthProvider,
@@ -141,8 +146,8 @@ export class UsersService {
     if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
       responseObject.lastActive = user.lastActive;
-      responseObject.createdAt = user.createdAt;
-      responseObject.updatedAt = user.updatedAt;
+      // responseObject.createdAt = user.createdAt;
+      // responseObject.updatedAt = user.updatedAt;
     }
     return responseObject;
   }
