@@ -7,6 +7,7 @@ import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
+import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
@@ -20,35 +21,67 @@ export class SlidesService {
     private readonly usersService: UsersService,
   ) {}
 
-  async findAll(page: number = 1): Promise<SlideDocument[]> {
+  async getSlides(page: number = 1): Promise<SlideResponseObject[]> {
     const skip = (page - 1) * this.pageSize;
-    return this.slideModel.find().skip(skip).limit(this.pageSize).exec();
+    return this.findSlides(skip, this.pageSize).then(slides =>
+      Promise.all(slides.map(slide => this.toResponseSlide(slide))),
+    );
   }
 
-  async findOneById(slideId: string): Promise<SlideDocument> {
-    const existingSlide = await this.slideModel.findById(slideId).exec();
+  async getSlideById(slideId: string): Promise<SlideResponseObject> {
+    return this.findSlideById(slideId, true).then(slide =>
+      this.toResponseSlide(slide, true, true),
+    );
+  }
+
+  async createSlide(
+    userId: string,
+    createSlideDto: CreateSlideDto,
+  ): Promise<SlideResponseObject> {
+    const { boardId, ...rest } = createSlideDto;
+    // TODO - check permissions first
+    const board = await this.boardsService.findBoardById(boardId);
+    this.validateSlidesLimit(board);
+    const createdSlide = new this.slideModel({ ...rest, board: board._id });
+    await this.boardsService.addSlideToBoard(
+      boardId,
+      createdSlide._id.toString(),
+    );
+    return createdSlide.save().then(slide => this.toResponseSlide(slide));
+  }
+
+  async deleteSlide(
+    userId: string,
+    slideId: string,
+  ): Promise<SlideResponseObject> {
+    // TODO - check permissions first
+    const slide = await this.findSlideById(slideId);
+    await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
+    return this.deleteSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  async findSlides(skip: number, limit: number): Promise<SlideDocument[]> {
+    return this.slideModel.find().skip(skip).limit(limit).exec();
+  }
+
+  async findSlideById(
+    slideId: string,
+    populateBoard: boolean = false,
+  ): Promise<SlideDocument> {
+    const query = this.slideModel.findById(slideId);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    if (populateBoard) query.populate('board');
+    const existingSlide = await query.exec();
     if (!existingSlide)
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
   }
 
-  // TODO - check permissions before creating (for edit) - there is a method in boards.service
-  async create(
-    userId: string,
-    createSlideDto: CreateSlideDto,
-  ): Promise<SlideDocument> {
-    const { boardId, ...rest } = createSlideDto;
-
-    // const user = await this.usersService.findOneById(userId);
-    const board = await this.boardsService.findBoardById(boardId);
-
-    this.validateSlidesLimit(board);
-    const createdSlide = new this.slideModel({ ...rest, board });
-    await this.boardsService.addSlideToBoard(boardId, createdSlide);
-    return createdSlide.save();
-  }
-
-  async delete(slideId: string): Promise<SlideDocument> {
+  async deleteSlideById(slideId: string): Promise<SlideDocument> {
     const deletedSlide = await this.slideModel
       .findByIdAndDelete(slideId)
       .exec();
@@ -57,6 +90,7 @@ export class SlidesService {
     return deletedSlide;
   }
 
+  // TODO - check permissions first
   async addSlideObject(
     slideId: string,
     slideObject: SlideObject,
@@ -72,9 +106,39 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
+  // TODO - check permissions first
+  async deleteSlideObject(
+    slideId: string,
+    slideObjectId: string,
+  ): Promise<void> {
+    const updatedSlide = await this.slideModel
+      .findByIdAndUpdate(
+        slideId,
+        { $pull: { objects: { _id: slideObjectId } } },
+        { new: true },
+      )
+      .exec();
+    if (!updatedSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+  }
+
   private validateSlidesLimit(board: BoardDocument): void {
     const slidesCount = board.slides.length;
     if (slidesCount >= this.slidesLimitPerBoard)
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
+  }
+
+  private toResponseSlide(
+    slide: SlideDocument,
+    showBoard: boolean = false,
+    showObjects: boolean = false,
+  ): SlideResponseObject {
+    const { _id, objects, board } = slide;
+    const responseObject: SlideResponseObject = { _id: _id as string };
+    if (showBoard && typeof board === 'object') {
+      responseObject.board = this.boardsService.toResponseBoard(board);
+    } else responseObject.board = board;
+    if (showObjects) responseObject.objects = objects;
+    return responseObject;
   }
 }

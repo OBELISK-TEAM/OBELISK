@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
-import { Slide } from '../../schemas/slide.schema';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 
 @Injectable()
@@ -89,9 +88,17 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  async addSlideToBoard(boardId: string, slide: Slide): Promise<void> {
+  async addSlideToBoard(boardId: string, slideId: string): Promise<void> {
     const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, { $push: { slides: slide } }, { new: true })
+      .findByIdAndUpdate(boardId, { $push: { slides: slideId } }, { new: true })
+      .exec();
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+  }
+
+  async deleteSlideFromBoard(boardId: string, slideId: string): Promise<void> {
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(boardId, { $pull: { slides: slideId } }, { new: true })
       .exec();
     if (!updatedBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
@@ -100,16 +107,14 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.userService.findUserById(userId);
     const board = await this.findBoardById(boardId);
-    // TODO - ugly - make it better
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
-    if (board.owner.toString() !== (owner._id as string).toString())
+    if (board.owner !== owner._id)
       throw new HttpException(
         'You are not the owner of this board',
         HttpStatus.FORBIDDEN,
       );
   }
 
-  private toResponseBoard(
+  toResponseBoard(
     board: BoardDocument,
     showSlides: boolean = false,
   ): BoardResponseObject {

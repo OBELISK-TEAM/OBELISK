@@ -38,7 +38,7 @@ export class SlideObjectsService {
   ): Promise<SlideObjectDocument> {
     const { slideId, ...slideObject } = createSlideObjectDto;
 
-    const slide = await this.slideService.findOneById(slideId);
+    const slide = await this.slideService.findSlideById(slideId);
     const user = await this.userService.findUserById(userId);
 
     const createdSlideObject = new this.slideObjectModel({
