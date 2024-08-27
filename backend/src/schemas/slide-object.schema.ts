@@ -3,16 +3,23 @@ import { User } from './user.schema';
 import { Slide } from './slide.schema';
 import { SlideObjectShadow } from '../shared/interfaces/SlideObjectShadow';
 import { SlideObjectPath } from '../shared/interfaces/SlideObjectPath';
+import { SlideObjectFilter } from '../shared/interfaces/SlideObjectFilter';
+import { SlideObjectTextStyles } from '../shared/interfaces/SlideObjectTextStyles';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
+  SchemaTimestampsConfig,
 } from 'mongoose';
-import { SlideObjectFilter } from '../shared/interfaces/SlideObjectFilter';
-import { SlideObjectTextStyles } from '../shared/interfaces/SlideObjectTextStyles';
 
-export type SlideObjectDocument = SlideObject & MongooseDocument;
+export type SlideObjectDocument = SlideObject &
+  MongooseDocument &
+  SchemaTimestampsConfig;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class SlideObject {
   // Fabric.js-specific properties
 

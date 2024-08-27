@@ -1,18 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from '../enums/user.role';
 import { UserAuthProvider } from '../enums/user.auth.provider';
-import { Board } from './board.schema';
 import { hashSync } from 'bcrypt';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
   UpdateQuery,
+  SchemaTimestampsConfig,
 } from 'mongoose';
-import { SlideObject } from './slide-object.schema';
 
-export type UserDocument = User & MongooseDocument;
+export type UserDocument = User & MongooseDocument & SchemaTimestampsConfig;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class User {
   @Prop({
     required: true,
@@ -55,7 +58,7 @@ export class User {
     ref: 'Board',
     default: [],
   })
-  boards: Board[];
+  boards: string[];
 
   @Prop({
     required: false,
@@ -63,7 +66,7 @@ export class User {
     ref: 'SlideObject',
     default: [],
   })
-  slideObjects: SlideObject[];
+  slideObjects: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
