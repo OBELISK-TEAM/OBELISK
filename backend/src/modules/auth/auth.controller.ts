@@ -34,12 +34,10 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'user already registered',
-    type: AuthToken,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'user not found (unconsistent DB)',
-    type: AuthToken,
   })
   async register(@Body() createUserDto: CreateUserDto): Promise<AuthToken> {
     return this.authService.register(createUserDto);
@@ -55,7 +53,6 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - local',
-    type: AuthToken,
   })
   login(@User() user: SafeUserDoc): AuthToken {
     return this.authService.login(user);
@@ -103,7 +100,6 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
-    type: String,
   })
   jwtSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
@@ -121,12 +117,10 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
-    type: String,
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'minimum role not fulfilled',
-    type: String,
   })
   minimumRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
@@ -144,12 +138,10 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
-    type: String,
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'required role not fulfilled',
-    type: String,
   })
   requiredRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
