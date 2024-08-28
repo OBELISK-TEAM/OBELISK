@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Post,
   Req,
   Res,
@@ -26,17 +27,17 @@ export class AuthController {
 
   @Post('register')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully registered and authenticated',
     type: AuthToken,
   })
   @ApiResponse({
-    status: 400,
+    status: HttpStatus.BAD_REQUEST,
     description: 'user already registered',
     type: AuthToken,
   })
   @ApiResponse({
-    status: 404,
+    status: HttpStatus.NOT_FOUND,
     description: 'user not found (unconsistent DB)',
     type: AuthToken,
   })
@@ -47,12 +48,12 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - local',
     type: AuthToken,
   })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - local',
     type: AuthToken,
   })
@@ -63,11 +64,11 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - google',
   })
   @ApiResponse({
-    status: 400,
+    status: HttpStatus.BAD_REQUEST,
     description: 'email not provided',
   })
   async googleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -76,15 +77,15 @@ export class AuthController {
 
   @Post('google/login')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - google',
   })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - google',
   })
   @ApiResponse({
-    status: 404,
+    status: HttpStatus.NOT_FOUND,
     description: 'user not found (unconsistent DB)',
   })
   async googleLogin(@Req() req: Request) {
@@ -95,12 +96,12 @@ export class AuthController {
   @Get('jwt-secured')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - jwt',
     type: String,
   })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
     type: String,
   })
@@ -113,17 +114,17 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @MinimumRole(UserRole.USER)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - jwt and role',
     type: String,
   })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
     type: String,
   })
   @ApiResponse({
-    status: 403,
+    status: HttpStatus.FORBIDDEN,
     description: 'minimum role not fulfilled',
     type: String,
   })
@@ -136,17 +137,17 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @RequiredRole(UserRole.ADMIN)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'successfully authenticated - jwt and role',
     type: String,
   })
   @ApiResponse({
-    status: 401,
+    status: HttpStatus.UNAUTHORIZED,
     description: 'unauthorized - jwt',
     type: String,
   })
   @ApiResponse({
-    status: 403,
+    status: HttpStatus.FORBIDDEN,
     description: 'required role not fulfilled',
     type: String,
   })
