@@ -18,29 +18,75 @@ import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/AuthToken';
 import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
 import { UserRole } from '../../enums/user.role';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @ApiResponse({
+    status: 200,
+    description: 'successfully registered and authenticated',
+    type: AuthToken,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'user already registered',
+    type: AuthToken,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'user not found (unconsistent DB)',
+    type: AuthToken,
+  })
   async register(@Body() createUserDto: CreateUserDto): Promise<AuthToken> {
     return this.authService.register(createUserDto);
   }
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - local',
+    type: AuthToken,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'unauthorized - local',
+    type: AuthToken,
+  })
   login(@User() user: SafeUserDoc): AuthToken {
     return this.authService.login(user);
   }
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - google',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'email not provided',
+  })
   async googleRedirect(@Req() req: Request, @Res() res: Response) {
     return this.authService.googleRedirect(req, res);
   }
 
   @Post('google/login')
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - google',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'unauthorized - google',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'user not found (unconsistent DB)',
+  })
   async googleLogin(@Req() req: Request) {
     return this.authService.googleLogin(req);
   }
@@ -48,6 +94,16 @@ export class AuthController {
   // add @UseGuards(JwtAuthGuard) to secure the route with JWT
   @Get('jwt-secured')
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - jwt',
+    type: String,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'unauthorized - jwt',
+    type: String,
+  })
   jwtSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
@@ -56,6 +112,21 @@ export class AuthController {
   @Get('min-role-secured')
   @UseGuards(JwtAuthGuard)
   @MinimumRole(UserRole.USER)
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - jwt and role',
+    type: String,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'unauthorized - jwt',
+    type: String,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'minimum role not fulfilled',
+    type: String,
+  })
   minimumRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
@@ -64,6 +135,21 @@ export class AuthController {
   @Get('req-role-secured')
   @UseGuards(JwtAuthGuard)
   @RequiredRole(UserRole.ADMIN)
+  @ApiResponse({
+    status: 200,
+    description: 'successfully authenticated - jwt and role',
+    type: String,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'unauthorized - jwt',
+    type: String,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'required role not fulfilled',
+    type: String,
+  })
   requiredRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
