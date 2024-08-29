@@ -114,9 +114,13 @@ export class BoardsService {
       );
   }
 
+  // TODO - implement
+  // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
+
   toResponseBoard(
     board: BoardDocument,
     showSlides: boolean = false,
+    showTimestamps: boolean = false,
   ): BoardResponseObject {
     const { _id, name, owner, permissions, slides } = board;
     const responseObject: BoardResponseObject = {
@@ -125,10 +129,12 @@ export class BoardsService {
       owner,
       permissions,
     };
+
     if (showSlides) responseObject.slides = slides;
+    if (showTimestamps) {
+      responseObject.createdAt = board.createdAt;
+      responseObject.updatedAt = board.updatedAt;
+    }
     return responseObject;
   }
-
-  // TODO - implement
-  // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
 }

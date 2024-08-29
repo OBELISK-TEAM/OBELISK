@@ -5,7 +5,10 @@ import { Slide, SlideDocument } from '../../schemas/slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
-import { SlideObject } from 'src/schemas/slide-object.schema';
+import {
+  SlideObject,
+  SlideObjectDocument,
+} from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
@@ -29,15 +32,16 @@ export class SlidesService {
   }
 
   async getSlideById(slideId: string): Promise<SlideResponseObject> {
-    return this.findSlideById(slideId, true).then(slide =>
-      this.toResponseSlide(slide, true, true),
-    );
+    return this.findSlideById(slideId)
+      .then(slide => slide.populate('board'))
+      .then(slide => slide.populate('objects'))
+      .then(slide => this.toResponseSlide(slide));
   }
 
   async createSlide(
     userId: string,
     createSlideDto: CreateSlideDto,
-  ): Promise<SlideResponseObject> {
+  ): Promise<any> {
     const { boardId, ...rest } = createSlideDto;
     // TODO - check permissions first
     const board = await this.boardsService.findBoardById(boardId);
@@ -47,7 +51,10 @@ export class SlidesService {
       boardId,
       createdSlide._id.toString(),
     );
-    return createdSlide.save().then(slide => this.toResponseSlide(slide));
+    return createdSlide
+      .save()
+      .then(slide => slide.populate('board'))
+      .then(slide => this.toResponseSlide(slide));
   }
 
   async deleteSlide(
@@ -57,9 +64,10 @@ export class SlidesService {
     // TODO - check permissions first
     const slide = await this.findSlideById(slideId);
     await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
-    return this.deleteSlideById(slideId).then(slide =>
-      this.toResponseSlide(slide),
-    );
+    return this.deleteSlideById(slideId)
+      .then(slide => slide.populate('board'))
+      .then(slide => slide.populate('objects'))
+      .then(slide => this.toResponseSlide(slide));
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -68,14 +76,8 @@ export class SlidesService {
     return this.slideModel.find().skip(skip).limit(limit).exec();
   }
 
-  async findSlideById(
-    slideId: string,
-    populateBoard: boolean = false,
-  ): Promise<SlideDocument> {
-    const query = this.slideModel.findById(slideId);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    if (populateBoard) query.populate('board');
-    const existingSlide = await query.exec();
+  async findSlideById(slideId: string): Promise<SlideDocument> {
+    const existingSlide = await this.slideModel.findById(slideId).exec();
     if (!existingSlide)
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
@@ -130,15 +132,26 @@ export class SlidesService {
 
   private toResponseSlide(
     slide: SlideDocument,
-    showBoard: boolean = false,
-    showObjects: boolean = false,
+    showTimestamps: boolean = false,
   ): SlideResponseObject {
-    const { _id, objects, board } = slide;
+    const { _id, board, objects } = slide;
     const responseObject: SlideResponseObject = { _id: _id as string };
-    if (showBoard && typeof board === 'object') {
-      responseObject.board = this.boardsService.toResponseBoard(board);
-    } else responseObject.board = board;
-    if (showObjects) responseObject.objects = objects;
+
+    slide.populated('board')
+      ? (responseObject.board = this.boardsService.toResponseBoard(
+          board as unknown as BoardDocument,
+        ))
+      : (responseObject.board = board);
+
+    slide.populated('objects')
+      ? (responseObject.objects = objects as unknown as SlideObjectDocument[])
+      : (responseObject.objects = objects);
+
+    if (showTimestamps) {
+      responseObject.createdAt = slide.createdAt;
+      responseObject.updatedAt = slide.updatedAt;
+    }
+
     return responseObject;
   }
 }

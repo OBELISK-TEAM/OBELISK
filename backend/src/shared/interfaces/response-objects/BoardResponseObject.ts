@@ -8,4 +8,6 @@ export interface BoardResponseObject {
     share: string[];
   };
   slides?: string[];
+  createdAt?: Date | string | boolean | undefined;
+  updatedAt?: Date | string | boolean | undefined;
 }

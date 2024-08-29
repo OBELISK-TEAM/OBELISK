@@ -6,6 +6,6 @@ export interface UserResponseObject {
   boards?: string[];
   slideObjects?: string[];
   lastActive?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string | boolean | undefined;
+  updatedAt?: Date | string | boolean | undefined;
 }

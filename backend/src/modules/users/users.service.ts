@@ -144,12 +144,12 @@ export class UsersService {
       userRole,
       userAuthProvider,
     };
+
     if (showBoards) responseObject.boards = user.boards;
     if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
-      responseObject.lastActive = user.lastActive;
-      // responseObject.createdAt = user.createdAt;
-      // responseObject.updatedAt = user.updatedAt;
+      responseObject.createdAt = user.createdAt;
+      responseObject.updatedAt = user.updatedAt;
     }
     return responseObject;
   }
