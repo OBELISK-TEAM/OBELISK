@@ -8,7 +8,6 @@ import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
-import { SlideObjectsService } from '../slide-objects/slide-objects.service';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
