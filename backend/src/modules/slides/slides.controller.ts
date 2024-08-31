@@ -39,7 +39,7 @@ export class SlidesController {
   createSlide(
     @User('_id') userId: string,
     @Body() createSlideDto: CreateSlideDto,
-  ): Promise<any> {
+  ): Promise<SlideResponseObject> {
     return this.slidesService.createSlide(userId, createSlideDto);
   }
 

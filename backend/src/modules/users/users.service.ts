@@ -137,7 +137,7 @@ export class UsersService {
     showSlideObjects: boolean = false,
     showTimestamps: boolean = false,
   ): UserResponseObject {
-    const { _id, email, userRole, userAuthProvider } = user;
+    const { _id, email, userRole, userAuthProvider } = user.toObject();
     const responseObject: UserResponseObject = {
       _id: _id as string,
       email,

@@ -5,12 +5,10 @@ import { Slide, SlideDocument } from '../../schemas/slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
-import {
-  SlideObject,
-  SlideObjectDocument,
-} from 'src/schemas/slide-object.schema';
+import { SlideObject } from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { SlideObjectsService } from '../slide-objects/slide-objects.service';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
 
@@ -41,7 +39,7 @@ export class SlidesService {
   async createSlide(
     userId: string,
     createSlideDto: CreateSlideDto,
-  ): Promise<any> {
+  ): Promise<SlideResponseObject> {
     const { boardId, ...rest } = createSlideDto;
     // TODO - check permissions first
     const board = await this.boardsService.findBoardById(boardId);
@@ -144,7 +142,7 @@ export class SlidesService {
       : (responseObject.board = board);
 
     slide.populated('objects')
-      ? (responseObject.objects = objects as unknown as SlideObjectDocument[])
+      ? (responseObject.objects = objects)
       : (responseObject.objects = objects);
 
     if (showTimestamps) {

@@ -1,6 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { User } from './user.schema';
-import { Slide } from './slide.schema';
 import { SlideObjectShadow } from '../shared/interfaces/SlideObjectShadow';
 import { SlideObjectPath } from '../shared/interfaces/SlideObjectPath';
 import { SlideObjectFilter } from '../shared/interfaces/SlideObjectFilter';
@@ -349,14 +347,14 @@ export class SlideObject {
     type: MongooseSchema.Types.ObjectId,
     ref: 'User',
   })
-  createdBy: User;
+  createdBy: string;
 
   @Prop({
     required: true,
     type: MongooseSchema.Types.ObjectId,
     ref: 'Slide',
   })
-  slide: Slide;
+  slide: string;
 }
 
 export const SlideObjectSchema = SchemaFactory.createForClass(SlideObject);

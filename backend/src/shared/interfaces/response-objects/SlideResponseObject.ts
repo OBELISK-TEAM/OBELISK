@@ -1,12 +1,10 @@
 import { BoardResponseObject } from './BoardResponseObject';
-import { SlideObjectDocument } from '../../../schemas/slide-object.schema';
+import { SlideObjectResponseObject } from './SlideObjectResponseObject';
 
 export interface SlideResponseObject {
   _id: string;
   board?: string | BoardResponseObject;
-  objects?: string[] | SlideObjectDocument[];
-  // TODO
-  // objects: string[] | SlideObjectResponseObject[] | SlideObjectDocument[];
+  objects?: string[] | SlideObjectResponseObject[];
   createdAt?: Date | string | boolean | undefined;
   updatedAt?: Date | string | boolean | undefined;
 }
