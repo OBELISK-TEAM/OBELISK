@@ -137,19 +137,20 @@ export class UsersService {
     showSlideObjects: boolean = false,
     showTimestamps: boolean = false,
   ): UserResponseObject {
-    const { _id, email, userRole, userAuthProvider } = user;
+    const { _id, email, userRole, userAuthProvider } =
+      user.toObject() as UserDocument;
     const responseObject: UserResponseObject = {
       _id: _id as string,
       email,
       userRole,
       userAuthProvider,
     };
+
     if (showBoards) responseObject.boards = user.boards;
     if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
-      responseObject.lastActive = user.lastActive;
-      // responseObject.createdAt = user.createdAt;
-      // responseObject.updatedAt = user.updatedAt;
+      responseObject.createdAt = user.createdAt;
+      responseObject.updatedAt = user.updatedAt;
     }
     return responseObject;
   }

@@ -1,6 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Board } from './board.schema';
-import { SlideObject } from './slide-object.schema';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
@@ -26,18 +24,19 @@ export class Slide {
     type: [
       {
         type: MongooseSchema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'SlideObject',
       },
     ],
   })
-  objects: SlideObject[];
+  objects: string[];
 
   @Prop({
     required: true,
-    type: Board,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Board',
   })
-  board: Board;
+  board: string;
 }
 
 export const SlideSchema = SchemaFactory.createForClass(Slide);

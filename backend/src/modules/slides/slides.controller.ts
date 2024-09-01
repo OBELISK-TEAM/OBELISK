@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { SlidesService } from './slides.service';
 import { CreateSlideDto } from './slides.dto';
-import { SlideDocument } from '../../schemas/slide.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { User } from '../auth/decorators/users.decorator';
+import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
 @Controller('slides')
 export class SlidesController {
@@ -21,26 +21,34 @@ export class SlidesController {
   // TODO - add proper role decorator for endpoints that should not be exposed
   // for example this one
   @Get()
-  async findAll(@Query('page') page: number = 1): Promise<SlideDocument[]> {
-    return this.slidesService.findAll(page);
+  async getSlides(
+    @Query('page') page: number = 1,
+  ): Promise<SlideResponseObject[]> {
+    return this.slidesService.getSlides(page);
   }
 
   @Get(':id')
-  async findOne(@Param('id') slideId: string): Promise<SlideDocument> {
-    return this.slidesService.findOneById(slideId);
+  async getSlideById(
+    @Param('id') slideId: string,
+  ): Promise<SlideResponseObject> {
+    return this.slidesService.getSlideById(slideId);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
+  createSlide(
     @User('_id') userId: string,
     @Body() createSlideDto: CreateSlideDto,
-  ): Promise<SlideDocument> {
-    return this.slidesService.create(userId, createSlideDto);
+  ): Promise<SlideResponseObject> {
+    return this.slidesService.createSlide(userId, createSlideDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async delete(@Param('id') slideId: string): Promise<SlideDocument> {
-    return this.slidesService.delete(slideId);
+  async deleteSlide(
+    @User('_id') userId: string,
+    @Param('id') slideId: string,
+  ): Promise<SlideResponseObject> {
+    return this.slidesService.deleteSlide(userId, slideId);
   }
 }
