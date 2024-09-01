@@ -47,7 +47,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, swaggerDocument);
 
   await app.listen(port);
-  Logger.log(`Server running on https://${host}:${port}`, 'Bootstrap');
+
+  Logger.log(`Server running at http://${host}:${port}`, 'Bootstrap');
+  Logger.log(`Docs available at http://${host}:${port}/docs`, 'Bootstrap');
 }
 
 void bootstrap();
