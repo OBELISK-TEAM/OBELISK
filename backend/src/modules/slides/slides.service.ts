@@ -6,7 +6,6 @@ import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
-import { UsersService } from '../users/users.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
@@ -18,7 +17,6 @@ export class SlidesService {
   constructor(
     @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
     private readonly boardsService: BoardsService,
-    private readonly usersService: UsersService,
   ) {}
 
   async getSlides(page: number = 1): Promise<SlideResponseObject[]> {
@@ -90,7 +88,7 @@ export class SlidesService {
   }
 
   // TODO - check permissions first
-  async addSlideObject(
+  async addSlideObjectToSlide(
     slideId: string,
     slideObject: SlideObject,
   ): Promise<void> {
@@ -106,7 +104,7 @@ export class SlidesService {
   }
 
   // TODO - check permissions first
-  async deleteSlideObject(
+  async deleteSlideObjectFromSlide(
     slideId: string,
     slideObjectId: string,
   ): Promise<void> {
@@ -127,18 +125,32 @@ export class SlidesService {
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
 
-  private toResponseSlide(
+  private async toResponseSlide(
     slide: SlideDocument,
+    showBoard: boolean = false,
+    showObjects: boolean = false,
     showTimestamps: boolean = false,
-  ): SlideResponseObject {
-    const { _id, board, objects } = slide;
+  ): Promise<SlideResponseObject> {
+    const { _id, board, objects } = slide.toObject() as SlideDocument;
     const responseObject: SlideResponseObject = { _id: _id as string };
 
-    slide.populated('board')
-      ? (responseObject.board = this.boardsService.toResponseBoard(
-          board as unknown as BoardDocument,
-        ))
-      : (responseObject.board = board);
+    if (showBoard) {
+      await slide.populate('board');
+      responseObject.board = await this.boardsService.toResponseBoard(
+        board as unknown as BoardDocument,
+      );
+    }
+
+    // if (showObjects) {
+    //   await slide.populate('objects');
+    //   responseObject.objects = await Promise.all(
+    //     objects.map(object =>
+    //       this.slideObjectsService.toResponseSlideObject(
+    //         object as unknown as SlideObjectDocument,
+    //       ),
+    //     ),
+    //   );
+    // }
 
     slide.populated('objects')
       ? (responseObject.objects = objects)

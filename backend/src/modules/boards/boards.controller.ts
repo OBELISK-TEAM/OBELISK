@@ -29,8 +29,9 @@ export class BoardsController {
   @Get(':id')
   async getBoardById(
     @Param('id') boardId: string,
+    @Query('slide') slideNumber: number,
   ): Promise<BoardResponseObject> {
-    return this.boardsService.getBoardById(boardId);
+    return this.boardsService.getBoardById(boardId, slideNumber);
   }
 
   @Post()

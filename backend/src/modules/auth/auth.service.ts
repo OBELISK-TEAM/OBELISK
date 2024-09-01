@@ -26,7 +26,7 @@ export class AuthService {
     password: string,
   ): Promise<SafeUserDoc | null> {
     try {
-      const user: UserDocument = await this.usersService.findOneByEmail(email);
+      const user: UserDocument = await this.usersService.findUserByEmail(email);
       if (user && (await this.comparePasswords(password, user.password))) {
         return this.extractUserWithoutPassword(user);
       }
@@ -78,7 +78,7 @@ export class AuthService {
   private async handleRegisterWhenEmailExists(
     createUserDto: CreateUserDto,
   ): Promise<UserDocument> {
-    const user = await this.usersService.findOneByEmail(createUserDto.email);
+    const user = await this.usersService.findUserByEmail(createUserDto.email);
 
     if (
       user.userAuthProvider == UserAuthProvider.INTERNAL ||
