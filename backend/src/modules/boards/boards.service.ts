@@ -5,6 +5,7 @@ import { CreateBoardDto } from './boards.dto';
 import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { SlideDocument } from '../../schemas/slide.schema';
 
 @Injectable()
 export class BoardsService {
@@ -21,9 +22,12 @@ export class BoardsService {
     );
   }
 
-  async getBoardById(boardId: string): Promise<BoardResponseObject> {
+  async getBoardById(
+    boardId: string,
+    slideNumber: number = -1,
+  ): Promise<BoardResponseObject> {
     return this.findBoardById(boardId).then(board =>
-      this.toResponseBoard(board, true),
+      this.toResponseBoard(board, slideNumber),
     );
   }
 
@@ -31,10 +35,8 @@ export class BoardsService {
     userId: string,
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseObject> {
-    const { name } = createBoardDto;
-    const owner = await this.userService.findUserById(userId);
-    const createdBoard = new this.boardModel({ name, owner: owner._id });
-    await this.userService.addBoardToUser(userId, createdBoard._id.toString());
+    const createdBoard = await this.createNewBoard(userId, createBoardDto);
+    await this.userService.addBoardToUser(userId, createdBoard._id as string);
     return createdBoard.save().then(board => this.toResponseBoard(board));
   }
 
@@ -44,12 +46,9 @@ export class BoardsService {
     updateBoardDto: CreateBoardDto,
   ): Promise<BoardResponseObject> {
     await this.verifyBoardOwner(userId, boardId);
-    const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
-      .exec();
-    if (!updatedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return this.toResponseBoard(updatedBoard, true);
+    return this.updateBoardById(boardId, updateBoardDto).then(updatedBoard =>
+      this.toResponseBoard(updatedBoard),
+    );
   }
 
   async deleteBoard(
@@ -63,8 +62,6 @@ export class BoardsService {
     );
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////
-
   private async findBoards(
     skip: number,
     limit: number,
@@ -77,6 +74,26 @@ export class BoardsService {
     if (!existingBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
+  }
+
+  private async createNewBoard(
+    owner: string,
+    createBoardDto: CreateBoardDto,
+  ): Promise<BoardDocument> {
+    const createdBoard = new this.boardModel({ ...createBoardDto, owner });
+    return createdBoard.save();
+  }
+
+  async updateBoardById(
+    boardId: string,
+    updateBoardDto: CreateBoardDto,
+  ): Promise<BoardDocument> {
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
+      .exec();
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
   }
 
   private async deleteBoardById(boardId: string): Promise<BoardDocument> {
@@ -117,20 +134,30 @@ export class BoardsService {
   // TODO - implement
   // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
 
-  toResponseBoard(
+  async toResponseBoard(
     board: BoardDocument,
-    showSlides: boolean = false,
+    showSlide: number = -1,
     showTimestamps: boolean = false,
-  ): BoardResponseObject {
-    const { _id, name, owner, permissions, slides } = board;
+  ): Promise<BoardResponseObject> {
+    const { _id, name, owner, permissions, slides } =
+      board.toObject() as BoardDocument;
     const responseObject: BoardResponseObject = {
       _id: _id as string,
       name,
       owner,
       permissions,
+      slides,
     };
 
-    if (showSlides) responseObject.slides = slides;
+    if (showSlide >= 0) {
+      await board.populate({
+        path: 'slides',
+        match: { _id: slides[showSlide] },
+        populate: { path: 'objects' },
+      });
+      responseObject.slide = board.slides[0] as unknown as SlideDocument;
+    }
+
     if (showTimestamps) {
       responseObject.createdAt = board.createdAt;
       responseObject.updatedAt = board.updatedAt;

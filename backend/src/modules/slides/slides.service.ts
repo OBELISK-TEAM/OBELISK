@@ -6,7 +6,6 @@ import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
-import { UsersService } from '../users/users.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
 // TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
@@ -18,7 +17,6 @@ export class SlidesService {
   constructor(
     @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
     private readonly boardsService: BoardsService,
-    private readonly usersService: UsersService,
   ) {}
 
   async getSlides(page: number = 1): Promise<SlideResponseObject[]> {
@@ -29,45 +27,38 @@ export class SlidesService {
   }
 
   async getSlideById(slideId: string): Promise<SlideResponseObject> {
-    return this.findSlideById(slideId)
-      .then(slide => slide.populate('board'))
-      .then(slide => slide.populate('objects'))
-      .then(slide => this.toResponseSlide(slide));
+    return this.findSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
   }
 
+  // TODO - check permissions first
   async createSlide(
     userId: string,
     createSlideDto: CreateSlideDto,
   ): Promise<SlideResponseObject> {
-    const { boardId, ...rest } = createSlideDto;
-    // TODO - check permissions first
+    const { boardId } = createSlideDto;
     const board = await this.boardsService.findBoardById(boardId);
     this.validateSlidesLimit(board);
-    const createdSlide = new this.slideModel({ ...rest, board: board._id });
+    const createdSlide = await this.createNewSlide(createSlideDto);
     await this.boardsService.addSlideToBoard(
       boardId,
-      createdSlide._id.toString(),
+      createdSlide._id as string,
     );
-    return createdSlide
-      .save()
-      .then(slide => slide.populate('board'))
-      .then(slide => this.toResponseSlide(slide));
+    return createdSlide.save().then(slide => this.toResponseSlide(slide));
   }
 
+  // TODO - check permissions first
   async deleteSlide(
     userId: string,
     slideId: string,
   ): Promise<SlideResponseObject> {
-    // TODO - check permissions first
     const slide = await this.findSlideById(slideId);
     await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
-    return this.deleteSlideById(slideId)
-      .then(slide => slide.populate('board'))
-      .then(slide => slide.populate('objects'))
-      .then(slide => this.toResponseSlide(slide));
+    return this.deleteSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
   }
-
-  ////////////////////////////////////////////////////////////////////////////////////
 
   async findSlides(skip: number, limit: number): Promise<SlideDocument[]> {
     return this.slideModel.find().skip(skip).limit(limit).exec();
@@ -80,6 +71,15 @@ export class SlidesService {
     return existingSlide;
   }
 
+  async createNewSlide(slide: CreateSlideDto): Promise<SlideDocument> {
+    const { boardId, ...rest } = slide;
+    const createdSlide = new this.slideModel({
+      ...rest,
+      board: boardId,
+    });
+    return createdSlide.save();
+  }
+
   async deleteSlideById(slideId: string): Promise<SlideDocument> {
     const deletedSlide = await this.slideModel
       .findByIdAndDelete(slideId)
@@ -90,7 +90,7 @@ export class SlidesService {
   }
 
   // TODO - check permissions first
-  async addSlideObject(
+  async addSlideObjectToSlide(
     slideId: string,
     slideObject: SlideObject,
   ): Promise<void> {
@@ -106,7 +106,7 @@ export class SlidesService {
   }
 
   // TODO - check permissions first
-  async deleteSlideObject(
+  async deleteSlideObjectFromSlide(
     slideId: string,
     slideObjectId: string,
   ): Promise<void> {
@@ -127,22 +127,33 @@ export class SlidesService {
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
 
-  private toResponseSlide(
+  private async toResponseSlide(
     slide: SlideDocument,
+    showBoard: boolean = false,
+    showObjects: boolean = false,
     showTimestamps: boolean = false,
-  ): SlideResponseObject {
-    const { _id, board, objects } = slide;
+  ): Promise<SlideResponseObject> {
+    const { _id, board, objects } = slide.toObject() as SlideDocument;
     const responseObject: SlideResponseObject = { _id: _id as string };
 
-    slide.populated('board')
-      ? (responseObject.board = this.boardsService.toResponseBoard(
-          board as unknown as BoardDocument,
-        ))
-      : (responseObject.board = board);
+    if (showBoard) {
+      await slide.populate('board');
+      responseObject.board = await this.boardsService.toResponseBoard(
+        board as unknown as BoardDocument,
+      );
+    }
 
-    slide.populated('objects')
-      ? (responseObject.objects = objects)
-      : (responseObject.objects = objects);
+    if (showObjects) {
+      await slide.populate('objects');
+      responseObject.objects = objects;
+      // responseObject.objects = await Promise.all(
+      //   objects.map(object =>
+      //     this.slideObjectsService.toResponseSlideObject(
+      //       object as unknown as SlideObjectDocument,
+      //     ),
+      //   ),
+      // );
+    }
 
     if (showTimestamps) {
       responseObject.createdAt = slide.createdAt;

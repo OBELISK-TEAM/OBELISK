@@ -55,7 +55,7 @@ export class SlideObjectsService {
       slide,
     });
     await this.userService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slideService.addSlideObject(slideId, createdSlideObject);
+    await this.slideService.addSlideObjectToSlide(slideId, createdSlideObject);
     return createdSlideObject
       .save()
       .then(slideObject => this.toResponseSlideObject(slideObject));
@@ -83,12 +83,16 @@ export class SlideObjectsService {
     userId: string,
     slideObjectId: string,
   ): Promise<SlideObjectResponseObject> {
+    const slideObject = await this.findOneById(slideObjectId);
+    await this.slideService.deleteSlideObjectFromSlide(
+      slideObjectId,
+      slideObject.slide,
+    );
+    await this.userService.deleteSlideObjectFromUser(userId, slideObjectId);
     return this.deleteSlideObjectById(slideObjectId).then(deletedSlideObject =>
       this.toResponseSlideObject(deletedSlideObject),
     );
   }
-
-  ////////////////////////////////////////////////////////////////////////////////////
 
   async findSlideObjects(
     skip: number,
@@ -117,7 +121,7 @@ export class SlideObjectsService {
     return deletedSlideObject;
   }
 
-  private toResponseSlideObject(
+  toResponseSlideObject(
     slideObject: SlideObjectDocument,
     showSlide: boolean = false,
     showCreatedBy: boolean = false,

@@ -53,7 +53,7 @@ export class AuthController {
   }
 
   // add @MinimumRole(UserRole.SOMETHING) to secure the route with a minimum role
-  @Get('min-role-secured')
+  @Get('min-role-secured-user')
   @UseGuards(JwtAuthGuard)
   @MinimumRole(UserRole.USER)
   minimumRoleSecured(@User('_id') userId: string): string {
@@ -61,7 +61,7 @@ export class AuthController {
   }
 
   // add @RequiredRole(UserRole.SOMETHING) to secure the route with a required role
-  @Get('req-role-secured')
+  @Get('req-role-secured-admin')
   @UseGuards(JwtAuthGuard)
   @RequiredRole(UserRole.ADMIN)
   requiredRoleSecured(@User('_id') userId: string): string {

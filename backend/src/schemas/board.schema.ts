@@ -51,9 +51,9 @@ export class Board {
     _id: false,
   })
   permissions: {
-    edit: string[];
-    view: string[];
-    share: string[];
+    viewer: string[];
+    editor: string[];
+    moderator: string[];
   };
 
   @Prop({
