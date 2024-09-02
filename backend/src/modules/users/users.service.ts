@@ -21,7 +21,7 @@ export class UsersService {
 
   async getUserById(userId: string): Promise<UserResponseObject> {
     return this.findUserById(userId).then(user =>
-      this.toResponseUser(user, true, true),
+      this.toResponseUser(user, true),
     );
   }
 
@@ -45,8 +45,6 @@ export class UsersService {
   async deleteUser(userId: string): Promise<UserResponseObject> {
     return this.deleteUserById(userId).then(user => this.toResponseUser(user));
   }
-
-  ////////////////////////////////////////////////////////////////////////////////////
 
   async findUsers(skip: number, limit: number): Promise<UserDocument[]> {
     return this.userModel.find().skip(skip).limit(limit).exec();

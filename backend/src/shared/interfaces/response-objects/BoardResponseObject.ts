@@ -6,9 +6,9 @@ export interface BoardResponseObject {
   name: string;
   owner: string;
   permissions: {
-    edit: string[];
-    view: string[];
-    share: string[];
+    viewer: string[];
+    editor: string[];
+    moderator: string[];
   };
   slides?: string[];
   slide?: SlideResponseObject | string | SlideDocument;

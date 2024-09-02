@@ -20,9 +20,7 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  async getBoards(
-    @Query('page') page: number = 1,
-  ): Promise<BoardResponseObject[]> {
+  async getBoards(@Query('page') page: number): Promise<BoardResponseObject[]> {
     return this.boardsService.getBoards(page);
   }
 

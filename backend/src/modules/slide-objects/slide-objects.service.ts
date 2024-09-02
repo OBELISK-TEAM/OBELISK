@@ -94,8 +94,6 @@ export class SlideObjectsService {
     );
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////
-
   async findSlideObjects(
     skip: number,
     limit: number,

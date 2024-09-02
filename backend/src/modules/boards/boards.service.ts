@@ -62,8 +62,6 @@ export class BoardsService {
     );
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////
-
   private async findBoards(
     skip: number,
     limit: number,
@@ -140,7 +138,7 @@ export class BoardsService {
     board: BoardDocument,
     showSlide: number = -1,
     showTimestamps: boolean = false,
-  ): Promise<any> {
+  ): Promise<BoardResponseObject> {
     const { _id, name, owner, permissions, slides } =
       board.toObject() as BoardDocument;
     const responseObject: BoardResponseObject = {
@@ -157,23 +155,7 @@ export class BoardsService {
         match: { _id: slides[showSlide] },
         populate: { path: 'objects' },
       });
-
-      if (board.slides.length === 0)
-        throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-
-      if (board.slides.length > 1)
-        throw new HttpException(
-          'Multiple slides found',
-          HttpStatus.BAD_REQUEST,
-        );
-
-      if (board.slides[0] === null || board.slides[0] === undefined)
-        throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
-
       responseObject.slide = board.slides[0] as unknown as SlideDocument;
-
-      // TODO - implement returning a single slide with slide objects
-      // return this.slidesService.toResponseSlide(slides[showSlide]);
     }
 
     if (showTimestamps) {

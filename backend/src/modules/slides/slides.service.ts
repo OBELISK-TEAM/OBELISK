@@ -27,45 +27,38 @@ export class SlidesService {
   }
 
   async getSlideById(slideId: string): Promise<SlideResponseObject> {
-    return this.findSlideById(slideId)
-      .then(slide => slide.populate('board'))
-      .then(slide => slide.populate('objects'))
-      .then(slide => this.toResponseSlide(slide));
+    return this.findSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
   }
 
+  // TODO - check permissions first
   async createSlide(
     userId: string,
     createSlideDto: CreateSlideDto,
   ): Promise<SlideResponseObject> {
-    const { boardId, ...rest } = createSlideDto;
-    // TODO - check permissions first
+    const { boardId } = createSlideDto;
     const board = await this.boardsService.findBoardById(boardId);
     this.validateSlidesLimit(board);
-    const createdSlide = new this.slideModel({ ...rest, board: board._id });
+    const createdSlide = await this.createNewSlide(createSlideDto);
     await this.boardsService.addSlideToBoard(
       boardId,
-      createdSlide._id.toString(),
+      createdSlide._id as string,
     );
-    return createdSlide
-      .save()
-      .then(slide => slide.populate('board'))
-      .then(slide => this.toResponseSlide(slide));
+    return createdSlide.save().then(slide => this.toResponseSlide(slide));
   }
 
+  // TODO - check permissions first
   async deleteSlide(
     userId: string,
     slideId: string,
   ): Promise<SlideResponseObject> {
-    // TODO - check permissions first
     const slide = await this.findSlideById(slideId);
     await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
-    return this.deleteSlideById(slideId)
-      .then(slide => slide.populate('board'))
-      .then(slide => slide.populate('objects'))
-      .then(slide => this.toResponseSlide(slide));
+    return this.deleteSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
   }
-
-  ////////////////////////////////////////////////////////////////////////////////////
 
   async findSlides(skip: number, limit: number): Promise<SlideDocument[]> {
     return this.slideModel.find().skip(skip).limit(limit).exec();
@@ -76,6 +69,15 @@ export class SlidesService {
     if (!existingSlide)
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
+  }
+
+  async createNewSlide(slide: CreateSlideDto): Promise<SlideDocument> {
+    const { boardId, ...rest } = slide;
+    const createdSlide = new this.slideModel({
+      ...rest,
+      board: boardId,
+    });
+    return createdSlide.save();
   }
 
   async deleteSlideById(slideId: string): Promise<SlideDocument> {
@@ -141,20 +143,17 @@ export class SlidesService {
       );
     }
 
-    // if (showObjects) {
-    //   await slide.populate('objects');
-    //   responseObject.objects = await Promise.all(
-    //     objects.map(object =>
-    //       this.slideObjectsService.toResponseSlideObject(
-    //         object as unknown as SlideObjectDocument,
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    slide.populated('objects')
-      ? (responseObject.objects = objects)
-      : (responseObject.objects = objects);
+    if (showObjects) {
+      await slide.populate('objects');
+      responseObject.objects = objects;
+      // responseObject.objects = await Promise.all(
+      //   objects.map(object =>
+      //     this.slideObjectsService.toResponseSlideObject(
+      //       object as unknown as SlideObjectDocument,
+      //     ),
+      //   ),
+      // );
+    }
 
     if (showTimestamps) {
       responseObject.createdAt = slide.createdAt;

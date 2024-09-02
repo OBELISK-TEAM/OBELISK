@@ -21,9 +21,7 @@ export class SlidesController {
   // TODO - add proper role decorator for endpoints that should not be exposed
   // for example this one
   @Get()
-  async getSlides(
-    @Query('page') page: number = 1,
-  ): Promise<SlideResponseObject[]> {
+  async getSlides(@Query('page') page: number): Promise<SlideResponseObject[]> {
     return this.slidesService.getSlides(page);
   }
 
