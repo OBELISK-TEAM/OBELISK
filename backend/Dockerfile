@@ -26,6 +26,6 @@ COPY --from=build /app/dist /app/dist
 
 RUN npm prune --omit dev
 
-EXPOSE ${BACKEND_PORT}
+EXPOSE ${SERVER_PORT}
 
 CMD ["npm", "start"]

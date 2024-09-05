@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     //console.log("body", JSON.stringify({ email, password }));
 
-    const response = await fetch(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/register`, {
+    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

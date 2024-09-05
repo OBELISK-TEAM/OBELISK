@@ -8,12 +8,12 @@ An `.env` file with the following content is required at the root of the project
 
 ```
 # frontend - for docker only
-FRONTEND_HOST=0.0.0.0
-FRONTEND_PORT=5000
+CLIENT_HOST=0.0.0.0
+CLIENT_PORT=5000
 
 # backend
-BACKEND_HOST=localhost
-BACKEND_PORT=4000
+SERVER_HOST=localhost
+SERVER_PORT=4000
 JWT_SECRET=secret
 JWT_EXPIRES_IN=7d
 GOOGLE_CLIENT_ID=id

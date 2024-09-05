@@ -10,8 +10,8 @@ RUN npm install
 
 FROM node:21-alpine3.19 AS build
 
-ARG BACKEND_HOST
-ARG BACKEND_PORT
+ARG SERVER_HOST
+ARG SERVER_PORT
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG GOOGLE_CALLBACK_URL
@@ -36,6 +36,6 @@ COPY --from=build /app/.next /app/.next
 
 RUN npm prune --omit dev
 
-EXPOSE ${FRONTEND_PORT}
+EXPOSE ${CLIENT_PORT}
 
 CMD ["npm", "run", "start-docker"]

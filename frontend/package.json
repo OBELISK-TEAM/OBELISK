@@ -9,7 +9,7 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.js\" \"src/**/*.json\" \"src/**/*.css\"",
     "start": "next start",
-    "start-docker": "next start -H ${FRONTEND_HOST:-localhost} -p ${FRONTEND_PORT:-3000}",
+    "start-docker": "next start -H ${CLIENT_HOST:-localhost} -p ${CLIENT_PORT:-3000}",
     "postinstall": "cd ./node_modules/fabric && node build.js modules=ALL exclude=gestures"
   },
   "dependencies": {
