@@ -7,13 +7,13 @@ This document contains information crucial for using and developing the project.
 An `.env` file with the following content is required at the root of the project (where `docker-compose.yml` is located): 
 
 ```
-# frontend - for docker only
-FRONTEND_HOST=0.0.0.0
-FRONTEND_PORT=5000
+# client - for docker only
+CLIENT_HOST=0.0.0.0
+CLIENT_PORT=5000
 
-# backend
-BACKEND_HOST=localhost
-BACKEND_PORT=4000
+# server
+SERVER_HOST=localhost
+SERVER_PORT=4000
 JWT_SECRET=secret
 JWT_EXPIRES_IN=7d
 GOOGLE_CLIENT_ID=id

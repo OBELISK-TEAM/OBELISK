@@ -1,10 +1,10 @@
-name: frontend
+name: client
 
 on:
   push:
 
 jobs:
-  frontend-pipeline:
+  client-pipeline:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,7 +18,7 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: frontend/node_modules
+          path: client/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-deps
           restore-keys: ${{ runner.os }}-node-${{ matrix.node-version }}-
 
@@ -29,16 +29,16 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: frontend
+        working-directory: client
 
       - name: Verify dependencies
         run: npm install -g depcheck && depcheck
-        working-directory: frontend
+        working-directory: client
 
       - name: Build
         run: npm run build
-        working-directory: frontend
+        working-directory: client
 
       - name: Lint
         run: npm run lint
-        working-directory: frontend
+        working-directory: client

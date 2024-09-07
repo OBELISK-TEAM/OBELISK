@@ -1,10 +1,10 @@
-name: backend
+name: server
 
 on:
   push:
 
 jobs:
-  backend-pipeline:
+  server-pipeline:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,7 +18,7 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: backend/node_modules
+          path: server/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-deps
           restore-keys: ${{ runner.os }}-node-${{ matrix.node-version }}-
 
@@ -29,23 +29,23 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: backend
+        working-directory: server
 
       - name: Verify dependencies
         run: npm install -g depcheck && depcheck
-        working-directory: backend
+        working-directory: server
 
       - name: Build
         run: npm run build
-        working-directory: backend
+        working-directory: server
 
       - name: Lint
         run: npm run lint
-        working-directory: backend
+        working-directory: server
 
       - name: Unit tests
         run: npm run test
-        working-directory: backend
+        working-directory: server
 
 #      - name: e2e tests
 #        run: npm run test:e2e

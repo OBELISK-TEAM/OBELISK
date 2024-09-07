@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     //   Authorization: `Bearer ${state}`,
     // });
 
-    const response = await fetch(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/auth/google/login`, {
+    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/auth/google/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

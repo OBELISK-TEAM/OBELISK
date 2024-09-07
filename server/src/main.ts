@@ -3,17 +3,28 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-const DEFAULT_HOST = 'localhost';
-const DEFAULT_PORT = 8080;
+const DEFAULT_SERVER_HOST = 'localhost';
+const DEFAULT_SERVER_PORT = 8080;
+const DEFAULT_GW_PORT = 8081;
+
 const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   const configService = app.get<ConfigService>(ConfigService);
-  const host = configService.get<string>('BACKEND_HOST', DEFAULT_HOST);
-  const port = configService.get<number>('BACKEND_PORT', DEFAULT_PORT);
 
+  const serverHost = configService.get<string>(
+    'SERVER_HOST',
+    DEFAULT_SERVER_HOST,
+  );
+  const serverPort = configService.get<number>(
+    'SERVER_PORT',
+    DEFAULT_SERVER_PORT,
+  );
+  const gatewayPort = configService.get<number>(
+    'SOCKET_GW_PORT',
+    DEFAULT_GW_PORT,
+  );
   const corsOrigin = configService.get<string>(
     'CORS_ORIGIN',
     DEFAULT_CORS_ORIGIN,
@@ -35,8 +46,15 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(port);
-  Logger.log(`Server running at http://${host}:${port}`, 'Bootstrap');
+  await app.listen(serverPort);
+  Logger.log(
+    `Server running at http://${serverHost}:${serverPort}`,
+    'Bootstrap',
+  );
+  Logger.log(
+    `Socket gateway running at ws://${serverHost}:${gatewayPort}/gateway`,
+    'Bootstrap',
+  );
 }
 
 void bootstrap();
