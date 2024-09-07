@@ -8,6 +8,7 @@ import { SlideObjectsController } from './slide-objects.controller';
 import { SlideObjectsService } from './slide-objects.service';
 import { UsersModule } from '../users/users.module';
 import { SlidesModule } from '../slides/slides.module';
+import { BoardsModule } from '../boards/boards.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SlidesModule } from '../slides/slides.module';
       },
     ]),
     UsersModule,
+    BoardsModule,
     SlidesModule,
   ],
   controllers: [SlideObjectsController],

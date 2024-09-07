@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
-import { GoogleUser } from '../../../shared/interfaces/GoogleUser';
+import { GoogleUser } from '../../../shared/interfaces/auth/GoogleUser';
 import { ConfigService } from '@nestjs/config';
 
 const DEFAULT_GOOGLE_CLIENT_ID = 'client';

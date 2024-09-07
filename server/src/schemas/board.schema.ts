@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Permissions } from '../shared/interfaces/Permissions';
 import {
   Schema as MongooseSchema,
   Document as MongooseDocument,
@@ -24,19 +25,19 @@ export class Board {
   @Prop({
     required: false,
     type: {
-      edit: [
+      viewer: [
         {
           type: MongooseSchema.Types.ObjectId,
           ref: 'User',
         },
       ],
-      view: [
+      editor: [
         {
           type: MongooseSchema.Types.ObjectId,
           ref: 'User',
         },
       ],
-      share: [
+      moderator: [
         {
           type: MongooseSchema.Types.ObjectId,
           ref: 'User',
@@ -44,17 +45,13 @@ export class Board {
       ],
     },
     default: {
-      edit: [],
-      view: [],
-      share: [],
+      viewer: [],
+      editor: [],
+      moderator: [],
     },
     _id: false,
   })
-  permissions: {
-    viewer: string[];
-    editor: string[];
-    moderator: string[];
-  };
+  permissions: Permissions;
 
   @Prop({
     required: true,

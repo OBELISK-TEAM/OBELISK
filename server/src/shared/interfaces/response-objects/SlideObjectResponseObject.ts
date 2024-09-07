@@ -1,7 +1,7 @@
-import { SlideObjectPath } from '../SlideObjectPath';
-import { SlideObjectShadow } from '../SlideObjectShadow';
-import { SlideObjectTextStyles } from '../SlideObjectTextStyles';
-import { SlideObjectFilter } from '../SlideObjectFilter';
+import { SlideObjectPath } from '../fabric-js/SlideObjectPath';
+import { SlideObjectShadow } from '../fabric-js/SlideObjectShadow';
+import { SlideObjectTextStyles } from '../fabric-js/SlideObjectTextStyles';
+import { SlideObjectFilter } from '../fabric-js/SlideObjectFilter';
 
 export interface SlideObjectResponseObject {
   _id: string;

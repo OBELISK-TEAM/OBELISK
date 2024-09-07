@@ -7,8 +7,8 @@ import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
-
-// TODO https://stackoverflow.com/questions/14940660/whats-mongoose-error-cast-to-objectid-failed-for-value-xxx-at-path-id
+import { UsersService } from '../users/users.service';
+import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class SlidesService {
@@ -16,6 +16,7 @@ export class SlidesService {
   private readonly slidesLimitPerBoard = 10;
   constructor(
     @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
+    private readonly usersService: UsersService,
     private readonly boardsService: BoardsService,
   ) {}
 
@@ -32,13 +33,18 @@ export class SlidesService {
     );
   }
 
-  // TODO - check permissions first
   async createSlide(
     userId: string,
     createSlideDto: CreateSlideDto,
   ): Promise<SlideResponseObject> {
     const { boardId } = createSlideDto;
+    const user = await this.usersService.findUserById(userId);
     const board = await this.boardsService.findBoardById(boardId);
+    this.boardsService.verifyBoardPermission(
+      board,
+      user,
+      BoardPermission.EDITOR,
+    );
     this.validateSlidesLimit(board);
     const createdSlide = await this.createNewSlide(createSlideDto);
     await this.boardsService.addSlideToBoard(
@@ -48,12 +54,18 @@ export class SlidesService {
     return createdSlide.save().then(slide => this.toResponseSlide(slide));
   }
 
-  // TODO - check permissions first
   async deleteSlide(
     userId: string,
     slideId: string,
   ): Promise<SlideResponseObject> {
     const slide = await this.findSlideById(slideId);
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.boardsService.findBoardById(slide.board);
+    this.boardsService.verifyBoardPermission(
+      board,
+      user,
+      BoardPermission.EDITOR,
+    );
     await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
     return this.deleteSlideById(slideId).then(slide =>
       this.toResponseSlide(slide),
@@ -89,7 +101,6 @@ export class SlidesService {
     return deletedSlide;
   }
 
-  // TODO - check permissions first
   async addSlideObjectToSlide(
     slideId: string,
     slideObject: SlideObject,
@@ -105,7 +116,6 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
-  // TODO - check permissions first
   async deleteSlideObjectFromSlide(
     slideId: string,
     slideObjectId: string,
