@@ -1,27 +1,27 @@
 services:
 
-  frontend:
+  client:
     build:
-      context: ./frontend
+      context: ./client
       args:
-        - SERVER_HOST=backend
+        - SERVER_HOST=server
         - SERVER_PORT
         - GOOGLE_CLIENT_ID
         - GOOGLE_CLIENT_SECRET
         - GOOGLE_CALLBACK_URL
     ports:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
-    container_name: obelisk_frontend_container
+    container_name: obelisk_client_container
     environment:
       - CLIENT_HOST
       - CLIENT_PORT
 
 
-  backend:
-    build: ./backend
+  server:
+    build: ./server
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
-    container_name: obelisk_backend_container
+    container_name: obelisk_server_container
     depends_on:
       - mongo
     environment:

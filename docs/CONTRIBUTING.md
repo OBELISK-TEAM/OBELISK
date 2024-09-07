@@ -56,7 +56,7 @@ GitHub actions will check if the commit message or pull request title follows th
 ### Format:
 
 - Type of Change - the message must start with one of the following types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
-- Optional Scope - an optional scope can be included in parentheses, e.g., `(api)`, `(backend)`.
+- Optional Scope - an optional scope can be included in parentheses, e.g., `(api)`, `(server)`.
 - Jira Issue ID - a mandatory Jira issue ID must be included in square brackets, e.g., `[OK-123]`.
 - Description - a short description must follow, starting with a capital letter.
 
@@ -71,7 +71,7 @@ GitHub actions will check if the commit message or pull request title follows th
 ### Example of incorrect commit messages / pull request titles:
 
 - `feat[OK-215] add new endpoint for fetching user data` - no capital letter at the beginning of the description
-- `feat(backend) Add new endpoint for fetching user data` - missing JIRA issue ID
-- `test(frontend): [OK-215] Add new test for the user data endpoint` - unnecessary colon
-- `docs (backend) [OK-215] Add new documentation for the user data endpoint` - unnecessary spaces
-- `refactor((backend))[OK-215] Refactor the user data endpoint` - unnecessary parentheses
+- `feat(server) Add new endpoint for fetching user data` - missing JIRA issue ID
+- `test(client): [OK-215] Add new test for the user data endpoint` - unnecessary colon
+- `docs (server) [OK-215] Add new documentation for the user data endpoint` - unnecessary spaces
+- `refactor((server))[OK-215] Refactor the user data endpoint` - unnecessary parentheses
