@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { getModelToken } from '@nestjs/mongoose';
@@ -6,11 +8,9 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../users.dto';
 import { UserAuthProvider } from 'src/enums/user.auth.provider';
 import { UserRole } from 'src/enums/user.role';
-import { UserResponseObject } from 'src/shared/interfaces/response-objects/UserResponseObject';
 import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
 
 class UserModelMock {
-  constructor(_: CreateUserDto) {}
   find = jest.fn();
   findOne = jest.fn();
   findById = jest.fn();
@@ -24,7 +24,7 @@ describe('UsersService', () => {
   // Setup
 
   let userService: UsersService;
-  const userModelMock = new UserModelMock({} as CreateUserDto);
+  const userModelMock = new UserModelMock();
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,7 +40,7 @@ describe('UsersService', () => {
     userService = module.get<UsersService>(UsersService);
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
@@ -87,7 +87,7 @@ describe('UsersService', () => {
 
   const userId2 = '2';
   const userEmail2 = 'test2@mail.com';
-  const userPassword2 = 'eudewuhfwehf29832328###222WWWSW12332hqwidhq';
+  const userPassword2 = 'anotherP4$$woRD';
   const userRole2 = UserRole.ADMIN;
   const userAuthProvider2 = UserAuthProvider.GOOGLE;
 
@@ -111,7 +111,7 @@ describe('UsersService', () => {
 
   describe('findUsers', () => {
     it('should return an array of users as UserDocument', async () => {
-      (userModelMock.find as jest.Mock).mockReturnValue({
+      (userModelMock.find).mockReturnValue({
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
         exec: jest.fn().mockResolvedValue(userDocumentsArray),
@@ -126,7 +126,7 @@ describe('UsersService', () => {
 
   describe('findUserById', () => {
     it('should return the user with the given ID as UserDocument', async () => {
-      (userModelMock.findById as jest.Mock).mockReturnValue({
+      (userModelMock.findById).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -137,7 +137,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findById as jest.Mock).mockReturnValue({
+      (userModelMock.findById).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -152,19 +152,19 @@ describe('UsersService', () => {
 
   describe('findUserByEmail', () => {
     it('should return the user with the given email as UserDocument', async () => {
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
       const result = await userService.findUserByEmail(userEmail1);
 
       expect(result).toEqual(userDocument1);
-      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userEmail1 })
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userEmail1 });
       expect(userModelMock.findOne().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -172,19 +172,19 @@ describe('UsersService', () => {
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userEmail1 })
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userEmail1 });
       expect(userModelMock.findOne().exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('createNewUser', () => {
-    (userModelMock.create as jest.Mock).mockReturnValue({
+    (userModelMock.create).mockReturnValue({
       save: jest.fn().mockResolvedValue(userDocument1),
     });
 
     it('should create a user and return the created user as UserDocument', async () => {
       // email does not exist
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(false),
       });
 
@@ -199,34 +199,44 @@ describe('UsersService', () => {
 
   describe('updateUserById', () => {
     it('should update the user with the given ID and return the user as UserDocument', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(updatedUserDocument1),
       });
 
       const result = await userService.updateUserById(userId1, updateUserDto1);
 
       expect(result).toEqual(updatedUserDocument1);
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, updateUserDto1, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        updateUserDto1,
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
-      await expect(userService.updateUserById(userId1, updateUserDto1)).rejects.toThrow(
+      await expect(
+        userService.updateUserById(userId1, updateUserDto1),
+      ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, updateUserDto1, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        updateUserDto1,
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('deleteUserById', () => {
     it('should delete the user with the given ID and return the user as UserDocument', async () => {
-      (userModelMock.findByIdAndDelete as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndDelete).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -238,7 +248,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user', async () => {
-      (userModelMock.findByIdAndDelete as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndDelete).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -253,7 +263,7 @@ describe('UsersService', () => {
 
   describe('emailExists', () => {
     it('should return true for existing email', async () => {
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(true),
       });
 
@@ -265,7 +275,7 @@ describe('UsersService', () => {
     });
 
     it('should return false for non-existing email', async () => {
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(false),
       });
 
@@ -279,115 +289,161 @@ describe('UsersService', () => {
 
   describe('addBoardToUser', () => {
     it('should add a board to the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
       const result = await userService.addBoardToUser(userId1, boardId1);
 
       expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $push: { boards: boardId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $push: { boards: boardId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for non-existing user', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
-      await expect(userService.addBoardToUser(userId1, boardId1)).rejects.toThrow(
+      await expect(
+        userService.addBoardToUser(userId1, boardId1),
+      ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $push: { boards: boardId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $push: { boards: boardId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('deleteBoardFromUser', () => {
     it('should remove a board from the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
       const result = await userService.deleteBoardFromUser(userId1, boardId1);
 
       expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $pull: { boards: boardId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $pull: { boards: boardId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for non-existing user when deleting a board', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
-      await expect(userService.deleteBoardFromUser(userId1, boardId1)).rejects.toThrow(
+      await expect(
+        userService.deleteBoardFromUser(userId1, boardId1),
+      ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $pull: { boards: boardId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $pull: { boards: boardId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('addSlideObjectToUser', () => {
     it('should add a slide object to the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
-      const result = await userService.addSlideObjectToUser(userId1, slideObject1);
+      const result = await userService.addSlideObjectToUser(
+        userId1,
+        slideObject1,
+      );
 
       expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $push: { slideObjects: slideObject1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $push: { slideObjects: slideObject1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for non-existing user when adding a slide object', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
-      await expect(userService.addSlideObjectToUser(userId1, slideObject1)).rejects.toThrow(
+      await expect(
+        userService.addSlideObjectToUser(userId1, slideObject1),
+      ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $push: { slideObjects: slideObject1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $push: { slideObjects: slideObject1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('deleteSlideObjectFromUser', () => {
     it('should remove a slide object from the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
-      const result = await userService.deleteSlideObjectFromUser(userId1, slideObjectId1);
+      const result = await userService.deleteSlideObjectFromUser(
+        userId1,
+        slideObjectId1,
+      );
 
       expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $pull: { slideObjects: slideObjectId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $pull: { slideObjects: slideObjectId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
 
     it('should throw 404 for non-existing user when deleting a slide object', async () => {
-      (userModelMock.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (userModelMock.findByIdAndUpdate).mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
-      await expect(userService.deleteSlideObjectFromUser(userId1, slideObjectId1)).rejects.toThrow(
+      await expect(
+        userService.deleteSlideObjectFromUser(userId1, slideObjectId1),
+      ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
 
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(userId1, { $pull: { slideObjects: slideObjectId1 } }, { new: true });
+      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        userId1,
+        { $pull: { slideObjects: slideObjectId1 } },
+        { new: true },
+      );
       expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('createGoogleUser', () => {
     it('should create a new Google user and return the created user document', async () => {
-      (userModelMock.create as jest.Mock).mockReturnValue({
+      (userModelMock.create).mockReturnValue({
         save: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -410,13 +466,15 @@ describe('UsersService', () => {
         userAuthProvider: UserAuthProvider.INTERNAL,
         save: jest.fn().mockResolvedValue(userDocument1),
       };
-      (userModelMock.findOne as jest.Mock).mockReturnValue({
+      (userModelMock.findOne).mockReturnValue({
         exec: jest.fn().mockResolvedValue(userWithInternalProvider),
       });
 
       const result = await userService.handleUserProvider(userEmail1);
 
-      expect(result.userAuthProvider).toEqual(UserAuthProvider.INTERNAL_AND_EXTERNAL);
+      expect(result.userAuthProvider).toEqual(
+        UserAuthProvider.INTERNAL_AND_EXTERNAL,
+      );
       expect(userWithInternalProvider.save).toHaveBeenCalledTimes(1);
     });
   });
@@ -435,8 +493,8 @@ describe('UsersService', () => {
     } as unknown as UserDocument;
 
     it('should return the basic UserResponseObject without boards, slideObjects, or timestamps', () => {
-      const result = (userService as any).toResponseUser(mockUserDocument);
-  
+      const result = userService.toResponseUser(mockUserDocument);
+
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,
@@ -444,10 +502,13 @@ describe('UsersService', () => {
         userAuthProvider: mockUserDocument.userAuthProvider,
       });
     });
-  
+
     it('should include boards in the response if showBoards is true', () => {
-      const result = (userService as any).toResponseUser(mockUserDocument, true);
-  
+      const result = userService.toResponseUser(
+        mockUserDocument,
+        true,
+      );
+
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,
@@ -456,10 +517,14 @@ describe('UsersService', () => {
         boards: mockUserDocument.boards,
       });
     });
-  
+
     it('should include slideObjects in the response if showSlideObjects is true', () => {
-      const result = (userService as any).toResponseUser(mockUserDocument, false, true);
-  
+      const result = userService.toResponseUser(
+        mockUserDocument,
+        false,
+        true,
+      );
+
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,
@@ -468,10 +533,15 @@ describe('UsersService', () => {
         slideObjects: mockUserDocument.slideObjects,
       });
     });
-  
+
     it('should include timestamps in the response if showTimestamps is true', () => {
-      const result = (userService as any).toResponseUser(mockUserDocument, false, false, true);
-  
+      const result = userService.toResponseUser(
+        mockUserDocument,
+        false,
+        false,
+        true,
+      );
+
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,
@@ -481,10 +551,15 @@ describe('UsersService', () => {
         updatedAt: mockUserDocument.updatedAt,
       });
     });
-  
+
     it('should include all fields if all flags are true', () => {
-      const result = (userService as any).toResponseUser(mockUserDocument, true, true, true);
-  
+      const result = userService.toResponseUser(
+        mockUserDocument,
+        true,
+        true,
+        true,
+      );
+
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,

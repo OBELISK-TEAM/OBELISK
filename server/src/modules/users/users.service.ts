@@ -157,7 +157,7 @@ export class UsersService {
     return existingUser;
   }
 
-  private toResponseUser(
+  public toResponseUser(
     user: UserDocument,
     showBoards: boolean = false,
     showSlideObjects: boolean = false,
