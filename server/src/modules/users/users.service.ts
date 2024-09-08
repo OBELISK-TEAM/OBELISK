@@ -65,7 +65,7 @@ export class UsersService {
   }
 
   async createNewUser(user: CreateUserDto): Promise<UserDocument> {
-    const createdUser = new this.userModel(user);
+    const createdUser = await this.userModel.create(user);
     return createdUser.save();
   }
 
@@ -141,7 +141,7 @@ export class UsersService {
   }
 
   async createGoogleUser(email: string): Promise<UserDocument> {
-    const createdUser = new this.userModel({
+    const createdUser = await this.userModel.create({
       email,
       userAuthProvider: UserAuthProvider.GOOGLE,
     });
