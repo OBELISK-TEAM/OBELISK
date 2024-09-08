@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { FilterIcon, ViewIcon, PlusIcon } from "lucide-react";
+import Link from "next/link";
 
 const UserBoardsActionButtons = () => {
   return (
@@ -12,10 +13,12 @@ const UserBoardsActionButtons = () => {
         <ViewIcon className="mr-2 h-5 w-5" />
         View
       </Button>
-      <Button>
-        <PlusIcon className="mr-2 h-5 w-5" />
-        Create new board
-      </Button>
+      <Link href={"/board"}>
+        <Button>
+          <PlusIcon className="mr-2 h-5 w-5" />
+          Create new board
+        </Button>
+      </Link>
     </div>
   );
 };
