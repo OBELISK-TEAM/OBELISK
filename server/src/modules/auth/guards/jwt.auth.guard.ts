@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from '../../../enums/user.role';
-import { SafeUserDoc } from '../../../shared/interfaces/SafeUserDoc';
+import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
 import { Request } from 'express';
 import {
   MINIMUM_ROLE_KEY,

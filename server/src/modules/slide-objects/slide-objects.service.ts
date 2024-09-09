@@ -9,6 +9,8 @@ import {
 import { UsersService } from '../users/users.service';
 import { SlidesService } from '../slides/slides.service';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
+import { BoardsService } from '../boards/boards.service';
+import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class SlideObjectsService {
@@ -16,8 +18,9 @@ export class SlideObjectsService {
   constructor(
     @InjectModel(SlideObject.name)
     private readonly slideObjectModel: Model<SlideObject>,
-    private readonly userService: UsersService,
-    private readonly slideService: SlidesService,
+    private readonly usersService: UsersService,
+    private readonly boardsService: BoardsService,
+    private readonly slidesService: SlidesService,
   ) {}
 
   async getSlideObjects(
@@ -41,33 +44,45 @@ export class SlideObjectsService {
     );
   }
 
-  // TODO - check permissions before creating (for edit) - there is a method in boards.service
   async createSlideObject(
     userId: string,
     createSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectResponseObject> {
     const { slideId, ...slideObject } = createSlideObjectDto;
-    const slide = await this.slideService.findSlideById(slideId);
-    const user = await this.userService.findUserById(userId);
+    const slide = await this.slidesService.findSlideById(slideId);
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.boardsService.findBoardById(slide.board);
+    this.boardsService.verifyBoardPermission(
+      board,
+      user,
+      BoardPermission.EDITOR,
+    );
     const createdSlideObject = new this.slideObjectModel({
       ...slideObject,
       createdBy: user,
       slide,
     });
-    await this.userService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slideService.addSlideObjectToSlide(slideId, createdSlideObject);
+    await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
+    await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
     return createdSlideObject
       .save()
       .then(slideObject => this.toResponseSlideObject(slideObject));
   }
 
-  // TODO - again - check user-board permissions
   async updateSlideObject(
     userId: string,
     slideObjectId: string,
     updateSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectResponseObject> {
     const { slideId, ...updatedSlideObjectProperties } = updateSlideObjectDto;
+    const slide = await this.slidesService.findSlideById(slideId);
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.boardsService.findBoardById(slide.board);
+    this.boardsService.verifyBoardPermission(
+      board,
+      user,
+      BoardPermission.EDITOR,
+    );
     const updatedSlideObject = await this.slideObjectModel
       .findByIdAndUpdate(slideObjectId, updatedSlideObjectProperties, {
         new: true,
@@ -78,17 +93,24 @@ export class SlideObjectsService {
     return this.toResponseSlideObject(updatedSlideObject);
   }
 
-  // TODO - here also
   async deleteSlideObject(
     userId: string,
     slideObjectId: string,
   ): Promise<SlideObjectResponseObject> {
     const slideObject = await this.findOneById(slideObjectId);
-    await this.slideService.deleteSlideObjectFromSlide(
+    const slide = await this.slidesService.findSlideById(slideObject.slide);
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.boardsService.findBoardById(slide.board);
+    this.boardsService.verifyBoardPermission(
+      board,
+      user,
+      BoardPermission.EDITOR,
+    );
+    await this.slidesService.deleteSlideObjectFromSlide(
       slideObjectId,
       slideObject.slide,
     );
-    await this.userService.deleteSlideObjectFromUser(userId, slideObjectId);
+    await this.usersService.deleteSlideObjectFromUser(userId, slideObjectId);
     return this.deleteSlideObjectById(slideObjectId).then(deletedSlideObject =>
       this.toResponseSlideObject(deletedSlideObject),
     );
@@ -133,14 +155,12 @@ export class SlideObjectsService {
       _id: _id as string,
       ...objectProperties,
     };
-
     if (showSlide) responseObject.slide = slide;
     if (showCreatedBy) responseObject.createdBy = createdBy;
     if (showTimestamps) {
       responseObject.createdAt = createdAt;
       responseObject.updatedAt = updatedAt;
     }
-
     return responseObject;
   }
 }

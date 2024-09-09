@@ -11,11 +11,11 @@ import { User } from './decorators/users.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
-import { SafeUserDoc } from '../../shared/interfaces/SafeUserDoc';
+import { SafeUserDoc } from '../../shared/interfaces/auth/SafeUserDoc';
 import { CreateUserDto } from '../users/users.dto';
 import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
-import { AuthToken } from '../../shared/interfaces/AuthToken';
+import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
 import { UserRole } from '../../enums/user.role';
 

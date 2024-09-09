@@ -6,13 +6,16 @@ import { Board, BoardDocument } from '../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { SlideDocument } from '../../schemas/slide.schema';
+import { BoardPermission } from '../../enums/board.permission';
+import { UserDocument } from '../../schemas/user.schema';
+import { Permissions } from '../../shared/interfaces/Permissions';
 
 @Injectable()
 export class BoardsService {
   private readonly pageSize = 10;
   constructor(
     @InjectModel(Board.name) private readonly boardModel: Model<Board>,
-    private readonly userService: UsersService,
+    private readonly usersService: UsersService,
   ) {}
 
   async getBoards(page: number = 1): Promise<BoardResponseObject[]> {
@@ -36,7 +39,7 @@ export class BoardsService {
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseObject> {
     const createdBoard = await this.createNewBoard(userId, createBoardDto);
-    await this.userService.addBoardToUser(userId, createdBoard._id as string);
+    await this.usersService.addBoardToUser(userId, createdBoard._id as string);
     return createdBoard.save().then(board => this.toResponseBoard(board));
   }
 
@@ -56,7 +59,7 @@ export class BoardsService {
     boardId: string,
   ): Promise<BoardResponseObject> {
     await this.verifyBoardOwner(userId, boardId);
-    await this.userService.deleteBoardFromUser(userId, boardId);
+    await this.usersService.deleteBoardFromUser(userId, boardId);
     return this.deleteBoardById(boardId).then(board =>
       this.toResponseBoard(board),
     );
@@ -122,7 +125,7 @@ export class BoardsService {
   }
 
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
-    const owner = await this.userService.findUserById(userId);
+    const owner = await this.usersService.findUserById(userId);
     const board = await this.findBoardById(boardId);
     if (board.owner !== owner._id)
       throw new HttpException(
@@ -131,8 +134,40 @@ export class BoardsService {
       );
   }
 
-  // TODO - implement
-  // async verifyBoardPermission(user: UserDocument, board: BoardDocument, permission: BoardPermission)
+  verifyBoardPermission(
+    board: BoardDocument,
+    user: UserDocument,
+    permission: BoardPermission,
+  ): void {
+    if (board.owner === user._id) return;
+    const permissions = board.permissions;
+    const userId = user._id as string;
+    if (!this.hasUserPermission(userId, permissions, permission))
+      throw new HttpException(
+        'You do not have permission to perform this action',
+        HttpStatus.FORBIDDEN,
+      );
+  }
+
+  private hasUserPermission(
+    userId: string,
+    permissions: Permissions,
+    permission: BoardPermission,
+  ): boolean {
+    const userPermission = this.getUserHighestPermission(userId, permissions);
+    return userPermission >= permission;
+  }
+
+  private getUserHighestPermission(
+    userId: string,
+    permissions: Permissions,
+  ): BoardPermission {
+    if (permissions.moderator.includes(userId))
+      return BoardPermission.MODERATOR;
+    if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
+    if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
+    return BoardPermission.VIEWER - 1;
+  }
 
   async toResponseBoard(
     board: BoardDocument,

@@ -1,5 +1,5 @@
 export enum BoardPermission {
-  EDIT = 1,
-  SHARE = 2,
-  VIEW = 3,
+  VIEWER = 1,
+  EDITOR = 2,
+  MODERATOR = 3,
 }

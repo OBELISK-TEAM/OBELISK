@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { SafeUserDoc } from '../../../shared/interfaces/SafeUserDoc';
+import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -17,7 +17,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       email,
       password,
     );
-    if (!safeUser) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    if (!safeUser)
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     return safeUser;
   }
 }
