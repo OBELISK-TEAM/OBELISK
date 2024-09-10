@@ -111,7 +111,7 @@ describe('UsersService', () => {
 
   describe('findUsers', () => {
     it('should return an array of users as UserDocument', async () => {
-      (userModelMock.find).mockReturnValue({
+      userModelMock.find.mockReturnValue({
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
         exec: jest.fn().mockResolvedValue(userDocumentsArray),
@@ -126,7 +126,7 @@ describe('UsersService', () => {
 
   describe('findUserById', () => {
     it('should return the user with the given ID as UserDocument', async () => {
-      (userModelMock.findById).mockReturnValue({
+      userModelMock.findById.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -137,7 +137,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findById).mockReturnValue({
+      userModelMock.findById.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -152,7 +152,7 @@ describe('UsersService', () => {
 
   describe('findUserByEmail', () => {
     it('should return the user with the given email as UserDocument', async () => {
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -164,7 +164,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -178,13 +178,11 @@ describe('UsersService', () => {
   });
 
   describe('createNewUser', () => {
-    (userModelMock.create).mockReturnValue({
-      save: jest.fn().mockResolvedValue(userDocument1),
-    });
+    userModelMock.create.mockReturnValue(userDocument1);
 
     it('should create a user and return the created user as UserDocument', async () => {
       // email does not exist
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(false),
       });
 
@@ -193,13 +191,12 @@ describe('UsersService', () => {
       expect(result).toEqual(userDocument1);
       expect(userModelMock.create).toHaveBeenCalledWith(createUserDto1);
       expect(userModelMock.create).toHaveBeenCalledTimes(1);
-      expect(userModelMock.create().save).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('updateUserById', () => {
     it('should update the user with the given ID and return the user as UserDocument', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(updatedUserDocument1),
       });
 
@@ -215,7 +212,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for a non-existing user', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -236,7 +233,7 @@ describe('UsersService', () => {
 
   describe('deleteUserById', () => {
     it('should delete the user with the given ID and return the user as UserDocument', async () => {
-      (userModelMock.findByIdAndDelete).mockReturnValue({
+      userModelMock.findByIdAndDelete.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -248,7 +245,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user', async () => {
-      (userModelMock.findByIdAndDelete).mockReturnValue({
+      userModelMock.findByIdAndDelete.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -263,7 +260,7 @@ describe('UsersService', () => {
 
   describe('emailExists', () => {
     it('should return true for existing email', async () => {
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(true),
       });
 
@@ -275,7 +272,7 @@ describe('UsersService', () => {
     });
 
     it('should return false for non-existing email', async () => {
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(false),
       });
 
@@ -289,7 +286,7 @@ describe('UsersService', () => {
 
   describe('addBoardToUser', () => {
     it('should add a board to the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -305,7 +302,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -326,7 +323,7 @@ describe('UsersService', () => {
 
   describe('deleteBoardFromUser', () => {
     it('should remove a board from the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -342,7 +339,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user when deleting a board', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -363,7 +360,7 @@ describe('UsersService', () => {
 
   describe('addSlideObjectToUser', () => {
     it('should add a slide object to the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -382,7 +379,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user when adding a slide object', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -403,7 +400,7 @@ describe('UsersService', () => {
 
   describe('deleteSlideObjectFromUser', () => {
     it('should remove a slide object from the user and return void', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userDocument1),
       });
 
@@ -422,7 +419,7 @@ describe('UsersService', () => {
     });
 
     it('should throw 404 for non-existing user when deleting a slide object', async () => {
-      (userModelMock.findByIdAndUpdate).mockReturnValue({
+      userModelMock.findByIdAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       });
 
@@ -443,9 +440,7 @@ describe('UsersService', () => {
 
   describe('createGoogleUser', () => {
     it('should create a new Google user and return the created user document', async () => {
-      (userModelMock.create).mockReturnValue({
-        save: jest.fn().mockResolvedValue(userDocument1),
-      });
+      userModelMock.create.mockReturnValue(userDocument1);
 
       const result = await userService.createGoogleUser(userEmail1);
 
@@ -455,7 +450,6 @@ describe('UsersService', () => {
         userAuthProvider: UserAuthProvider.GOOGLE,
       });
       expect(userModelMock.create).toHaveBeenCalledTimes(1);
-      expect(userModelMock.create().save).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -466,7 +460,7 @@ describe('UsersService', () => {
         userAuthProvider: UserAuthProvider.INTERNAL,
         save: jest.fn().mockResolvedValue(userDocument1),
       };
-      (userModelMock.findOne).mockReturnValue({
+      userModelMock.findOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue(userWithInternalProvider),
       });
 
@@ -504,10 +498,7 @@ describe('UsersService', () => {
     });
 
     it('should include boards in the response if showBoards is true', () => {
-      const result = userService.toResponseUser(
-        mockUserDocument,
-        true,
-      );
+      const result = userService.toResponseUser(mockUserDocument, true);
 
       expect(result).toEqual({
         _id: mockUserDocument._id,
@@ -519,11 +510,7 @@ describe('UsersService', () => {
     });
 
     it('should include slideObjects in the response if showSlideObjects is true', () => {
-      const result = userService.toResponseUser(
-        mockUserDocument,
-        false,
-        true,
-      );
+      const result = userService.toResponseUser(mockUserDocument, false, true);
 
       expect(result).toEqual({
         _id: mockUserDocument._id,
