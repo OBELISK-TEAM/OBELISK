@@ -5,6 +5,7 @@ import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "./ThemeToggle";
 import { AppLogo } from "./AppLogo";
+import Link from "next/link";
 
 const Header: FC = () => {
   const { logout, loading } = useHandleAuth();
@@ -12,9 +13,11 @@ const Header: FC = () => {
   return (
     <div className="h-min-[64px] x-4 flex h-[64px] items-center justify-between border-b bg-background pl-0">
       <div className="flex">
-        <div className="h-min-[64px] flex h-[64px] w-[3.5em] items-center justify-center border-r">
-          <AppLogo width={20} height={20} />
-        </div>
+        <Link href={"/user-boards"}>
+          <div className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted">
+            <AppLogo width={20} height={20} />
+          </div>
+        </Link>
         <div className="flex">
           <HeaderLinks />
         </div>

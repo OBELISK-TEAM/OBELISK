@@ -8,6 +8,7 @@ import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
+import Link from "next/link";
 
 interface HorizontalMenuProps {
   boardName: string;
@@ -24,9 +25,11 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
   return (
     <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
       <div className="flex">
-        <div className="h-min-[64px] flex h-[64px] w-[3.5em] items-center justify-center border-r">
-          <AppLogo width={20} height={20} />
-        </div>
+        <Link href={"/user-boards"}>
+          <div className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted">
+            <AppLogo width={20} height={20} />
+          </div>
+        </Link>
         <div className="flex flex-shrink-0 items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
