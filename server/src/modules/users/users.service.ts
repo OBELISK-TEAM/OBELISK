@@ -65,8 +65,7 @@ export class UsersService {
   }
 
   async createNewUser(user: CreateUserDto): Promise<UserDocument> {
-    const createdUser = new this.userModel(user);
-    return createdUser.save();
+    return this.userModel.create(user);
   }
 
   async updateUserById(
@@ -141,11 +140,10 @@ export class UsersService {
   }
 
   async createGoogleUser(email: string): Promise<UserDocument> {
-    const createdUser = new this.userModel({
+    return this.userModel.create({
       email,
       userAuthProvider: UserAuthProvider.GOOGLE,
     });
-    return createdUser.save();
   }
 
   async handleUserProvider(email: string): Promise<UserDocument> {
@@ -157,7 +155,7 @@ export class UsersService {
     return existingUser;
   }
 
-  private toResponseUser(
+  public toResponseUser(
     user: UserDocument,
     showBoards: boolean = false,
     showSlideObjects: boolean = false,

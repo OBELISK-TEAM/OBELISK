@@ -19,7 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:watch": "jest --watch"
   },
-  "jest": {
+"jest": {
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
@@ -29,6 +29,9 @@
       "json",
       "ts"
     ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "rootDir": "src",
     "testEnvironment": "node",
     "testRegex": ".*\\.(spec|test)\\.ts$",
