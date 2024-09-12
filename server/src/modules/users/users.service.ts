@@ -65,7 +65,7 @@ export class UsersService {
   }
 
   async createNewUser(user: CreateUserDto): Promise<UserDocument> {
-    return await this.userModel.create(user);
+    return this.userModel.create(user);
   }
 
   async updateUserById(
@@ -140,7 +140,7 @@ export class UsersService {
   }
 
   async createGoogleUser(email: string): Promise<UserDocument> {
-    return await this.userModel.create({
+    return this.userModel.create({
       email,
       userAuthProvider: UserAuthProvider.GOOGLE,
     });
