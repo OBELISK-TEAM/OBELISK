@@ -139,7 +139,8 @@ export class BoardsService {
     user: UserDocument,
     permission: BoardPermission,
   ): void {
-    if (board.owner === user._id) return;
+    const isOwner = board.owner.toString() === (user._id as string).toString();
+    if (isOwner) return;
     const permissions = board.permissions;
     const userId = user._id as string;
     if (!this.hasUserPermission(userId, permissions, permission))
