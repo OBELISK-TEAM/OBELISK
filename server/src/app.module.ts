@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { SlideObjectsModule } from './modules/slide-objects/slide-objects.module';
+import { SyncGateway } from './gateway/sync.gateway';
 
 const DEFAULT_DB_HOST = 'localhost';
 
@@ -38,6 +39,7 @@ const DEFAULT_DB_HOST = 'localhost';
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
+    SyncGateway,
   ],
   controllers: [],
 })
