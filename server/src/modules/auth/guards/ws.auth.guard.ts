@@ -1,16 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { AuthService } from '../auth.service';
 import { WsException } from '@nestjs/websockets';
-import { WsCustomStrategy } from '../strategies/ws.strategy';
+import { WsAuthStrategy } from '../strategies/ws.strategy';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly wsStrategy: WsCustomStrategy,
-  ) {}
+  constructor(private readonly wsStrategy: WsAuthStrategy) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client: Socket = context.switchToWs().getClient<Socket>();
@@ -23,7 +19,7 @@ export class WsAuthGuard implements CanActivate {
       throw new WsException('Token not provided');
     }
 
-    await this.wsStrategy.validate({
+    client.data.user = await this.wsStrategy.validate({
       handshake: client.handshake,
     });
 

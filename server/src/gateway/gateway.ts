@@ -8,10 +8,8 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { AuthService } from '../modules/auth/auth.service';
-import { BoardsService } from '../modules/boards/boards.service';
 import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, UseGuards } from '@nestjs/common';
 
 @WebSocketGateway(3002, {
   namespace: 'gateway',
@@ -75,6 +73,7 @@ export class Gateway
   }
 
   @SubscribeMessage('join-board')
+  @UseGuards(WsAuthGuard)
   async handleJoinBoard(client: Socket, data: any) {
     console.log(data);
 
