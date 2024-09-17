@@ -8,7 +8,15 @@ export class WsAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client: Socket = context.switchToWs().getClient<Socket>();
-    client.data.user = await this.wsStrategy.validate(client.handshake);
+    try {
+      client.data.user = await this.wsStrategy.validate(client.handshake);
+    } catch (error) {
+      client.emit('error', { message: error.message });
+      client.disconnect(true);
+      console.log('Unauthorized user');
+      return false;
+    }
+    console.log('Authenticated user: ', client.data.user.email);
     return true;
   }
 }

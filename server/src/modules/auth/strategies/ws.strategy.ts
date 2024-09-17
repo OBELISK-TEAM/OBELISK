@@ -13,9 +13,6 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
   }
 
   async validate(handshake: Socket['handshake']): Promise<SafeUserDoc> {
-    console.log('inside ws.strategy.ts');
-    console.log(handshake);
-
     if (!handshake.headers.authorization) {
       throw new WsException('Missing token');
     }
@@ -27,7 +24,6 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
     const token = handshake.headers.authorization.split(' ')[1];
     const user = await this.authService.validateToken(token);
     if (!user) throw new WsException('Invalid token');
-    console.log(user);
     return user;
   }
 }

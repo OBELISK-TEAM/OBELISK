@@ -35,13 +35,7 @@ export class Gateway
       }),
     } as ExecutionContext;
 
-    const canConnect = await this.wsAuthGuard.canActivate(context);
-    if (!canConnect) client.disconnect(true);
-
-    const user = 'user123123123';
-
-    console.log(user);
-    client.data.user = user;
+    await this.wsAuthGuard.canActivate(context);
   }
 
   handleDisconnect(client: Socket) {
