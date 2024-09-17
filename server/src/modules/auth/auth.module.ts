@@ -34,5 +34,6 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}
