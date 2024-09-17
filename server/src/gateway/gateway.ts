@@ -28,7 +28,6 @@ export class Gateway
     console.log('Gateway initialized on port 3002');
   }
 
-  @UseGuards(WsAuthGuard)
   async handleConnection(client: Socket) {
     const context = {
       switchToWs: () => ({
@@ -44,10 +43,11 @@ export class Gateway
 
   @SubscribeMessage('join-board')
   @UseGuards(WsAuthGuard)
-  async handleJoinBoard(client: Socket, data: any) {
+  async handleJoinBoard(client: Socket, data: JoinBoardDto) {
     const user: SafeUserDoc = client.data.user;
-    client.join(`${KEY}-someBoardId`);
-    client.emit(`someBoardId`, { boardId: '11111' });
+    // TODO verify if user has access to the board
+    client.join(`${KEY}-${data.boardId}`);
+    // client.emit(`someBoardId`, { boardId: '11111' });
   }
 
   // @SubscribeMessage('modify-slide')
@@ -79,4 +79,8 @@ export class Gateway
   //     client.emit('error', { message: error.message });
   //   }
   // }
+}
+
+export interface JoinBoardDto {
+  boardId: string;
 }
