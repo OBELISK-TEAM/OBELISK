@@ -16,7 +16,7 @@ export class WsAuthGuard implements CanActivate {
       console.log('Unauthorized user');
       return false;
     }
-    console.log('Authenticated user: ', client.data.user.email);
+    console.log('Authenticated user:', client.data.user.email);
     return true;
   }
 }
