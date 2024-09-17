@@ -109,10 +109,15 @@ export class AuthService {
   // unfortunately passport-jwt does not support websockets
   // so we have to validate the token manually for ws.auth.guard.ts
   async validateToken(token: string): Promise<SafeUserDoc | null> {
-    const payload = this.jwtService.verify(token);
-    console.log('inside auth.service.ts validateToken');
-    console.log(payload);
-    return this.validateUserById(payload._id);
+    try {
+      console.log('inside auth.service.ts validateToken');
+      console.log(token);
+      const payload = this.jwtService.verify(token);
+      console.log(payload);
+      return this.validateUserById(payload._id);
+    } catch (error) {
+      return null;
+    }
   }
 
   async googleRedirect(req: Request, res: Response): Promise<void> {

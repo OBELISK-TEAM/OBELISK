@@ -35,37 +35,13 @@ export class Gateway
       }),
     } as ExecutionContext;
 
-    try {
-      const canConnect = await this.wsAuthGuard.canActivate(context);
+    const canConnect = await this.wsAuthGuard.canActivate(context);
+    if (!canConnect) client.disconnect(true);
 
-      const token = client.handshake.headers.authorization?.split(' ')[1];
-      if (!token) {
-        throw new WsException('Token not provided');
-      }
+    const user = 'user123123123';
 
-      console.log(token);
-
-      const user = 'user123123123';
-      // passport method for extracting bearer token
-      // auth service method for validating user by id
-      // sth like this:
-      // const safeUser = await this.authService.validateUserById(payload._id);
-      console.log(user);
-      // if (!user) {
-      //   throw new WsException('Invalid token');
-      // }
-
-      // store user data in client
-      client.data.user = user;
-
-      console.log(`Client connected: ${client.id}`);
-    } catch (error) {
-      console.error('Authentication error', error.message);
-      client.emit('error', {
-        message: 'Authentication error: ' + error.message,
-      });
-      client.disconnect();
-    }
+    console.log(user);
+    client.data.user = user;
   }
 
   handleDisconnect(client: Socket) {
@@ -76,34 +52,19 @@ export class Gateway
   @UseGuards(WsAuthGuard)
   async handleJoinBoard(client: Socket, data: any) {
     console.log(data);
+    // TODO - check user board permission before joining
 
-    const { boardId } = data;
+    const user = client.data.user;
 
-    try {
-      // this.boardsService.verifyBoardPermission();
+    console.log('inside join board');
+    console.log(user);
 
-      // Weryfikacja czy użytkownik ma dostęp do boardu
-      const user = client.data.user;
-
-      console.log('inside join board');
-      console.log(user);
-
-      if (!user) {
-        throw new WsException('Unauthorized user');
-      }
-
-      // Logika do sprawdzenia dostępu użytkownika do boardu
-      const hasAccess = await this.checkBoardAccess(user.id, boardId);
-      if (!hasAccess) {
-        throw new WsException('Access denied to board');
-      }
-
-      console.log(`Client ${client.id} joined board ${boardId}`);
-      client.join(boardId); // Dołączenie do pokoju
-      client.emit('joined-board', { boardId });
-    } catch (error) {
-      client.emit('error', { message: error.message });
+    if (!user) {
+      throw new WsException('Unauthorized user');
     }
+
+    client.join('someBoardId');
+    client.emit('joined-board', { boardId: '11111' });
   }
 
   @SubscribeMessage('modify-slide')
