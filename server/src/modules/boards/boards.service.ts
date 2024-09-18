@@ -127,7 +127,6 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.usersService.findUserById(userId);
     const board = await this.findBoardById(boardId);
-    console.log(board.owner, owner._id);
     if (board.owner.toString() !== (owner._id as string).toString())
       throw new HttpException(
         'You are not the owner of this board',
@@ -241,7 +240,6 @@ export class BoardsService {
     boardId: string,
     boardWithPermission: Permissions2,
   ): BoardPermission {
-    console.log(boardWithPermission);
     const { owner, viewer, editor, moderator } = boardWithPermission;
     if (owner.includes(boardId)) return BoardPermission.OWNER;
     if (moderator.includes(boardId)) return BoardPermission.MODERATOR;

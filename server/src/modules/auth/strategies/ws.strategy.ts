@@ -13,7 +13,7 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
     super();
   }
 
-  async validate(handshake: Socket['handshake']): Promise<SafeUserDoc> {
+  async validate(handshake: Socket['handshake']): Promise<any> {
     if (!handshake.headers.authorization) {
       throw new WsException('Missing token');
     }

@@ -1,53 +1,41 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
-import { ExecutionContext, UseGuards } from '@nestjs/common';
+import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
 import { BoardsService } from '../modules/boards/boards.service';
 import { BoardPermission } from '../enums/board.permission';
 
 @WebSocketGateway(3002, {
   namespace: 'gateway',
 })
-export class Gateway
-  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
-{
-  @WebSocketServer()
-  server: Server;
+export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
+  private readonly logger = new Logger(Gateway.name);
 
   constructor(
     private readonly wsAuthGuard: WsAuthGuard,
     private readonly boardsService: BoardsService,
   ) {}
 
-  afterInit() {
-    console.log('Gateway initialized on port 3002');
-  }
-
   async handleConnection(client: Socket) {
-    const context = {
-      switchToWs: () => ({
-        getClient: () => client,
-      }),
-    } as ExecutionContext;
-    await this.wsAuthGuard.canActivate(context);
+    await this.validateClient(client);
+    this.logger.log(`Client connected: ${client.id} ${client.data.user.email}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   // TODO - add proper class validator dto
+  @UseGuards(WsAuthGuard)
   @SubscribeMessage('join-board')
-  @UseGuards(WsAuthGuard) // TODO - is it needed?
   async handleJoinBoard(client: Socket, data: JoinBoardDto) {
-    console.log(data);
     const { boardId } = data;
 
     try {
@@ -60,7 +48,7 @@ export class Gateway
       return;
     }
 
-    const permission = this.getBoardPermission(data.boardId, client);
+    const permission = this.getBoardPermission(boardId, client);
     if (permission === BoardPermission.NONE) {
       client.emit('error', {
         message: 'You do not have permission to join this board',
@@ -69,15 +57,20 @@ export class Gateway
     }
     client.data.user.permission = permission;
 
-    console.log(`Client ${client.data.user._id} joined board ${data.boardId}`);
-    console.log(
-      `Client ${client.data.user._id} has permission ${BoardPermission[permission]}`,
+    this.logger.log(
+      `${client.data.user._id} is ${BoardPermission[permission]}`,
     );
-
-    // TODO - verify permissions
-    console.log('Joining board', data.boardId);
+    this.logger.log(`Joining the board: ${data.boardId}...`);
     client.join(`${data.boardId}`);
-    // client.emit(`someBoardId`, { boardId: '11111' });
+  }
+
+  private async validateClient(client: Socket) {
+    const context = {
+      switchToWs: () => ({
+        getClient: () => client,
+      }),
+    } as ExecutionContext;
+    await this.wsAuthGuard.canActivate(context);
   }
 
   private getBoardPermission(boardId: string, socket: Socket): BoardPermission {
