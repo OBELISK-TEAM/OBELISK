@@ -127,7 +127,8 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.usersService.findUserById(userId);
     const board = await this.findBoardById(boardId);
-    if (board.owner !== owner._id)
+    console.log(board.owner, owner._id);
+    if (board.owner.toString() !== (owner._id as string).toString())
       throw new HttpException(
         'You are not the owner of this board',
         HttpStatus.FORBIDDEN,
@@ -168,6 +169,71 @@ export class BoardsService {
     if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
     if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
     return BoardPermission.VIEWER - 1;
+  }
+
+  async updatePermissions(
+    userId: string,
+    boardId: string,
+    permissions: Permissions,
+  ): Promise<BoardResponseObject> {
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.findBoardById(boardId);
+    this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
+    return this.updateBoardPermissions(boardId, permissions).then(board =>
+      this.toResponseBoard(board),
+    );
+  }
+
+  private async updateBoardPermissions(
+    boardId: string,
+    permissions: Permissions,
+  ): Promise<BoardDocument> {
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(boardId, { permissions }, { new: true })
+      .exec();
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
+  }
+
+  async getAvailableBoardsForUser(userId: string) {
+    const boards = await this.boardModel
+      .find({
+        $or: [
+          { owner: userId },
+          { 'permissions.viewer': userId },
+          { 'permissions.editor': userId },
+          { 'permissions.moderator': userId },
+        ],
+      })
+      .exec();
+
+    const roleMap = {
+      owner: [] as string[],
+      viewer: [] as string[],
+      editor: [] as string[],
+      moderator: [] as string[],
+    };
+
+    boards.forEach(board => {
+      const boardId = board._id.toString();
+      const ownerId = board.owner.toString();
+      const viewerIds = board.permissions.viewer.map((id: any) =>
+        id.toString(),
+      );
+      const editorIds = board.permissions.editor.map((id: any) =>
+        id.toString(),
+      );
+      const moderatorIds = board.permissions.moderator.map((id: any) =>
+        id.toString(),
+      );
+
+      if (ownerId === userId) roleMap.owner.push(boardId);
+      if (viewerIds.includes(userId)) roleMap.viewer.push(boardId);
+      if (editorIds.includes(userId)) roleMap.editor.push(boardId);
+      if (moderatorIds.includes(userId)) roleMap.moderator.push(boardId);
+    });
+    return roleMap;
   }
 
   async toResponseBoard(
