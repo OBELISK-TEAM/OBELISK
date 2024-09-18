@@ -8,7 +8,7 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { SlideDocument } from '../../schemas/slide.schema';
 import { BoardPermission } from '../../enums/board.permission';
 import { UserDocument } from '../../schemas/user.schema';
-import { Permissions } from '../../shared/interfaces/Permissions';
+import { Permissions, Permissions2 } from '../../shared/interfaces/Permissions';
 
 @Injectable()
 export class BoardsService {
@@ -209,11 +209,13 @@ export class BoardsService {
       .exec();
 
     const roleMap = {
-      owner: [] as string[],
       viewer: [] as string[],
       editor: [] as string[],
       moderator: [] as string[],
+      owner: [] as string[],
     };
+
+    userId = userId.toString();
 
     boards.forEach(board => {
       const boardId = board._id.toString();
@@ -227,13 +229,25 @@ export class BoardsService {
       const moderatorIds = board.permissions.moderator.map((id: any) =>
         id.toString(),
       );
-
-      if (ownerId === userId) roleMap.owner.push(boardId);
       if (viewerIds.includes(userId)) roleMap.viewer.push(boardId);
       if (editorIds.includes(userId)) roleMap.editor.push(boardId);
       if (moderatorIds.includes(userId)) roleMap.moderator.push(boardId);
+      if (ownerId === userId) roleMap.owner.push(boardId);
     });
     return roleMap;
+  }
+
+  getBoardPermission(
+    boardId: string,
+    boardWithPermission: Permissions2,
+  ): BoardPermission {
+    console.log(boardWithPermission);
+    const { owner, viewer, editor, moderator } = boardWithPermission;
+    if (owner.includes(boardId)) return BoardPermission.OWNER;
+    if (moderator.includes(boardId)) return BoardPermission.MODERATOR;
+    if (editor.includes(boardId)) return BoardPermission.EDITOR;
+    if (viewer.includes(boardId)) return BoardPermission.VIEWER;
+    return BoardPermission.NONE;
   }
 
   async toResponseBoard(

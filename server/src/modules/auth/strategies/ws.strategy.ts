@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
+import { BoardsService } from '../../boards/boards.service';
 
 @Injectable()
 export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {

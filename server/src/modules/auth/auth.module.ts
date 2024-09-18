@@ -11,6 +11,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { CacheModule } from '@nestjs/cache-manager';
 import { WsAuthStrategy } from './strategies/ws.strategy';
 import { WsAuthGuard } from './guards/ws.auth.guard';
+import { BoardsModule } from '../boards/boards.module';
 
 const DEFAULT_JWT_SECRET = 'secret';
 const DEFAULT_JWT_EXPIRES_IN = '14d';
@@ -33,6 +34,7 @@ const DEFAULT_JWT_EXPIRES_IN = '14d';
       inject: [ConfigService],
     }),
     UsersModule,
+    BoardsModule,
   ],
   providers: [
     AuthService,
