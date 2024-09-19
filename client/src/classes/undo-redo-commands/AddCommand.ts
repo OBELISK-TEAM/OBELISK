@@ -27,17 +27,16 @@ export class AddCommand implements UndoRedoCommand {
 
   /**
    *
-   * @param canvas
-   * @param id
-   * @param object It **has to** have an `id` property already set
-   * @throws `FabricObjectIdError` if `object` has no `id` property
+   * @param canvas The canvas where the object is added/removed
+   * @param objectJSON JSON object describing the object - acquired with the `obj.toJSON(["id"])` method. It must have an `id` property
+   * @throws `FabricObjectIdError` if `objectJSON` has no `id` property
    */
-  constructor(canvas: fabric.Canvas, object: fabric.Object) {
-    this._objectJSON = object.toJSON(["id"]);
+  constructor(canvas: fabric.Canvas, objectJSON: any) {
+    this._objectJSON = objectJSON;
     this._canvas = canvas;
 
     if (!this._objectJSON.id) {
-      throw new FabricObjectIdError(object);
+      throw new FabricObjectIdError(this._objectJSON);
     }
     this._objectId = this._objectJSON.id;
   }
@@ -53,7 +52,7 @@ export class AddCommand implements UndoRedoCommand {
     }
 
     this._canvas.remove(objectToRemove);
-    this.canvas.renderAll();
+    this._canvas.renderAll();
   }
 
   /**
@@ -61,7 +60,7 @@ export class AddCommand implements UndoRedoCommand {
    */
   public redo() {
     // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
-    const activeListeners = removeListenersTemporarily(this.canvas, "path:created");
+    const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
 
     if (getItemById(this._canvas, this._objectId)) {
       toast.warning("The canvas already contains an object with id " + this._objectId);
@@ -78,6 +77,6 @@ export class AddCommand implements UndoRedoCommand {
       "fabric"
     );
 
-    addListenersBack(this.canvas, "path:created", activeListeners);
+    addListenersBack(this._canvas, "path:created", activeListeners);
   }
 }

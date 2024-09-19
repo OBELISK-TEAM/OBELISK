@@ -86,7 +86,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const id = generateId("path");
       Object.assign(e.path, { id });
 
-      const command = new AddCommand(canvas, e.path);
+      const command = new AddCommand(canvas, e.path.toJSON(["id"]));
       saveCommand(command);
     };
 
@@ -110,7 +110,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             clonedObject.set(key, oldValues[key]);
           });
 
-          const command = new ModifyCommand(canvas, clonedObject, modifiedObject, handleStyleChange);
+          const command = new ModifyCommand(
+            canvas,
+            clonedObject.toJSON(["id"]),
+            modifiedObject.toJSON(["id"]),
+            handleStyleChange
+          );
           saveCommand(command);
         },
         ["id"]
@@ -166,7 +171,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       e.target.clone(
         (clonedObject: fabric.Text) => {
           clonedObject.text = observedTextContent; // prepare the old version
-          const command = new ModifyCommand(canvas, clonedObject, e.target, handleStyleChange);
+          const command = new ModifyCommand(
+            canvas,
+            clonedObject.toJSON(["id"]),
+            e.target.toJSON(["id"]),
+            handleStyleChange
+          );
           saveCommand(command);
         },
         ["id"]

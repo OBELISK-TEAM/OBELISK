@@ -6,7 +6,7 @@ import { fabric } from "fabric";
 import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
 
 /**
- * Its purpose it to encompass adding/removing objects DIRECTLY to/from the canvas.
+ * Its purpose is to encompass adding/removing objects DIRECTLY to/from the canvas.
  * The class doesn't handle the 'object nested in another object' situation.
  */
 export class RemoveCommand implements UndoRedoCommand {
@@ -25,12 +25,18 @@ export class RemoveCommand implements UndoRedoCommand {
     return this._canvas;
   }
 
-  constructor(canvas: fabric.Canvas, object: fabric.Object) {
-    this._objectJSON = object.toJSON(["id"]);
+  /**
+   *
+   * @param canvas The canvas where the object is being removed
+   * @param objectJSON The JSON representation of the object that should be removed
+   * @throws `FabricObjectIdError` if `objectJSON` does not have an `id`
+   */
+  constructor(canvas: fabric.Canvas, objectJSON: any) {
+    this._objectJSON = objectJSON;
     this._canvas = canvas;
 
     if (!this._objectJSON.id) {
-      throw new FabricObjectIdError(object);
+      throw new FabricObjectIdError(this._objectJSON);
     }
     this._objectId = this._objectJSON.id;
   }
@@ -59,7 +65,7 @@ export class RemoveCommand implements UndoRedoCommand {
    * redo
    */
   public redo() {
-    // we need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack
+    // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
     const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
 
     const objectToRemove = getItemById(this._canvas, this._objectId);
@@ -69,7 +75,7 @@ export class RemoveCommand implements UndoRedoCommand {
     }
 
     this._canvas.remove(objectToRemove);
-    this.canvas.renderAll();
+    this._canvas.renderAll();
 
     addListenersBack(this._canvas, "path:created", activeListeners);
   }

@@ -35,22 +35,25 @@ export class ModifyCommand implements UndoRedoCommand {
     return this._handleStyleChange;
   }
 
-  constructor(
-    canvas: fabric.Canvas,
-    objectBefore: fabric.Object,
-    objectAfter: fabric.Object,
-    handleStyleChange: () => void
-  ) {
+  /**
+   *
+   * @param canvas The canvas where objects are added/removed
+   * @param objectBefore JSON representation of the object before modification
+   * @param objectAfter JSON representation of the object after modification
+   * @param handleStyleChange A callback for handling style changes
+   * @throws `FabricObjectIdError` if `objectBefore` or `objectAfter` does not have an `id`
+   * @throws Error if `objectBefore.id` and `objectAfter.id` do not match
+   */
+  constructor(canvas: fabric.Canvas, objectBefore: any, objectAfter: any, handleStyleChange: () => void) {
     this._canvas = canvas;
     this._handleStyleChange = handleStyleChange;
 
-    if (!Object.hasOwn(objectBefore, "id")) {
+    if (!objectBefore.id) {
       throw new FabricObjectIdError(objectBefore);
     }
-    if (!Object.hasOwn(objectAfter, "id")) {
+    if (!objectAfter.id) {
       throw new FabricObjectIdError(objectAfter);
     }
-    // @ts-expect-error Every fabric object must have an id, but typescript is oblivious of it
     if (objectBefore.id !== objectAfter.id) {
       throw new Error("Ids of objectBefore and objectAfter are not the same");
     }
@@ -58,7 +61,6 @@ export class ModifyCommand implements UndoRedoCommand {
     this._addObjectBefore = new AddCommand(canvas, objectBefore);
     this._addObjectAfter = new AddCommand(canvas, objectAfter);
 
-    // @ts-expect-error Every fabric object should have an id, but typescript is oblivious of it
     this._objectId = objectBefore.id;
   }
 
@@ -81,11 +83,13 @@ export class ModifyCommand implements UndoRedoCommand {
 
     const currentObject = getItemById(this._canvas, this._objectId);
 
-    if (!currentObject) {
+    if (this._addObjectAfter.objectJSON.type !== "image" && !currentObject) {
+      // adding images to canvas takes time, so they aren't available immediately
       toast.warning("The object with id " + this._objectId + " was not found");
+      return;
     }
 
-    updateDimensions(currentObject); // needed in case the modification changed scaleX and/or scaleY properties
+    updateDimensions(currentObject); // Update dimensions in case scaleX/scaleY changed
     this._handleStyleChange();
   }
 }

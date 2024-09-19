@@ -42,7 +42,12 @@ const FontStyleControls: React.FC = () => {
     modifiedObject.clone(
       (clonedObject: fabric.Text) => {
         setObjectStyle(canvas, clonedObject, { [styleKey]: oldValue });
-        const command = new ModifyCommand(canvas, clonedObject, modifiedObject, handleStyleChange);
+        const command = new ModifyCommand(
+          canvas,
+          clonedObject.toJSON(["id"]),
+          modifiedObject.toJSON(["id"]),
+          handleStyleChange
+        );
         saveCommand(command);
       },
       ["id"]

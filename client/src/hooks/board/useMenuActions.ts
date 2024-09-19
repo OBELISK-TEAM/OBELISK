@@ -70,7 +70,7 @@ export const useMenuActions = () => {
         const id = generateId("line");
         Object.assign(addedLine, { id });
 
-        const command = new AddCommand(canvas, addedLine);
+        const command = new AddCommand(canvas, addedLine.toJSON(["id"]));
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -83,7 +83,7 @@ export const useMenuActions = () => {
         const id = generateId("rect");
         Object.assign(addedRect, { id });
 
-        const command = new AddCommand(canvas, addedRect);
+        const command = new AddCommand(canvas, addedRect.toJSON(["id"]));
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -96,7 +96,7 @@ export const useMenuActions = () => {
         const id = generateId("circ");
         Object.assign(addedCircle, { id });
 
-        const command = new AddCommand(canvas, addedCircle);
+        const command = new AddCommand(canvas, addedCircle.toJSON(["id"]));
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -109,7 +109,7 @@ export const useMenuActions = () => {
         const id = generateId("text");
         Object.assign(addedText, { id });
 
-        const command = new AddCommand(canvas, addedText);
+        const command = new AddCommand(canvas, addedText.toJSON(["id"]));
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -128,8 +128,8 @@ export const useMenuActions = () => {
         Object.assign(group, { id });
 
         // prepare undo/redo command and save it on the undo/redo stack
-        const addGroupCommand = new AddCommand(canvas, group);
-        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj));
+        const addGroupCommand = new AddCommand(canvas, group.toJSON(["id"]));
+        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
         const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
         saveCommand(command);
       },
@@ -143,7 +143,7 @@ export const useMenuActions = () => {
         }
 
         // prepare undo/redo command and save it on the undo/redo stack
-        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj));
+        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
         const command = new ComplexCommand(removeCommands);
         saveCommand(command);
       },
@@ -154,7 +154,7 @@ export const useMenuActions = () => {
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
 
-        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj));
+        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
         const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);
       },
