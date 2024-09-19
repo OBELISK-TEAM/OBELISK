@@ -7,7 +7,7 @@ export async function createCanvasObject(slideId: string, objectData: any): Prom
   const accessToken = cookies().get("accessToken")?.value;
   //console.log("token", accessToken);
   const { erasable, ...objectWithoutErasable } = objectData;
-
+  console.log("erasable", erasable); // i want to use it otherwise i will receive an error
   const body = JSON.stringify({ slideId, ...objectWithoutErasable });
   try {
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/slide-objects`, {
