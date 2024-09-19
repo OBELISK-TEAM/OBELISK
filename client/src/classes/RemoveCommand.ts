@@ -1,9 +1,10 @@
+import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/utils/board/canvasUtils";
 import { toast } from "sonner";
+import { fabric } from "fabric";
 
 /**
- * The class is used in the canvas undo/redo functionality.
  * Its purpose it to encompass adding/removing objects DIRECTLY to/from the canvas.
  * The class doesn't handle the 'object nested in another object' situation.
  */
@@ -13,9 +14,9 @@ export class RemoveCommand implements UndoRedoCommand {
     return this._objectId;
   }
 
-  private _object: fabric.Object;
-  public get object(): fabric.Object {
-    return this._object;
+  private _objectJSON: any;
+  public get objectJSON(): any {
+    return this._objectJSON;
   }
 
   private _canvas: fabric.Canvas;
@@ -23,12 +24,12 @@ export class RemoveCommand implements UndoRedoCommand {
     return this._canvas;
   }
 
-  constructor(canvas: fabric.Canvas, id: string, object: fabric.Object) {
-    this._objectId = id;
-    this._object = object;
+  constructor(canvas: fabric.Canvas, object: fabric.Object) {
+    this._objectJSON = object.toJSON(["id"]);
     this._canvas = canvas;
 
-    Object.assign(this._object, { id: id });
+    if (!this._objectJSON.id) throw new FabricObjectIdError(object);
+    this._objectId = this._objectJSON.id;
   }
 
   /**
@@ -40,8 +41,21 @@ export class RemoveCommand implements UndoRedoCommand {
       return;
     }
 
-    this.canvas.add(this._object);
-    this.canvas.renderAll();
+    fabric.util.enlivenObjects(
+      [this._objectJSON],
+      (objects: any[]) => {
+        var origRenderOnAddRemove = this._canvas.renderOnAddRemove;
+        this._canvas.renderOnAddRemove = false;
+
+        objects.forEach((o) => {
+          this._canvas.add(o);
+        });
+
+        this._canvas.renderOnAddRemove = origRenderOnAddRemove;
+        this._canvas.renderAll();
+      },
+      "fabric"
+    );
   }
 
   /**

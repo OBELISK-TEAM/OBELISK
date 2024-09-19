@@ -1,10 +1,11 @@
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/utils/board/canvasUtils";
 import { toast } from "sonner";
+import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
+import { fabric } from "fabric";
 
 /**
- * The class is used in the canvas undo/redo functionality.
- * Its purpose it to encompass adding/removing objects DIRECTLY to/from the canvas.
+ * The purpose of this class is to encompass adding/removing objects DIRECTLY to/from the canvas.
  * The class doesn't handle the 'object nested in another object' situation.
  */
 export class AddCommand implements UndoRedoCommand {
@@ -13,9 +14,9 @@ export class AddCommand implements UndoRedoCommand {
     return this._objectId;
   }
 
-  private _object: fabric.Object;
-  public get object(): fabric.Object {
-    return this._object;
+  private _objectJSON: any;
+  public get objectJSON(): any {
+    return this._objectJSON;
   }
 
   private _canvas: fabric.Canvas;
@@ -23,17 +24,27 @@ export class AddCommand implements UndoRedoCommand {
     return this._canvas;
   }
 
-  constructor(canvas: fabric.Canvas, id: string, object: fabric.Object) {
-    this._objectId = id;
-    this._object = object;
+  /**
+   *
+   * @param canvas
+   * @param id
+   * @param object It **has to** have an `id` property already set
+   * @throws `FabricObjectIdError` if `object` has no `id` property
+   */
+  constructor(canvas: fabric.Canvas, object: fabric.Object) {
+    this._objectJSON = object.toJSON(["id"]);
     this._canvas = canvas;
+
+    if (!this._objectJSON.id) throw new FabricObjectIdError(object);
+    this._objectId = this._objectJSON.id;
   }
 
   /**
    * undo
    */
   public undo() {
-    // we need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack
+    // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
+    // Have any other idea how to do it? Feel free to try.
     // @ts-ignore
     const activeHandlers = this._canvas.__eventListeners["path:created"];
     // @ts-ignore
@@ -61,7 +72,20 @@ export class AddCommand implements UndoRedoCommand {
       return;
     }
 
-    this.canvas.add(this._object);
-    this.canvas.renderAll();
+    fabric.util.enlivenObjects(
+      [this._objectJSON],
+      (objects: any[]) => {
+        var origRenderOnAddRemove = this._canvas.renderOnAddRemove;
+        this._canvas.renderOnAddRemove = false;
+
+        objects.forEach((o) => {
+          this._canvas.add(o);
+        });
+
+        this._canvas.renderOnAddRemove = origRenderOnAddRemove;
+        this._canvas.renderAll();
+      },
+      "fabric"
+    );
   }
 }

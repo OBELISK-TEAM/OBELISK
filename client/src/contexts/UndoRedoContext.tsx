@@ -88,7 +88,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const id = generateId("path");
       Object.assign(e.path, { id });
 
-      const command = new AddCommand(canvas, id, e.path);
+      const command = new AddCommand(canvas, e.path);
       saveCommand(command);
     };
 

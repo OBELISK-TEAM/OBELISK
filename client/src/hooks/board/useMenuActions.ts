@@ -70,7 +70,7 @@ export const useMenuActions = () => {
         const id = generateId("line");
         Object.assign(addedLine, { id });
 
-        const command = new AddCommand(canvas, id, addedLine);
+        const command = new AddCommand(canvas, addedLine);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -83,7 +83,7 @@ export const useMenuActions = () => {
         const id = generateId("rect");
         Object.assign(addedRect, { id });
 
-        const command = new AddCommand(canvas, id, addedRect);
+        const command = new AddCommand(canvas, addedRect);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -96,7 +96,7 @@ export const useMenuActions = () => {
         const id = generateId("circ");
         Object.assign(addedCircle, { id });
 
-        const command = new AddCommand(canvas, id, addedCircle);
+        const command = new AddCommand(canvas, addedCircle);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -109,7 +109,7 @@ export const useMenuActions = () => {
         const id = generateId("text");
         Object.assign(addedText, { id });
 
-        const command = new AddCommand(canvas, id, addedText);
+        const command = new AddCommand(canvas, addedText);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -128,9 +128,9 @@ export const useMenuActions = () => {
         Object.assign(group, { id });
 
         // prepare undo/redo command and save it on the undo/redo stack
-        const addGroupCommand = new AddCommand(canvas, id, group);
+        const addGroupCommand = new AddCommand(canvas, group);
         // @ts-ignore
-        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
         saveCommand(command);
       },
@@ -145,7 +145,7 @@ export const useMenuActions = () => {
 
         // prepare undo/redo command and save it on the undo/redo stack
         // @ts-ignore
-        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand(removeCommands);
         saveCommand(command);
       },
@@ -157,7 +157,7 @@ export const useMenuActions = () => {
         canvas.remove(...allObjects);
 
         // @ts-ignore
-        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);
       },
