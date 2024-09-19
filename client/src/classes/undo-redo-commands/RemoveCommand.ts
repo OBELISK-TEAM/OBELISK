@@ -6,7 +6,7 @@ import { fabric } from "fabric";
 import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
 
 /**
- * Its purpose is to encompass adding/removing objects DIRECTLY to/from the canvas.
+ * Its purpose is to encompass removing objects DIRECTLY from the canvas.
  * The class doesn't handle the 'object nested in another object' situation.
  */
 export class RemoveCommand implements UndoRedoCommand {
