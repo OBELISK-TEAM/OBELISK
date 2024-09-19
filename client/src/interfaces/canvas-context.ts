@@ -8,7 +8,7 @@ export interface CanvasContext {
   setCanvasMode: (mode: CanvasMode) => void;
   setColor: (color: string) => void;
   setSize: (size: number) => void;
-  handleStyleChange: (styles: object) => void;
+  handleStyleChange: () => void;
   setActiveItem: (activeItem: string | null) => void;
 }
 

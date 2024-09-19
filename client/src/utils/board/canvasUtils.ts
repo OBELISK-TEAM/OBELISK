@@ -7,23 +7,19 @@ export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | 
 };
 
 export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
-  if (canvas) {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      return activeObject.toObject();
-    }
-  }
-  return null;
+  if (!canvas) { return null; }
+
+  const activeObject = canvas.getActiveObject();
+  if (!activeObject) { return null; }
+
+  return activeObject.toObject();
 };
 
-export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
-  if (!canvas) {
+export const setObjectStyle = (canvas: fabric.Canvas | null, fabricObject: fabric.Object | null, styles: object): fabric.Object | undefined => {
+  if (!canvas || !fabricObject) {
     return;
   }
-  const activeObjects = canvas.getActiveObjects();
-  activeObjects.forEach((obj) => {
-    obj.set(styles);
-  });
+  fabricObject.set(styles);
   canvas.requestRenderAll();
 };
 

@@ -3,21 +3,46 @@ import ToolbarInput from "@/components/board/Toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
+import { setObjectStyle } from "@/utils/board/canvasUtils";
+import { UndoRedoCommand } from "@/interfaces/canvas-action";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
   const {
-    state: { selectedObjectStyles },
-    handleStyleChange,
+    state: { selectedObjectStyles, canvas },
+    handleStyleChange
   } = useCanvas();
+
+  const { saveCommand } = useUndoRedo();
 
   if (!selectedObjectStyles) {
     return null;
   }
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
-    handleStyleChange?.({ [key]: value });
+    if (!canvas) { return; }
+    const fabricObject = canvas.getActiveObject();
+    if (!fabricObject) { return; }
+
+    const oldValue = fabricObject.get(key as keyof fabric.Object);
+    const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
+
+    // I know it's cheeky, but otherwise we often register the change twice
+    if (newValue === oldValue) { return; }
+
+    setObjectStyle(canvas, fabricObject, { [key]: newValue });
+    handleStyleChange();
+    
+    const command: UndoRedoCommand = {
+      undo: () => {
+        setObjectStyle(canvas, fabricObject, { [key]: oldValue});
+      },
+      redo: () => {
+        setObjectStyle(canvas, fabricObject, { [key]: newValue});
+      }
+    }
+    saveCommand(command);
   };
 
   const controlsMap: Record<string, ReactElement[]> = {
