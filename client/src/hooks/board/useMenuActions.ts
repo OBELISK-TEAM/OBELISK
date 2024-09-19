@@ -24,6 +24,7 @@ import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
+import { assignId } from "@/utils/utils";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -43,6 +44,14 @@ export const useMenuActions = () => {
   const { saveCommand } = useUndoRedo();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
+    function handleSimpleObjectAdding(canvas: fabric.Canvas, addedObject: fabric.Object) {
+      const id = generateId("obj"); // whatever, it will be changed in the near future
+      assignId(addedObject, id);
+
+      const command = new AddCommand(canvas, addedObject.toJSON(["id"]));
+      saveCommand(command);
+    }
+    
     const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
       [CanvasMode.SELECTION]: ({ setCanvasMode }) => {
         if (!setCanvasMode) {
@@ -67,11 +76,7 @@ export const useMenuActions = () => {
           return;
         }
         const addedLine = addLine(canvas, properties);
-        const id = generateId("line");
-        Object.assign(addedLine, { id });
-
-        const command = new AddCommand(canvas, addedLine.toJSON(["id"]));
-        saveCommand(command);
+        handleSimpleObjectAdding(canvas, addedLine);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -80,11 +85,7 @@ export const useMenuActions = () => {
           return;
         }
         const addedRect = addRectangle(canvas, properties);
-        const id = generateId("rect");
-        Object.assign(addedRect, { id });
-
-        const command = new AddCommand(canvas, addedRect.toJSON(["id"]));
-        saveCommand(command);
+        handleSimpleObjectAdding(canvas, addedRect);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -93,11 +94,7 @@ export const useMenuActions = () => {
           return;
         }
         const addedCircle = addCircle(canvas, properties);
-        const id = generateId("circ");
-        Object.assign(addedCircle, { id });
-
-        const command = new AddCommand(canvas, addedCircle.toJSON(["id"]));
-        saveCommand(command);
+        handleSimpleObjectAdding(canvas, addedCircle);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -106,11 +103,7 @@ export const useMenuActions = () => {
           return;
         }
         const addedText = addText(canvas, 50, 50, properties);
-        const id = generateId("text");
-        Object.assign(addedText, { id });
-
-        const command = new AddCommand(canvas, addedText.toJSON(["id"]));
-        saveCommand(command);
+        handleSimpleObjectAdding(canvas, addedText);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -125,7 +118,7 @@ export const useMenuActions = () => {
         }
 
         const id = generateId("group");
-        Object.assign(group, { id });
+        assignId(group, id);
 
         // prepare undo/redo command and save it on the undo/redo stack
         const addGroupCommand = new AddCommand(canvas, group.toJSON(["id"]));
