@@ -31,10 +31,14 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const undo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || undoStack.current.length === 0) {return;}
+    if (!canvas || undoStack.current.length === 0) {
+      return;
+    }
 
     const lastAction = undoStack.current.pop();
-    if (!lastAction) {return;}
+    if (!lastAction) {
+      return;
+    }
 
     lastAction.undo();
     redoStack.current.push(lastAction);
@@ -43,10 +47,14 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const redo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || redoStack.current.length === 0) {return;}
+    if (!canvas || redoStack.current.length === 0) {
+      return;
+    }
 
     const lastAction = redoStack.current.pop();
-    if (!lastAction) {return;}
+    if (!lastAction) {
+      return;
+    }
 
     lastAction.redo();
     undoStack.current.push(lastAction);

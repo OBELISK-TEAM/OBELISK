@@ -41,7 +41,7 @@ const FontStyleControls: React.FC = () => {
 
     const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
-    Object.assign(clonedJSON, { [styleKey]: oldValue});
+    Object.assign(clonedJSON, { [styleKey]: oldValue });
 
     const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
     saveCommand(command);

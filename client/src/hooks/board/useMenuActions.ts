@@ -51,7 +51,7 @@ export const useMenuActions = () => {
       const command = new AddCommand(canvas, addedObject.toJSON(["_id"]));
       saveCommand(command);
     }
-    
+
     const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
       [CanvasMode.SELECTION]: ({ setCanvasMode }) => {
         if (!setCanvasMode) {

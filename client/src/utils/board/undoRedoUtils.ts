@@ -34,6 +34,6 @@ export const getJsonWithAbsoluteProperties = (obj: fabric.Object): any[] => {
   if (objJSON.top && group.top && group.height) {
     objJSON.top += group.top + group.height / 2;
   }
-  
+
   return objJSON;
 };
