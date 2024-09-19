@@ -16,3 +16,8 @@ export async function clearCookie() {
   const cookieStore = cookies();
   cookieStore.set("accessToken", "", { maxAge: 0, path: "/" });
 }
+
+export const getCookie = (cookieName: string): string | undefined => {
+  const cookieStore = cookies();
+  return cookieStore.get(cookieName)?.value;
+};

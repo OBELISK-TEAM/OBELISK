@@ -12,10 +12,14 @@ import {
 } from "@/utils/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
+import { BoardDataResposne } from "@/interfaces/board-data-response";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
-export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResposne }> = ({
+  children,
+  boardData,
+}) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
@@ -23,6 +27,9 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
 
+    if (boardData.slide && newCanvas) {
+      newCanvas.loadFromJSON(boardData.slide, newCanvas.renderAll.bind(newCanvas));
+    }
     const handleSelectionCreated = () => {
       //toolbar appear
       dispatch({
@@ -129,7 +136,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   return (
     <CanvasContext.Provider
-      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem }}
+      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem, boardData }}
     >
       {children}
     </CanvasContext.Provider>
