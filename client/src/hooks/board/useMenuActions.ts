@@ -20,9 +20,10 @@ import {
   setSelectionMode,
 } from "@/utils/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
 import { AddCommand } from "@/classes/AddCommand";
 import { generateId } from "@/utils/randomUtils";
+import { RemoveCommand } from "@/classes/RemoveCommand";
+import { ComplexCommand } from "@/classes/ComplexCommand";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -119,21 +120,18 @@ export const useMenuActions = () => {
         }
         const activeObjects = canvas.getActiveObjects();
         const group = groupSelectedObjects(canvas);
-
         if (!group) {
           return;
         }
 
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.remove(group);
-            canvas.add(...activeObjects);
-          },
-          redo: () => {
-            canvas.remove(...activeObjects);
-            canvas.add(group);
-          },
-        };
+        const id = generateId("group");
+        Object.assign(group, { id });
+
+        // prepare undo/redo command and save it on the undo/redo stack
+        const addGroupCommand = new AddCommand(canvas, id, group);
+        // @ts-ignore
+        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
         saveCommand(command);
       },
       [MenuActions.REMOVE_SELECTED]: ({ canvas }) => {
@@ -144,14 +142,11 @@ export const useMenuActions = () => {
         if (!removedObjects) {
           return;
         }
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.add(...removedObjects);
-          },
-          redo: () => {
-            canvas.remove(...removedObjects);
-          },
-        };
+
+        // prepare undo/redo command and save it on the undo/redo stack
+        // @ts-ignore
+        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const command = new ComplexCommand(removeCommands);
         saveCommand(command);
       },
       [MenuActions.CLEAR_CANVAS]: ({ canvas }) => {
@@ -161,14 +156,9 @@ export const useMenuActions = () => {
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
 
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.add(...allObjects);
-          },
-          redo: () => {
-            canvas.remove(...allObjects);
-          },
-        };
+        // @ts-ignore
+        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.id, obj));
+        const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);
       },
       [MenuActions.LOAD_CANVAS]: ({ canvas, setCanvasMode }) => {
