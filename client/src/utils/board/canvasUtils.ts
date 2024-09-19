@@ -2,28 +2,41 @@ import { fabric } from "fabric";
 import { CanvasRef } from "@/interfaces/canvas-context";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 
-export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
-  if (canvas) {
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      return activeObject.toObject();
-    }
-  }
-  return null;
+export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | null => {
+  return canvas.getObjects().find((object: any) => object._id === id) || null;
 };
 
-export const setSelectedObjectStyles = (canvas: fabric.Canvas | null, styles: object): void => {
+export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
   if (!canvas) {
+    return null;
+  }
+
+  const activeObject = canvas.getActiveObject();
+  if (!activeObject) {
+    return null;
+  }
+
+  return activeObject.toObject();
+};
+
+export const setObjectStyle = (
+  canvas: fabric.Canvas | null,
+  fabricObject: fabric.Object | null,
+  styles: object
+): fabric.Object | undefined => {
+  if (!canvas || !fabricObject) {
     return;
   }
-  const activeObjects = canvas.getActiveObjects();
-  activeObjects.forEach((obj) => {
-    obj.set(styles);
-  });
+  fabricObject.set(styles);
   canvas.requestRenderAll();
 };
 
 export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
+  // as long as we can't handle scaling and rotating regarding undo/redo commands, we need to lock these possibilities for users
+  fabric.ActiveSelection.prototype.lockScalingX = true;
+  fabric.ActiveSelection.prototype.lockScalingY = true;
+  fabric.ActiveSelection.prototype.lockRotation = true;
+
   if (canvasRef.current) {
     return new fabric.Canvas(canvasRef.current, {
       selection: true,

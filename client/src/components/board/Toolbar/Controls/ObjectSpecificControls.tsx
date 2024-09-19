@@ -3,21 +3,50 @@ import ToolbarInput from "@/components/board/Toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
+import { setObjectStyle } from "@/utils/board/canvasUtils";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { fabric } from "fabric";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
   const {
-    state: { selectedObjectStyles },
+    state: { selectedObjectStyles, canvas },
     handleStyleChange,
   } = useCanvas();
+
+  const { saveCommand } = useUndoRedo();
 
   if (!selectedObjectStyles) {
     return null;
   }
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
-    handleStyleChange?.({ [key]: value });
+    if (!canvas) {
+      return;
+    }
+    const modifiedObject = canvas.getActiveObject();
+    if (!modifiedObject) {
+      return;
+    }
+
+    const oldValue = modifiedObject.get(key as keyof fabric.Object);
+    const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
+
+    // I know it's cheeky, but otherwise we often register the change twice
+    if (newValue === oldValue) {
+      return;
+    }
+
+    setObjectStyle(canvas, modifiedObject, { [key]: newValue });
+    handleStyleChange();
+
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
+    const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
+    Object.assign(clonedJSON, { [key]: oldValue });
+
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    saveCommand(command);
   };
 
   const controlsMap: Record<string, ReactElement[]> = {

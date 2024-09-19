@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useRef } from "react";
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerAction } from "@/enums/CanvasReducerAction";
@@ -7,7 +7,6 @@ import { CanvasContext as ICanvasContext } from "@/interfaces/canvas-context";
 import {
   getSelectedObjectStyles,
   initializeCanvas,
-  setSelectedObjectStyles,
   toggleDrawingMode,
   updateDimensions,
 } from "@/utils/board/canvasUtils";
@@ -40,7 +39,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem: null });
     };
 
-    const handleObjectModified = (e: fabric.IEvent) => {
+    const handleMouseUpDown = (e: fabric.IEvent) => {
       if (!e.target) {
         return;
       }
@@ -87,10 +86,10 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     newCanvas?.on("selection:created", handleSelectionCreated);
     newCanvas?.on("selection:cleared", handleSelectionCleared);
-    newCanvas?.on("object:modified", handleObjectModified);
+    // newCanvas?.on("object:modified", handleObjectModified);
 
-    newCanvas?.on("mouse:down", handleObjectModified);
-    newCanvas?.on("mouse:up", handleObjectModified);
+    newCanvas?.on("mouse:down", handleMouseUpDown);
+    newCanvas?.on("mouse:up", handleMouseUpDown);
 
     return () => {
       newCanvas?.dispose();
@@ -121,18 +120,12 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem });
   };
 
-  const handleStyleChange = useCallback(
-    (styles: object) => {
-      if (state.canvas) {
-        setSelectedObjectStyles(state.canvas, styles);
-        dispatch({
-          type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
-          styles: getSelectedObjectStyles(state.canvas),
-        });
-      }
-    },
-    [state.canvas]
-  );
+  const handleStyleChange = () => {
+    dispatch({
+      type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
+      styles: getSelectedObjectStyles(state.canvas),
+    });
+  };
 
   return (
     <CanvasContext.Provider
