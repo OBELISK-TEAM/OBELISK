@@ -5,7 +5,7 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
 import { setObjectStyle } from "@/utils/board/canvasUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
-import { ModifyCommand } from "@/classes/ModifyCommand";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { fabric } from "fabric";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar

@@ -5,10 +5,10 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { updateDimensions } from "@/utils/board/canvasUtils";
-import { AddCommand } from "@/classes/AddCommand";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
-import { ModifyCommand } from "@/classes/ModifyCommand";
-import { ComplexCommand } from "@/classes/ComplexCommand";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 

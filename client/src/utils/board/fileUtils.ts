@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { AddCommand } from "@/classes/AddCommand";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "../randomUtils";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {

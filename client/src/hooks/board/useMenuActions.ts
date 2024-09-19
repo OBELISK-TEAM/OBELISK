@@ -20,10 +20,10 @@ import {
   setSelectionMode,
 } from "@/utils/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
-import { AddCommand } from "@/classes/AddCommand";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
-import { RemoveCommand } from "@/classes/RemoveCommand";
-import { ComplexCommand } from "@/classes/ComplexCommand";
+import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
+import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
