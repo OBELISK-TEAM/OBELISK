@@ -35,10 +35,10 @@ export class RemoveCommand implements UndoRedoCommand {
     this._objectJSON = objectJSON;
     this._canvas = canvas;
 
-    if (!this._objectJSON.id) {
+    if (!this._objectJSON._id) {
       throw new FabricObjectIdError(this._objectJSON);
     }
-    this._objectId = this._objectJSON.id;
+    this._objectId = this._objectJSON._id;
   }
 
   /**

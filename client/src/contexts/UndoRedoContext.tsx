@@ -9,6 +9,7 @@ import { generateId } from "@/utils/randomUtils";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
+import { assignId } from "@/utils/utils";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -87,9 +88,9 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       } // to differentiate betwen 'real paths' and 'eraser paths'
 
       const id = generateId("path");
-      Object.assign(e.path, { id });
+      assignId(e.path, id);
 
-      const command = new AddCommand(canvas, e.path.toJSON(["id"]));
+      const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
       saveCommand(command);
     };
 
@@ -129,7 +130,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return;
       }
 
-      const targetJSON = target.toJSON(["id"]);
+      const targetJSON = target.toJSON(["_id"]);
       const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
       Object.assign(clonedJSON, oldValues);
       const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
@@ -157,7 +158,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       } // the erased path doesn't collide with enything erasable
 
       for (const target of e.targets) {
-        const targetJSON = target.toJSON(["id"]);
+        const targetJSON = target.toJSON(["_id"]);
         const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
 
         clonedJSON.eraser.objects.pop();
@@ -171,12 +172,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const handleTextEditingEntered = (e: any) => {
-      setObservedTextId(e.target.id);
+      setObservedTextId(e.target._id);
       setObservedTextContent(e.target.text);
     };
 
     const handleTextEditingExited = (e: any) => {
-      const currentId: string = e.target.id;
+      const currentId: string = e.target._id;
       if (currentId !== observedTextId) {
         // that's not the same object
         return;
@@ -188,7 +189,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return;
       }
 
-      const targetJSON = e.target.toJSON(["id"]);
+      const targetJSON = e.target.toJSON(["_id"]);
       const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
       clonedJSON.text = observedTextContent;
 

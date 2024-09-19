@@ -3,7 +3,7 @@ import { CanvasRef } from "@/interfaces/canvas-context";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 
 export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | null => {
-  return canvas.getObjects().find((object: any) => object.id === id) || null;
+  return canvas.getObjects().find((object: any) => object._id === id) || null;
 };
 
 export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {

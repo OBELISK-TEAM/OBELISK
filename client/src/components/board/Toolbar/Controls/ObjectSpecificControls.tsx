@@ -41,7 +41,7 @@ const ObjectSpecificControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [key]: newValue });
     handleStyleChange();
 
-    const modifiedObjectJSON = modifiedObject.toJSON(["id"]);
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [key]: oldValue });
 

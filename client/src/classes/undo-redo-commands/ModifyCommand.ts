@@ -42,26 +42,26 @@ export class ModifyCommand implements UndoRedoCommand {
    * @param objectAfter JSON representation of the object after modification
    * @param handleStyleChange A callback for handling style changes
    * @throws `FabricObjectIdError` if `objectBefore` or `objectAfter` does not have an `id`
-   * @throws Error if `objectBefore.id` and `objectAfter.id` do not match
+   * @throws Error if `objectBefore._id` and `objectAfter._id` do not match
    */
   constructor(canvas: fabric.Canvas, objectBefore: any, objectAfter: any, handleStyleChange: () => void) {
     this._canvas = canvas;
     this._handleStyleChange = handleStyleChange;
 
-    if (!objectBefore.id) {
+    if (!objectBefore._id) {
       throw new FabricObjectIdError(objectBefore);
     }
-    if (!objectAfter.id) {
+    if (!objectAfter._id) {
       throw new FabricObjectIdError(objectAfter);
     }
-    if (objectBefore.id !== objectAfter.id) {
+    if (objectBefore._id !== objectAfter._id) {
       throw new Error("Ids of objectBefore and objectAfter are not the same");
     }
 
     this._addObjectBefore = new AddCommand(canvas, objectBefore);
     this._addObjectAfter = new AddCommand(canvas, objectAfter);
 
-    this._objectId = objectBefore.id;
+    this._objectId = objectBefore._id;
   }
 
   /**

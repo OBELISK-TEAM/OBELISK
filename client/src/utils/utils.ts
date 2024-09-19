@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function assignId(obj: fabric.Object, id: string) {
-  Object.assign(obj, { id })
+  Object.assign(obj, { _id: id })
 }

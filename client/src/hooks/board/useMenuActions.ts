@@ -48,7 +48,7 @@ export const useMenuActions = () => {
       const id = generateId("obj"); // whatever, it will be changed in the near future
       assignId(addedObject, id);
 
-      const command = new AddCommand(canvas, addedObject.toJSON(["id"]));
+      const command = new AddCommand(canvas, addedObject.toJSON(["_id"]));
       saveCommand(command);
     }
     
@@ -120,9 +120,8 @@ export const useMenuActions = () => {
         const id = generateId("group");
         assignId(group, id);
 
-        // prepare undo/redo command and save it on the undo/redo stack
-        const addGroupCommand = new AddCommand(canvas, group.toJSON(["id"]));
-        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
+        const addGroupCommand = new AddCommand(canvas, group.toJSON(["_id"]));
+        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
         const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
         saveCommand(command);
       },
@@ -136,7 +135,7 @@ export const useMenuActions = () => {
         }
 
         // prepare undo/redo command and save it on the undo/redo stack
-        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
+        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
         const command = new ComplexCommand(removeCommands);
         saveCommand(command);
       },
@@ -147,7 +146,7 @@ export const useMenuActions = () => {
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
 
-        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["id"])));
+        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
         const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);
       },

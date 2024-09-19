@@ -58,7 +58,7 @@ export const addImage = (
     const id = generateId("img");
     Object.assign(img, { id });
 
-    const command = new AddCommand(canvas, img.toJSON(["id"]));
+    const command = new AddCommand(canvas, img.toJSON(["_id"]));
     saveCommand(command);
   });
 };

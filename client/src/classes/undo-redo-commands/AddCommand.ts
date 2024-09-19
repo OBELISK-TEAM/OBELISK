@@ -28,17 +28,17 @@ export class AddCommand implements UndoRedoCommand {
   /**
    *
    * @param canvas The canvas where the object is added/removed
-   * @param objectJSON JSON object describing the object - acquired with the `obj.toJSON(["id"])` method. It must have an `id` property
+   * @param objectJSON JSON object describing the object - acquired with the `obj.toJSON(["_id"])` method. It must have an `id` property
    * @throws `FabricObjectIdError` if `objectJSON` has no `id` property
    */
   constructor(canvas: fabric.Canvas, objectJSON: any) {
     this._objectJSON = objectJSON;
     this._canvas = canvas;
 
-    if (!this._objectJSON.id) {
+    if (!this._objectJSON._id) {
       throw new FabricObjectIdError(this._objectJSON);
     }
-    this._objectId = this._objectJSON.id;
+    this._objectId = this._objectJSON._id;
   }
 
   /**

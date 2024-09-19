@@ -21,7 +21,7 @@ export function addListenersBack(canvas: fabric.Canvas, key: string, listeners: 
  * @returns JSON representation according to
  */
 export const getJsonWithAbsoluteProperties = (obj: fabric.Object): any[] => {
-  const objJSON = obj.toJSON(["id"]) as any;
+  const objJSON = obj.toJSON(["_id"]) as any;
 
   const group = obj.group;
   if (!group) {
