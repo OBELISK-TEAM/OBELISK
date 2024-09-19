@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useRef, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useRef, useCallback, useEffect, useState } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfaces/undo-redo-context";
@@ -16,6 +16,11 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     state: { canvas },
     handleStyleChange,
   } = useCanvas();
+
+  // these states are used to memorize the content of recently modified text
+  // so that we can use this old value to prepare a propper ModifiedCommand
+  const [observedTextId, setObservedTextId] = useState<string | undefined>(undefined);
+  const [observedTextContent, setObservedTextContent] = useState<string | undefined>(undefined);
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
   const undoStack = useRef<Array<UndoRedoCommand>>([]);
@@ -140,16 +145,50 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
 
+    const handleTextEditingEntered = (e: any) => {
+      setObservedTextId(e.target.id);
+      setObservedTextContent(e.target.text);
+    };
+
+    const handleTextEditingExited = (e: any) => {
+      const currentId: string = e.target.id;
+      if (currentId !== observedTextId) {
+        // that's not the same object
+        return;
+      }
+
+      const currentText: string = e.target.text;
+      if (currentText === observedTextContent) {
+        // text content hasn't changed
+        return;
+      }
+
+      e.target.clone(
+        (clonedObject: fabric.Text) => {
+          clonedObject.text = observedTextContent; // prepare the old version
+          const command = new ModifyCommand(canvas, clonedObject, e.target, handleStyleChange);
+          saveCommand(command);
+        },
+        ["id"]
+      );
+
+      setObservedTextContent(currentText);
+    };
+
     canvas.on("path:created", handlePathCreated);
     canvas.on("object:modified", handleObjectModified);
     canvas.on("erasing:end", handleEraserAdded);
+    canvas.on("text:editing:entered", handleTextEditingEntered);
+    canvas.on("text:editing:exited", handleTextEditingExited);
 
     return () => {
       canvas.off("path:created", handlePathCreated);
       canvas.off("object:modified", handleObjectModified);
       canvas.off("erasing:end", handleEraserAdded);
+      canvas.off("text:editing:entered", handleTextEditingEntered);
+      canvas.off("text:editing:exited", handleTextEditingExited);
     };
-  }, [canvas, saveCommand, handleStyleChange]);
+  }, [canvas, saveCommand, handleStyleChange, observedTextContent, observedTextId]);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };
