@@ -21,6 +21,8 @@ import {
 } from "@/utils/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { AddCommand } from "@/classes/AddCommand";
+import { generateId } from "@/utils/randomUtils";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -64,14 +66,10 @@ export const useMenuActions = () => {
           return;
         }
         const addedLine = addLine(canvas, properties);
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.remove(addedLine);
-          },
-          redo: () => {
-            canvas.add(addedLine);
-          },
-        };
+        const id = generateId("line");
+        Object.assign(addedLine, { id });
+
+        const command = new AddCommand(canvas, id, addedLine);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -80,16 +78,11 @@ export const useMenuActions = () => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
-
         const addedRect = addRectangle(canvas, properties);
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.remove(addedRect);
-          },
-          redo: () => {
-            canvas.add(addedRect);
-          },
-        };
+        const id = generateId("rect");
+        Object.assign(addedRect, { id });
+
+        const command = new AddCommand(canvas, id, addedRect);
         saveCommand(command);
 
         setCanvasMode(CanvasMode.SELECTION);
@@ -99,15 +92,12 @@ export const useMenuActions = () => {
           return;
         }
         const addedCircle = addCircle(canvas, properties);
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.remove(addedCircle);
-          },
-          redo: () => {
-            canvas.add(addedCircle);
-          },
-        };
+        const id = generateId("circ");
+        Object.assign(addedCircle, { id });
+
+        const command = new AddCommand(canvas, id, addedCircle);
         saveCommand(command);
+
         setCanvasMode(CanvasMode.SELECTION);
       },
       [MenuActions.ADD_TEXT]: ({ canvas, properties, setCanvasMode }) => {
@@ -115,15 +105,12 @@ export const useMenuActions = () => {
           return;
         }
         const addedText = addText(canvas, 50, 50, properties);
-        const command: UndoRedoCommand = {
-          undo: () => {
-            canvas.remove(addedText);
-          },
-          redo: () => {
-            canvas.add(addedText);
-          },
-        };
+        const id = generateId("text");
+        Object.assign(addedText, { id });
+
+        const command = new AddCommand(canvas, id, addedText);
         saveCommand(command);
+
         setCanvasMode(CanvasMode.SELECTION);
       },
       [MenuActions.GROUP_SELECTED]: ({ canvas }) => {

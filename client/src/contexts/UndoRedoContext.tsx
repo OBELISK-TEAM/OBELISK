@@ -5,6 +5,8 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
 import { updateDimensions } from "@/utils/board/canvasUtils";
+import { AddCommand } from "@/classes/AddCommand";
+import { generateId } from "@/utils/randomUtils";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -14,6 +16,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     handleStyleChange,
   } = useCanvas();
 
+  // TODO: remove it
   const [listenersOn, setListenersOn] = useState(true);
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
@@ -70,6 +73,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
 
     console.log("Setting up canvas event listeners");
+
     const handlePathCreated = (e: any) => {
       if (!e.path) {
         return;
@@ -81,18 +85,10 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return;
       } // to differentiate betwen 'real paths' and 'eraser paths'
 
-      const command: UndoRedoCommand = {
-        undo: () => {
-          setListenersOn(false);
-          canvas?.remove(e.path);
-          setListenersOn(true);
-        },
-        redo: () => {
-          setListenersOn(false);
-          canvas?.add(e.path);
-          setListenersOn(true);
-        },
-      };
+      const id = generateId("path");
+      Object.assign(e.path, { id });
+
+      const command = new AddCommand(canvas, id, e.path);
       saveCommand(command);
     };
 
@@ -240,7 +236,11 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [canvas, saveCommand, listenersOn]);
 
-  return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
+  return (
+    <UndoRedoContext.Provider value={{ saveCommand, undo, redo, listenersOn, setListenersOn }}>
+      {children}
+    </UndoRedoContext.Provider>
+  );
 };
 
 export const useUndoRedo = () => {

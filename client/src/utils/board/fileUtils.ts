@@ -1,6 +1,8 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { AddCommand } from "@/classes/AddCommand";
+import { generateId } from "../randomUtils";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
@@ -29,6 +31,10 @@ export const addImage = (
   options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
   saveCommand?: (command: UndoRedoCommand) => void
 ): void => {
+  if (!canvas) {
+    return;
+  }
+
   const { scaleX = 1, scaleY = 1, left = 0, top = 0 } = options || {};
   fabric.Image.fromURL(imageUrl, (img) => {
     img.set({
@@ -42,21 +48,17 @@ export const addImage = (
       lockMovementX: false,
       lockMovementY: false,
     });
-    canvas?.add(img);
-    canvas?.setActiveObject(img);
+    canvas.add(img);
+    canvas.setActiveObject(img);
 
     if (!saveCommand) {
       return;
     }
-    const command: UndoRedoCommand = {
-      undo: () => {
-        canvas?.remove(img);
-      },
-      redo: () => {
-        canvas?.add(img);
-      },
-    };
 
+    const id = generateId("img");
+    Object.assign(img, { id });
+
+    const command = new AddCommand(canvas, id, img);
     saveCommand(command);
   });
 };
