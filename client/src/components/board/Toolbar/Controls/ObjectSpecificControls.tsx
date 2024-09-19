@@ -11,7 +11,7 @@ import { useUndoRedo } from "@/contexts/UndoRedoContext";
 const ObjectSpecificControls: React.FC = () => {
   const {
     state: { selectedObjectStyles, canvas },
-    handleStyleChange
+    handleStyleChange,
   } = useCanvas();
 
   const { saveCommand } = useUndoRedo();
@@ -21,27 +21,33 @@ const ObjectSpecificControls: React.FC = () => {
   }
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (!canvas) { return; }
+    if (!canvas) {
+      return;
+    }
     const fabricObject = canvas.getActiveObject();
-    if (!fabricObject) { return; }
+    if (!fabricObject) {
+      return;
+    }
 
     const oldValue = fabricObject.get(key as keyof fabric.Object);
     const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
 
     // I know it's cheeky, but otherwise we often register the change twice
-    if (newValue === oldValue) { return; }
+    if (newValue === oldValue) {
+      return;
+    }
 
     setObjectStyle(canvas, fabricObject, { [key]: newValue });
     handleStyleChange();
-    
+
     const command: UndoRedoCommand = {
       undo: () => {
-        setObjectStyle(canvas, fabricObject, { [key]: oldValue});
+        setObjectStyle(canvas, fabricObject, { [key]: oldValue });
       },
       redo: () => {
-        setObjectStyle(canvas, fabricObject, { [key]: newValue});
-      }
-    }
+        setObjectStyle(canvas, fabricObject, { [key]: newValue });
+      },
+    };
     saveCommand(command);
   };
 

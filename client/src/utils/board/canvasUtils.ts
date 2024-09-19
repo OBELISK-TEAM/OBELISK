@@ -7,15 +7,23 @@ export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | 
 };
 
 export const getSelectedObjectStyles = (canvas: fabric.Canvas | null): object | null => {
-  if (!canvas) { return null; }
+  if (!canvas) {
+    return null;
+  }
 
   const activeObject = canvas.getActiveObject();
-  if (!activeObject) { return null; }
+  if (!activeObject) {
+    return null;
+  }
 
   return activeObject.toObject();
 };
 
-export const setObjectStyle = (canvas: fabric.Canvas | null, fabricObject: fabric.Object | null, styles: object): fabric.Object | undefined => {
+export const setObjectStyle = (
+  canvas: fabric.Canvas | null,
+  fabricObject: fabric.Object | null,
+  styles: object
+): fabric.Object | undefined => {
   if (!canvas || !fabricObject) {
     return;
   }

@@ -123,17 +123,17 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const handleStyleChange = () => {
     dispatch({
       type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
-      styles: getSelectedObjectStyles(state.canvas)
+      styles: getSelectedObjectStyles(state.canvas),
     });
   };
 
-return (
-  <CanvasContext.Provider
-    value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem }}
-  >
-    {children}
-  </CanvasContext.Provider>
-);
+  return (
+    <CanvasContext.Provider
+      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem }}
+    >
+      {children}
+    </CanvasContext.Provider>
+  );
 };
 
 export const useCanvas = () => {

@@ -11,7 +11,7 @@ const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
     state: { canvas },
-    handleStyleChange
+    handleStyleChange,
   } = useCanvas();
 
   const [listenersOn, setListenersOn] = useState(true);
@@ -64,18 +64,23 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     canvas.renderAll();
   }, []);
 
-
-
-
   useEffect(() => {
-    if (!canvas) { return; }
+    if (!canvas) {
+      return;
+    }
 
     console.log("Setting up canvas event listeners");
     const handlePathCreated = (e: any) => {
-      if (!e.path) { return; }
-      if (!listenersOn) { return; }
+      if (!e.path) {
+        return;
+      }
+      if (!listenersOn) {
+        return;
+      }
+      if (!canvas.contains(e.path)) {
+        return;
+      } // to differentiate betwen 'real paths' and 'eraser paths'
 
-      // Object.assign(e.path, { id: generateId("path") });
       const command: UndoRedoCommand = {
         undo: () => {
           setListenersOn(false);
@@ -83,27 +88,31 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setListenersOn(true);
         },
         redo: () => {
-          setListenersOn(false)
+          setListenersOn(false);
           canvas?.add(e.path);
           setListenersOn(true);
-        }
-      }
+        },
+      };
       saveCommand(command);
     };
 
     /**
-     * This handler handles those modifications, which are visible in the `fabric.IEvent#transform.original` object 
+     * This handler handles those modifications, which are visible in the `fabric.IEvent#transform.original` object
      * (like angle, scaleX, top, left etc.) (not like color, strokeWidth etc.)
      */
     const handleObjectModified = (e: fabric.IEvent) => {
       const targetOldValues = e.transform?.original; // the original properties values before modification
-      const target = e.target; // the modified fabric object
+      const target = e.target;
 
-      if (!targetOldValues || !target) { return; }
-      if (!listenersOn) { return; }
+      if (!targetOldValues || !target) {
+        return;
+      }
+      if (!listenersOn) {
+        return;
+      }
 
       // here we store all the changes which happened with our object after the 'object:modified' event
-      const changes: {key: keyof fabric.Object, oldValue: any; newValue: any}[] = [];
+      const changes: { key: keyof fabric.Object; oldValue: any; newValue: any }[] = [];
 
       // type of keys we expect in oldValues
       type Key = keyof typeof targetOldValues;
@@ -112,10 +121,10 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const newValue = target[key];
 
         if (oldValue !== newValue) {
-          changes.push({ 
+          changes.push({
             key,
             oldValue,
-            newValue
+            newValue,
           });
         }
       });
@@ -123,16 +132,18 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       updateDimensions(target);
       handleStyleChange();
 
-      if (changes.length === 0) { return; } // no changes, so no need to create a command for the undo redo stack
+      if (changes.length === 0) {
+        return;
+      } // no changes, so no need to create a command for the undo redo stack
 
       const command: UndoRedoCommand = {
         undo: () => {
-          changes.forEach(({key, newValue, oldValue}) => {
-            if (key === 'scaleX' || key === 'scaleY') { // we need this exception, because of the 'updateDimensions' method
-              target?.set(key, oldValue/newValue);
+          changes.forEach(({ key, newValue, oldValue }) => {
+            if (key === "scaleX" || key === "scaleY") {
+              // we need this exception, because of the 'updateDimensions' method
+              target?.set(key, oldValue / newValue);
               target.setCoords();
-            }
-            else {
+            } else {
               target?.set(key, oldValue);
               target.setCoords();
             }
@@ -142,34 +153,94 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           canvas.renderAll();
         },
         redo: () => {
-          changes.forEach(({key, newValue}) => {
+          changes.forEach(({ key, newValue }) => {
             target?.set(key, newValue);
             target.setCoords();
           });
           updateDimensions(target);
           handleStyleChange();
           target.setCoords();
-        }
+        },
       };
 
       saveCommand(command);
-    }
+    };
+
+    const handleEraserAdded = (e: fabric.IEvent) => {
+      // TODO: this handler is faulty, because we should add and remove eraser paths by their ids
+      if (!listenersOn) {
+        return;
+      }
+      setListenersOn(false);
+
+      // @ts-ignore
+      const latestEraserPaths = e.targets.map((target) => target.eraser._objects.at(-1));
+      console.log(latestEraserPaths);
+
+      if (!latestEraserPaths) {
+        return;
+      } // the erased path doesn't collide with enything erasable
+
+      const command: UndoRedoCommand = {
+        undo: () => {
+          setListenersOn(false);
+          // @ts-ignore
+          console.log("undo");
+
+          // @ts-ignore
+          console.log(e.targets);
+
+          // @ts-ignore
+          for (const i in e.targets) {
+            // @ts-ignore
+            const target = e.targets[i];
+            target.eraser._objects.remove(target);
+            // target.eraser._objects = target.eraser._objects.slice(0, -1); // remove last eraser path
+          }
+          canvas.requestRenderAll();
+          setListenersOn(true);
+        },
+        redo: () => {
+          setListenersOn(false);
+          console.log("redo");
+          // @ts-ignore
+          for (let i = 0; i < latestEraserPaths.length; i++) {
+            const lastPath = latestEraserPaths[i];
+            // @ts-ignore
+            const target = e.targets[i];
+
+            target.eraser._objects.push(lastPath);
+          }
+          canvas.requestRenderAll();
+          setListenersOn(true);
+        },
+      };
+
+      saveCommand(command);
+      // // @ts-ignore
+      // const targets = e.targets;
+      // console.log(targets[0].eraser);
+
+      // //@ts-ignore
+      // for (const target of e.targets) {
+      //   target.eraser._objects = target.eraser._objects.slice(0, -1); // remove last eraser path
+      // }
+      setListenersOn(true);
+    };
 
     canvas.on("path:created", handlePathCreated);
     canvas.on("object:modified", handleObjectModified);
+    // @ts-ignore
+    canvas.on("erasing:end", handleEraserAdded);
 
     return () => {
       console.log("Removing canvas event listeners");
       canvas.off("path:created", handlePathCreated);
       canvas.off("object:modified", handleObjectModified);
     };
-
   }, [canvas, saveCommand, listenersOn]);
 
-
-  return (
-    <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>
-  );
+  return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };
 
 export const useUndoRedo = () => {
