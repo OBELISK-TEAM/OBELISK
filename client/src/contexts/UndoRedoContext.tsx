@@ -8,6 +8,7 @@ import { updateDimensions } from "@/utils/board/canvasUtils";
 import { AddCommand } from "@/classes/AddCommand";
 import { generateId } from "@/utils/randomUtils";
 import { ModifyCommand } from "@/classes/ModifyCommand";
+import { ComplexCommand } from "@/classes/ComplexCommand";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -16,9 +17,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     state: { canvas },
     handleStyleChange,
   } = useCanvas();
-
-  // TODO: remove it
-  const [listenersOn, setListenersOn] = useState(true);
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
   const undoStack = useRef<Array<UndoRedoCommand>>([]);
@@ -73,18 +71,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    console.log("Setting up canvas event listeners");
-
     const handlePathCreated = (e: any) => {
-      if (!e.path) {
-        return;
-      }
-      if (!listenersOn) {
-        return;
-      }
-      if (!canvas.contains(e.path)) {
-        return;
-      } // to differentiate betwen 'real paths' and 'eraser paths'
+      if (!e.path) return;
+
+      if (!canvas.contains(e.path)) return; // to differentiate betwen 'real paths' and 'eraser paths'
+
+      console.log("handlePathCreated");
 
       const id = generateId("path");
       Object.assign(e.path, { id });
@@ -121,79 +113,39 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       handleStyleChange();
     };
 
-    const handleEraserAdded = (e: fabric.IEvent) => {
-      // TODO: this handler is faulty, because we should add and remove eraser paths by their ids
-      if (!listenersOn) {
-        return;
+    const handleEraserAdded = (e: any) => {
+      if (!e.targets) return; // the erased path doesn't collide with enything erasable
+
+      const commands: UndoRedoCommand[] = [];
+      for (const target of e.targets) {
+        target.clone(
+          // http://fabricjs.com/docs/fabric.Object.html#clone
+          (clonedObject: any) => {
+            clonedObject.eraser._objects.pop();
+            if (!clonedObject.eraser._objects) {
+              delete clonedObject.eraser;
+            }
+
+            const modifyCommand = new ModifyCommand(canvas, clonedObject, target, handleStyleChange);
+            commands.push(modifyCommand);
+          },
+          ["id"]
+        );
+
+        saveCommand(new ComplexCommand(commands));
       }
-      setListenersOn(false);
-
-      // @ts-ignore
-      const latestEraserPaths = e.targets.map((target) => target.eraser._objects.at(-1));
-      console.log(latestEraserPaths);
-
-      if (!latestEraserPaths) {
-        return;
-      } // the erased path doesn't collide with enything erasable
-
-      const command: UndoRedoCommand = {
-        undo: () => {
-          setListenersOn(false);
-          // @ts-ignore
-          console.log("undo");
-
-          // @ts-ignore
-          console.log(e.targets);
-
-          // @ts-ignore
-          for (const i in e.targets) {
-            // @ts-ignore
-            const target = e.targets[i];
-            target.eraser._objects.remove(target);
-            // target.eraser._objects = target.eraser._objects.slice(0, -1); // remove last eraser path
-          }
-          canvas.requestRenderAll();
-          setListenersOn(true);
-        },
-        redo: () => {
-          setListenersOn(false);
-          console.log("redo");
-          // @ts-ignore
-          for (let i = 0; i < latestEraserPaths.length; i++) {
-            const lastPath = latestEraserPaths[i];
-            // @ts-ignore
-            const target = e.targets[i];
-
-            target.eraser._objects.push(lastPath);
-          }
-          canvas.requestRenderAll();
-          setListenersOn(true);
-        },
-      };
-
-      saveCommand(command);
-      // // @ts-ignore
-      // const targets = e.targets;
-      // console.log(targets[0].eraser);
-
-      // //@ts-ignore
-      // for (const target of e.targets) {
-      //   target.eraser._objects = target.eraser._objects.slice(0, -1); // remove last eraser path
-      // }
-      setListenersOn(true);
     };
 
     canvas.on("path:created", handlePathCreated);
     canvas.on("object:modified", handleObjectModified);
-    // @ts-ignore
     canvas.on("erasing:end", handleEraserAdded);
 
     return () => {
-      console.log("Removing canvas event listeners");
       canvas.off("path:created", handlePathCreated);
       canvas.off("object:modified", handleObjectModified);
+      canvas.off("erasing:end", handleEraserAdded);
     };
-  }, [canvas, saveCommand, listenersOn]);
+  }, [canvas, saveCommand]);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };

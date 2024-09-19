@@ -74,7 +74,7 @@ export class ModifyCommand implements UndoRedoCommand {
 
     const currentObject = getItemById(this._canvas, this._objectId);
 
-    updateDimensions(currentObject);  // needed in case the modification changed scaleX and/or scaleY properties
+    updateDimensions(currentObject); // needed in case the modification changed scaleX and/or scaleY properties
     this._handleStyleChange();
   }
 }

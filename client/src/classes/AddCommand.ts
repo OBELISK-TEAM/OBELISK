@@ -43,13 +43,6 @@ export class AddCommand implements UndoRedoCommand {
    * undo
    */
   public undo() {
-    // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
-    // Have any other idea how to do it? Feel free to try.
-    // @ts-ignore
-    const activeHandlers = this._canvas.__eventListeners["path:created"];
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = [];
-
     const objectToRemove = getItemById(this._canvas, this._objectId);
     if (!objectToRemove) {
       toast.warning("The object with id " + this._objectId + " was not found");
@@ -58,15 +51,19 @@ export class AddCommand implements UndoRedoCommand {
 
     this._canvas.remove(objectToRemove);
     this.canvas.renderAll();
-
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = activeHandlers;
   }
 
   /**
    * redo
    */
   public redo() {
+    // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
+    // Have any better idea how to do it? Feel free to try.
+    // @ts-ignore
+    const activeHandlers = this._canvas.__eventListeners["path:created"];
+    // @ts-ignore
+    this._canvas.__eventListeners["path:created"] = [];
+
     if (getItemById(this._canvas, this._objectId)) {
       toast.warning("The canvas already contains an object with id " + this._objectId);
       return;
@@ -81,5 +78,8 @@ export class AddCommand implements UndoRedoCommand {
       },
       "fabric"
     );
+
+    // @ts-ignore
+    this._canvas.__eventListeners["path:created"] = activeHandlers;
   }
 }
