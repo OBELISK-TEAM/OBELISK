@@ -8,6 +8,7 @@ import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
+import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -21,6 +22,8 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // so that we can use this old value to prepare a propper ModifiedCommand
   const [observedTextId, setObservedTextId] = useState<string | undefined>(undefined);
   const [observedTextContent, setObservedTextContent] = useState<string | undefined>(undefined);
+
+  const [recentlyActiveObjects, setRecentlyActiveObjects] = useState<any[]>([]);
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
   const undoStack = useRef<Array<UndoRedoCommand>>([]);
@@ -90,11 +93,35 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       saveCommand(command);
     };
 
+    const handleActiveSelectionModification = () => {
+      const activeObjects: fabric.Object[] = canvas.getActiveObjects();
+
+      if (activeObjects.length <= 1) {
+        return;
+      }
+
+      const activeObjectsJSONs = activeObjects.map((obj: fabric.Object) => getJsonWithAbsoluteProperties(obj));
+
+      const commands: UndoRedoCommand[] = [];
+      for (const i in activeObjectsJSONs) {
+        const activeObjectJSON = activeObjectsJSONs[i];
+        const recentlyActiveObjectJSON = recentlyActiveObjects[i];
+
+        commands.push(new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, handleStyleChange));
+      }
+      saveCommand(new ComplexCommand(commands));
+    };
+
     /**
      * This handler handles oly those modifications, which are visible in the `fabric.IEvent#transform.original` object
      * (like angle, scaleX, top, left etc.) (not like color, strokeWidth etc.)
      */
     const handleObjectModified = (e: fabric.IEvent) => {
+      if (e.target?.type === "activeSelection") {
+        handleActiveSelectionModification();
+        return;
+      }
+
       const oldValues = e.transform?.original; // the original properties values before modification
       const modifiedObject = e.target;
 
@@ -123,6 +150,18 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       updateDimensions(modifiedObject);
       handleStyleChange();
+    };
+
+    const handleMultipleSelections = () => {
+      const activeObjects: fabric.Object[] = canvas.getActiveObjects();
+
+      if (activeObjects.length <= 1) {
+        return;
+      }
+
+      const activeObjectsJSONs = activeObjects.map((obj: fabric.Object) => getJsonWithAbsoluteProperties(obj));
+
+      setRecentlyActiveObjects(activeObjectsJSONs);
     };
 
     const handleEraserAdded = (e: any) => {
@@ -190,6 +229,8 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     canvas.on("erasing:end", handleEraserAdded);
     canvas.on("text:editing:entered", handleTextEditingEntered);
     canvas.on("text:editing:exited", handleTextEditingExited);
+    canvas.on("selection:created", handleMultipleSelections);
+    canvas.on("selection:updated", handleMultipleSelections);
 
     return () => {
       canvas.off("path:created", handlePathCreated);
@@ -197,8 +238,10 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       canvas.off("erasing:end", handleEraserAdded);
       canvas.off("text:editing:entered", handleTextEditingEntered);
       canvas.off("text:editing:exited", handleTextEditingExited);
+      canvas.off("selection:created", handleMultipleSelections);
+      canvas.off("selection:updated", handleMultipleSelections);
     };
-  }, [canvas, saveCommand, handleStyleChange, observedTextContent, observedTextId]);
+  }, [canvas, saveCommand, handleStyleChange, observedTextContent, observedTextId, recentlyActiveObjects]);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };

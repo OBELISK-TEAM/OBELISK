@@ -32,6 +32,11 @@ export const setObjectStyle = (
 };
 
 export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
+  // as long as we can't handle scaling and rotating regarding undo/redo commands, we need to lock these possibilities for users
+  fabric.ActiveSelection.prototype.lockScalingX = true;
+  fabric.ActiveSelection.prototype.lockScalingY = true;
+  fabric.ActiveSelection.prototype.lockRotation = true;
+
   if (canvasRef.current) {
     return new fabric.Canvas(canvasRef.current, {
       selection: true,
