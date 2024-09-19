@@ -123,32 +123,19 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
 
       const oldValues = e.transform?.original; // the original properties values before modification
-      const modifiedObject = e.target;
+      const target = e.target;
 
-      if (!oldValues || !modifiedObject) {
+      if (!oldValues || !target) {
         return;
       }
 
-      modifiedObject.clone(
-        (clonedObject: fabric.Object) => {
-          // prepare version from before modification
-          type Key = keyof typeof oldValues;
-          (Object.keys(oldValues) as Key[]).forEach((key) => {
-            clonedObject.set(key, oldValues[key]);
-          });
+      const targetJSON = target.toJSON(["id"]);
+      const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
+      Object.assign(clonedJSON, oldValues);
+      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+      saveCommand(command);
 
-          const command = new ModifyCommand(
-            canvas,
-            clonedObject.toJSON(["id"]),
-            modifiedObject.toJSON(["id"]),
-            handleStyleChange
-          );
-          saveCommand(command);
-        },
-        ["id"]
-      );
-
-      updateDimensions(modifiedObject);
+      updateDimensions(target);
       handleStyleChange();
     };
 
@@ -169,23 +156,17 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return;
       } // the erased path doesn't collide with enything erasable
 
-      const commands: UndoRedoCommand[] = [];
       for (const target of e.targets) {
-        target.clone(
-          // http://fabricjs.com/docs/fabric.Object.html#clone
-          (clonedObject: any) => {
-            clonedObject.eraser._objects.pop();
-            if (!clonedObject.eraser._objects) {
-              delete clonedObject.eraser;
-            }
+        const targetJSON = target.toJSON(["id"]);
+        const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
 
-            const modifyCommand = new ModifyCommand(canvas, clonedObject, target, handleStyleChange);
-            commands.push(modifyCommand);
-          },
-          ["id"]
-        );
+        clonedJSON.eraser.objects.pop();
+        if (!clonedJSON.eraser.objects) {
+          delete clonedJSON.eraser;
+        }
 
-        saveCommand(new ComplexCommand(commands));
+        const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+        saveCommand(modifyCommand);
       }
     };
 
@@ -207,19 +188,12 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return;
       }
 
-      e.target.clone(
-        (clonedObject: fabric.Text) => {
-          clonedObject.text = observedTextContent; // prepare the old version
-          const command = new ModifyCommand(
-            canvas,
-            clonedObject.toJSON(["id"]),
-            e.target.toJSON(["id"]),
-            handleStyleChange
-          );
-          saveCommand(command);
-        },
-        ["id"]
-      );
+      const targetJSON = e.target.toJSON(["id"]);
+      const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
+      clonedJSON.text = observedTextContent;
+
+      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+      saveCommand(command);
 
       setObservedTextContent(currentText);
     };

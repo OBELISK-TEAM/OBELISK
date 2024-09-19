@@ -39,19 +39,12 @@ const FontStyleControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [styleKey]: newValue });
     handleStyleChange();
 
-    modifiedObject.clone(
-      (clonedObject: fabric.Text) => {
-        setObjectStyle(canvas, clonedObject, { [styleKey]: oldValue });
-        const command = new ModifyCommand(
-          canvas,
-          clonedObject.toJSON(["id"]),
-          modifiedObject.toJSON(["id"]),
-          handleStyleChange
-        );
-        saveCommand(command);
-      },
-      ["id"]
-    );
+    const modifiedObjectJSON = modifiedObject.toJSON(["id"]);
+    const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
+    Object.assign(clonedJSON, { [styleKey]: oldValue});
+
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    saveCommand(command);
   };
 
   const onBoldClick = () => styleToggle("fontWeight", "bold", "normal");

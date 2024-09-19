@@ -41,19 +41,12 @@ const ObjectSpecificControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [key]: newValue });
     handleStyleChange();
 
-    modifiedObject.clone(
-      (clonedObject: fabric.Object) => {
-        setObjectStyle(canvas, clonedObject, { [key]: oldValue });
-        const command = new ModifyCommand(
-          canvas,
-          clonedObject.toJSON(["id"]),
-          modifiedObject.toJSON(["id"]),
-          handleStyleChange
-        );
-        saveCommand(command);
-      },
-      ["id"]
-    );
+    const modifiedObjectJSON = modifiedObject.toJSON(["id"]);
+    const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
+    Object.assign(clonedJSON, { [key]: oldValue });
+
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    saveCommand(command);
   };
 
   const controlsMap: Record<string, ReactElement[]> = {
