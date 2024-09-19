@@ -2,6 +2,7 @@ import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById, updateDimensions } from "@/utils/board/canvasUtils";
 import { AddCommand } from "./AddCommand";
+import { toast } from "sonner";
 
 /**
  * The class is used in the canvas undo/redo functionality.
@@ -79,6 +80,10 @@ export class ModifyCommand implements UndoRedoCommand {
     this._addObjectAfter.redo();
 
     const currentObject = getItemById(this._canvas, this._objectId);
+
+    if (!currentObject) {
+      toast.warning("The object with id " + this._objectId + " was not found");
+    }
 
     updateDimensions(currentObject); // needed in case the modification changed scaleX and/or scaleY properties
     this._handleStyleChange();
