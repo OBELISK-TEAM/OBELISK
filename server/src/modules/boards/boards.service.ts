@@ -196,7 +196,52 @@ export class BoardsService {
   }
 
   async getAvailableBoardsForUser(userId: string): Promise<Permissions2> {
-    const boards = await this.boardModel
+    const boards = await this.fetchBoardsForUser(userId);
+
+    const boardRolesMap = this.initializeUserBoardRolesMap();
+    userId = userId.toString();
+
+    boards.forEach(board =>
+      this.assignBoardToRoles(board, userId, boardRolesMap),
+    );
+    return boardRolesMap;
+  }
+
+  private initializeUserBoardRolesMap(): Permissions2 {
+    return {
+      viewer: [] as string[],
+      editor: [] as string[],
+      moderator: [] as string[],
+      owner: [] as string[],
+    };
+  }
+
+  private assignBoardToRoles(
+    board: BoardDocument,
+    userId: string,
+    userBoardRolesMap: Permissions2,
+  ): void {
+    const boardId = (board._id as string).toString();
+    const ownerId = board.owner.toString();
+    const viewerIds = board.permissions.viewer.map((id: string) =>
+      id.toString(),
+    );
+    const editorIds = board.permissions.editor.map((id: string) =>
+      id.toString(),
+    );
+    const moderatorIds = board.permissions.moderator.map((id: string) =>
+      id.toString(),
+    );
+
+    if (viewerIds.includes(userId)) userBoardRolesMap.viewer.push(boardId);
+    if (editorIds.includes(userId)) userBoardRolesMap.editor.push(boardId);
+    if (moderatorIds.includes(userId))
+      userBoardRolesMap.moderator.push(boardId);
+    if (ownerId === userId) userBoardRolesMap.owner.push(boardId);
+  }
+
+  private async fetchBoardsForUser(userId: string): Promise<BoardDocument[]> {
+    return this.boardModel
       .find({
         $or: [
           { owner: userId },
@@ -206,34 +251,6 @@ export class BoardsService {
         ],
       })
       .exec();
-
-    const roleMap = {
-      viewer: [] as string[],
-      editor: [] as string[],
-      moderator: [] as string[],
-      owner: [] as string[],
-    };
-
-    userId = userId.toString();
-
-    boards.forEach(board => {
-      const boardId = board._id.toString();
-      const ownerId = board.owner.toString();
-      const viewerIds = board.permissions.viewer.map((id: any) =>
-        id.toString(),
-      );
-      const editorIds = board.permissions.editor.map((id: any) =>
-        id.toString(),
-      );
-      const moderatorIds = board.permissions.moderator.map((id: any) =>
-        id.toString(),
-      );
-      if (viewerIds.includes(userId)) roleMap.viewer.push(boardId);
-      if (editorIds.includes(userId)) roleMap.editor.push(boardId);
-      if (moderatorIds.includes(userId)) roleMap.moderator.push(boardId);
-      if (ownerId === userId) roleMap.owner.push(boardId);
-    });
-    return roleMap;
   }
 
   getBoardPermission(

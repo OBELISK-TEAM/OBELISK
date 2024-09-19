@@ -2,8 +2,17 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { WsAuthStrategy } from '../strategies/ws.strategy';
 import { BoardsService } from '../../boards/boards.service';
-import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
-import { Permissions2 } from '../../../shared/interfaces/Permissions';
+
+interface UserData {
+  _id: string;
+  availableBoards?: string[];
+}
+
+type CustomSocket = Socket & {
+  data: {
+    user: UserData;
+  };
+};
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
@@ -14,15 +23,14 @@ export class WsAuthGuard implements CanActivate {
 
   // fetching the available boards for the user after successful authentication
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const client = context.switchToWs().getClient<Socket>();
+    // const client = context.switchToWs().getClient<Socket>();
+    const client = context.switchToWs().getClient<CustomSocket>();
     try {
-      client.data.user = (await this.wsStrategy.validate(
-        client.handshake,
-      ));
+      client.data.user = await this.wsStrategy.validate(client.handshake);
       client.data.user.availableBoards =
-        (await this.boardsService.getAvailableBoardsForUser(
+        await this.boardsService.getAvailableBoardsForUser(
           client.data.user._id,
-        ));
+        );
     } catch (error) {
       client.emit('error', { message: error.message });
       client.disconnect(true);
