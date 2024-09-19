@@ -43,16 +43,10 @@ export class RemoveCommand implements UndoRedoCommand {
 
     fabric.util.enlivenObjects(
       [this._objectJSON],
-      (objects: any[]) => {
-        var origRenderOnAddRemove = this._canvas.renderOnAddRemove;
-        this._canvas.renderOnAddRemove = false;
-
+      (objects: fabric.Object[]) => {
         objects.forEach((o) => {
           this._canvas.add(o);
         });
-
-        this._canvas.renderOnAddRemove = origRenderOnAddRemove;
-        this._canvas.renderAll();
       },
       "fabric"
     );

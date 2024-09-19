@@ -7,6 +7,7 @@ import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { updateDimensions } from "@/utils/board/canvasUtils";
 import { AddCommand } from "@/classes/AddCommand";
 import { generateId } from "@/utils/randomUtils";
+import { ModifyCommand } from "@/classes/ModifyCommand";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -97,66 +98,27 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
      * (like angle, scaleX, top, left etc.) (not like color, strokeWidth etc.)
      */
     const handleObjectModified = (e: fabric.IEvent) => {
-      const targetOldValues = e.transform?.original; // the original properties values before modification
-      const target = e.target;
+      const oldValues = e.transform?.original; // the original properties values before modification
+      const modifiedObject = e.target;
 
-      if (!targetOldValues || !target) {
-        return;
-      }
+      if (!oldValues || !modifiedObject) return;
 
-      // here we store all the changes which happened with our object after the 'object:modified' event
-      const changes: { key: keyof fabric.Object; oldValue: any; newValue: any }[] = [];
-
-      // type of keys we expect in oldValues
-      type Key = keyof typeof targetOldValues;
-      (Object.keys(targetOldValues) as Key[]).forEach((key) => {
-        const oldValue = targetOldValues[key];
-        const newValue = target[key];
-
-        if (oldValue !== newValue) {
-          changes.push({
-            key,
-            oldValue,
-            newValue,
+      modifiedObject.clone(
+        (clonedObject: fabric.Object) => {
+          // prepare version from before modification
+          type Key = keyof typeof oldValues;
+          (Object.keys(oldValues) as Key[]).forEach((key) => {
+            clonedObject.set(key, oldValues[key]);
           });
-        }
-      });
 
-      updateDimensions(target);
+          const command = new ModifyCommand(canvas, clonedObject, modifiedObject, handleStyleChange);
+          saveCommand(command);
+        },
+        ["id"]
+      );
+
+      updateDimensions(modifiedObject);
       handleStyleChange();
-
-      if (changes.length === 0) {
-        return;
-      } // no changes, so no need to create a command for the undo redo stack
-
-      const command: UndoRedoCommand = {
-        undo: () => {
-          changes.forEach(({ key, newValue, oldValue }) => {
-            if (key === "scaleX" || key === "scaleY") {
-              // we need this exception, because of the 'updateDimensions' method
-              target?.set(key, oldValue / newValue);
-              target.setCoords();
-            } else {
-              target?.set(key, oldValue);
-              target.setCoords();
-            }
-          });
-          updateDimensions(target);
-          handleStyleChange();
-          canvas.renderAll();
-        },
-        redo: () => {
-          changes.forEach(({ key, newValue }) => {
-            target?.set(key, newValue);
-            target.setCoords();
-          });
-          updateDimensions(target);
-          handleStyleChange();
-          target.setCoords();
-        },
-      };
-
-      saveCommand(command);
     };
 
     const handleEraserAdded = (e: fabric.IEvent) => {

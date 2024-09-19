@@ -4,8 +4,9 @@ import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
 import { setObjectStyle } from "@/utils/board/canvasUtils";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { ModifyCommand } from "@/classes/ModifyCommand";
+import { fabric } from "fabric";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -24,12 +25,10 @@ const ObjectSpecificControls: React.FC = () => {
     if (!canvas) {
       return;
     }
-    const fabricObject = canvas.getActiveObject();
-    if (!fabricObject) {
-      return;
-    }
+    const modifiedObject = canvas.getActiveObject();
+    if (!modifiedObject) return;
 
-    const oldValue = fabricObject.get(key as keyof fabric.Object);
+    const oldValue = modifiedObject.get(key as keyof fabric.Object);
     const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
 
     // I know it's cheeky, but otherwise we often register the change twice
@@ -37,18 +36,17 @@ const ObjectSpecificControls: React.FC = () => {
       return;
     }
 
-    setObjectStyle(canvas, fabricObject, { [key]: newValue });
+    setObjectStyle(canvas, modifiedObject, { [key]: newValue });
     handleStyleChange();
 
-    const command: UndoRedoCommand = {
-      undo: () => {
-        setObjectStyle(canvas, fabricObject, { [key]: oldValue });
+    modifiedObject.clone(
+      (clonedObject: fabric.Object) => {
+        setObjectStyle(canvas, clonedObject, { [key]: oldValue });
+        const command = new ModifyCommand(canvas, clonedObject, modifiedObject, handleStyleChange);
+        saveCommand(command);
       },
-      redo: () => {
-        setObjectStyle(canvas, fabricObject, { [key]: newValue });
-      },
-    };
-    saveCommand(command);
+      ["id"]
+    );
   };
 
   const controlsMap: Record<string, ReactElement[]> = {
