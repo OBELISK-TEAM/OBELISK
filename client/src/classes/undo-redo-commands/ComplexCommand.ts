@@ -1,6 +1,4 @@
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { getItemById } from "@/utils/board/canvasUtils";
-import { toast } from "sonner";
 
 /**
  * The class is used in the canvas undo/redo functionality.

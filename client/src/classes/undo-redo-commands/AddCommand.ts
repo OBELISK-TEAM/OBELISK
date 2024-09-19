@@ -36,7 +36,9 @@ export class AddCommand implements UndoRedoCommand {
     this._objectJSON = object.toJSON(["id"]);
     this._canvas = canvas;
 
-    if (!this._objectJSON.id) throw new FabricObjectIdError(object);
+    if (!this._objectJSON.id) {
+      throw new FabricObjectIdError(object);
+    }
     this._objectId = this._objectJSON.id;
   }
 

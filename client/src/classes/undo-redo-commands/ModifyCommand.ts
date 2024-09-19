@@ -43,15 +43,21 @@ export class ModifyCommand implements UndoRedoCommand {
     this._canvas = canvas;
     this._handleStyleChange = handleStyleChange;
 
-    if (!Object.hasOwn(objectBefore, "id")) throw new FabricObjectIdError(objectBefore);
-    if (!Object.hasOwn(objectAfter, "id")) throw new FabricObjectIdError(objectAfter);
-    // @ts-ignore
-    if (objectBefore.id !== objectAfter.id) throw new Error("Ids of objectBefore and objectAfter are not the same");
+    if (!Object.hasOwn(objectBefore, "id")) {
+      throw new FabricObjectIdError(objectBefore);
+    }
+    if (!Object.hasOwn(objectAfter, "id")) {
+      throw new FabricObjectIdError(objectAfter);
+    }
+    // @ts-expect-error Every fabric object must have an id, but typescript is oblivious of it
+    if (objectBefore.id !== objectAfter.id) {
+      throw new Error("Ids of objectBefore and objectAfter are not the same");
+    }
 
     this._addObjectBefore = new AddCommand(canvas, objectBefore);
     this._addObjectAfter = new AddCommand(canvas, objectAfter);
 
-    // @ts-ignore
+    // @ts-expect-error Every fabric object should have an id, but typescript is oblivious of it
     this._objectId = objectBefore.id;
   }
 

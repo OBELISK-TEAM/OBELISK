@@ -1,9 +1,8 @@
 "use client";
-import React, { createContext, useContext, useRef, useCallback, useEffect, useState } from "react";
+import React, { createContext, useContext, useRef, useCallback, useEffect } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
+import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { updateDimensions } from "@/utils/board/canvasUtils";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
@@ -24,7 +23,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     canvasRef.current = canvas;
-    console.log("Canvas updated:", canvas);
   }, [canvas]);
 
   const saveCommand = useCallback((command: UndoRedoCommand) => {
@@ -72,9 +70,13 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
 
     const handlePathCreated = (e: any) => {
-      if (!e.path) return;
+      if (!e.path) {
+        return;
+      }
 
-      if (!canvas.contains(e.path)) return; // to differentiate betwen 'real paths' and 'eraser paths'
+      if (!canvas.contains(e.path)) {
+        return;
+      } // to differentiate betwen 'real paths' and 'eraser paths'
 
       const id = generateId("path");
       Object.assign(e.path, { id });
@@ -91,7 +93,9 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const oldValues = e.transform?.original; // the original properties values before modification
       const modifiedObject = e.target;
 
-      if (!oldValues || !modifiedObject) return;
+      if (!oldValues || !modifiedObject) {
+        return;
+      }
 
       modifiedObject.clone(
         (clonedObject: fabric.Object) => {
@@ -112,7 +116,9 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const handleEraserAdded = (e: any) => {
-      if (!e.targets) return; // the erased path doesn't collide with enything erasable
+      if (!e.targets) {
+        return;
+      } // the erased path doesn't collide with enything erasable
 
       const commands: UndoRedoCommand[] = [];
       for (const target of e.targets) {
@@ -143,7 +149,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       canvas.off("object:modified", handleObjectModified);
       canvas.off("erasing:end", handleEraserAdded);
     };
-  }, [canvas, saveCommand]);
+  }, [canvas, saveCommand, handleStyleChange]);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };

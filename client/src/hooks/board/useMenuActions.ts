@@ -129,7 +129,6 @@ export const useMenuActions = () => {
 
         // prepare undo/redo command and save it on the undo/redo stack
         const addGroupCommand = new AddCommand(canvas, group);
-        // @ts-ignore
         const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
         saveCommand(command);
@@ -144,7 +143,6 @@ export const useMenuActions = () => {
         }
 
         // prepare undo/redo command and save it on the undo/redo stack
-        // @ts-ignore
         const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand(removeCommands);
         saveCommand(command);
@@ -156,7 +154,6 @@ export const useMenuActions = () => {
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
 
-        // @ts-ignore
         const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj));
         const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);

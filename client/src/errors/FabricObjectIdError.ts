@@ -1,5 +1,5 @@
 export class FabricObjectIdError extends Error {
-  constructor(obj: Object) {
+  constructor(obj: any) {
     super(`The object ${obj} has no 'id' property`);
     this.name = "ObjectIdError";
   }

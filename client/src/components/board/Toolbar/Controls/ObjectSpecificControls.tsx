@@ -26,7 +26,9 @@ const ObjectSpecificControls: React.FC = () => {
       return;
     }
     const modifiedObject = canvas.getActiveObject();
-    if (!modifiedObject) return;
+    if (!modifiedObject) {
+      return;
+    }
 
     const oldValue = modifiedObject.get(key as keyof fabric.Object);
     const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
