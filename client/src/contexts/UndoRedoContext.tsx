@@ -76,8 +76,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       if (!canvas.contains(e.path)) return; // to differentiate betwen 'real paths' and 'eraser paths'
 
-      console.log("handlePathCreated");
-
       const id = generateId("path");
       Object.assign(e.path, { id });
 

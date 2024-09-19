@@ -3,6 +3,7 @@ import { getItemById } from "@/utils/board/canvasUtils";
 import { toast } from "sonner";
 import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { fabric } from "fabric";
+import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
 
 /**
  * The purpose of this class is to encompass adding/removing objects DIRECTLY to/from the canvas.
@@ -58,11 +59,7 @@ export class AddCommand implements UndoRedoCommand {
    */
   public redo() {
     // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
-    // Have any better idea how to do it? Feel free to try.
-    // @ts-ignore
-    const activeHandlers = this._canvas.__eventListeners["path:created"];
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = [];
+    const activeListeners = removeListenersTemporarily(this.canvas, "path:created");
 
     if (getItemById(this._canvas, this._objectId)) {
       toast.warning("The canvas already contains an object with id " + this._objectId);
@@ -79,7 +76,6 @@ export class AddCommand implements UndoRedoCommand {
       "fabric"
     );
 
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = activeHandlers;
+    addListenersBack(this.canvas, "path:created", activeListeners);
   }
 }

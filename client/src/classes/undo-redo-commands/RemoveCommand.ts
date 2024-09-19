@@ -3,6 +3,7 @@ import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/utils/board/canvasUtils";
 import { toast } from "sonner";
 import { fabric } from "fabric";
+import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
 
 /**
  * Its purpose it to encompass adding/removing objects DIRECTLY to/from the canvas.
@@ -57,10 +58,7 @@ export class RemoveCommand implements UndoRedoCommand {
    */
   public redo() {
     // we need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack
-    // @ts-ignore
-    const activeHandlers = this._canvas.__eventListeners["path:created"]; // TODO: refactor it out into a util function I guess
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = [];
+    const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
 
     const objectToRemove = getItemById(this._canvas, this._objectId);
     if (!objectToRemove) {
@@ -71,7 +69,6 @@ export class RemoveCommand implements UndoRedoCommand {
     this._canvas.remove(objectToRemove);
     this.canvas.renderAll();
 
-    // @ts-ignore
-    this._canvas.__eventListeners["path:created"] = activeHandlers;
+    addListenersBack(this._canvas, "path:created", activeListeners);
   }
 }
