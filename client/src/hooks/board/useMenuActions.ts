@@ -20,7 +20,7 @@ import {
   setSelectionMode,
 } from "@/utils/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
-import { UndoRedoCommand } from "@/interfaces/canvas-action";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,

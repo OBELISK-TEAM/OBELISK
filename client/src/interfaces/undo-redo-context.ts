@@ -1,4 +1,4 @@
-import { UndoRedoCommand } from "./canvas-action";
+import { UndoRedoCommand } from "./undo-redo-command";
 
 export interface UndoRedoContext {
   // saveAction: (action: CanvasActions, objectId: string, objectState?: any) => void;

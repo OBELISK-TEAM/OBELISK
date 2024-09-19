@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
-import { UndoRedoCommand } from "@/interfaces/canvas-action";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {

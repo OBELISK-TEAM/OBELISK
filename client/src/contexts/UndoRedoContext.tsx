@@ -3,7 +3,7 @@ import React, { createContext, useContext, useRef, useCallback, useEffect, useSt
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
-import { UndoRedoCommand } from "@/interfaces/canvas-action";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
 import { updateDimensions } from "@/utils/board/canvasUtils";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
