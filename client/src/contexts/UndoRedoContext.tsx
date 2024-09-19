@@ -3,6 +3,7 @@ import React, { createContext, useContext, useRef, useCallback, useEffect } from
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
+import { UndoRedoCommand } from "@/interfaces/canvas-action";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -12,92 +13,59 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   } = useCanvas();
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
-  const undoStack = useRef<Array<any>>([]);
-  const redoStack = useRef<Array<any>>([]);
+  const undoStack = useRef<Array<UndoRedoCommand>>([]);
+  const redoStack = useRef<Array<UndoRedoCommand>>([]);
 
   useEffect(() => {
     canvasRef.current = canvas;
+    console.log("Canvas updated:", canvas);
   }, [canvas]);
 
-  const areStatesEqual = (state1: any, state2: any) => {
-    return JSON.stringify(state1) === JSON.stringify(state2);
-  };
-
-  const saveState = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
+  const saveAction = useCallback((command: UndoRedoCommand) => {
+    undoStack.current.push(command);
+    if (undoStack.current.length > 50) {
+      undoStack.current.shift();
     }
-    const state = canvas.toJSON();
-    if (undoStack.current.length === 0 || !areStatesEqual(state, undoStack.current[undoStack.current.length - 1])) {
-      undoStack.current.push(state);
-      if (undoStack.current.length > 50) {
-        undoStack.current.shift();
-      }
-      redoStack.current.length = 0;
-    }
+    redoStack.current.length = 0;
   }, []);
 
   const undo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (canvas && undoStack.current.length > 0) {
-      const currentState = canvas.toJSON();
-      redoStack.current.push(currentState);
 
-      const state = undoStack.current.pop();
-      if (!state) {
-        return;
-      }
-      canvas.loadFromJSON(state, () => {
-        canvas.renderAll();
-        canvas.calcOffset();
-      });
+    if (!canvas || undoStack.current.length === 0) {
+      return;
     }
+    const lastAction = undoStack.current.pop();
+    if (!lastAction) {
+      return;
+    }
+
+    console.log("undo -", lastAction);
+
+    lastAction.undo();
+    redoStack.current.push(lastAction);
+    canvas.renderAll();
   }, []);
 
   const redo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (canvas && redoStack.current.length > 0) {
-      const currentState = canvas.toJSON();
-      undoStack.current.push(currentState);
-
-      const state = redoStack.current.pop();
-      if (!state) {
-        return;
-      }
-      canvas.loadFromJSON(state, () => {
-        canvas.renderAll();
-        canvas.calcOffset();
-      });
+    if (!canvas || redoStack.current.length === 0) {
+      return;
     }
+    const lastAction = redoStack.current.pop();
+    if (!lastAction) {
+      return;
+    }
+
+    console.log("redo -", lastAction);
+    lastAction.redo();
+    undoStack.current.push(lastAction);
+    canvas.renderAll();
   }, []);
 
-  useEffect(() => {
-    if (canvas) {
-      const handleMouseDown = () => {
-        saveState();
-      };
-
-      const handleMouseUp = () => {
-        saveState();
-      };
-
-      const handlePathCreated = () => {
-        saveState();
-      };
-
-      canvas.on("mouse:down", handleMouseDown);
-      canvas.on("mouse:up", handleMouseUp);
-      canvas.on("path:created", handlePathCreated);
-
-      return () => {
-        canvas.off("mouse:down", handleMouseDown);
-        canvas.off("mouse:up", handleMouseUp);
-        canvas.off("path:created", handlePathCreated);
-      };
-    }
-  }, [canvas, saveState]);
-  return <UndoRedoContext.Provider value={{ saveState, undo, redo }}>{children}</UndoRedoContext.Provider>;
+  return (
+    <UndoRedoContext.Provider value={{ saveCommand: saveAction, undo, redo }}>{children}</UndoRedoContext.Provider>
+  );
 };
 
 export const useUndoRedo = () => {

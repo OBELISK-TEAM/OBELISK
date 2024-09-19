@@ -13,7 +13,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
     state: { activeItem, canvas },
     setActiveItem,
   } = useCanvas();
-  const { saveState } = useUndoRedo();
+  const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -35,7 +35,6 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const result = e.target?.result;
         if (result) {
           loadImagesFromJSON(canvas, result as string);
-          saveState();
         }
       };
       reader.readAsText(file);
@@ -50,8 +49,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const result = e.target?.result;
         if (result) {
           fitImageByShrinking(result as string, 800, 600, (resizedImage) => {
-            addImage(canvas, resizedImage);
-            saveState();
+            addImage(canvas, resizedImage, undefined, saveCommand);
           });
         }
       };
@@ -61,8 +59,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleAddImageByUrl = (url: string) => {
     if (canvas) {
-      addImage(canvas, url);
-      saveState();
+      addImage(canvas, url, undefined, saveCommand);
     }
   };
 

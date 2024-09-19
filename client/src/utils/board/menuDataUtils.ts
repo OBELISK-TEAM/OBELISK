@@ -64,12 +64,12 @@ export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<
   }
 };
 
-export const handleAddText = (
+export const addText = (
   canvas: fabric.Canvas | null,
   posX: number,
   posY: number,
   options?: { text?: string; color?: string; fontSize?: number }
-): void => {
+): fabric.IText => {
   const { text = "Type here...", color = "#333", fontSize = 20 } = options || {};
 
   const newText = new fabric.IText(text, {
@@ -89,39 +89,51 @@ export const handleAddText = (
   canvas?.setActiveObject(newText);
   newText.enterEditing();
   newText.selectAll();
+
+  return newText;
 };
 
-export const handleRemoveSelected = (canvas: fabric.Canvas | null): void => {
-  if (canvas) {
-    const activeObjects = canvas.getActiveObjects();
-    activeObjects.forEach((obj) => canvas.remove(obj));
-    canvas.discardActiveObject().requestRenderAll();
+export const removeSelectedObjects = (canvas: fabric.Canvas | null): fabric.Object[] | undefined => {
+  if (!canvas) {
+    return;
   }
+
+  const activeObjects = canvas.getActiveObjects();
+  canvas.remove(...activeObjects);
+  canvas.discardActiveObject().requestRenderAll();
+
+  return activeObjects;
 };
 
-export const handleGroupSelected = (canvas: fabric.Canvas | null): void => {
-  if (canvas) {
-    const activeObjects = canvas.getActiveObjects();
-    if (activeObjects.length) {
-      const clonedObjects = activeObjects.map((obj) => fabric.util.object.clone(obj));
-
-      const group = new fabric.Group(clonedObjects, {
-        originX: "center",
-        originY: "center",
-      });
-
-      activeObjects.forEach((obj) => canvas.remove(obj));
-      canvas.add(group);
-      canvas.setActiveObject(group);
-      canvas.requestRenderAll();
-    }
+export const groupSelectedObjects = (canvas: fabric.Canvas | null): fabric.Group | undefined => {
+  if (!canvas) {
+    return;
   }
+
+  const activeObjects = canvas.getActiveObjects();
+  if (!activeObjects.length) {
+    return;
+  }
+
+  const clonedObjects = activeObjects.map((obj) => fabric.util.object.clone(obj));
+
+  const group = new fabric.Group(clonedObjects, {
+    originX: "center",
+    originY: "center",
+  });
+
+  canvas.remove(...activeObjects);
+  canvas.add(group);
+  canvas.setActiveObject(group);
+  canvas.requestRenderAll();
+
+  return group;
 };
 
 export const addLine = (
   canvas: fabric.Canvas | null,
   options?: { color?: string; width?: number; height?: number }
-): void => {
+): fabric.Line => {
   const { color = "black", width, height } = options || {};
   const line = new fabric.Line([50, 100, 200, 200], {
     stroke: color,
@@ -132,12 +144,13 @@ export const addLine = (
   });
   canvas?.add(line);
   canvas?.setActiveObject(line);
+  return line;
 };
 
 export const addRectangle = (
   canvas: fabric.Canvas | null,
   options?: { fillColor?: string; width?: number; height?: number }
-): void => {
+): fabric.Rect => {
   const { fillColor = "red", width = 200, height = 100 } = options || {};
   const rect = new fabric.Rect({
     left: 100,
@@ -150,9 +163,13 @@ export const addRectangle = (
   });
   canvas?.add(rect);
   canvas?.setActiveObject(rect);
+  return rect;
 };
 
-export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: string; radius?: number }): void => {
+export const addCircle = (
+  canvas: fabric.Canvas | null,
+  options?: { fillColor?: string; radius?: number }
+): fabric.Circle => {
   const { fillColor = "green", radius = 50 } = options || {};
   const circle = new fabric.Circle({
     radius: radius,
@@ -162,6 +179,7 @@ export const addCircle = (canvas: fabric.Canvas | null, options?: { fillColor?: 
   });
   canvas?.add(circle);
   canvas?.setActiveObject(circle);
+  return circle;
 };
 
 export const exportToPDF = async (canvas: fabric.Canvas | null): Promise<void> => {
