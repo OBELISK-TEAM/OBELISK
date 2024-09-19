@@ -3,7 +3,7 @@ import React, { createContext, useContext, useRef, useCallback, useEffect, useSt
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext } from "@/interfaces/undo-redo-context";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { updateDimensions } from "@/utils/board/canvasUtils";
 import { AddCommand } from "@/classes/AddCommand";
 import { generateId } from "@/utils/randomUtils";
@@ -93,7 +93,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     /**
-     * This handler handles those modifications, which are visible in the `fabric.IEvent#transform.original` object
+     * This handler handles oly those modifications, which are visible in the `fabric.IEvent#transform.original` object
      * (like angle, scaleX, top, left etc.) (not like color, strokeWidth etc.)
      */
     const handleObjectModified = (e: fabric.IEvent) => {
@@ -101,9 +101,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const target = e.target;
 
       if (!targetOldValues || !target) {
-        return;
-      }
-      if (!listenersOn) {
         return;
       }
 
@@ -236,11 +233,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [canvas, saveCommand, listenersOn]);
 
-  return (
-    <UndoRedoContext.Provider value={{ saveCommand, undo, redo, listenersOn, setListenersOn }}>
-      {children}
-    </UndoRedoContext.Provider>
-  );
+  return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };
 
 export const useUndoRedo = () => {

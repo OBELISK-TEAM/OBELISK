@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { AddCommand } from "@/classes/AddCommand";
 import { generateId } from "../randomUtils";
 

@@ -1,4 +1,4 @@
-import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/utils/board/canvasUtils";
 import { toast } from "sonner";
 

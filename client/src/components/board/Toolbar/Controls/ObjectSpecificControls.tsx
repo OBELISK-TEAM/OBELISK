@@ -4,7 +4,7 @@ import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
 import { setObjectStyle } from "@/utils/board/canvasUtils";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-command";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
