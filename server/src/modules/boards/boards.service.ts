@@ -195,7 +195,7 @@ export class BoardsService {
     return updatedBoard;
   }
 
-  async getAvailableBoardsForUser(userId: string) {
+  async getAvailableBoardsForUser(userId: string): Promise<Permissions2> {
     const boards = await this.boardModel
       .find({
         $or: [

@@ -3,19 +3,19 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
+import { Socket } from 'socket.io';
 import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
+import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
 import { BoardsService } from '../modules/boards/boards.service';
 import { BoardPermission } from '../enums/board.permission';
+import { JoinBoardDto } from './gateway.dto';
 
 @WebSocketGateway(3002, {
   namespace: 'gateway',
 })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+  // @WebSocketServer() private readonly server: Server;
   private readonly logger = new Logger(Gateway.name);
 
   constructor(
@@ -23,62 +23,100 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly boardsService: BoardsService,
   ) {}
 
-  async handleConnection(client: Socket) {
-    await this.validateClient(client);
-    this.logger.log(`Client connected: ${client.id} ${client.data.user.email}`);
+  async handleConnection(client: Socket): Promise<void> {
+    try {
+      await this.validateClient(client);
+      this.logClientConnection(client);
+    } catch (error) {
+      this.emitErrorAndDisconnect(client, 'Authentication failed');
+    }
   }
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket): void {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  // TODO - add proper class validator dto
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('join-board')
-  async handleJoinBoard(client: Socket, data: JoinBoardDto) {
+  async handleJoinBoard(client: Socket, data: JoinBoardDto): Promise<void> {
     const { boardId } = data;
 
-    try {
-      await this.boardsService.findBoardById(boardId);
-    } catch (error) {
-      client.emit('error', {
-        message: 'Invalid board id',
-      });
-      client.disconnect(true);
-      return;
-    }
+    if (!(await this.isBoardValid(client, boardId))) return;
 
     const permission = this.getBoardPermission(boardId, client);
-    if (permission === BoardPermission.NONE) {
-      client.emit('error', {
-        message: 'You do not have permission to join this board',
-      });
-      client.disconnect(true);
-    }
-    client.data.user.permission = permission;
+    if (!this.isPermissionValid(client, permission)) return;
 
-    this.logger.log(
-      `${client.data.user._id} is ${BoardPermission[permission]}`,
-    );
-    this.logger.log(`Joining the board: ${data.boardId}...`);
-    client.join(`${data.boardId}`);
+    this.assignClientPermission(client, permission, boardId);
+    this.joinClientToBoard(client, boardId);
   }
 
-  private async validateClient(client: Socket) {
-    const context = {
+  private async validateClient(client: Socket): Promise<void> {
+    const context = this.createExecutionContext(client);
+    await this.wsAuthGuard.canActivate(context);
+  }
+
+  private createExecutionContext(client: Socket): ExecutionContext {
+    return {
       switchToWs: () => ({
         getClient: () => client,
       }),
     } as ExecutionContext;
-    await this.wsAuthGuard.canActivate(context);
   }
 
-  private getBoardPermission(boardId: string, socket: Socket): BoardPermission {
-    const availableBoards = socket.data.user.availableBoards;
+  private logClientConnection(client: Socket): void {
+    this.logger.log(`Client connected: ${client.data.user.email} ${client.id}`);
+  }
+
+  private async isBoardValid(
+    client: Socket,
+    boardId: string,
+  ): Promise<boolean> {
+    try {
+      await this.boardsService.findBoardById(boardId);
+      return true;
+    } catch {
+      this.emitErrorAndDisconnect(client, 'Invalid board id');
+      return false;
+    }
+  }
+
+  private emitErrorAndDisconnect(client: Socket, message: string): void {
+    client.emit('error', { message });
+    client.disconnect(true);
+  }
+
+  private getBoardPermission(boardId: string, client: Socket): BoardPermission {
+    const availableBoards = client.data.user.availableBoards;
     return this.boardsService.getBoardPermission(boardId, availableBoards);
   }
-}
 
-export interface JoinBoardDto {
-  boardId: string;
+  private isPermissionValid(
+    client: Socket,
+    permission: BoardPermission,
+  ): boolean {
+    if (permission === BoardPermission.NONE) {
+      this.emitErrorAndDisconnect(
+        client,
+        'You do not have permission to join this board',
+      );
+      return false;
+    }
+    return true;
+  }
+
+  private assignClientPermission(
+    client: Socket,
+    permission: BoardPermission,
+    boardId: string,
+  ): void {
+    client.data.user.permission = permission;
+    this.logger.log(
+      `${client.data.user.email} is ${BoardPermission[permission]} of board ${boardId}`,
+    );
+  }
+
+  private joinClientToBoard(client: Socket, boardId: string): void {
+    this.logger.log(`Joining the board...`);
+    client.join(boardId);
+  }
 }

@@ -5,7 +5,6 @@ import { AuthService } from '../auth.service';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
-import { BoardsService } from '../../boards/boards.service';
 
 @Injectable()
 export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
@@ -13,7 +12,7 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
     super();
   }
 
-  async validate(handshake: Socket['handshake']): Promise<any> {
+  async validate(handshake: Socket['handshake']): Promise<SafeUserDoc> {
     if (!handshake.headers.authorization) {
       throw new WsException('Missing token');
     }
