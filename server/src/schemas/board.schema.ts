@@ -70,3 +70,15 @@ export class Board {
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
+
+// // TODO - set everywhere ObjectId type not string
+BoardSchema.pre('save', async function (next) {
+  if (this.slides.length === 0) {
+    const emptySlide = await this.model('Slide').create({
+      version: '5.3.0',
+      board: this._id,
+    });
+    this.slides.push(emptySlide._id.toString());
+  }
+  next();
+});
