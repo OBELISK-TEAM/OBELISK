@@ -2,7 +2,8 @@ import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
-import { generateId } from "../randomUtils";
+import { createCanvasObject } from "@/app/actions/slideActions";
+import { toast } from "sonner";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
@@ -25,42 +26,52 @@ export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) =
   }
 };
 
-export const addImage = (
+export const addImage = async (
   canvas: fabric.Canvas | null,
+  slideId: string,
   imageUrl: string,
   options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
   saveCommand?: (command: UndoRedoCommand) => void
-): void => {
+): Promise<void> => {
   if (!canvas) {
     return;
   }
 
   const { scaleX = 1, scaleY = 1, left = 0, top = 0 } = options || {};
-  fabric.Image.fromURL(imageUrl, (img) => {
-    img.set({
-      scaleX: scaleX,
-      scaleY: scaleY,
-      left: left,
-      top: top,
-      lockScalingFlip: false,
-      lockUniScaling: false,
-      lockRotation: false,
-      lockMovementX: false,
-      lockMovementY: false,
+  try {
+    fabric.Image.fromURL(imageUrl, async (img) => {
+      img.set({
+        scaleX: scaleX,
+        scaleY: scaleY,
+        left: left,
+        top: top,
+        lockScalingFlip: false,
+        lockUniScaling: false,
+        lockRotation: false,
+        lockMovementX: false,
+        lockMovementY: false,
+      });
+
+      const objectData = img.toJSON();
+      try {
+        const responseData = await createCanvasObject(slideId, objectData);
+        Object.assign(img, { _id: responseData._id });
+        canvas.add(img);
+        canvas.setActiveObject(img);
+      } catch (error: any) {
+        console.error("Error creating image object on backend:", error);
+        toast.error(error.message || "Failed to create image on backend");
+      }
+      if (!saveCommand) {
+        return;
+      }
+      const command = new AddCommand(canvas, img.toJSON(["_id"]));
+      saveCommand(command);
     });
-    canvas.add(img);
-    canvas.setActiveObject(img);
-
-    if (!saveCommand) {
-      return;
-    }
-
-    const id = generateId("img");
-    Object.assign(img, { id });
-
-    const command = new AddCommand(canvas, img.toJSON(["_id"]));
-    saveCommand(command);
-  });
+  } catch (error: any) {
+    console.error("Error loading image:", error);
+    toast.error(error.message || "Failed to load image");
+  }
 };
 
 export const fitImageByShrinking = (
