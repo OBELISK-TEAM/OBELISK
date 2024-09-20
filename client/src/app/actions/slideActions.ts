@@ -1,10 +1,11 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { ApiError } from "@/interfaces/api-error";
+import { getCookie } from "@/utils/authApi";
+import { extractMessagesFromApiError } from "@/lib/toastsUtils";
+import { ApiError } from "@/errors/ApiError";
 
 export async function createCanvasObject(slideId: string, objectData: any): Promise<any> {
-  const accessToken = cookies().get("accessToken")?.value;
+  const accessToken = getCookie("accessToken");
   //console.log("token", accessToken);
   const { erasable, ...objectWithoutErasable } = objectData;
   console.log("erasable", erasable); // i want to use it otherwise i will receive an error
@@ -20,8 +21,8 @@ export async function createCanvasObject(slideId: string, objectData: any): Prom
     });
 
     if (!response.ok) {
-      const errorData: ApiError = await response.json();
-      throw new Error(errorData.message || "Failed to create object");
+      const reasons = await extractMessagesFromApiError(response);
+      throw new ApiError(reasons);
     }
     return await response.json();
   } catch (error) {

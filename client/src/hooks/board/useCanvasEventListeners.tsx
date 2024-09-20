@@ -8,6 +8,10 @@ import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
 import { createCanvasObject } from "@/app/actions/slideActions";
 import { toast } from "sonner";
+import { assignId } from "@/utils/utils";
+import { complexToast } from "@/contexts/complexToast";
+import { ToastTypes } from "@/enums/ToastType";
+import { ApiError } from "@/errors/ApiError";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -29,15 +33,16 @@ const useCanvasEventHandlers = (
       try {
         const objectData = e.path.toJSON();
         const responseData = await createCanvasObject(slideId, objectData);
-        const _id = responseData._id;
-        // Attach backend ID to the canvas object
-        Object.assign(e.path, { _id });
-
+        assignId(e.path, responseData._id);
         const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
         saveCommand(command);
       } catch (error: any) {
         console.error("Error while creating object:", error);
-        toast.error(error.message || "Failed to create object on the backend");
+        if (error instanceof ApiError) {
+          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        } else {
+          toast.error(error.message || "Failed to create an object");
+        }
       }
     };
 

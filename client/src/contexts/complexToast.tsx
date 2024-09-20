@@ -9,7 +9,7 @@ import { ToasterProps, toast } from "sonner";
  * @param toasterProps Properties passed into the toast further
  * @param toastTitle If this argument is undefined, the `toastType` value serves as a title
  */
-export const toastAuthorizationResult = (
+export const complexToast = (
   toastType: ToastTypes,
   toastDescription: string | string[],
   toasterProps?: ToasterProps,
