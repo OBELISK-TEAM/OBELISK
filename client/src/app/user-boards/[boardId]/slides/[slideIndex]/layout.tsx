@@ -5,7 +5,7 @@ import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
 import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
-import { BoardDataResposne } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/board-data-response";
 
 interface UserBoardLayout {
   children: React.ReactNode;
@@ -37,7 +37,7 @@ const SliderLayout = async ({ children, params }: UserBoardLayout) => {
     return notFound();
   }
 
-  const boardData: BoardDataResposne = await boardResponse.json();
+  const boardData: BoardDataResponse = await boardResponse.json();
   const length = boardData.slides.length;
   if (parseInt(slideIndex) >= length || parseInt(slideIndex) < 0) {
     return notFound();

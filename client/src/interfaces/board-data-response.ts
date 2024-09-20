@@ -1,10 +1,11 @@
 import { SlideResponse } from "@/interfaces/slide-response";
+import { PermissionsResponse } from "@/interfaces/permissions-response";
 
-export interface BoardDataResposne {
+export interface BoardDataResponse {
   _id: string;
   name: string;
   owner: string;
-  permissions: Permissions;
+  permissions: PermissionsResponse;
   slides: string[];
   slide?: SlideResponse;
 }

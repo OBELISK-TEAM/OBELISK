@@ -12,11 +12,11 @@ import {
 } from "@/utils/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
-import { BoardDataResposne } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/board-data-response";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
-export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResposne }> = ({
+export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResponse }> = ({
   children,
   boardData,
 }) => {

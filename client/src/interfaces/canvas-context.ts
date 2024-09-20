@@ -1,7 +1,7 @@
 import { CanvasReducerState } from "@/types/CanvasReducer";
 import { MutableRefObject } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { BoardDataResposne } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/board-data-response";
 
 export interface CanvasContext {
   state: CanvasReducerState;
@@ -11,7 +11,7 @@ export interface CanvasContext {
   setSize: (size: number) => void;
   handleStyleChange: () => void;
   setActiveItem: (activeItem: string | null) => void;
-  boardData: BoardDataResposne;
+  boardData: BoardDataResponse;
 }
 
 export interface CanvasRef {

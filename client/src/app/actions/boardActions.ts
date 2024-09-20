@@ -1,10 +1,10 @@
 "use server";
 
 import { getCookie } from "@/utils/authApi";
-import { BoardDataResposne } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/board-data-response";
 import { ApiError } from "@/interfaces/api-error";
 
-export async function createBoard(): Promise<BoardDataResposne> {
+export async function createBoard(): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
   try {
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards`, {
