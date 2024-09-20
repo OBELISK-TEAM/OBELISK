@@ -26,10 +26,6 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
-
-    if (boardData.slide && newCanvas) {
-      newCanvas.loadFromJSON(boardData.slide, newCanvas.renderAll.bind(newCanvas));
-    }
     const handleSelectionCreated = () => {
       //toolbar appear
       dispatch({
@@ -103,6 +99,12 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
     };
   }, [handleZoom]);
 
+  useEffect(() => {
+    if (boardData.slide && canvasRef.current && state.canvas) {
+      console.log("loading slide data", JSON.stringify(boardData.slide));
+      state.canvas.loadFromJSON(boardData.slide, () => state.canvas?.renderAll());
+    }
+  }, [state.canvas, boardData.slide]);
   useEffect(() => {
     if (state.canvas) {
       toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);
