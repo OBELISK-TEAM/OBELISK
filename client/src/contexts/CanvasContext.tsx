@@ -101,7 +101,6 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
 
   useEffect(() => {
     if (boardData.slide && canvasRef.current && state.canvas) {
-      console.log("loading slide data", JSON.stringify(boardData.slide));
       state.canvas.loadFromJSON(boardData.slide, () => state.canvas?.renderAll());
     }
   }, [state.canvas, boardData.slide]);
