@@ -6,7 +6,10 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
-import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
+import {
+  CustomSocket,
+  WsAuthGuard,
+} from '../modules/auth/guards/ws.auth.guard';
 import { BoardsService } from '../modules/boards/boards.service';
 import { BoardPermission } from '../enums/board.permission';
 import { JoinBoardDto } from './gateway.dto';
@@ -15,7 +18,6 @@ import { JoinBoardDto } from './gateway.dto';
   namespace: 'gateway',
 })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
-  // @WebSocketServer() private readonly server: Server;
   private readonly logger = new Logger(Gateway.name);
 
   constructor(
@@ -27,8 +29,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       await this.validateClient(client);
       this.logClientConnection(client);
-    } catch (error) {
-      this.emitErrorAndDisconnect(client, 'Authentication failed');
+    } catch {
+      this.emitErrorAndDisconnect(client, 'Connection failed to authenticate');
     }
   }
 
@@ -38,7 +40,10 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('join-board')
-  async handleJoinBoard(client: Socket, data: JoinBoardDto): Promise<void> {
+  async handleJoinBoard(
+    client: CustomSocket,
+    data: JoinBoardDto,
+  ): Promise<void> {
     const { boardId } = data;
 
     if (!(await this.isBoardValid(client, boardId))) return;
@@ -47,7 +52,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!this.isPermissionValid(client, permission)) return;
 
     this.assignClientPermission(client, permission, boardId);
-    this.joinClientToBoard(client, boardId);
+    await this.joinClientToBoard(client, boardId);
   }
 
   private async validateClient(client: Socket): Promise<void> {
@@ -63,12 +68,12 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     } as ExecutionContext;
   }
 
-  private logClientConnection(client: Socket): void {
+  private logClientConnection(client: CustomSocket): void {
     this.logger.log(`Client connected: ${client.data.user.email} ${client.id}`);
   }
 
   private async isBoardValid(
-    client: Socket,
+    client: CustomSocket,
     boardId: string,
   ): Promise<boolean> {
     try {
@@ -85,13 +90,20 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.disconnect(true);
   }
 
-  private getBoardPermission(boardId: string, client: Socket): BoardPermission {
+  private getBoardPermission(
+    boardId: string,
+    client: CustomSocket,
+  ): BoardPermission {
+    if (!client.data.user.availableBoards) {
+      return BoardPermission.NONE;
+    }
+
     const availableBoards = client.data.user.availableBoards;
     return this.boardsService.getBoardPermission(boardId, availableBoards);
   }
 
   private isPermissionValid(
-    client: Socket,
+    client: CustomSocket,
     permission: BoardPermission,
   ): boolean {
     if (permission === BoardPermission.NONE) {
@@ -105,7 +117,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private assignClientPermission(
-    client: Socket,
+    client: CustomSocket,
     permission: BoardPermission,
     boardId: string,
   ): void {
@@ -115,8 +127,11 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
   }
 
-  private joinClientToBoard(client: Socket, boardId: string): void {
+  private async joinClientToBoard(
+    client: CustomSocket,
+    boardId: string,
+  ): Promise<void> {
     this.logger.log(`Joining the board...`);
-    client.join(boardId);
+    return client.join(boardId);
   }
 }
