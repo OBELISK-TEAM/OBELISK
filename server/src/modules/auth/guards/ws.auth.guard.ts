@@ -3,17 +3,6 @@ import { Socket } from 'socket.io';
 import { WsAuthStrategy } from '../strategies/ws.strategy';
 import { BoardsService } from '../../boards/boards.service';
 
-interface UserData {
-  _id: string;
-  availableBoards?: string[];
-}
-
-type CustomSocket = Socket & {
-  data: {
-    user: UserData;
-  };
-};
-
 @Injectable()
 export class WsAuthGuard implements CanActivate {
   constructor(
@@ -23,8 +12,7 @@ export class WsAuthGuard implements CanActivate {
 
   // fetching the available boards for the user after successful authentication
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // const client = context.switchToWs().getClient<Socket>();
-    const client = context.switchToWs().getClient<CustomSocket>();
+    const client = context.switchToWs().getClient<Socket>();
     try {
       client.data.user = await this.wsStrategy.validate(client.handshake);
       client.data.user.availableBoards =
