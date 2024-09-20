@@ -4,22 +4,10 @@ import {
   HttpException,
   Injectable,
 } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { WsAuthStrategy } from '../strategies/ws.strategy';
 import { BoardsService } from '../../boards/boards.service';
-import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
-import { Permissions2 } from '../../../shared/interfaces/Permissions';
 import { WsException } from '@nestjs/websockets';
-import { BoardPermission } from '../../../enums/board.permission';
-
-export interface CustomSocket extends Socket {
-  data: {
-    user: SafeUserDoc & {
-      availableBoards?: Permissions2;
-      permission?: BoardPermission;
-    };
-  };
-}
+import { GatewaySocket } from '../../../shared/interfaces/auth/GatewaySocket';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
@@ -30,7 +18,7 @@ export class WsAuthGuard implements CanActivate {
 
   // fetching the available boards for the user after successful authentication
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const client = context.switchToWs().getClient<CustomSocket>();
+    const client = context.switchToWs().getClient<GatewaySocket>();
     try {
       client.data.user = await this.wsStrategy.validate(client.handshake);
       client.data.user.availableBoards =

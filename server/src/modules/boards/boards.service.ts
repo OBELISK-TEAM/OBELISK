@@ -8,7 +8,8 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { SlideDocument } from '../../schemas/slide.schema';
 import { BoardPermission } from '../../enums/board.permission';
 import { UserDocument } from '../../schemas/user.schema';
-import { Permissions, Permissions2 } from '../../shared/interfaces/Permissions';
+import { Permissions } from '../../shared/interfaces/Permissions';
+import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 
 @Injectable()
 export class BoardsService {
@@ -195,7 +196,7 @@ export class BoardsService {
     return updatedBoard;
   }
 
-  async getAvailableBoardsForUser(userId: string): Promise<Permissions2> {
+  async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
     const boards = await this.fetchBoardsForUser(userId);
 
     const boardRolesMap = this.initializeUserBoardRolesMap();
@@ -207,7 +208,7 @@ export class BoardsService {
     return boardRolesMap;
   }
 
-  private initializeUserBoardRolesMap(): Permissions2 {
+  private initializeUserBoardRolesMap(): AvailableBoards {
     return {
       viewer: [] as string[],
       editor: [] as string[],
@@ -219,7 +220,7 @@ export class BoardsService {
   private assignBoardToRoles(
     board: BoardDocument,
     userId: string,
-    userBoardRolesMap: Permissions2,
+    userBoardRolesMap: AvailableBoards,
   ): void {
     const boardId = (board._id as string).toString();
     const ownerId = board.owner.toString();
@@ -255,7 +256,7 @@ export class BoardsService {
 
   getBoardPermission(
     boardId: string,
-    boardWithPermission: Permissions2,
+    boardWithPermission: AvailableBoards,
   ): BoardPermission {
     const { owner, viewer, editor, moderator } = boardWithPermission;
     if (owner.includes(boardId)) return BoardPermission.OWNER;

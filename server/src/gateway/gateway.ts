@@ -6,11 +6,9 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
-import {
-  CustomSocket,
-  WsAuthGuard,
-} from '../modules/auth/guards/ws.auth.guard';
+import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
 import { BoardsService } from '../modules/boards/boards.service';
+import { GatewaySocket } from '../shared/interfaces/auth/GatewaySocket';
 import { BoardPermission } from '../enums/board.permission';
 import { JoinBoardDto } from './gateway.dto';
 
@@ -41,7 +39,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('join-board')
   async handleJoinBoard(
-    client: CustomSocket,
+    client: GatewaySocket,
     data: JoinBoardDto,
   ): Promise<void> {
     const { boardId } = data;
@@ -68,12 +66,12 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     } as ExecutionContext;
   }
 
-  private logClientConnection(client: CustomSocket): void {
+  private logClientConnection(client: GatewaySocket): void {
     this.logger.log(`Client connected: ${client.data.user.email} ${client.id}`);
   }
 
   private async isBoardValid(
-    client: CustomSocket,
+    client: GatewaySocket,
     boardId: string,
   ): Promise<boolean> {
     try {
@@ -92,7 +90,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private getBoardPermission(
     boardId: string,
-    client: CustomSocket,
+    client: GatewaySocket,
   ): BoardPermission {
     if (!client.data.user.availableBoards) {
       return BoardPermission.NONE;
@@ -103,7 +101,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private isPermissionValid(
-    client: CustomSocket,
+    client: GatewaySocket,
     permission: BoardPermission,
   ): boolean {
     if (permission === BoardPermission.NONE) {
@@ -117,7 +115,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private assignClientPermission(
-    client: CustomSocket,
+    client: GatewaySocket,
     permission: BoardPermission,
     boardId: string,
   ): void {
@@ -128,7 +126,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private async joinClientToBoard(
-    client: CustomSocket,
+    client: GatewaySocket,
     boardId: string,
   ): Promise<void> {
     this.logger.log(`Joining the board...`);
