@@ -30,7 +30,7 @@ import { createCanvasObject } from "@/app/actions/slideActions";
 import { toast } from "sonner";
 import { ToastTypes } from "@/enums/ToastType";
 import { complexToast } from "@/contexts/complexToast";
-import { ApiErrorData } from "@/errors/ApiErrorData";
+import { ApiError } from "@/errors/ApiError";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -64,7 +64,7 @@ export const useMenuActions = () => {
         saveCommand(command);
       } catch (error: any) {
         console.error("Error while creating object:", error);
-        if (error instanceof ApiErrorData) {
+        if (error instanceof ApiError) {
           complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
         } else {
           toast.error(error.message || "Failed to create an object");

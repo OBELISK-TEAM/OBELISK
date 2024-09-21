@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { assignId } from "@/utils/utils";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
-import { ApiErrorData } from "@/errors/ApiErrorData";
+import { ApiError } from "@/errors/ApiError";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -38,7 +38,7 @@ const useCanvasEventHandlers = (
         saveCommand(command);
       } catch (error: any) {
         console.error("Error while creating object:", error);
-        if (error instanceof ApiErrorData) {
+        if (error instanceof ApiError) {
           complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
         } else {
           toast.error(error.message || "Failed to create an object");

@@ -3,7 +3,7 @@
 import { getCookie } from "@/utils/authApi";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiErrorData } from "@/errors/ApiErrorData";
+import { ApiError } from "@/errors/ApiError";
 
 export async function createBoard(): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
@@ -21,7 +21,7 @@ export async function createBoard(): Promise<BoardDataResponse> {
 
     if (!response.ok) {
       const reasons = await extractMessagesFromApiError(response);
-      throw new ApiErrorData(reasons);
+      throw new ApiError(reasons);
     }
     return await response.json();
   } catch (error) {

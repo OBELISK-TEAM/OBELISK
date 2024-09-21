@@ -1,4 +1,4 @@
-export class ApiErrorData extends Error {
+export class ApiError extends Error {
   messages: string[];
 
   constructor(messages: string[]) {

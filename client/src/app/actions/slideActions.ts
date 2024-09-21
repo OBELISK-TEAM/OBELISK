@@ -2,7 +2,7 @@
 
 import { getCookie } from "@/utils/authApi";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiErrorData } from "@/errors/ApiErrorData";
+import { ApiError } from "@/errors/ApiError";
 
 export async function createCanvasObject(slideId: string, objectData: any): Promise<any> {
   const accessToken = getCookie("accessToken");
@@ -22,7 +22,7 @@ export async function createCanvasObject(slideId: string, objectData: any): Prom
 
     if (!response.ok) {
       const reasons = await extractMessagesFromApiError(response);
-      throw new ApiErrorData(reasons);
+      throw new ApiError(reasons);
     }
     return await response.json();
   } catch (error) {

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { createBoard } from "@/app/actions/boardActions";
-import { ApiErrorData } from "@/errors/ApiErrorData";
+import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 
@@ -23,7 +23,7 @@ const UserBoardsActionButtons = () => {
     } catch (error: any) {
       setIsLoading(false);
       console.error("Error in handleCreateNewBoard:", error);
-      if (error instanceof ApiErrorData) {
+      if (error instanceof ApiError) {
         complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
       } else {
         toast.error(error.message || "Failed to create board");
