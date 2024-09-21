@@ -67,8 +67,6 @@ export interface CustomSlideObject {
   cropX?: number;
   cropY?: number;
   filters?: SlideObjectFilter[];
-  createdBy: string;
-  slide: string;
 }
 
 export interface CustomSlideObjectWithId extends CustomSlideObject {

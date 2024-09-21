@@ -16,8 +16,19 @@ export class JoinBoardDto {
 
 export interface AddObjectData {
   object: CustomSlideObject;
+  slide: CustomSlide;
 }
 
 export interface UpdateObjectData {
   object: CustomSlideObjectWithId;
+}
+
+export interface CustomSlide {
+  slideId: string;
+}
+
+export interface JoinBoardData {
+  board: {
+    boardId: string;
+  };
 }

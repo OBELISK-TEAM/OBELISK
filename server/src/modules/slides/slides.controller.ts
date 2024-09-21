@@ -26,9 +26,7 @@ export class SlidesController {
   }
 
   @Get(':id')
-  async getSlideById(
-    @Param('id') slideId: string,
-  ): Promise<SlideResponseObject> {
+  async getSlideById(@Param('id') slideId: string): Promise<any> {
     return this.slidesService.getSlideById(slideId);
   }
 

@@ -149,18 +149,26 @@ export class SlideObjectsService {
 
   // WS methods
 
-  async getSlideObjectById100(
-    slideObjectId: string,
+  async createObject(
+    userId: string,
+    slideId: string,
+    objectProps: CustomSlideObject,
   ): Promise<SlideObjectResponseObject> {
-    const existingSlideObject = await this.slideObjectModel
-      .findById(slideObjectId)
-      .exec();
-    if (!existingSlideObject)
-      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-    return this.toResponseSlideObject(existingSlideObject);
+    const slide = await this.slidesService.findSlideById(slideId);
+    const user = await this.usersService.findUserById(userId);
+    const createdSlideObject = new this.slideObjectModel({
+      ...objectProps,
+      createdBy: user,
+      slide,
+    });
+    await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
+    await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
+    return createdSlideObject
+      .save()
+      .then(slideObject => this.toResponseSlideObject(slideObject));
   }
 
-  async updateSlideObjectById(
+  async updateSlideObject2(
     object: CustomSlideObjectWithId,
   ): Promise<SlideObjectResponseObject> {
     const updatedSlideObject = await this.slideObjectModel
@@ -169,6 +177,32 @@ export class SlideObjectsService {
     if (!updatedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
     return this.toResponseSlideObject(updatedSlideObject);
+  }
+
+  async deleteSlideObjectById2(
+    userId: string,
+    slideId: string,
+    slideObjectId: string,
+  ): Promise<SlideObjectDocument> {
+    // const slide = await this.slidesService.findSlideById(slideId);
+    // const user = await this.usersService.findUserById(userId);
+
+    const deletedSlideObject = await this.slideObjectModel
+      .findByIdAndDelete(slideObjectId)
+      .exec();
+    if (!deletedSlideObject)
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
+
+    await this.usersService.deleteSlideObjectFromUser(
+      userId,
+      deletedSlideObject._id.toString(),
+    );
+    await this.slidesService.deleteSlideObjectFromSlide(
+      slideId,
+      deletedSlideObject._id.toString(),
+    );
+
+    return deletedSlideObject;
   }
 
   toResponseSlideObject(

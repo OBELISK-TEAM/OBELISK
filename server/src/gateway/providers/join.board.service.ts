@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BoardsService } from '../../modules/boards/boards.service';
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
-import { JoinBoardDto } from '../gateway.dto';
+import { JoinBoardData, JoinBoardDto } from '../gateway.dto';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
 
@@ -10,8 +10,8 @@ export class JoinBoardService {
   private readonly logger = new Logger(JoinBoardService.name);
   constructor(private readonly boardsService: BoardsService) {}
 
-  async handleJoinBoard(client: GwSocket, data: JoinBoardDto): Promise<void> {
-    const { boardId } = data;
+  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+    const boardId = data.board.boardId;
 
     if (!(await this.isBoardValid(client, boardId))) {
       this.emitErrorAndDisconnect(client, 'Invalid board id');

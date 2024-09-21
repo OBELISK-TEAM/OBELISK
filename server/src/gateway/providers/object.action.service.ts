@@ -42,13 +42,21 @@ export class ObjectActionService {
       return;
     }
 
-    // const objectId = data.object._id;
-    // const object = await this.slideObjectsService.createSlideObject()
-    // await this.slideObjectsService.getSlideObjectById100(objectId);
-    // const boardId = client.data.user.targetBoard.boardId;
-    //
-    // this.logger.log(`Object added: ${object._id} by ${client.data.user.email}`);
-    // client.to(boardId).emit('object-added', object);
+    const boardId = client.data.user.targetBoard.boardId;
+    const userId = client.data.user._id as string;
+    const slideId = data.slide.slideId;
+    const objectProps = data.object;
+
+    const createdObject = await this.slideObjectsService.createObject(
+      userId,
+      slideId,
+      objectProps,
+    );
+
+    this.logger.log(
+      `Object added: ${createdObject._id} by ${client.data.user.email}`,
+    );
+    client.to(boardId).emit('object-added', createdObject);
   }
 
   private async handleUpdateObject(
@@ -60,20 +68,37 @@ export class ObjectActionService {
       return;
     }
 
-    const object = await this.slideObjectsService.updateSlideObjectById(
-      data.object,
-    );
+    const object = data.object;
+
+    const updatedObject =
+      await this.slideObjectsService.updateSlideObject2(object);
+
     const boardId = client.data.user.targetBoard.boardId;
 
     this.logger.log(
-      `Object updated: ${object._id} by ${client.data.user.email}`,
+      `Object updated: ${updatedObject._id} by ${client.data.user.email}`,
     );
-    client.to(boardId).emit('object-updated', object);
+    client.to(boardId).emit('object-updated', updatedObject);
   }
 
   private handleDeleteObject(client: GwSocket, data: any): void {
-    const boardId = data.boardId;
-    client.to(boardId).emit('object-deleted', data);
+    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
+      this.emitErrorAndDisconnect(client, 'Something went wrong');
+      return;
+    }
+
+    const boardId = client.data.user.targetBoard.boardId;
+    const userId = client.data.user._id as string;
+    const slideId = data.slide.slideId;
+    const objectId = data.objectId;
+
+    const deletedObject = this.slideObjectsService.deleteSlideObjectById2(
+      userId,
+      slideId,
+      objectId,
+    );
+
+    client.to(boardId).emit('object-deleted', deletedObject);
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {
