@@ -7,6 +7,7 @@ import { ApiError } from "@/errors/ApiError";
 
 export async function createBoard(): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
+  console.log("token", token);
   try {
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards`, {
       method: "POST",
