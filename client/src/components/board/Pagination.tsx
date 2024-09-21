@@ -7,6 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis, // Import the PaginationEllipsis component
 } from "@/components/ui/pagination";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,8 @@ export function BoardPagination() {
   const { _id: boardId, slides, slide } = boardData;
   const currentSlideIndex = slides.findIndex((s) => s === slide?._id);
   const totalSlides = slides.length;
-  const SLIDE_LIMIT = 30;
+  const SLIDE_LIMIT = 10;
+
   const handlePrevious = async () => {
     if (currentSlideIndex > 0) {
       await revalidateSlidePath(boardId, currentSlideIndex);
@@ -33,7 +35,7 @@ export function BoardPagination() {
   const handleNext = async () => {
     if (currentSlideIndex < totalSlides - 1) {
       router.push(`/user-boards/${boardId}/slides/${currentSlideIndex + 1}`);
-    } else {
+    } else if (totalSlides < SLIDE_LIMIT) {
       try {
         await revalidateSlidePath(boardId, currentSlideIndex);
         await createSlide(boardId);
@@ -62,28 +64,81 @@ export function BoardPagination() {
     }
   };
 
-  const pageNumbers = slides.map((slideId, index) => index);
+  const getPageItems = (current: number, total: number) => {
+    const items: (number | "ellipsis")[] = [];
+
+    if (total <= 5) {
+      // Show all page numbers if total slides are less than or equal to 5
+      for (let i = 0; i < total; i++) {
+        items.push(i);
+      }
+    } else {
+      // Always include the first page!!!
+      items.push(0);
+
+      if (current > 2) {
+        items.push("ellipsis");
+      }
+
+      // Determine the range of page numbers to display around the current page :)
+      const startPage = Math.max(1, current - 1);
+      const endPage = Math.min(total - 2, current + 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        if (i !== 0 && i !== total - 1) {
+          items.push(i);
+        }
+      }
+
+      if (current < total - 3) {
+        items.push("ellipsis");
+      }
+
+      // Always include the last page!!!
+      if (total > 1) {
+        items.push(total - 1);
+      }
+    }
+
+    return items;
+  };
+
+  const pageItems = getPageItems(currentSlideIndex, totalSlides);
 
   return (
     <Pagination className="mt-[0.3em] flex items-center space-x-2">
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" onClick={handlePrevious} />
-        </PaginationItem>
-        {pageNumbers.map((pageIndex) => (
-          <PaginationItem key={pageIndex}>
-            <PaginationLink
-              href="#"
-              isActive={pageIndex === currentSlideIndex}
-              onClick={() => handleChangeSlide(pageIndex)}
-            >
-              {pageIndex + 1}
-            </PaginationLink>
+        {currentSlideIndex > 0 && (
+          <PaginationItem>
+            <PaginationPrevious href="#" onClick={handlePrevious} />
           </PaginationItem>
-        ))}
-        <PaginationItem>
-          <PaginationNext href="#" onClick={handleNext} />
-        </PaginationItem>
+        )}
+        {pageItems.map((item, index) => {
+          if (item === "ellipsis") {
+            return (
+              <PaginationItem key={`ellipsis-${index}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            );
+          } else {
+            return (
+              <PaginationItem key={item}>
+                <PaginationLink href="#" isActive={item === currentSlideIndex} onClick={() => handleChangeSlide(item)}>
+                  {item + 1}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          }
+        })}
+        {currentSlideIndex < SLIDE_LIMIT - 1 && (
+          <PaginationItem>
+            {currentSlideIndex === totalSlides - 1 ? (
+              <PaginationNext text={"Create Slide"} href="#" onClick={handleNext} />
+            ) : (
+              <PaginationNext href="#" onClick={handleNext} />
+            )}
+          </PaginationItem>
+        )}
       </PaginationContent>
     </Pagination>
   );
