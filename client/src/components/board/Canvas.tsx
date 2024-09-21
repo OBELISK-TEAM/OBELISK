@@ -2,7 +2,7 @@
 import React from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useZoom } from "@/contexts/ZoomUIContext";
-import { BoardPagination } from "@/components/board/Pagination";
+import { SlideControls } from "@/components/board/SlideControls/SlideControls";
 
 const SlideCanvas: React.FC = () => {
   const { canvasRef } = useCanvas();
@@ -20,7 +20,7 @@ const SlideCanvas: React.FC = () => {
 
         <div className={`zoom-badge ${showZoomBadge ? "show" : "hide"}`}>Zoom: {zoomValue.toFixed(2)}%</div>
       </div>
-      <BoardPagination />
+      <SlideControls />
     </div>
   );
 };
