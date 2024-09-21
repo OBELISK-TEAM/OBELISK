@@ -18,8 +18,9 @@ export type SlideObjectDocument = SlideObject &
   versionKey: false,
   validateBeforeSave: true,
 })
-export class SlideObject {
-  // Fabric.js-specific properties
+export class FabricJsCanvasObjectBase {
+
+  // Fabric.js - specific properties
 
   @Prop({
     type: String,
@@ -340,6 +341,34 @@ export class SlideObject {
   })
   filters?: SlideObjectFilter[];
 
+  @Prop({
+    type: Boolean,
+  })
+  erasable?: boolean;
+}
+
+export class Eraser extends FabricJsCanvasObjectBase {
+
+  // Fabric.js - specific properties
+
+  @Prop({
+    type: FabricJsCanvasObjectBase,
+  })
+  objects?: FabricJsCanvasObjectBase;
+}
+
+export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
+
+  // Fabric.js - specific properties
+
+  @Prop({
+    type: Eraser,
+  })
+  eraser?: Eraser;
+}
+
+export class SlideObject extends FabricJsCanvasObjectWithEraser {
+  
   // relations
 
   @Prop({
