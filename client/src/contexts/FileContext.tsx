@@ -5,6 +5,7 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board/fileUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { FileContext as IFileContext } from "@/interfaces/file-context";
+import { toast } from "sonner";
 
 const FileContext = createContext<IFileContext | undefined>(undefined);
 
@@ -12,6 +13,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const {
     state: { activeItem, canvas },
     setActiveItem,
+    boardData: { slide },
   } = useCanvas();
   const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -43,13 +45,13 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && canvas) {
+    if (file && canvas && slide?._id) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;
         if (result) {
-          fitImageByShrinking(result as string, 800, 600, (resizedImage) => {
-            addImage(canvas, resizedImage, undefined, saveCommand);
+          fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
+            await addImage(canvas, slide._id, resizedImage, undefined, saveCommand);
           });
         }
       };
@@ -57,9 +59,13 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const handleAddImageByUrl = (url: string) => {
+  const handleAddImageByUrl = async (url: string) => {
+    if (!slide?._id) {
+      toast.error("No slide found");
+      return;
+    }
     if (canvas) {
-      addImage(canvas, url, undefined, saveCommand);
+      await addImage(canvas, slide._id, url, undefined, saveCommand);
     }
   };
 

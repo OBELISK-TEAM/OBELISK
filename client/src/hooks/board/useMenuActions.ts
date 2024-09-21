@@ -1,3 +1,4 @@
+"use client";
 import { useCallback, useMemo } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuActions } from "@/enums/MenuActions";
@@ -25,6 +26,11 @@ import { generateId } from "@/utils/randomUtils";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { assignId } from "@/utils/utils";
+import { createCanvasObject } from "@/app/actions/slideActions";
+import { toast } from "sonner";
+import { ToastTypes } from "@/enums/ToastType";
+import { complexToast } from "@/contexts/complexToast";
+import { ApiError } from "@/errors/ApiError";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -40,17 +46,31 @@ export const useMenuActions = () => {
   const {
     state: { canvas, color, size },
     setCanvasMode,
+    boardData: { slide },
   } = useCanvas();
   const { saveCommand } = useUndoRedo();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
-    function handleSimpleObjectAdding(canvas: fabric.Canvas, addedObject: fabric.Object) {
-      const id = generateId("obj"); // whatever, it will be changed in the near future
-      assignId(addedObject, id);
-
-      const command = new AddCommand(canvas, addedObject.toJSON(["_id"]));
-      saveCommand(command);
-    }
+    const handleSimpleObjectAdding = async (canvas: fabric.Canvas, addedObject: fabric.Object) => {
+      if (!slide?._id) {
+        toast.error("No slide found");
+        return;
+      }
+      const objectData = addedObject.toJSON();
+      try {
+        const responseData = await createCanvasObject(slide._id, objectData);
+        assignId(addedObject, responseData._id);
+        const command = new AddCommand(canvas, addedObject.toJSON(["_id"]));
+        saveCommand(command);
+      } catch (error: any) {
+        console.error("Error while creating object:", error);
+        if (error instanceof ApiError) {
+          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        } else {
+          toast.error(error.message || "Failed to create an object");
+        }
+      }
+    };
 
     const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
       [CanvasMode.SELECTION]: ({ setCanvasMode }) => {
@@ -71,39 +91,39 @@ export const useMenuActions = () => {
         }
         setEraserMode(canvas, size as number, setCanvasMode);
       },
-      [MenuActions.ADD_LINE]: ({ canvas, properties, setCanvasMode }) => {
+      [MenuActions.ADD_LINE]: async ({ canvas, properties, setCanvasMode }) => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
         const addedLine = addLine(canvas, properties);
-        handleSimpleObjectAdding(canvas, addedLine);
+        await handleSimpleObjectAdding(canvas, addedLine);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
-      [MenuActions.ADD_RECTANGLE]: ({ canvas, properties, setCanvasMode }) => {
+      [MenuActions.ADD_RECTANGLE]: async ({ canvas, properties, setCanvasMode }) => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
         const addedRect = addRectangle(canvas, properties);
-        handleSimpleObjectAdding(canvas, addedRect);
+        await handleSimpleObjectAdding(canvas, addedRect);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
-      [MenuActions.ADD_CIRCLE]: ({ canvas, properties, setCanvasMode }) => {
+      [MenuActions.ADD_CIRCLE]: async ({ canvas, properties, setCanvasMode }) => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
         const addedCircle = addCircle(canvas, properties);
-        handleSimpleObjectAdding(canvas, addedCircle);
+        await handleSimpleObjectAdding(canvas, addedCircle);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
-      [MenuActions.ADD_TEXT]: ({ canvas, properties, setCanvasMode }) => {
+      [MenuActions.ADD_TEXT]: async ({ canvas, properties, setCanvasMode }) => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
         const addedText = addText(canvas, 50, 50, properties);
-        handleSimpleObjectAdding(canvas, addedText);
+        await handleSimpleObjectAdding(canvas, addedText);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -221,7 +241,7 @@ export const useMenuActions = () => {
       },
     };
     return actionHandlers;
-  }, [saveCommand]);
+  }, [saveCommand, slide]);
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {

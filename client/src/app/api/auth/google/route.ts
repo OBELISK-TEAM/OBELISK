@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
     if (response.ok) {
       const { accessToken } = await response.json();
+      //console.log("accessToken", accessToken);
       setTokenCookie(accessToken);
       return NextResponse.json({ message: "Login successful" });
     } else {

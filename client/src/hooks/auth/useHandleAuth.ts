@@ -5,7 +5,7 @@ import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
 import { useAuthForm } from "./useAuthForm";
 import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
-import { toastAuthorizationResult } from "@/contexts/toastAuthorizationResult";
+import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 
 export const useHandleAuth = (): HandleAuth => {
@@ -41,13 +41,13 @@ export const useHandleAuth = (): HandleAuth => {
           try {
             if (err instanceof Error) {
               const errorMessages = JSON.parse(err.message) as string[];
-              toastAuthorizationResult(ToastTypes.ERROR, errorMessages);
+              complexToast(ToastTypes.ERROR, errorMessages);
               console.warn(errorMessages);
             } else {
-              toastAuthorizationResult(ToastTypes.ERROR, "Unexpected error");
+              complexToast(ToastTypes.ERROR, "Unexpected error");
             }
           } catch (err2: any) {
-            toastAuthorizationResult(ToastTypes.ERROR, "Unexpected error");
+            complexToast(ToastTypes.ERROR, "Unexpected error");
           }
         } finally {
           setLoading(false);

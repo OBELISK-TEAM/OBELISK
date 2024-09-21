@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
-import { toastAuthorizationResult } from "./toastAuthorizationResult";
+import { complexToast } from "./complexToast";
 import { extractMessagesFromApiError } from "../lib/toastsUtils";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
@@ -19,11 +19,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     if (response.ok) {
       toast.dismiss();
-      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged in succesfully");
+      complexToast(ToastTypes.SUCCESS, "Logged in succesfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, reasons);
+      complexToast(ToastTypes.ERROR, reasons);
     }
   };
 
@@ -36,11 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (response.ok) {
       toast.dismiss();
-      toastAuthorizationResult(ToastTypes.SUCCESS, "Registered successfully");
+      complexToast(ToastTypes.SUCCESS, "Registered successfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, reasons, { duration: Infinity });
+      complexToast(ToastTypes.ERROR, reasons, { duration: Infinity });
     }
   };
 
@@ -48,11 +48,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const response = await fetch("/api/auth/logout", { method: "POST" });
     if (response.ok) {
       toast.dismiss();
-      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged out successfully");
+      complexToast(ToastTypes.SUCCESS, "Logged out successfully");
       router.push(successRedirect || "/auth/login");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, reasons);
+      complexToast(ToastTypes.ERROR, reasons);
     }
   };
 
@@ -67,11 +67,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (response.ok) {
       toast.dismiss();
-      toastAuthorizationResult(ToastTypes.SUCCESS, "Logged in with Google successfully");
+      complexToast(ToastTypes.SUCCESS, "Logged in with Google successfully");
       router.push(successRedirect || "/user-boards");
     } else {
       const reasons = await extractMessagesFromApiError(response);
-      toastAuthorizationResult(ToastTypes.ERROR, reasons);
+      complexToast(ToastTypes.ERROR, reasons);
       await extractMessagesFromApiError(response);
     }
   };

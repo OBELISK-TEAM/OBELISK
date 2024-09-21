@@ -4,14 +4,20 @@ import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
-import { generateId } from "@/utils/randomUtils";
-import { assignId } from "@/utils/utils";
+
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
+import { createCanvasObject } from "@/app/actions/slideActions";
+import { toast } from "sonner";
+import { assignId } from "@/utils/utils";
+import { complexToast } from "@/contexts/complexToast";
+import { ToastTypes } from "@/enums/ToastType";
+import { ApiError } from "@/errors/ApiError";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
   saveCommand: (command: any) => void,
-  handleStyleChange: () => void
+  handleStyleChange: () => void,
+  slideId: string
 ) => {
   const [state, dispatch] = useReducer(canvasEventListenersReducer, initialState);
 
@@ -20,16 +26,24 @@ const useCanvasEventHandlers = (
       return;
     }
 
-    const handlePathCreated = (e: any) => {
+    const handlePathCreated = async (e: any) => {
       if (!e.path || !canvas.contains(e.path)) {
         return;
       }
-
-      const id = generateId("path");
-      assignId(e.path, id);
-
-      const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
-      saveCommand(command);
+      try {
+        const objectData = e.path.toJSON();
+        const responseData = await createCanvasObject(slideId, objectData);
+        assignId(e.path, responseData._id);
+        const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
+        saveCommand(command);
+      } catch (error: any) {
+        console.error("Error while creating object:", error);
+        if (error instanceof ApiError) {
+          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        } else {
+          toast.error(error.message || "Failed to create an object");
+        }
+      }
     };
 
     const handleActiveSelectionModification = () => {
