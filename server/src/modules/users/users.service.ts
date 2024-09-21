@@ -10,7 +10,10 @@ import { UserResponseObject } from '../../shared/interfaces/response-objects/Use
 @Injectable()
 export class UsersService {
   private readonly pageSize = 10;
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
+  ) {}
 
   async getUsers(page: number = 1): Promise<UserResponseObject[]> {
     const skip = (page - 1) * this.pageSize;

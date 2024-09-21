@@ -14,6 +14,7 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { Permissions } from '../../shared/interfaces/Permissions';
 
 @Controller('boards')
 export class BoardsController {
@@ -58,5 +59,16 @@ export class BoardsController {
     @Param('id') boardId: string,
   ): Promise<BoardResponseObject> {
     return this.boardsService.deleteBoard(userId, boardId);
+  }
+
+  // TODO add proper dto!!! with class validator - now its for testing purposes
+  @Put(':id/permissions')
+  @UseGuards(JwtAuthGuard)
+  async updatePermissions(
+    @User('_id') userId: string,
+    @Param('id') boardId: string,
+    @Body() permissions: Permissions,
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.updatePermissions(userId, boardId, permissions);
   }
 }

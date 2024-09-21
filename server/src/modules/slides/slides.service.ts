@@ -15,7 +15,8 @@ export class SlidesService {
   private readonly pageSize = 5;
   private readonly slidesLimitPerBoard = 10;
   constructor(
-    @InjectModel(Slide.name) private readonly slideModel: Model<Slide>,
+    @InjectModel(Slide.name)
+    private readonly slideModel: Model<Slide>,
     private readonly usersService: UsersService,
     private readonly boardsService: BoardsService,
   ) {}

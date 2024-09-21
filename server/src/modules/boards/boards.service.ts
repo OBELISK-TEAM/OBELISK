@@ -9,6 +9,7 @@ import { SlideDocument } from '../../schemas/slide.schema';
 import { BoardPermission } from '../../enums/board.permission';
 import { UserDocument } from '../../schemas/user.schema';
 import { Permissions } from '../../shared/interfaces/Permissions';
+import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 
 @Injectable()
 export class BoardsService {
@@ -127,7 +128,7 @@ export class BoardsService {
   async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
     const owner = await this.usersService.findUserById(userId);
     const board = await this.findBoardById(boardId);
-    if (board.owner !== owner._id)
+    if (board.owner.toString() !== (owner._id as string).toString())
       throw new HttpException(
         'You are not the owner of this board',
         HttpStatus.FORBIDDEN,
@@ -168,6 +169,101 @@ export class BoardsService {
     if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
     if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
     return BoardPermission.VIEWER - 1;
+  }
+
+  async updatePermissions(
+    userId: string,
+    boardId: string,
+    permissions: Permissions,
+  ): Promise<BoardResponseObject> {
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.findBoardById(boardId);
+    this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
+    return this.updateBoardPermissions(boardId, permissions).then(board =>
+      this.toResponseBoard(board),
+    );
+  }
+
+  private async updateBoardPermissions(
+    boardId: string,
+    permissions: Permissions,
+  ): Promise<BoardDocument> {
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(boardId, { permissions }, { new: true })
+      .exec();
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
+  }
+
+  async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
+    const boards = await this.fetchBoardsForUser(userId);
+
+    const boardRolesMap = this.initializeUserBoardRolesMap();
+    userId = userId.toString();
+
+    boards.forEach(board =>
+      this.assignBoardToRoles(board, userId, boardRolesMap),
+    );
+    return boardRolesMap;
+  }
+
+  private initializeUserBoardRolesMap(): AvailableBoards {
+    return {
+      viewer: [] as string[],
+      editor: [] as string[],
+      moderator: [] as string[],
+      owner: [] as string[],
+    };
+  }
+
+  private assignBoardToRoles(
+    board: BoardDocument,
+    userId: string,
+    userBoardRolesMap: AvailableBoards,
+  ): void {
+    const boardId = (board._id as string).toString();
+    const ownerId = board.owner.toString();
+    const viewerIds = board.permissions.viewer.map((id: string) =>
+      id.toString(),
+    );
+    const editorIds = board.permissions.editor.map((id: string) =>
+      id.toString(),
+    );
+    const moderatorIds = board.permissions.moderator.map((id: string) =>
+      id.toString(),
+    );
+
+    if (viewerIds.includes(userId)) userBoardRolesMap.viewer.push(boardId);
+    if (editorIds.includes(userId)) userBoardRolesMap.editor.push(boardId);
+    if (moderatorIds.includes(userId))
+      userBoardRolesMap.moderator.push(boardId);
+    if (ownerId === userId) userBoardRolesMap.owner.push(boardId);
+  }
+
+  private async fetchBoardsForUser(userId: string): Promise<BoardDocument[]> {
+    return this.boardModel
+      .find({
+        $or: [
+          { owner: userId },
+          { 'permissions.viewer': userId },
+          { 'permissions.editor': userId },
+          { 'permissions.moderator': userId },
+        ],
+      })
+      .exec();
+  }
+
+  getBoardPermission(
+    boardId: string,
+    boardWithPermission: AvailableBoards,
+  ): BoardPermission {
+    const { owner, viewer, editor, moderator } = boardWithPermission;
+    if (owner.includes(boardId)) return BoardPermission.OWNER;
+    if (moderator.includes(boardId)) return BoardPermission.MODERATOR;
+    if (editor.includes(boardId)) return BoardPermission.EDITOR;
+    if (viewer.includes(boardId)) return BoardPermission.VIEWER;
+    return BoardPermission.NONE;
   }
 
   async toResponseBoard(

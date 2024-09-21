@@ -12,6 +12,7 @@ import { GoogleUser } from '../../shared/interfaces/auth/GoogleUser';
 import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { UserAuthProvider } from 'src/enums/user.auth.provider';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
+import { Payload } from '../../shared/interfaces/auth/Payload';
 
 @Injectable()
 export class AuthService {
@@ -104,6 +105,13 @@ export class AuthService {
   ): AuthToken {
     const payload = { email: user.email, _id: user._id };
     return { accessToken: this.jwtService.sign(payload) };
+  }
+
+  // unfortunately passport-jwt does not support websockets
+  // so we have to validate the token manually for ws.auth.guard.ts
+  async validateToken(token: string): Promise<SafeUserDoc | null> {
+    const payload = this.jwtService.verify<Payload>(token);
+    return this.validateUserById(payload._id);
   }
 
   async googleRedirect(req: Request, res: Response): Promise<void> {
