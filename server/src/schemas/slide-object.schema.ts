@@ -19,7 +19,6 @@ export type SlideObjectDocument = SlideObject &
   validateBeforeSave: true,
 })
 export class FabricJsCanvasObjectBase {
-
   // Fabric.js - specific properties
 
   @Prop({
@@ -348,7 +347,6 @@ export class FabricJsCanvasObjectBase {
 }
 
 export class Eraser extends FabricJsCanvasObjectBase {
-
   // Fabric.js - specific properties
 
   @Prop({
@@ -358,7 +356,6 @@ export class Eraser extends FabricJsCanvasObjectBase {
 }
 
 export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
-
   // Fabric.js - specific properties
 
   @Prop({
@@ -368,7 +365,6 @@ export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
 }
 
 export class SlideObject extends FabricJsCanvasObjectWithEraser {
-  
   // relations
 
   @Prop({
