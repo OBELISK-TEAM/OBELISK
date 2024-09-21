@@ -22,8 +22,9 @@ import {
 } from "@/app/actions/slideActions";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, MinusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DeleteSlideDialog } from "@/components/board/DeleteSlideModal";
 
 export function BoardPagination() {
   const router = useRouter();
@@ -48,6 +49,7 @@ export function BoardPagination() {
       await revalidateSlidePath(boardId, currentSlideIndex);
       await createSlideAction(boardId);
       router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
+      toast.success("Slide created successfully");
     } catch (error: any) {
       console.error("Error creating new slide:", error);
       if (error instanceof ApiError) {
@@ -58,17 +60,18 @@ export function BoardPagination() {
     }
   };
 
-  const deleteSlide = async (slideId: string) => {
+  const deleteSlide = async () => {
     if (totalSlides === 1) {
       toast.error("You cannot delete slide as it is the only slide in the board");
       return;
     }
     try {
-      await deleteSlideAction(slideId);
+      await deleteSlideAction(slide._id);
       toast.success(`Slide deleted successfully`);
       if (currentSlideIndex === 0) {
         await revalidateSlidePath(boardId, currentSlideIndex);
         router.refresh();
+        console.log("Refreshed");
       } else {
         router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlideIndex - 1, 0)}`);
       }
@@ -164,7 +167,7 @@ export function BoardPagination() {
             {pageItems.map((item, index) => {
               if (item === "ellipsis") {
                 return (
-                  <HoverCard closeDelay={200} key="hover-card">
+                  <HoverCard closeDelay={200} key={`hover-card-${index}`}>
                     <HoverCardTrigger asChild>
                       <PaginationItem key={`ellipsis-${index}`}>
                         <PaginationEllipsis className="h-4 cursor-pointer transition-transform duration-200 hover:text-blue-500" />
@@ -217,12 +220,10 @@ export function BoardPagination() {
       <div className="flex max-w-[33%] flex-grow items-center justify-end space-x-4">
         <Button variant="outline" onClick={createSlide}>
           <PlusIcon size={16} className="mr-2 h-5 w-5" />
-          Add slide
+          Create slide
         </Button>
-        <Button variant="outline" onClick={() => deleteSlide(slide._id)}>
-          <MinusIcon size={16} className="mr-2 h-5 w-5" />
-          Delete slide
-        </Button>
+
+        <DeleteSlideDialog deleteSlide={deleteSlide} />
       </div>
     </div>
   );
