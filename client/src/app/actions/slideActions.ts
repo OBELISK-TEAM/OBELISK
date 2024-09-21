@@ -62,6 +62,30 @@ export async function createSlide(boardId: string): Promise<SlideIdResponse> {
   }
 }
 
+export async function deleteSlide(slideId: string): Promise<SlideIdResponse> {
+  const accessToken = getCookie("accessToken");
+
+  try {
+    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/slides/${slideId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const reasons = await extractMessagesFromApiError(response);
+      throw new ApiError(reasons);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error while deleting slide:", error);
+    throw error;
+  }
+}
+
 export async function revalidateSlidePath(boardId: string, slideIndex: number) {
   revalidatePath(`/user-boards/${boardId}/slides/${slideIndex}`);
 }

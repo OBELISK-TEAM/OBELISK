@@ -21,7 +21,7 @@ const Board: React.FC = () => {
         >
           <BoardToolBar />
           <SlideCanvas />
-          <BoardPagination />
+
           <SlideFileInputs />
         </div>
       </div>
