@@ -58,15 +58,16 @@ export const addImage = async (
         Object.assign(img, { _id: responseData._id });
         canvas.add(img);
         canvas.setActiveObject(img);
+
+        if (!saveCommand) {
+          return;
+        }
+        const command = new AddCommand(canvas, img.toJSON(["_id"]));
+        saveCommand(command);
       } catch (error: any) {
-        console.error("Error creating image object on backend:", error);
-        toast.error(error.message || "Failed to create image on backend");
+        console.error("Error creating image object:", error);
+        toast.error(error.message || "Failed to create image");
       }
-      if (!saveCommand) {
-        return;
-      }
-      const command = new AddCommand(canvas, img.toJSON(["_id"]));
-      saveCommand(command);
     });
   } catch (error: any) {
     console.error("Error loading image:", error);

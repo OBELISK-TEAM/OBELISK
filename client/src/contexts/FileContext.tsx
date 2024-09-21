@@ -45,11 +45,11 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && canvas) {
+    if (file && canvas && slide?._id) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;
-        if (result && slide?._id) {
+        if (result) {
           fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
             await addImage(canvas, slide._id, resizedImage, undefined, saveCommand);
           });
