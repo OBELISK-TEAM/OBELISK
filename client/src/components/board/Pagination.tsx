@@ -14,7 +14,7 @@ import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { toast } from "sonner";
-import { createSlide } from "@/app/actions/slideActions";
+import { createSlide, revalidateSlidePath } from "@/app/actions/slideActions";
 
 export function BoardPagination() {
   const router = useRouter();
@@ -23,8 +23,9 @@ export function BoardPagination() {
   const currentSlideIndex = slides.findIndex((s) => s === slide?._id);
   const totalSlides = slides.length;
   const SLIDE_LIMIT = 30;
-  const handlePrevious = () => {
+  const handlePrevious = async () => {
     if (currentSlideIndex > 0) {
+      await revalidateSlidePath(boardId, currentSlideIndex);
       router.push(`/user-boards/${boardId}/slides/${currentSlideIndex - 1}`);
     }
   };
@@ -34,6 +35,7 @@ export function BoardPagination() {
       router.push(`/user-boards/${boardId}/slides/${currentSlideIndex + 1}`);
     } else {
       try {
+        await revalidateSlidePath(boardId, currentSlideIndex);
         await createSlide(boardId);
         router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
       } catch (error: any) {
@@ -47,8 +49,17 @@ export function BoardPagination() {
     }
   };
 
-  const handlePaginationLinkClick = (index: number) => {
-    router.push(`/user-boards/${boardId}/slides/${index}`);
+  const handleChangeSlide = async (slideIndex: number) => {
+    if (slideIndex === currentSlideIndex) {
+      return;
+    }
+    try {
+      await revalidateSlidePath(boardId, slideIndex);
+      router.push(`/user-boards/${boardId}/slides/${slideIndex}`);
+    } catch (error) {
+      console.error("Error revalidating path:", error);
+      toast.error("Failed to revalidate slide");
+    }
   };
 
   const pageNumbers = slides.map((slideId, index) => index);
@@ -64,7 +75,7 @@ export function BoardPagination() {
             <PaginationLink
               href="#"
               isActive={pageIndex === currentSlideIndex}
-              onClick={() => handlePaginationLinkClick(pageIndex)}
+              onClick={() => handleChangeSlide(pageIndex)}
             >
               {pageIndex + 1}
             </PaginationLink>

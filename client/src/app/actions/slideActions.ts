@@ -4,6 +4,7 @@ import { getCookie } from "@/utils/authApi";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { ApiError } from "@/errors/ApiError";
 import { SlideIdResponse } from "@/interfaces/responses/slide-id-response";
+import { revalidatePath } from "next/cache";
 
 export async function createCanvasObject(slideId: string, objectData: any): Promise<any> {
   const accessToken = getCookie("accessToken");
@@ -54,10 +55,13 @@ export async function createSlide(boardId: string): Promise<SlideIdResponse> {
       const reasons = await extractMessagesFromApiError(response);
       throw new ApiError(reasons);
     }
-
     return await response.json();
   } catch (error) {
     console.error("Error while creating slide:", error);
     throw error;
   }
+}
+
+export async function revalidateSlidePath(boardId: string, slideIndex: number) {
+  revalidatePath(`/user-boards/${boardId}/slides/${slideIndex}`);
 }
