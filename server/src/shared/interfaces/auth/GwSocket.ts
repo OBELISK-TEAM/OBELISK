@@ -7,7 +7,10 @@ export interface GwSocket extends Socket {
   data: {
     user: SafeUserDoc & {
       availableBoards?: AvailableBoards;
-      permission?: BoardPermission;
+      targetBoard?: {
+        boardId: string;
+        permission: BoardPermission;
+      };
     };
   };
 }

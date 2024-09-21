@@ -13,12 +13,19 @@ export class JoinBoardService {
   async handleJoinBoard(client: GwSocket, data: JoinBoardDto): Promise<void> {
     const { boardId } = data;
 
-    if (!(await this.isBoardValid(client, boardId))) return;
+    if (!(await this.isBoardValid(client, boardId))) {
+      this.emitErrorAndDisconnect(client, 'Invalid board id');
+      return;
+    }
 
     const permission = this.getBoardPermission(boardId, client);
-    if (!this.isPermissionValid(client, permission)) return;
 
-    this.assignClientPermission(client, permission, boardId);
+    if (!this.isPermissionValid(client, permission)) {
+      this.emitErrorAndDisconnect(client, 'Invalid permission');
+      return;
+    }
+
+    this.assignClientBoardAndPermission(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
   }
 
@@ -66,12 +73,12 @@ export class JoinBoardService {
     return true;
   }
 
-  private assignClientPermission(
+  private assignClientBoardAndPermission(
     client: GwSocket,
     permission: BoardPermission,
     boardId: string,
   ): void {
-    client.data.user.permission = permission;
+    client.data.user.targetBoard = { boardId, permission };
     this.logger.log(
       `${client.data.user.email} is ${BoardPermission[permission]} of board ${boardId}`,
     );

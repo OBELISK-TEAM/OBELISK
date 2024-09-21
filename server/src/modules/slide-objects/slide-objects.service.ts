@@ -11,6 +11,10 @@ import { SlidesService } from '../slides/slides.service';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
 import { BoardsService } from '../boards/boards.service';
 import { BoardPermission } from '../../enums/board.permission';
+import {
+  CustomSlideObject,
+  CustomSlideObjectWithId,
+} from '../../shared/interfaces/CustomSlideObject';
 
 @Injectable()
 export class SlideObjectsService {
@@ -39,7 +43,7 @@ export class SlideObjectsService {
   async getSlideObjectById(
     slideObjectId: string,
   ): Promise<SlideObjectResponseObject> {
-    return this.findOneById(slideObjectId).then(slideObject =>
+    return this.findObjectById(slideObjectId).then(slideObject =>
       this.toResponseSlideObject(slideObject, true, true),
     );
   }
@@ -97,7 +101,7 @@ export class SlideObjectsService {
     userId: string,
     slideObjectId: string,
   ): Promise<SlideObjectResponseObject> {
-    const slideObject = await this.findOneById(slideObjectId);
+    const slideObject = await this.findObjectById(slideObjectId);
     const slide = await this.slidesService.findSlideById(slideObject.slide);
     const user = await this.usersService.findUserById(userId);
     const board = await this.boardsService.findBoardById(slide.board);
@@ -123,7 +127,7 @@ export class SlideObjectsService {
     return this.slideObjectModel.find().skip(skip).limit(limit).exec();
   }
 
-  async findOneById(slideObjectId: string): Promise<SlideObjectDocument> {
+  async findObjectById(slideObjectId: string): Promise<SlideObjectDocument> {
     const existingSlideObject = await this.slideObjectModel
       .findById(slideObjectId)
       .exec();
@@ -141,6 +145,30 @@ export class SlideObjectsService {
     if (!deletedSlideObject)
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
     return deletedSlideObject;
+  }
+
+  // WS methods
+
+  async getSlideObjectById100(
+    slideObjectId: string,
+  ): Promise<SlideObjectResponseObject> {
+    const existingSlideObject = await this.slideObjectModel
+      .findById(slideObjectId)
+      .exec();
+    if (!existingSlideObject)
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
+    return this.toResponseSlideObject(existingSlideObject);
+  }
+
+  async updateSlideObjectById(
+    object: CustomSlideObjectWithId,
+  ): Promise<SlideObjectResponseObject> {
+    const updatedSlideObject = await this.slideObjectModel
+      .findByIdAndUpdate(object._id, object, { new: true })
+      .exec();
+    if (!updatedSlideObject)
+      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
+    return this.toResponseSlideObject(updatedSlideObject);
   }
 
   toResponseSlideObject(

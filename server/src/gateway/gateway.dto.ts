@@ -1,4 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import {
+  CustomSlideObject,
+  CustomSlideObjectWithId,
+} from '../shared/interfaces/CustomSlideObject';
 
 export class JoinBoardDto {
   @IsString({
@@ -8,4 +12,12 @@ export class JoinBoardDto {
     message: 'The boardId is required',
   })
   boardId: string;
+}
+
+export interface AddObjectData {
+  object: CustomSlideObject;
+}
+
+export interface UpdateObjectData {
+  object: CustomSlideObjectWithId;
 }
