@@ -107,8 +107,8 @@ export class SlideObjectsService {
       BoardPermission.EDITOR,
     );
     await this.slidesService.deleteSlideObjectFromSlide(
-      slideObjectId,
       slideObject.slide,
+      slideObjectId,
     );
     await this.usersService.deleteSlideObjectFromUser(userId, slideObjectId);
     return this.deleteSlideObjectById(slideObjectId).then(deletedSlideObject =>
