@@ -2,7 +2,7 @@
 
 import { getCookie } from "@/utils/authApi";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiError } from "@/errors/ApiError";
+import { ApiErrorData } from "@/errors/ApiErrorData";
 
 export async function createCanvasObject(slideId: string, objectData: any): Promise<any> {
   const accessToken = getCookie("accessToken");
@@ -22,11 +22,11 @@ export async function createCanvasObject(slideId: string, objectData: any): Prom
 
     if (!response.ok) {
       const reasons = await extractMessagesFromApiError(response);
-      throw new ApiError(reasons);
+      throw new ApiErrorData(reasons);
     }
     return await response.json();
   } catch (error) {
-    console.error("Error creating object:", error);
+    console.error("Error while creating object:", error);
     throw error;
   }
 }

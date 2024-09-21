@@ -1,7 +1,7 @@
-import { ApiError } from "@/interfaces/api-error";
+import { ApiErrorResponse } from "@/interfaces/responses/api-error-response";
 
 export const extractMessagesFromApiError = async (response: Response): Promise<string[]> => {
-  const errorData: ApiError = await response.json();
+  const errorData: ApiErrorResponse = await response.json();
   let errorMessages: string[] = [];
 
   if (errorData?.details && typeof errorData.details === "object") {

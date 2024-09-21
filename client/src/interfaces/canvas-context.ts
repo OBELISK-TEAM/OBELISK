@@ -1,7 +1,7 @@
 import { CanvasReducerState } from "@/types/CanvasReducer";
 import { MutableRefObject } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { BoardDataResponse } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 
 export interface CanvasContext {
   state: CanvasReducerState;

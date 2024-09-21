@@ -12,7 +12,7 @@ import {
 } from "@/utils/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
-import { BoardDataResponse } from "@/interfaces/board-data-response";
+import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -26,6 +26,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
+
     const handleSelectionCreated = () => {
       //toolbar appear
       dispatch({

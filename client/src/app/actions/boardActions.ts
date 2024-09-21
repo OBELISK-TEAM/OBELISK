@@ -1,8 +1,9 @@
 "use server";
 
 import { getCookie } from "@/utils/authApi";
-import { BoardDataResponse } from "@/interfaces/board-data-response";
-import { ApiError } from "@/interfaces/api-error";
+import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+import { extractMessagesFromApiError } from "@/lib/toastsUtils";
+import { ApiErrorData } from "@/errors/ApiErrorData";
 
 export async function createBoard(): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
@@ -19,12 +20,12 @@ export async function createBoard(): Promise<BoardDataResponse> {
     });
 
     if (!response.ok) {
-      const errorData: ApiError = await response.json();
-      throw new Error(errorData.message || "Failed to create board");
+      const reasons = await extractMessagesFromApiError(response);
+      throw new ApiErrorData(reasons);
     }
     return await response.json();
   } catch (error) {
-    console.error("Error creating board:", error);
+    console.error("Error while creating board:", error);
     throw error;
   }
 }
