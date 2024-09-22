@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { MinusIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import clsx from "clsx";
 
 interface DeleteSlideDialogProps {
   deleteSlide: () => void;
