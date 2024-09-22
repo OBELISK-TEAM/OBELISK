@@ -23,6 +23,10 @@ export class SlideObjectsService {
     private readonly slidesService: SlidesService,
   ) {}
 
+  getSlideObjectModel(): Model<SlideObject> {
+    return this.slideObjectModel;
+  }
+
   async getSlideObjects(
     page: number = 1,
   ): Promise<SlideObjectResponseObject[]> {
@@ -42,31 +46,6 @@ export class SlideObjectsService {
     return this.findOneById(slideObjectId).then(slideObject =>
       this.toResponseSlideObject(slideObject, true, true),
     );
-  }
-
-  async createSlideObject(
-    userId: string,
-    createSlideObjectDto: CreateSlideObjectDto,
-  ): Promise<SlideObjectResponseObject> {
-    const { slideId, ...slideObject } = createSlideObjectDto;
-    const slide = await this.slidesService.findSlideById(slideId);
-    const user = await this.usersService.findUserById(userId);
-    const board = await this.boardsService.findBoardById(slide.board);
-    this.boardsService.verifyBoardPermission(
-      board,
-      user,
-      BoardPermission.EDITOR,
-    );
-    const createdSlideObject = new this.slideObjectModel({
-      ...slideObject,
-      createdBy: user,
-      slide,
-    });
-    await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
-    return createdSlideObject
-      .save()
-      .then(slideObject => this.toResponseSlideObject(slideObject));
   }
 
   async updateSlideObject(

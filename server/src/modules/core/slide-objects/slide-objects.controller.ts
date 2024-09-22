@@ -14,10 +14,14 @@ import { CreateSlideObjectDto } from './slide-objects.dto';
 import { User } from '../../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
 import { SlideObjectResponseObject } from '../../../shared/interfaces/response-objects/SlideObjectResponseObject';
+import { CoreService } from '../core.service';
 
 @Controller('slide-objects')
 export class SlideObjectsController {
-  constructor(private readonly slideObjectsService: SlideObjectsService) {}
+  constructor(
+    private readonly slideObjectsService: SlideObjectsService,
+    private readonly coreService: CoreService,
+  ) {}
 
   @Get()
   async getSlideObjects(
@@ -39,7 +43,7 @@ export class SlideObjectsController {
     @User('_id') userId: string,
     @Body() createSlideObjectDto: CreateSlideObjectDto,
   ): Promise<SlideObjectResponseObject> {
-    return await this.slideObjectsService.createSlideObject(
+    return await this.coreService.createSlideObject(
       userId,
       createSlideObjectDto,
     );
