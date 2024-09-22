@@ -1,1 +1,1 @@
-export type SlideObjectPath = [string, number, number];
+export type SlideObjectPath = [string, ...number[]];

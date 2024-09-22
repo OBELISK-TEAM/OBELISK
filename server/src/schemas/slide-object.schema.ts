@@ -350,16 +350,16 @@ export class Eraser extends FabricJsCanvasObjectBase {
   // Fabric.js - specific properties
 
   @Prop({
-    type: FabricJsCanvasObjectBase,
+    type: [MongooseSchema.Types.Mixed],
   })
-  objects?: FabricJsCanvasObjectBase;
+  objects?: FabricJsCanvasObjectBase[];
 }
 
 export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
   // Fabric.js - specific properties
 
   @Prop({
-    type: Eraser,
+    type: MongooseSchema.Types.Mixed,
   })
   eraser?: Eraser;
 }
