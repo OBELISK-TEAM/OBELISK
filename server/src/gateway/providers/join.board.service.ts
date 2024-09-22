@@ -11,7 +11,7 @@ export class JoinBoardService {
   constructor(private readonly boardsService: BoardsService) {}
 
   async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
-    const boardId = data.board.boardId;
+    const boardId = data.board._id;
 
     if (!(await this.isBoardValid(client, boardId))) {
       this.emitErrorAndDisconnect(client, 'Invalid board id');

@@ -5,10 +5,7 @@ import { Slide, SlideDocument } from '../../schemas/slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
-import {
-  SlideObject,
-  SlideObjectDocument,
-} from 'src/schemas/slide-object.schema';
+import { SlideObject } from 'src/schemas/slide-object.schema';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { UsersService } from '../users/users.service';
 import { BoardPermission } from '../../enums/board.permission';
@@ -31,11 +28,10 @@ export class SlidesService {
     );
   }
 
-  async getSlideById(slideId: string): Promise<any> {
-    return this.findSlideById(slideId);
-    // return this.findSlideById(slideId).then(slide =>
-    //   this.toResponseSlide(slide),
-    // );
+  async getSlideById(slideId: string): Promise<SlideResponseObject> {
+    return this.findSlideById(slideId).then(slide =>
+      this.toResponseSlide(slide),
+    );
   }
 
   async createSlide(

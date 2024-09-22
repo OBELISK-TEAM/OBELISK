@@ -12,9 +12,9 @@ import { SlideObjectResponseObject } from '../../shared/interfaces/response-obje
 import { BoardsService } from '../boards/boards.service';
 import { BoardPermission } from '../../enums/board.permission';
 import {
-  CustomSlideObject,
-  CustomSlideObjectWithId,
-} from '../../shared/interfaces/CustomSlideObject';
+  ObjectDataProps,
+  ObjectDataPropsWithId,
+} from '../../gateway/gateway.dto';
 
 @Injectable()
 export class SlideObjectsService {
@@ -152,7 +152,7 @@ export class SlideObjectsService {
   async createObject(
     userId: string,
     slideId: string,
-    objectProps: CustomSlideObject,
+    objectProps: ObjectDataProps,
   ): Promise<SlideObjectResponseObject> {
     const slide = await this.slidesService.findSlideById(slideId);
     const user = await this.usersService.findUserById(userId);
@@ -169,7 +169,7 @@ export class SlideObjectsService {
   }
 
   async updateObject(
-    object: CustomSlideObjectWithId,
+    object: ObjectDataPropsWithId,
   ): Promise<SlideObjectResponseObject> {
     const updatedSlideObject = await this.slideObjectModel
       .findByIdAndUpdate(object._id, object, { new: true })

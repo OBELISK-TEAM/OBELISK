@@ -5,8 +5,6 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { UseGuards } from '@nestjs/common';
-import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
 import { GwSocket } from '../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
@@ -17,6 +15,11 @@ import {
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { ObjectActionService } from './providers/object.action.service';
+
+// no need to use @UseGuards() decorator here
+// because the WsAuthGuard is already applied in the ConnectionService
+// auth is done on connection, not on message
+// so no need to authenticate every message
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -37,7 +40,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-board')
-  @UseGuards(WsAuthGuard)
   async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
     return this.joinBoardService.handleJoinBoard(client, data);
   }

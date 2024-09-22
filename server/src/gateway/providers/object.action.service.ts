@@ -8,7 +8,7 @@ import {
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
 import { SlideObjectsService } from '../../modules/slide-objects/slide-objects.service';
 import { Socket } from 'socket.io';
-import { CustomSlideObjectWithId } from '../../shared/interfaces/CustomSlideObject';
+import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class ObjectActionService {
@@ -17,23 +17,25 @@ export class ObjectActionService {
 
   async handleObjectAction(
     client: GwSocket,
-    data: any,
+    data: AddObjectData | UpdateObjectData | DeleteObjectData,
     action: ObjectAction,
   ): Promise<void> {
-    // TODO - verify if user is editor/moderator/owner
-    // TODO - if missing - emit error and disconnect
-    // use - try catch  - catch emit error and disconnect
+    if (!this.hasClientPermission(client)) return;
 
-    switch (action) {
-      case ObjectAction.ADD:
-        await this.handleAddObject(client, data);
-        break;
-      case ObjectAction.UPDATE:
-        await this.handleUpdateObject(client, data);
-        break;
-      case ObjectAction.DELETE:
-        await this.handleDeleteObject(client, data);
-        break;
+    try {
+      switch (action) {
+        case ObjectAction.ADD:
+          await this.handleAddObject(client, data as AddObjectData);
+          break;
+        case ObjectAction.UPDATE:
+          await this.handleUpdateObject(client, data as UpdateObjectData);
+          break;
+        case ObjectAction.DELETE:
+          await this.handleDeleteObject(client, data as DeleteObjectData);
+          break;
+      }
+    } catch (error) {
+      this.emitErrorAndDisconnect(client, 'Something went wrong');
     }
   }
 
@@ -103,6 +105,21 @@ export class ObjectActionService {
     );
 
     client.to(boardId).emit('object-deleted', deletedObject);
+  }
+
+  private hasClientPermission(client: GwSocket): boolean {
+    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
+      this.emitErrorAndDisconnect(client, 'Something went wrong');
+      return false;
+    }
+    if (
+      client.data.user.targetBoard.permission === BoardPermission.VIEWER ||
+      client.data.user.targetBoard.permission === BoardPermission.NONE
+    ) {
+      this.emitErrorAndDisconnect(client, 'Invalid permission');
+      return false;
+    }
+    return true;
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {
