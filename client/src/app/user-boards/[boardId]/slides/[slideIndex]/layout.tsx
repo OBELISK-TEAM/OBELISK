@@ -18,30 +18,49 @@ interface UserBoardLayout {
 const SliderLayout = async ({ children, params }: UserBoardLayout) => {
   const { boardId, slideIndex } = params;
 
-  if (isNaN(parseInt(slideIndex))) {
+  const slideIndexNumber = parseInt(slideIndex);
+
+  if (isNaN(slideIndexNumber)) {
     return notFound();
   }
 
-  const boardResponse = await fetch(
-    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}?slide=${slideIndex}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    }
-  );
+  let boardResponse: Response;
+
+  try {
+    boardResponse = await fetch(
+      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}?slide=${slideIndex}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+  } catch (error) {
+    console.error("Error fetching board data:", error);
+    return notFound();
+  }
 
   if (!boardResponse.ok) {
     return notFound();
   }
 
-  const boardData: BoardDataResponse = await boardResponse.json();
-  const length = boardData.slides.length;
-  if (parseInt(slideIndex) >= length || parseInt(slideIndex) < 0) {
+  let boardData: BoardDataResponse;
+
+  try {
+    boardData = await boardResponse.json();
+  } catch (error) {
+    console.error("Error parsing board data:", error);
     return notFound();
   }
+
+  const totalSlides = boardData.slides.length;
+
+  if (slideIndexNumber >= totalSlides || slideIndexNumber < 0) {
+    return notFound();
+  }
+
   const slide = boardData.slide;
 
   if (!slide) {
