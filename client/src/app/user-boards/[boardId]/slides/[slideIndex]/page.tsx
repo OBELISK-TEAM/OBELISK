@@ -1,6 +1,5 @@
 import BoardSidebar from "@/components/board/Sidebar";
 import BoardToolBar from "@/components/board/Toolbar/Toolbar";
-import { BoardPagination } from "@/components/board/Pagination";
 import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
 import SlideCanvas from "@/components/board/Canvas";
@@ -21,7 +20,7 @@ const Board: React.FC = () => {
         >
           <BoardToolBar />
           <SlideCanvas />
-          <BoardPagination />
+
           <SlideFileInputs />
         </div>
       </div>

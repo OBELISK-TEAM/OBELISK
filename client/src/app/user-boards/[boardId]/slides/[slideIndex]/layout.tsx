@@ -18,11 +18,16 @@ interface UserBoardLayout {
 const SliderLayout = async ({ children, params }: UserBoardLayout) => {
   const { boardId, slideIndex } = params;
 
-  if (isNaN(parseInt(slideIndex))) {
+  const slideIndexNumber = parseInt(slideIndex);
+
+  if (isNaN(slideIndexNumber)) {
     return notFound();
   }
+
+  let boardResponse: Response;
+
   try {
-    const boardResponse = await fetch(
+    boardResponse = await fetch(
       `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}?slide=${slideIndex}`,
       {
         method: "GET",
@@ -32,39 +37,49 @@ const SliderLayout = async ({ children, params }: UserBoardLayout) => {
         cache: "no-store",
       }
     );
-
-    if (!boardResponse.ok) {
-      return notFound();
-    }
-
-    const boardData: BoardDataResponse = await boardResponse.json();
-    const length = boardData.slides.length;
-    if (parseInt(slideIndex) >= length || parseInt(slideIndex) < 0) {
-      return notFound();
-    }
-    const slide = boardData.slide;
-
-    if (!slide) {
-      return notFound();
-    }
-
-    return (
-      <ZoomUIProvider>
-        <CanvasProvider boardData={boardData}>
-          <UndoRedoProvider slideId={slide._id}>
-            <MenuDataProvider>
-              <FileProvider>
-                <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
-              </FileProvider>
-            </MenuDataProvider>
-          </UndoRedoProvider>
-        </CanvasProvider>
-      </ZoomUIProvider>
-    );
   } catch (error) {
-    console.error("Error in SliderLayout:", error);
+    console.error("Error fetching board data:", error);
     return notFound();
   }
+
+  if (!boardResponse.ok) {
+    return notFound();
+  }
+
+  let boardData: BoardDataResponse;
+
+  try {
+    boardData = await boardResponse.json();
+  } catch (error) {
+    console.error("Error parsing board data:", error);
+    return notFound();
+  }
+
+  const totalSlides = boardData.slides.length;
+
+  if (slideIndexNumber >= totalSlides || slideIndexNumber < 0) {
+    return notFound();
+  }
+
+  const slide = boardData.slide;
+
+  if (!slide) {
+    return notFound();
+  }
+
+  return (
+    <ZoomUIProvider>
+      <CanvasProvider boardData={boardData}>
+        <UndoRedoProvider slideId={slide._id}>
+          <MenuDataProvider>
+            <FileProvider>
+              <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+            </FileProvider>
+          </MenuDataProvider>
+        </UndoRedoProvider>
+      </CanvasProvider>
+    </ZoomUIProvider>
+  );
 };
 
 export default SliderLayout;
