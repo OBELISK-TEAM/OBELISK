@@ -83,8 +83,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleNext = async () => {
     if (currentSlideIndex < totalSlides - 1) {
       router.push(`/user-boards/${boardId}/slides/${currentSlideIndex + 1}`);
-    } else if (totalSlides < SLIDE_LIMIT) {
-      await createSlide();
     }
   };
 

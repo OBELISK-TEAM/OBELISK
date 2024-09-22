@@ -15,8 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useSlideControls } from "@/contexts/SlideControlsContext";
 
 export function SlidePagination() {
-  const { currentSlideIndex, totalSlides, SLIDE_LIMIT, handleChangeSlide, handlePrevious, handleNext } =
-    useSlideControls();
+  const { currentSlideIndex, totalSlides, handleChangeSlide, handlePrevious, handleNext } = useSlideControls();
   const slideInputRef = useRef<HTMLInputElement>(null);
 
   const handleShowSlide = async () => {
@@ -115,13 +114,9 @@ export function SlidePagination() {
               );
             }
           })}
-          {currentSlideIndex < SLIDE_LIMIT - 1 && (
+          {currentSlideIndex < totalSlides - 1 && (
             <PaginationItem>
-              {currentSlideIndex === totalSlides - 1 ? (
-                <PaginationNext text={"Create Slide"} href="#" onClick={handleNext} />
-              ) : (
-                <PaginationNext href="#" onClick={handleNext} />
-              )}
+              <PaginationNext href="#" onClick={handleNext} />
             </PaginationItem>
           )}
         </PaginationContent>
