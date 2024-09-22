@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BoardsService } from '../../modules/boards/boards.service';
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
-import { JoinBoardData, JoinBoardDto } from '../gateway.dto';
+import { JoinBoardData } from '../gateway.dto';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
 

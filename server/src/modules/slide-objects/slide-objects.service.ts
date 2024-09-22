@@ -168,7 +168,7 @@ export class SlideObjectsService {
       .then(slideObject => this.toResponseSlideObject(slideObject));
   }
 
-  async updateSlideObject2(
+  async updateObject(
     object: CustomSlideObjectWithId,
   ): Promise<SlideObjectResponseObject> {
     const updatedSlideObject = await this.slideObjectModel
@@ -179,13 +179,13 @@ export class SlideObjectsService {
     return this.toResponseSlideObject(updatedSlideObject);
   }
 
-  async deleteSlideObjectById2(
+  async deleteObject(
     userId: string,
     slideId: string,
     slideObjectId: string,
-  ): Promise<SlideObjectDocument> {
-    // const slide = await this.slidesService.findSlideById(slideId);
-    // const user = await this.usersService.findUserById(userId);
+  ): Promise<SlideObjectResponseObject> {
+    await this.slidesService.findSlideById(slideId);
+    await this.usersService.findUserById(userId);
 
     const deletedSlideObject = await this.slideObjectModel
       .findByIdAndDelete(slideObjectId)
@@ -197,13 +197,14 @@ export class SlideObjectsService {
       userId,
       deletedSlideObject._id.toString(),
     );
-    await this.slidesService.deleteSlideObjectFromSlide(
+    await this.slidesService.deleteObjectFromSlide(
       slideId,
       deletedSlideObject._id.toString(),
     );
-
-    return deletedSlideObject;
+    return this.toResponseSlideObject(deletedSlideObject);
   }
+
+  // END WS methods
 
   toResponseSlideObject(
     slideObject: SlideObjectDocument,

@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ObjectAction } from '../gateway';
-import { AddObjectData, UpdateObjectData } from '../gateway.dto';
+import {
+  AddObjectData,
+  DeleteObjectData,
+  UpdateObjectData,
+} from '../gateway.dto';
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
 import { SlideObjectsService } from '../../modules/slide-objects/slide-objects.service';
 import { Socket } from 'socket.io';
@@ -28,7 +32,7 @@ export class ObjectActionService {
         await this.handleUpdateObject(client, data);
         break;
       case ObjectAction.DELETE:
-        this.handleDeleteObject(client, data);
+        await this.handleDeleteObject(client, data);
         break;
     }
   }
@@ -44,7 +48,7 @@ export class ObjectActionService {
 
     const boardId = client.data.user.targetBoard.boardId;
     const userId = client.data.user._id as string;
-    const slideId = data.slide.slideId;
+    const slideId = data.slide._id;
     const objectProps = data.object;
 
     const createdObject = await this.slideObjectsService.createObject(
@@ -69,10 +73,7 @@ export class ObjectActionService {
     }
 
     const object = data.object;
-
-    const updatedObject =
-      await this.slideObjectsService.updateSlideObject2(object);
-
+    const updatedObject = await this.slideObjectsService.updateObject(object);
     const boardId = client.data.user.targetBoard.boardId;
 
     this.logger.log(
@@ -81,7 +82,10 @@ export class ObjectActionService {
     client.to(boardId).emit('object-updated', updatedObject);
   }
 
-  private handleDeleteObject(client: GwSocket, data: any): void {
+  private async handleDeleteObject(
+    client: GwSocket,
+    data: DeleteObjectData,
+  ): Promise<void> {
     if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
       this.emitErrorAndDisconnect(client, 'Something went wrong');
       return;
@@ -89,10 +93,10 @@ export class ObjectActionService {
 
     const boardId = client.data.user.targetBoard.boardId;
     const userId = client.data.user._id as string;
-    const slideId = data.slide.slideId;
-    const objectId = data.objectId;
+    const slideId = data.slide._id;
+    const objectId = data.object._id;
 
-    const deletedObject = this.slideObjectsService.deleteSlideObjectById2(
+    const deletedObject = await this.slideObjectsService.deleteObject(
       userId,
       slideId,
       objectId,

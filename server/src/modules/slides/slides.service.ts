@@ -5,7 +5,10 @@ import { Slide, SlideDocument } from '../../schemas/slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
 import { BoardDocument } from '../../schemas/board.schema';
-import { SlideObject } from 'src/schemas/slide-object.schema';
+import {
+  SlideObject,
+  SlideObjectDocument,
+} from 'src/schemas/slide-object.schema';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { UsersService } from '../users/users.service';
 import { BoardPermission } from '../../enums/board.permission';
@@ -28,10 +31,11 @@ export class SlidesService {
     );
   }
 
-  async getSlideById(slideId: string): Promise<SlideResponseObject> {
-    return this.findSlideById(slideId).then(slide =>
-      this.toResponseSlide(slide),
-    );
+  async getSlideById(slideId: string): Promise<any> {
+    return this.findSlideById(slideId);
+    // return this.findSlideById(slideId).then(slide =>
+    //   this.toResponseSlide(slide),
+    // );
   }
 
   async createSlide(
@@ -117,6 +121,7 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
+  // not working or sth?
   async deleteSlideObjectFromSlide(
     slideId: string,
     slideObjectId: string,
@@ -125,6 +130,22 @@ export class SlidesService {
       .findByIdAndUpdate(
         slideId,
         { $pull: { objects: { _id: slideObjectId } } },
+        { new: true },
+      )
+      .exec();
+    console.log(updatedSlide);
+    if (!updatedSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+  }
+
+  async deleteObjectFromSlide(
+    slideId: string,
+    objectId: string,
+  ): Promise<void> {
+    const updatedSlide = await this.slideModel
+      .findByIdAndUpdate(
+        slideId,
+        { $pull: { objects: objectId } },
         { new: true },
       )
       .exec();

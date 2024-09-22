@@ -10,8 +10,8 @@ import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
 import { GwSocket } from '../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
+  DeleteObjectData,
   JoinBoardData,
-  JoinBoardDto,
   UpdateObjectData,
 } from './gateway.dto';
 import { ConnectionService } from './providers/connection.service';
@@ -64,9 +64,15 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('delete-object')
-  async handleDeleteObject(client: GwSocket, data: any): Promise<void> {
-    const boardId = data.boardId;
-    client.to(boardId).emit('object-deleted', data);
+  async handleDeleteObject(
+    client: GwSocket,
+    data: DeleteObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleObjectAction(
+      client,
+      data,
+      ObjectAction.DELETE,
+    );
   }
 }
 
