@@ -38,7 +38,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       await revalidateSlidePath(boardId, currentSlideIndex);
       await createSlideAction(boardId);
       router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
-      toast.success("Slide created successfully");
     } catch (error: any) {
       console.error("Error creating new slide:", error);
       if (error instanceof ApiError) {
@@ -59,12 +58,14 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     try {
       await deleteSlideAction(slide._id);
-      toast.success(`Slide deleted successfully`);
+      toast.success(`Slide deleted successfully`, { duration: 1200 });
       if (currentSlideIndex === 0) {
         await revalidateSlidePath(boardId, currentSlideIndex);
         router.refresh();
       } else {
-        router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlideIndex - 1, 0)}`);
+        const index = Math.max(currentSlideIndex - 1, 0);
+        await revalidateSlidePath(boardId, index);
+        router.push(`/user-boards/${boardId}/slides/${index}`);
       }
     } catch (error: any) {
       console.error("Error deleting slide:", error);

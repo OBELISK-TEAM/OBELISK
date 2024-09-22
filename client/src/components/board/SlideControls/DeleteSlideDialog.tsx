@@ -25,10 +25,10 @@ export function DeleteSlideDialog({ deleteSlide }: DeleteSlideDialogProps) {
           Delete slide
         </Button>
       </DialogTrigger>
-      <DialogContent className="text-center sm:max-w-md">
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-center">Delete current slide</DialogTitle>
-          <DialogDescription className="text-center">
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Delete current slide</DialogTitle>
+          <DialogDescription>
             You are about to permanently delete the current slide.
             <br />
             The action is <strong>irreversible!</strong>
