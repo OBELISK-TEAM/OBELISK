@@ -8,9 +8,9 @@ import {
 } from 'src/schemas/slide-object.schema';
 import { UsersService } from '../users/users.service';
 import { SlidesService } from '../slides/slides.service';
-import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
+import { SlideObjectResponseObject } from '../../../shared/interfaces/response-objects/SlideObjectResponseObject';
 import { BoardsService } from '../boards/boards.service';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../../enums/board.permission';
 
 @Injectable()
 export class SlideObjectsService {

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './users.dto';
 import { UsersService } from './users.service';
-import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
+import { UserResponseObject } from '../../../shared/interfaces/response-objects/UserResponseObject';
 
 @Controller('users')
 export class UsersController {

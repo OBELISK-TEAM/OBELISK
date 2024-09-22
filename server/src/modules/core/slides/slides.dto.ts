@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { SlideObject } from '../../schemas/slide-object.schema';
+import { SlideObject } from '../../../schemas/slide-object.schema';
 
 export class CreateSlideDto {
   @IsString({

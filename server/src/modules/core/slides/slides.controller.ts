@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { SlidesService } from './slides.service';
 import { CreateSlideDto } from './slides.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { User } from '../auth/decorators/users.decorator';
-import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
+import { User } from '../../auth/decorators/users.decorator';
+import { SlideResponseObject } from '../../../shared/interfaces/response-objects/SlideResponseObject';
 
 @Controller('slides')
 export class SlidesController {

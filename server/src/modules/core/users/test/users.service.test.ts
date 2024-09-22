@@ -3,7 +3,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { UserDocument } from '../../../schemas/user.schema';
+import { UserDocument } from '../../../../schemas/user.schema';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../users.dto';
 import { UserAuthProvider } from 'src/enums/user.auth.provider';

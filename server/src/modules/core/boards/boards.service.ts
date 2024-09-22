@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
-import { Board, BoardDocument } from '../../schemas/board.schema';
+import { Board, BoardDocument } from '../../../schemas/board.schema';
 import { UsersService } from '../users/users.service';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { SlideDocument } from '../../schemas/slide.schema';
-import { BoardPermission } from '../../enums/board.permission';
-import { UserDocument } from '../../schemas/user.schema';
-import { Permissions } from '../../shared/interfaces/Permissions';
-import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
+import { SlideDocument } from '../../../schemas/slide.schema';
+import { BoardPermission } from '../../../enums/board.permission';
+import { UserDocument } from '../../../schemas/user.schema';
+import { Permissions } from '../../../shared/interfaces/Permissions';
+import { AvailableBoards } from '../../../shared/interfaces/AvailableBoards';
 
 @Injectable()
 export class BoardsService {

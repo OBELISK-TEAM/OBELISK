@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Slide, SlideDocument } from '../../schemas/slide.schema';
+import { Slide, SlideDocument } from '../../../schemas/slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
-import { BoardDocument } from '../../schemas/board.schema';
+import { BoardDocument } from '../../../schemas/board.schema';
 import { SlideObject } from 'src/schemas/slide-object.schema';
-import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { SlideResponseObject } from '../../../shared/interfaces/response-objects/SlideResponseObject';
 import { UsersService } from '../users/users.service';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../../enums/board.permission';
 
 @Injectable()
 export class SlidesService {

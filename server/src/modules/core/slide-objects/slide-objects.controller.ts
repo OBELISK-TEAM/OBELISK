@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { SlideObjectsService } from './slide-objects.service';
 import { CreateSlideObjectDto } from './slide-objects.dto';
-import { User } from '../auth/decorators/users.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
+import { User } from '../../auth/decorators/users.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
+import { SlideObjectResponseObject } from '../../../shared/interfaces/response-objects/SlideObjectResponseObject';
 
 @Controller('slide-objects')
 export class SlideObjectsController {

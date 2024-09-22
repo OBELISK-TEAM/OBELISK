@@ -7,7 +7,7 @@ import {
 import { Socket } from 'socket.io';
 import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
 import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
-import { BoardsService } from '../modules/boards/boards.service';
+import { BoardsService } from '../modules/core/boards/boards.service';
 import { GatewaySocket } from '../shared/interfaces/auth/GatewaySocket';
 import { BoardPermission } from '../enums/board.permission';
 import { JoinBoardDto } from './gateway.dto';

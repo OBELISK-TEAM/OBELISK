@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
+import { UsersModule } from '../core/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
@@ -11,7 +11,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { CacheModule } from '@nestjs/cache-manager';
 import { WsAuthStrategy } from './strategies/ws.strategy';
 import { WsAuthGuard } from './guards/ws.auth.guard';
-import { BoardsModule } from '../boards/boards.module';
+import { BoardsModule } from '../core/boards/boards.module';
 
 const DEFAULT_JWT_SECRET = 'secret';
 const DEFAULT_JWT_EXPIRES_IN = '14d';

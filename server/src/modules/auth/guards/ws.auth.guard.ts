@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { WsAuthStrategy } from '../strategies/ws.strategy';
-import { BoardsService } from '../../boards/boards.service';
+import { BoardsService } from '../../core/boards/boards.service';
 import { WsException } from '@nestjs/websockets';
 import { GatewaySocket } from '../../../shared/interfaces/auth/GatewaySocket';
 

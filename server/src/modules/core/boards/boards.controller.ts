@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
-import { User } from '../auth/decorators/users.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { Permissions } from '../../shared/interfaces/Permissions';
+import { User } from '../../auth/decorators/users.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
+import { Permissions } from '../../../shared/interfaces/Permissions';
 
 @Controller('boards')
 export class BoardsController {
