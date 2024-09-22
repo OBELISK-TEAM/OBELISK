@@ -14,12 +14,13 @@ import { MinusIcon } from "lucide-react";
 
 interface DeleteSlideDialogProps {
   deleteSlide: () => void;
+  totalSlides: number;
 }
 
-export function DeleteSlideDialog({ deleteSlide }: DeleteSlideDialogProps) {
+export function DeleteSlideDialog({ deleteSlide, totalSlides }: DeleteSlideDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={totalSlides === 1}>
         <Button variant="outline">
           <MinusIcon size={16} className="mr-2 h-5 w-5" />
           Delete slide

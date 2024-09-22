@@ -59,13 +59,13 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await deleteSlideAction(slide._id);
       toast.success(`Slide deleted successfully`, { duration: 1200 });
-      if (currentSlideIndex === 0) {
-        await revalidateSlidePath(boardId, currentSlideIndex);
-        router.refresh();
-      } else {
+      if (currentSlideIndex === totalSlides - 1) {
         const index = Math.max(currentSlideIndex - 1, 0);
         await revalidateSlidePath(boardId, index);
         router.push(`/user-boards/${boardId}/slides/${index}`);
+      } else {
+        await revalidateSlidePath(boardId, currentSlideIndex);
+        router.replace(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
       }
     } catch (error: any) {
       console.error("Error deleting slide:", error);

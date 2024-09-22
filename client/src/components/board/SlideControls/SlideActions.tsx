@@ -26,7 +26,7 @@ export function SlideActions() {
         )}
       </HoverCard>
 
-      <DeleteSlideDialog deleteSlide={deleteSlide} />
+      <DeleteSlideDialog deleteSlide={deleteSlide} totalSlides={totalSlides} />
     </div>
   );
 }
