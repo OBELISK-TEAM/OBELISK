@@ -5,7 +5,10 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { GwSocket } from '../shared/interfaces/auth/GwSocket';
+import {
+  GwSocket,
+  GwSocketWithTarget,
+} from '../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
   DeleteObjectData,
@@ -15,6 +18,7 @@ import {
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { ObjectActionService } from './providers/object.action.service';
+import { ObjectAction } from '../enums/object.action';
 
 // no need to use @UseGuards() decorator here
 // because the WsAuthGuard is already applied in the ConnectionService
@@ -45,8 +49,11 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('add-object')
-  async handleAddObject(client: GwSocket, data: AddObjectData): Promise<void> {
-    return this.objectActionService.handleObjectAction(
+  async handleAddObject(
+    client: GwSocketWithTarget,
+    data: AddObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleActionObject(
       client,
       data,
       ObjectAction.ADD,
@@ -55,10 +62,10 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('update-object')
   async handleUpdateObject(
-    client: GwSocket,
+    client: GwSocketWithTarget,
     data: UpdateObjectData,
   ): Promise<void> {
-    return this.objectActionService.handleObjectAction(
+    return this.objectActionService.handleActionObject(
       client,
       data,
       ObjectAction.UPDATE,
@@ -67,19 +74,13 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('delete-object')
   async handleDeleteObject(
-    client: GwSocket,
+    client: GwSocketWithTarget,
     data: DeleteObjectData,
   ): Promise<void> {
-    return this.objectActionService.handleObjectAction(
+    return this.objectActionService.handleActionObject(
       client,
       data,
       ObjectAction.DELETE,
     );
   }
-}
-
-export enum ObjectAction {
-  ADD = 1,
-  UPDATE = 2,
-  DELETE = 3,
 }

@@ -1,38 +1,37 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ObjectAction } from '../gateway';
 import {
   AddObjectData,
   DeleteObjectData,
   UpdateObjectData,
 } from '../gateway.dto';
-import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
+import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { SlideObjectsService } from '../../modules/slide-objects/slide-objects.service';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
+import { ObjectAction } from '../../enums/object.action';
 
 @Injectable()
 export class ObjectActionService {
   private readonly logger = new Logger(ObjectActionService.name);
   constructor(private readonly slideObjectsService: SlideObjectsService) {}
 
-  async handleObjectAction(
-    client: GwSocket,
+  async handleActionObject(
+    client: GwSocketWithTarget,
     data: AddObjectData | UpdateObjectData | DeleteObjectData,
     action: ObjectAction,
   ): Promise<void> {
-    if (!this.hasClientPermission(client)) return;
+    if (!this.validateUserTargetPermission(client)) return;
 
     try {
       switch (action) {
         case ObjectAction.ADD:
-          await this.handleAddObject(client, data as AddObjectData);
-          break;
+          return this.handleAddObject(client, data as AddObjectData);
         case ObjectAction.UPDATE:
-          await this.handleUpdateObject(client, data as UpdateObjectData);
-          break;
+          return this.handleUpdateObject(client, data as UpdateObjectData);
         case ObjectAction.DELETE:
-          await this.handleDeleteObject(client, data as DeleteObjectData);
-          break;
+          return this.handleDeleteObject(client, data as DeleteObjectData);
+        default:
+          this.emitErrorAndDisconnect(client, 'Invalid action');
       }
     } catch (error) {
       this.emitErrorAndDisconnect(client, 'Something went wrong');
@@ -40,14 +39,9 @@ export class ObjectActionService {
   }
 
   private async handleAddObject(
-    client: GwSocket,
+    client: GwSocketWithTarget,
     data: AddObjectData,
   ): Promise<void> {
-    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
-      this.emitErrorAndDisconnect(client, 'Something went wrong');
-      return;
-    }
-
     const boardId = client.data.user.targetBoard.boardId;
     const userId = client.data.user._id as string;
     const slideId = data.slide._id;
@@ -66,14 +60,9 @@ export class ObjectActionService {
   }
 
   private async handleUpdateObject(
-    client: GwSocket,
+    client: GwSocketWithTarget,
     data: UpdateObjectData,
   ): Promise<void> {
-    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
-      this.emitErrorAndDisconnect(client, 'Something went wrong');
-      return;
-    }
-
     const object = data.object;
     const updatedObject = await this.slideObjectsService.updateObject(object);
     const boardId = client.data.user.targetBoard.boardId;
@@ -85,14 +74,9 @@ export class ObjectActionService {
   }
 
   private async handleDeleteObject(
-    client: GwSocket,
+    client: GwSocketWithTarget,
     data: DeleteObjectData,
   ): Promise<void> {
-    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
-      this.emitErrorAndDisconnect(client, 'Something went wrong');
-      return;
-    }
-
     const boardId = client.data.user.targetBoard.boardId;
     const userId = client.data.user._id as string;
     const slideId = data.slide._id;
@@ -104,10 +88,13 @@ export class ObjectActionService {
       objectId,
     );
 
+    this.logger.log(
+      `Object deleted: ${deletedObject._id} by ${client.data.user.email}`,
+    );
     client.to(boardId).emit('object-deleted', deletedObject);
   }
 
-  private hasClientPermission(client: GwSocket): boolean {
+  private validateUserTargetPermission(client: GwSocketWithTarget): boolean {
     if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
       this.emitErrorAndDisconnect(client, 'Something went wrong');
       return false;
