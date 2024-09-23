@@ -2,6 +2,7 @@ import { SlideObjectPath } from '../fabric-js/SlideObjectPath';
 import { SlideObjectShadow } from '../fabric-js/SlideObjectShadow';
 import { SlideObjectTextStyles } from '../fabric-js/SlideObjectTextStyles';
 import { SlideObjectFilter } from '../fabric-js/SlideObjectFilter';
+import { Eraser } from 'src/schemas/slide-object.schema';
 
 export interface SlideObjectResponseObject {
   _id: string;
@@ -73,4 +74,6 @@ export interface SlideObjectResponseObject {
   cropX?: number;
   cropY?: number;
   filters?: SlideObjectFilter[];
+  erasable?: boolean;
+  eraser?: Eraser;
 }

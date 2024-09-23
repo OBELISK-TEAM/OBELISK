@@ -14,6 +14,7 @@ import { SlideObjectShadow } from '../../shared/interfaces/fabric-js/SlideObject
 import { SlideObjectPath } from '../../shared/interfaces/fabric-js/SlideObjectPath';
 import { SlideObjectFilter } from '../../shared/interfaces/fabric-js/SlideObjectFilter';
 import { SlideObjectTextStyles } from '../../shared/interfaces/fabric-js/SlideObjectTextStyles';
+import { Eraser } from 'src/schemas/slide-object.schema';
 
 export class CreateSlideObjectDto {
   @IsString({
@@ -176,6 +177,14 @@ export class CreateSlideObjectDto {
 
   @IsOptional()
   @IsNumber()
+  rx: number;
+
+  @IsOptional()
+  @IsNumber()
+  ry: number;
+
+  @IsOptional()
+  @IsNumber()
   @Min(0)
   radius: number;
 
@@ -274,4 +283,12 @@ export class CreateSlideObjectDto {
   @IsOptional()
   @IsArray()
   filters: SlideObjectFilter[];
+
+  @IsOptional()
+  @IsBoolean()
+  erasable: boolean;
+
+  @IsOptional()
+  @Type(() => Eraser)
+  eraser: Eraser;
 }
