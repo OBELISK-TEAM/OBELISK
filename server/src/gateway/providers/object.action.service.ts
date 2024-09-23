@@ -5,15 +5,15 @@ import {
   UpdateObjectData,
 } from '../gateway.dto';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { SlideObjectsService } from '../../modules/slide-objects/slide-objects.service';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
 import { ObjectAction } from '../../enums/object.action';
+import { WsObjectsService } from '../../modules/slide-objects/ws.objects.service';
 
 @Injectable()
 export class ObjectActionService {
   private readonly logger = new Logger(ObjectActionService.name);
-  constructor(private readonly slideObjectsService: SlideObjectsService) {}
+  constructor(private readonly wsObjectsService: WsObjectsService) {}
 
   async handleActionObject(
     client: GwSocketWithTarget,
@@ -47,7 +47,7 @@ export class ObjectActionService {
     const slideId = data.slide._id;
     const objectProps = data.object;
 
-    const createdObject = await this.slideObjectsService.createObject(
+    const createdObject = await this.wsObjectsService.createObject(
       userId,
       slideId,
       objectProps,
@@ -64,7 +64,7 @@ export class ObjectActionService {
     data: UpdateObjectData,
   ): Promise<void> {
     const object = data.object;
-    const updatedObject = await this.slideObjectsService.updateObject(object);
+    const updatedObject = await this.wsObjectsService.updateObject(object);
     const boardId = client.data.user.targetBoard.boardId;
 
     this.logger.log(
@@ -82,7 +82,7 @@ export class ObjectActionService {
     const slideId = data.slide._id;
     const objectId = data.object._id;
 
-    const deletedObject = await this.slideObjectsService.deleteObject(
+    const deletedObject = await this.wsObjectsService.deleteObject(
       userId,
       slideId,
       objectId,

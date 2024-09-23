@@ -11,10 +11,6 @@ import { SlidesService } from '../slides/slides.service';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
 import { BoardsService } from '../boards/boards.service';
 import { BoardPermission } from '../../enums/board.permission';
-import {
-  ObjectDataProps,
-  ObjectDataPropsWithId,
-} from '../../gateway/gateway.dto';
 
 @Injectable()
 export class SlideObjectsService {
@@ -146,65 +142,6 @@ export class SlideObjectsService {
       throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
     return deletedSlideObject;
   }
-
-  // WS methods
-
-  async createObject(
-    userId: string,
-    slideId: string,
-    objectProps: ObjectDataProps,
-  ): Promise<SlideObjectResponseObject> {
-    const slide = await this.slidesService.findSlideById(slideId);
-    const user = await this.usersService.findUserById(userId);
-    const createdSlideObject = new this.slideObjectModel({
-      ...objectProps,
-      createdBy: user,
-      slide,
-    });
-    await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
-    return createdSlideObject
-      .save()
-      .then(slideObject => this.toResponseSlideObject(slideObject));
-  }
-
-  async updateObject(
-    object: ObjectDataPropsWithId,
-  ): Promise<SlideObjectResponseObject> {
-    const updatedSlideObject = await this.slideObjectModel
-      .findByIdAndUpdate(object._id, object, { new: true })
-      .exec();
-    if (!updatedSlideObject)
-      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-    return this.toResponseSlideObject(updatedSlideObject);
-  }
-
-  async deleteObject(
-    userId: string,
-    slideId: string,
-    slideObjectId: string,
-  ): Promise<SlideObjectResponseObject> {
-    await this.slidesService.findSlideById(slideId);
-    await this.usersService.findUserById(userId);
-
-    const deletedSlideObject = await this.slideObjectModel
-      .findByIdAndDelete(slideObjectId)
-      .exec();
-    if (!deletedSlideObject)
-      throw new HttpException('Slide Object not found', HttpStatus.NOT_FOUND);
-
-    await this.usersService.deleteSlideObjectFromUser(
-      userId,
-      deletedSlideObject._id.toString(),
-    );
-    await this.slidesService.deleteObjectFromSlide(
-      slideId,
-      deletedSlideObject._id.toString(),
-    );
-    return this.toResponseSlideObject(deletedSlideObject);
-  }
-
-  // END WS methods
 
   toResponseSlideObject(
     slideObject: SlideObjectDocument,
