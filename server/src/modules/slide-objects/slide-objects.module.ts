@@ -9,6 +9,7 @@ import { SlideObjectsService } from './slide-objects.service';
 import { UsersModule } from '../users/users.module';
 import { SlidesModule } from '../slides/slides.module';
 import { BoardsModule } from '../boards/boards.module';
+import { WsObjectsService } from './ws.objects.service';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { BoardsModule } from '../boards/boards.module';
     SlidesModule,
   ],
   controllers: [SlideObjectsController],
-  providers: [SlideObjectsService],
-  exports: [SlideObjectsService],
+  providers: [SlideObjectsService, WsObjectsService],
+  exports: [SlideObjectsService, WsObjectsService],
 })
 export class SlideObjectsModule {}

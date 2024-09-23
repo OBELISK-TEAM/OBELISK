@@ -117,6 +117,7 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
+  // not working or sth?
   async deleteSlideObjectFromSlide(
     slideId: string,
     slideObjectId: string,
@@ -125,6 +126,22 @@ export class SlidesService {
       .findByIdAndUpdate(
         slideId,
         { $pull: { objects: { _id: slideObjectId } } },
+        { new: true },
+      )
+      .exec();
+    console.log(updatedSlide);
+    if (!updatedSlide)
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+  }
+
+  async deleteObjectFromSlide(
+    slideId: string,
+    objectId: string,
+  ): Promise<void> {
+    const updatedSlide = await this.slideModel
+      .findByIdAndUpdate(
+        slideId,
+        { $pull: { objects: objectId } },
         { new: true },
       )
       .exec();

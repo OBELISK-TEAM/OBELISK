@@ -7,7 +7,7 @@ import {
 import { WsAuthStrategy } from '../strategies/ws.strategy';
 import { BoardsService } from '../../boards/boards.service';
 import { WsException } from '@nestjs/websockets';
-import { GatewaySocket } from '../../../shared/interfaces/auth/GatewaySocket';
+import { GwSocket } from '../../../shared/interfaces/auth/GwSocket';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
@@ -18,7 +18,7 @@ export class WsAuthGuard implements CanActivate {
 
   // fetching the available boards for the user after successful authentication
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const client = context.switchToWs().getClient<GatewaySocket>();
+    const client = context.switchToWs().getClient<GwSocket>();
     try {
       client.data.user = await this.wsStrategy.validate(client.handshake);
       client.data.user.availableBoards =

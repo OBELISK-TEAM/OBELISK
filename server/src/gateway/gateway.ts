@@ -5,131 +5,82 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { ExecutionContext, Logger, UseGuards } from '@nestjs/common';
-import { WsAuthGuard } from '../modules/auth/guards/ws.auth.guard';
-import { BoardsService } from '../modules/boards/boards.service';
-import { GatewaySocket } from '../shared/interfaces/auth/GatewaySocket';
-import { BoardPermission } from '../enums/board.permission';
-import { JoinBoardDto } from './gateway.dto';
+import {
+  GwSocket,
+  GwSocketWithTarget,
+} from '../shared/interfaces/auth/GwSocket';
+import {
+  AddObjectData,
+  DeleteObjectData,
+  JoinBoardData,
+  UpdateObjectData,
+} from './gateway.dto';
+import { ConnectionService } from './providers/connection.service';
+import { JoinBoardService } from './providers/join.board.service';
+import { ObjectActionService } from './providers/object.action.service';
+import { ObjectAction } from '../enums/object.action';
 
-@WebSocketGateway(3002, {
+// no need to use @UseGuards() decorator here
+// because the WsAuthGuard is already applied in the ConnectionService
+// auth is done on connection, not on message
+// so no need to authenticate every message
+
+@WebSocketGateway(4003, {
   namespace: 'gateway',
 })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger = new Logger(Gateway.name);
-
   constructor(
-    private readonly wsAuthGuard: WsAuthGuard,
-    private readonly boardsService: BoardsService,
+    private readonly connectionService: ConnectionService,
+    private readonly joinBoardService: JoinBoardService,
+    private readonly objectActionService: ObjectActionService,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
-    try {
-      await this.validateClient(client);
-      this.logClientConnection(client);
-    } catch {
-      this.emitErrorAndDisconnect(client, 'Connection failed to authenticate');
-    }
+    return this.connectionService.handleConnection(client);
   }
 
   handleDisconnect(client: Socket): void {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    return this.connectionService.handleDisconnect(client);
   }
 
-  @UseGuards(WsAuthGuard)
   @SubscribeMessage('join-board')
-  async handleJoinBoard(
-    client: GatewaySocket,
-    data: JoinBoardDto,
+  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+    return this.joinBoardService.handleJoinBoard(client, data);
+  }
+
+  @SubscribeMessage('add-object')
+  async handleAddObject(
+    client: GwSocketWithTarget,
+    data: AddObjectData,
   ): Promise<void> {
-    const { boardId } = data;
-
-    if (!(await this.isBoardValid(client, boardId))) return;
-
-    const permission = this.getBoardPermission(boardId, client);
-    if (!this.isPermissionValid(client, permission)) return;
-
-    this.assignClientPermission(client, permission, boardId);
-    await this.joinClientToBoard(client, boardId);
-  }
-
-  private async validateClient(client: Socket): Promise<void> {
-    const context = this.createExecutionContext(client);
-    await this.wsAuthGuard.canActivate(context);
-  }
-
-  private createExecutionContext(client: Socket): ExecutionContext {
-    return {
-      switchToWs: () => ({
-        getClient: () => client,
-      }),
-    } as ExecutionContext;
-  }
-
-  private logClientConnection(client: GatewaySocket): void {
-    this.logger.log(`Client connected: ${client.data.user.email} ${client.id}`);
-  }
-
-  private async isBoardValid(
-    client: GatewaySocket,
-    boardId: string,
-  ): Promise<boolean> {
-    try {
-      await this.boardsService.findBoardById(boardId);
-      return true;
-    } catch {
-      this.emitErrorAndDisconnect(client, 'Invalid board id');
-      return false;
-    }
-  }
-
-  private emitErrorAndDisconnect(client: Socket, message: string): void {
-    client.emit('error', { message });
-    client.disconnect(true);
-  }
-
-  private getBoardPermission(
-    boardId: string,
-    client: GatewaySocket,
-  ): BoardPermission {
-    if (!client.data.user.availableBoards) {
-      return BoardPermission.NONE;
-    }
-
-    const availableBoards = client.data.user.availableBoards;
-    return this.boardsService.getBoardPermission(boardId, availableBoards);
-  }
-
-  private isPermissionValid(
-    client: GatewaySocket,
-    permission: BoardPermission,
-  ): boolean {
-    if (permission === BoardPermission.NONE) {
-      this.emitErrorAndDisconnect(
-        client,
-        'You do not have permission to join this board',
-      );
-      return false;
-    }
-    return true;
-  }
-
-  private assignClientPermission(
-    client: GatewaySocket,
-    permission: BoardPermission,
-    boardId: string,
-  ): void {
-    client.data.user.permission = permission;
-    this.logger.log(
-      `${client.data.user.email} is ${BoardPermission[permission]} of board ${boardId}`,
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.ADD,
     );
   }
 
-  private async joinClientToBoard(
-    client: GatewaySocket,
-    boardId: string,
+  @SubscribeMessage('update-object')
+  async handleUpdateObject(
+    client: GwSocketWithTarget,
+    data: UpdateObjectData,
   ): Promise<void> {
-    this.logger.log(`Joining the board...`);
-    return client.join(boardId);
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.UPDATE,
+    );
+  }
+
+  @SubscribeMessage('delete-object')
+  async handleDeleteObject(
+    client: GwSocketWithTarget,
+    data: DeleteObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.DELETE,
+    );
   }
 }

@@ -110,8 +110,15 @@ export class AuthService {
   // unfortunately passport-jwt does not support websockets
   // so we have to validate the token manually for ws.auth.guard.ts
   async validateToken(token: string): Promise<SafeUserDoc | null> {
-    const payload = this.jwtService.verify<Payload>(token);
-    return this.validateUserById(payload._id);
+    try {
+      const payload = this.jwtService.verify<Payload>(token);
+      return this.validateUserById(payload._id);
+    } catch (error) {
+      if ((error as Error).name === 'TokenExpiredError') {
+        throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
+      }
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   async googleRedirect(req: Request, res: Response): Promise<void> {
