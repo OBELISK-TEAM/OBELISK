@@ -13,11 +13,6 @@ export type SlideObjectDocument = SlideObject &
   MongooseDocument &
   SchemaTimestampsConfig;
 
-@Schema({
-  timestamps: true,
-  versionKey: false,
-  validateBeforeSave: true,
-})
 export class FabricJsCanvasObjectBase {
   // Fabric.js - specific properties
 
@@ -364,9 +359,12 @@ export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
   eraser?: Eraser;
 }
 
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class SlideObject extends FabricJsCanvasObjectWithEraser {
-  // relations
-
   @Prop({
     required: true,
     type: MongooseSchema.Types.ObjectId,
