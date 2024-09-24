@@ -48,6 +48,11 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinBoardService.handleJoinBoard(client, data);
   }
 
+  @SubscribeMessage('leave-board')
+  async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
+    return this.joinBoardService.handleLeaveBoard(client);
+  }
+
   @SubscribeMessage('add-object')
   async handleAddObject(
     client: GwSocketWithTarget,

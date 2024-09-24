@@ -96,7 +96,7 @@ export class ObjectActionService {
 
   private validateUserTargetPermission(client: GwSocketWithTarget): boolean {
     if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
-      this.emitErrorAndDisconnect(client, 'Something went wrong');
+      this.emitErrorAndDisconnect(client, 'Join a board first');
       return false;
     }
     if (
