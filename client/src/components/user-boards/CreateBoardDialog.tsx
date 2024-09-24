@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState } from "react";
-import { useTheme } from "next-themes";
 
 const formSchema = z.object({
   boardName: z
@@ -34,7 +33,6 @@ interface CreateBoardDialog {
 
 export function CreateBoardDialog({ action, children }: CreateBoardDialog) {
   const [open, setOpen] = useState(false);
-  const { theme } = useTheme();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,13 +65,11 @@ export function CreateBoardDialog({ action, children }: CreateBoardDialog) {
                     <Input
                       placeholder="E.g. My awesome board"
                       {...field}
-                      className={`${fieldState.error ? (theme === "dark" ? "border-2 border-red-500" : "border-2 border-red-600") : ""} focus:outline-none focus:ring-0`}
+                      className={`${fieldState.error ? "border-error-border" : ""} focus:outline-none focus:ring-0`}
                       style={{ boxShadow: "none" }}
                     />
                   </FormControl>
-                  <FormMessage
-                    className={`${fieldState.error ? (theme === "dark" ? "text-red-500" : "text-red-600") : ""}`}
-                  />
+                  <FormMessage className={`${fieldState.error ? "text-error-foreground" : ""}`} />
                 </FormItem>
               )}
             />

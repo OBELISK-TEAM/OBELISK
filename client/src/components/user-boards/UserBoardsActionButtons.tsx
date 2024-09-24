@@ -24,12 +24,11 @@ const UserBoardsActionButtons = () => {
     } catch (error: any) {
       console.error("Error in handleCreateNewBoard:", error);
       if (error instanceof ApiError) {
+        setIsLoading(false);
         complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
       } else {
         toast.error(error.message || "Failed to create board");
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
