@@ -9,7 +9,7 @@ import {
   initializeCanvas,
   toggleDrawingMode,
   updateDimensions,
-} from "@/utils/board/canvasUtils";
+} from "@/lib/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
