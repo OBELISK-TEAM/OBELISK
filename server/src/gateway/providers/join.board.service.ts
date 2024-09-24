@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BoardsService } from '../../modules/boards/boards.service';
-import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
+import {
+  GwSocket,
+  GwSocketWithTarget,
+} from '../../shared/interfaces/auth/GwSocket';
 import { JoinBoardData } from '../gateway.dto';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
@@ -89,6 +92,19 @@ export class JoinBoardService {
     boardId: string,
   ): Promise<void> {
     this.logger.log(`Joining the board...`);
-    return client.join(boardId);
+    await client.join(boardId);
+    client.to(boardId).emit('joined-board', {
+      message: `${client.data.user.email} has joined the board`,
+    });
+  }
+
+  async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
+    const user = client.data.user;
+    const boardId = user.targetBoard.boardId;
+    this.logger.log(`${user.email} is leaving the board...`);
+    await client.leave(boardId);
+    client.to(boardId).emit('left-board', {
+      message: `${user.email} has left the board`,
+    });
   }
 }
