@@ -5,7 +5,7 @@ import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { ApiError } from "@/errors/ApiError";
 
-export async function createBoard(): Promise<BoardDataResponse> {
+export async function createBoard(name: string): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
   try {
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards`, {
@@ -15,7 +15,7 @@ export async function createBoard(): Promise<BoardDataResponse> {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        name: `Board-${Date.now()}`,
+        name,
       }),
     });
 
