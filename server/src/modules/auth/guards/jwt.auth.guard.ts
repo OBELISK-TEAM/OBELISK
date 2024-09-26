@@ -10,8 +10,8 @@ import { UserRole } from '../../../enums/user.role';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
 import { Request } from 'express';
 import {
-  MINIMUM_ROLE_KEY,
-  REQUIRED_ROLE_KEY,
+  MINIMUM_USER_ROLE_KEY,
+  REQUIRED_USER_ROLE_KEY,
 } from '../decorators/roles.decorator';
 
 @Injectable()
@@ -40,13 +40,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   private getRequiredRole(context: ExecutionContext): UserRole | undefined {
     return this.reflector.get<UserRole>(
-      REQUIRED_ROLE_KEY,
+      REQUIRED_USER_ROLE_KEY,
       context.getHandler(),
     );
   }
 
   private getMinimumRole(context: ExecutionContext): UserRole | undefined {
-    return this.reflector.get<UserRole>(MINIMUM_ROLE_KEY, context.getHandler());
+    return this.reflector.get<UserRole>(
+      MINIMUM_USER_ROLE_KEY,
+      context.getHandler(),
+    );
   }
 
   private getUserFromRequest(context: ExecutionContext): SafeUserDoc {

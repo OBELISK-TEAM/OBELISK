@@ -6,7 +6,6 @@ import {
 } from '../gateway.dto';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { Socket } from 'socket.io';
-import { BoardPermission } from '../../enums/board.permission';
 import { ObjectAction } from '../../enums/object.action';
 import { WsObjectsService } from '../../modules/slide-objects/ws.objects.service';
 
@@ -20,8 +19,6 @@ export class ObjectActionService {
     data: AddObjectData | UpdateObjectData | DeleteObjectData,
     action: ObjectAction,
   ): Promise<void> {
-    if (!this.validateUserTargetPermission(client)) return;
-
     try {
       switch (action) {
         case ObjectAction.ADD:
@@ -92,21 +89,6 @@ export class ObjectActionService {
       `Object deleted: ${deletedObject._id} by ${client.data.user.email}`,
     );
     client.to(boardId).emit('object-deleted', deletedObject);
-  }
-
-  private validateUserTargetPermission(client: GwSocketWithTarget): boolean {
-    if (!client.data.user.availableBoards || !client.data.user.targetBoard) {
-      this.emitErrorAndDisconnect(client, 'Join a board first');
-      return false;
-    }
-    if (
-      client.data.user.targetBoard.permission === BoardPermission.VIEWER ||
-      client.data.user.targetBoard.permission === BoardPermission.NONE
-    ) {
-      this.emitErrorAndDisconnect(client, 'Invalid permission');
-      return false;
-    }
-    return true;
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {
