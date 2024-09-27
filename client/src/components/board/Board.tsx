@@ -22,7 +22,6 @@ const Board: React.FC = async () => {
         >
           <BoardToolBar />
           <SlideCanvas />
-
           <SlideFileInputs />
         </div>
       </div>

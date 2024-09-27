@@ -5,7 +5,6 @@ import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
 import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
-import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import Board from "@/components/board/Board";
 import { fetchBoardData } from "@/services/fetchBoardData";
 
@@ -17,7 +16,6 @@ interface UserBoardPage {
 }
 
 const SliderPage = async ({ params }: UserBoardPage) => {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const { boardId, slideIndex } = params;
 
   const boardData = await fetchBoardData(boardId, slideIndex);

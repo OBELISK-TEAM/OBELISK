@@ -5,7 +5,6 @@ import UserBoardsActionButtons from "@/components/UserBoardsActionButtons";
 import TabButtons from "@/components/TabButtons";
 
 export default async function UserBoards() {
-  await new Promise((resolve) => setTimeout(resolve, 8000));
   const tabs = [{ label: "All" }, { label: "Shared by others" }, { label: "Archived" }];
 
   return (
