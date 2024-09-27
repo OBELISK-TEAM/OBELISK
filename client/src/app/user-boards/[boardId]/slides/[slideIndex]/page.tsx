@@ -16,6 +16,7 @@ interface UserBoardPage {
 }
 
 const SliderPage = async ({ params }: UserBoardPage) => {
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   const { boardId, slideIndex } = params;
 
   const slideIndexNumber = parseInt(slideIndex);
