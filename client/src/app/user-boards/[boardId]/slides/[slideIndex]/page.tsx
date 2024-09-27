@@ -7,6 +7,7 @@ import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import Board from "@/components/board/Board";
+import { fetchBoardData } from "@/services/fetchBoardData";
 
 interface UserBoardPage {
   params: {
@@ -19,59 +20,16 @@ const SliderPage = async ({ params }: UserBoardPage) => {
   await new Promise((resolve) => setTimeout(resolve, 5000));
   const { boardId, slideIndex } = params;
 
-  const slideIndexNumber = parseInt(slideIndex);
+  const boardData = await fetchBoardData(boardId, slideIndex);
 
-  if (isNaN(slideIndexNumber)) {
-    return notFound();
-  }
-
-  let boardResponse: Response;
-
-  try {
-    boardResponse = await fetch(
-      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}?slide=${slideIndex}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }
-    );
-  } catch (error) {
-    console.error("Error fetching board data:", error);
-    return notFound();
-  }
-
-  if (!boardResponse.ok) {
-    return notFound();
-  }
-
-  let boardData: BoardDataResponse;
-
-  try {
-    boardData = await boardResponse.json();
-  } catch (error) {
-    console.error("Error parsing board data:", error);
-    return notFound();
-  }
-
-  const totalSlides = boardData.slides.length;
-
-  if (slideIndexNumber >= totalSlides || slideIndexNumber < 0) {
-    return notFound();
-  }
-
-  const slide = boardData.slide;
-
-  if (!slide) {
+  if (!boardData || !boardData.slides || !boardData.slide?._id) {
     return notFound();
   }
 
   return (
     <ZoomUIProvider>
       <CanvasProvider boardData={boardData}>
-        <UndoRedoProvider slideId={slide._id}>
+        <UndoRedoProvider slideId={boardData.slide._id}>
           <MenuDataProvider>
             <FileProvider>
               <KeydownListenerWrapper>
