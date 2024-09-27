@@ -5,7 +5,7 @@ import BoardTable from "@/components/BoardTable";
 import UserBoardsActionButtons from "@/components/UserBoardsActionButtons";
 import TabButtons from "@/components/TabButtons";
 
-export default function UserBoards() {
+export default async function UserBoards() {
   const tabs = [{ label: "All" }, { label: "Shared by others" }, { label: "Archived" }];
 
   return (

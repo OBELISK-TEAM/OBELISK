@@ -1,6 +1,7 @@
 // app/[boardId]/[slideIndex]/loading.tsx
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarSkeleton } from "@/components/loading/Sidebar";
 
 export default function LoadingBoard() {
   return (
@@ -23,38 +24,9 @@ export default function LoadingBoard() {
         </div>
       </div>
       <div className="flex">
-        {/* Sidebar Skeleton */}
-        <div
-          className="group relative flex w-[56px] flex-col overflow-hidden border-r bg-background"
-          style={{ height: "calc(100vh - 64px)" }}
-        >
-          <div className="flex flex-1 flex-col space-y-4 p-2">
-            <div className="grow">
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-            </div>
-            <div className="mt-auto border-t pt-3">
-              <Skeleton className="h-10 w-full" />
-            </div>
-          </div>
-        </div>
-        {/* Sidebar Skeleton */}
-        <div
-          className="group relative flex w-[56px] flex-col overflow-hidden border-l bg-background"
-          style={{ height: "calc(100vh - 64px)" }}
-        >
-          <div className="flex flex-1 flex-col space-y-4 p-2">
-            <div className="grow">
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-              <Skeleton className="mb-2 h-10 w-full" />
-            </div>
-          </div>
-        </div>
+        <SidebarSkeleton count={6} className={"border-r"} withSettings={true} />
+
+        <SidebarSkeleton count={3} className={"border-l"} />
 
         <div
           className="flex flex-col items-center bg-muted text-muted-foreground"
