@@ -25,7 +25,7 @@ import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { generateId } from "@/utils/randomUtils";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
-import { assignId } from "@/utils/utils";
+import { assignId } from "@/lib/utils";
 import { createCanvasObject } from "@/app/actions/slideActions";
 import { toast } from "sonner";
 import { ToastTypes } from "@/enums/ToastType";
