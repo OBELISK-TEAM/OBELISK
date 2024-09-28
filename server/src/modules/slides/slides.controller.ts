@@ -1,17 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Param, Post } from '@nestjs/common';
 import { SlidesService } from './slides.service';
-import { CreateSlideDto } from './slides.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { User } from '../auth/decorators/users.decorator';
+// import { CreateSlideDto } from './slides.dto';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 
 @Controller('slides')
@@ -20,31 +9,32 @@ export class SlidesController {
 
   // TODO - add proper role decorator for endpoints that should not be exposed
   // for example this one
-  @Get()
-  async getSlides(@Query('page') page: number): Promise<SlideResponseObject[]> {
-    return this.slidesService.getSlides(page);
-  }
+  // @Get()
+  // async getSlides(@Query('page') page: number): Promise<SlideResponseObject[]> {
+  //   return this.slidesService.getSlides(page);
+  // }
 
-  @Get(':id')
-  async getSlideById(
-    @Param('id') slideId: string,
-  ): Promise<SlideResponseObject> {
-    return this.slidesService.getSlideById(slideId);
-  }
+  // @Get(':id')
+  // async getSlideById(
+  //   @Param('id') slideId: string,
+  // ): Promise<SlideResponseObject> {
+  //   return this.slidesService.getSlideById(slideId);
+  // }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   createSlide(
-    @User('_id') userId: string,
-    @Body() createSlideDto: CreateSlideDto,
+    @Param('boardId') boardId: string,
+    // @User('_id') userId: string,
+    // @Body() createSlideDto: CreateSlideDto,
   ): Promise<SlideResponseObject> {
-    return this.slidesService.createSlide(userId, createSlideDto);
+    return this.slidesService.createSlide(boardId);
   }
 
-  @Delete(':id')
-  async deleteSlide(@Param('id') slideId: string): Promise<any> {
-    return this.slidesService.deleteSlideById(slideId);
-  }
+  // @Delete(':id')
+  // async deleteSlide(@Param('id') slideId: string): Promise<any> {
+  //   return this.slidesService.deleteSlideById(slideId);
+  // }
 
   // @UseGuards(JwtAuthGuard)
   // @Delete(':id')

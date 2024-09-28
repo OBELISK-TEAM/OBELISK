@@ -12,6 +12,8 @@ import { UserDocument } from '../../schemas/user.schema';
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
+import { SuperSlide } from '../../schemas/slide/super.slide.schema';
+import { SuperObject } from '../../schemas/object/super.object.schema';
 
 @Injectable()
 export class BoardsService {
@@ -21,6 +23,38 @@ export class BoardsService {
     private readonly boardModel: Model<SuperBoard>,
     private readonly usersService: UsersService,
   ) {}
+
+  async createBoard(
+    owner: string,
+    createBoardDto: CreateBoardDto,
+  ): Promise<any> {
+    return this.boardModel.create({
+      ...createBoardDto,
+      owner,
+    });
+  }
+
+  async createSlide(boardId: string): Promise<any> {
+    const newSlide = new SuperSlide();
+    return this.boardModel.findByIdAndUpdate(
+      boardId,
+      { $push: { slides: newSlide } },
+      { new: true },
+    );
+  }
+
+  async createObject(
+    boardId: string,
+    slideId: string,
+    objectProps: any,
+  ): Promise<any> {
+    const newObject = new SuperObject({ ...objectProps });
+    return this.boardModel.findOneAndUpdate(
+      { _id: boardId, 'slides._id': slideId },
+      { $push: { 'slides.$.objects': newObject } },
+      { new: true },
+    );
+  }
 
   async getBoards(page: number = 1): Promise<BoardResponseObject[]> {
     const skip = (page - 1) * this.pageSize;
@@ -36,15 +70,6 @@ export class BoardsService {
     return this.findBoardById(boardId).then(board =>
       this.toResponseBoard(board, slideNumber),
     );
-  }
-
-  async createBoard(
-    userId: string,
-    createBoardDto: CreateBoardDto,
-  ): Promise<any> {
-    return this.createNewBoard(userId, createBoardDto);
-    // await this.usersService.addBoardToUser(userId, createdBoard._id as string);
-    // return createdBoard.save().then(board => this.toResponseBoard(board));
   }
 
   async updateBoard(
@@ -81,16 +106,6 @@ export class BoardsService {
     if (!existingBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
-  }
-
-  private async createNewBoard(
-    owner: string,
-    createBoardDto: CreateBoardDto,
-  ): Promise<any> {
-    return this.boardModel.create({
-      ...createBoardDto,
-      owner,
-    });
   }
 
   async updateBoardById(

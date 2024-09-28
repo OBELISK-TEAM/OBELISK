@@ -11,6 +11,11 @@ export type SuperObjectDocument = SuperObject &
   versionKey: false,
   validateBeforeSave: true,
 })
-export class SuperObject extends BaseObjectWithEraser {}
+export class SuperObject extends BaseObjectWithEraser {
+  constructor(partial: Partial<SuperObject>) {
+    super();
+    Object.assign(this, partial);
+  }
+}
 
 export const SuperObjectSchema = SchemaFactory.createForClass(SuperObject);

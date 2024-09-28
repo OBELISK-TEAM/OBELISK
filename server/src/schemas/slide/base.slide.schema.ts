@@ -1,5 +1,4 @@
 import { Prop } from '@nestjs/mongoose';
-import { Schema as MongooseSchema } from 'mongoose';
 import { SuperObject } from '../object/super.object.schema';
 
 export class BaseSlide {
@@ -14,14 +13,9 @@ export class BaseSlide {
 
 export class BaseSlideWithObjects extends BaseSlide {
   @Prop({
-    type: [
-      {
-        type: MongooseSchema.Types.ObjectId,
-        required: false,
-        ref: 'SuperObject',
-      },
-    ],
+    type: [SuperObject],
+    required: false,
     default: [],
   })
-  objects?: SuperObject[];
+  objects: SuperObject[];
 }

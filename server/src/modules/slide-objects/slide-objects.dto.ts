@@ -16,15 +16,7 @@ import { SlideObjectFilter } from '../../shared/interfaces/fabric-js/SlideObject
 import { SlideObjectTextStyles } from '../../shared/interfaces/fabric-js/SlideObjectTextStyles';
 import { Eraser } from '../../schemas/object/base.object.schema';
 
-export class CreateSlideObjectDto {
-  @IsString({
-    message: 'The slideId must be a string',
-  })
-  @IsNotEmpty({
-    message: 'The slideId is required',
-  })
-  slideId: string;
-
+export class CreateSlideObject {
   @IsOptional()
   @IsString()
   type: string;

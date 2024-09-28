@@ -36,7 +36,7 @@ export class WsObjectsService {
       slide,
     });
     // await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
-    await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
+    // await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
     return createdSlideObject
       .save()
       .then(slideObject => this.toResponseObject(slideObject));
@@ -65,14 +65,10 @@ export class WsObjectsService {
       .exec();
     if (!deletedSlideObject) throw new WsException('Slide Object not found');
 
-    await this.usersService.deleteSlideObjectFromUser(
-      userId,
-      deletedSlideObject._id.toString(),
-    );
-    await this.slidesService.deleteObjectFromSlide(
-      slideId,
-      deletedSlideObject._id.toString(),
-    );
+    // await this.slidesService.deleteObjectFromSlide(
+    //   slideId,
+    //   deletedSlideObject._id.toString(),
+    // );
     return this.toResponseObject(deletedSlideObject);
   }
 

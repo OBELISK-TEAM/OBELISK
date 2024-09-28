@@ -1,20 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 @Controller('boards')
 export class BoardsController {
@@ -40,6 +28,21 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
   ): Promise<any> {
     return this.boardsService.createBoard(userId, createBoardDto);
+  }
+
+  @Post(':boardId')
+  createSlide(@Param('boardId') boardId: string): Promise<any> {
+    console.log(boardId);
+    return this.boardsService.createSlide(boardId);
+  }
+
+  @Post(':boardId/slides/:slideId')
+  createObject(
+    @Param('boardId') boardId: string,
+    @Param('slideId') slideId: string,
+    @Body() objectProps: any,
+  ): Promise<any> {
+    return this.boardsService.createObject(boardId, slideId, objectProps);
   }
 
   // @Put(':id')
