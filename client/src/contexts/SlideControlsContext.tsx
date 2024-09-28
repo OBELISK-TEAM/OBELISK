@@ -31,10 +31,9 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const SLIDE_LIMIT = 10;
   const createSlide = async () => {
     setIsLoading(true);
-    const totalSlidesTemp = slides.length;
     try {
       await createSlideAction(boardId);
-      router.push(`/user-boards/${boardId}/slides/${totalSlidesTemp}`);
+      router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
     } catch (error: any) {
       console.error("Error creating new slide:", error);
       if (error instanceof ApiError) {
@@ -93,10 +92,10 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handleChangeSlide = async (slideIndex: number) => {
-    setIsLoading(true);
     if (slideIndex === currentSlideIndex) {
       return;
     }
+    setIsLoading(true);
     try {
       router.push(`/user-boards/${boardId}/slides/${slideIndex}`);
     } catch (error) {
