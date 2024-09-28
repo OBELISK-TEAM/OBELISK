@@ -42,31 +42,6 @@ export class User {
     default: UserAuthProvider.INTERNAL,
   })
   userAuthProvider: UserAuthProvider;
-
-  @Prop({
-    required: false,
-    type: Date,
-    default: Date.now,
-  })
-  lastActive: Date;
-
-  // relations
-
-  // @Prop({
-  //   required: false,
-  //   type: [MongooseSchema.Types.ObjectId],
-  //   ref: 'Board',
-  //   default: [],
-  // })
-  // boards: string[];
-
-  @Prop({
-    required: false,
-    type: [MongooseSchema.Types.ObjectId],
-    ref: 'SlideObject',
-    default: [],
-  })
-  slideObjects: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

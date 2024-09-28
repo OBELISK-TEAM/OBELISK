@@ -41,10 +41,10 @@ export class BoardsService {
   async createBoard(
     userId: string,
     createBoardDto: CreateBoardDto,
-  ): Promise<BoardResponseObject> {
-    const createdBoard = await this.createNewBoard(userId, createBoardDto);
-    await this.usersService.addBoardToUser(userId, createdBoard._id as string);
-    return createdBoard.save().then(board => this.toResponseBoard(board));
+  ): Promise<any> {
+    return this.createNewBoard(userId, createBoardDto);
+    // await this.usersService.addBoardToUser(userId, createdBoard._id as string);
+    // return createdBoard.save().then(board => this.toResponseBoard(board));
   }
 
   async updateBoard(
@@ -86,9 +86,11 @@ export class BoardsService {
   private async createNewBoard(
     owner: string,
     createBoardDto: CreateBoardDto,
-  ): Promise<SuperBoardDocument> {
-    const createdBoard = new this.boardModel({ ...createBoardDto, owner });
-    return createdBoard.save();
+  ): Promise<any> {
+    return this.boardModel.create({
+      ...createBoardDto,
+      owner,
+    });
   }
 
   async updateBoardById(

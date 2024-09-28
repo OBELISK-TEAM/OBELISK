@@ -173,7 +173,7 @@ export class UsersService {
     };
 
     // if (showBoards) responseObject.boards = user.boards;
-    if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
+    // if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
       responseObject.createdAt = user.createdAt;
       responseObject.updatedAt = user.updatedAt;

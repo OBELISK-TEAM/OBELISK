@@ -41,6 +41,11 @@ export class SlidesController {
     return this.slidesService.createSlide(userId, createSlideDto);
   }
 
+  @Delete(':id')
+  async deleteSlide(@Param('id') slideId: string): Promise<any> {
+    return this.slidesService.deleteSlideById(slideId);
+  }
+
   // @UseGuards(JwtAuthGuard)
   // @Delete(':id')
   // async deleteSlide(
