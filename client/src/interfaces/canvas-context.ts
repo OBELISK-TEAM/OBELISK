@@ -2,6 +2,7 @@ import { CanvasReducerState } from "@/types/CanvasReducer";
 import { MutableRefObject } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+import { KeyedMutator } from "swr";
 
 export interface CanvasContext {
   state: CanvasReducerState;
@@ -12,6 +13,7 @@ export interface CanvasContext {
   handleStyleChange: () => void;
   setActiveItem: (activeItem: string | null) => void;
   boardData: BoardDataResponse;
+  mutateBoardData: KeyedMutator<BoardDataResponse>;
 }
 
 export interface CanvasRef {

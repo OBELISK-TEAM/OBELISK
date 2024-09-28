@@ -1,3 +1,4 @@
+"use client";
 import { MenuDataProvider } from "@/contexts/MenuDataContext";
 import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
@@ -6,7 +7,11 @@ import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import Board from "@/components/board/Board";
-import { fetchBoardData } from "@/services/fetchBoardData";
+import { defaultBoardData } from "@/data/default-board-data";
+import { useBoardData } from "@/hooks/board/useBoardData";
+import { useEffect } from "react";
+import LoadingBoard from "@/app/user-boards/[boardId]/loading";
+import { useBoardDataContext } from "@/contexts/BoardDataContext";
 
 interface UserBoardPage {
   params: {
@@ -15,23 +20,35 @@ interface UserBoardPage {
   };
 }
 
-const SliderPage = async ({ params }: UserBoardPage) => {
+const BoardPage = ({ params }: UserBoardPage) => {
   const { boardId, slideIndex } = params;
+  const { data: fetchedBoardData, isLoading, isError, mutateBoardData } = useBoardData(boardId, slideIndex);
+  const { boardData, setBoardData } = useBoardDataContext();
 
-  const boardData = await fetchBoardData(boardId, slideIndex);
+  useEffect(() => {
+    if (fetchedBoardData) {
+      setBoardData(fetchedBoardData);
+    }
+  }, [fetchedBoardData, setBoardData]);
 
-  if (!boardData || !boardData.slides || !boardData.slide?._id) {
+  const boardDataResponse = fetchedBoardData || boardData;
+  const slideId = boardDataResponse?.slide?._id;
+  if (isError || !slideId) {
     return notFound();
   }
-
+  console.log("boardDataResponse_id:", boardDataResponse._id);
+  console.log("isLoading:", isLoading);
+  if (isLoading && boardDataResponse._id === "-1") {
+    return <LoadingBoard />;
+  }
   return (
     <ZoomUIProvider>
-      <CanvasProvider boardData={boardData}>
-        <UndoRedoProvider slideId={boardData.slide._id}>
+      <CanvasProvider boardData={boardDataResponse} mutateBoardData={mutateBoardData}>
+        <UndoRedoProvider slideId={slideId}>
           <MenuDataProvider>
             <FileProvider>
               <KeydownListenerWrapper>
-                <Board />
+                <Board isLoading={isLoading} />
               </KeydownListenerWrapper>
             </FileProvider>
           </MenuDataProvider>
@@ -41,4 +58,4 @@ const SliderPage = async ({ params }: UserBoardPage) => {
   );
 };
 
-export default SliderPage;
+export default BoardPage;

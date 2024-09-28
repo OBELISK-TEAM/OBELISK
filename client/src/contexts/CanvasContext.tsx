@@ -13,13 +13,15 @@ import {
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+import { KeyedMutator } from "swr";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
-export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResponse }> = ({
-  children,
-  boardData,
-}) => {
+export const CanvasProvider: React.FC<{
+  children: React.ReactNode;
+  boardData: BoardDataResponse;
+  mutateBoardData: KeyedMutator<BoardDataResponse>;
+}> = ({ children, boardData, mutateBoardData }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
@@ -138,7 +140,17 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
 
   return (
     <CanvasContext.Provider
-      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem, boardData }}
+      value={{
+        state,
+        canvasRef,
+        setCanvasMode,
+        setColor,
+        setSize,
+        handleStyleChange,
+        setActiveItem,
+        boardData,
+        mutateBoardData,
+      }}
     >
       {children}
     </CanvasContext.Provider>

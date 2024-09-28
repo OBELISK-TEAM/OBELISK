@@ -6,11 +6,7 @@ import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { toast } from "sonner";
-import {
-  createSlide as createSlideAction,
-  deleteSlide as deleteSlideAction,
-  revalidateSlidePath,
-} from "@/app/actions/slideActions";
+import { createSlide as createSlideAction, deleteSlide as deleteSlideAction } from "@/app/actions/slideActions";
 
 interface SlideControlsContext {
   currentSlideIndex: number;
@@ -27,15 +23,16 @@ const SlideControlsContext = createContext<SlideControlsContext | undefined>(und
 
 export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const { boardData } = useCanvas();
+  const { boardData, mutateBoardData } = useCanvas();
   const { _id: boardId, slides, slide } = boardData;
   const currentSlideIndex = slides.findIndex((s) => s === slide?._id);
+
   const totalSlides = slides.length;
   const SLIDE_LIMIT = 10;
-
+  console.log("boardData in SlideControlsProvider:", boardData);
+  console.log("currentSlideIndex:", currentSlideIndex);
   const createSlide = async () => {
     try {
-      await revalidateSlidePath(boardId, currentSlideIndex);
       await createSlideAction(boardId);
       router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
     } catch (error: any) {
@@ -56,16 +53,16 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       toast.error("You cannot delete slide as it is the only slide in the board");
       return;
     }
+
     try {
       await deleteSlideAction(slide._id);
       toast.success(`Slide deleted successfully`, { duration: 1200 });
+      await mutateBoardData();
       if (currentSlideIndex === totalSlides - 1) {
         const index = Math.max(currentSlideIndex - 1, 0);
-        await revalidateSlidePath(boardId, index);
         router.push(`/user-boards/${boardId}/slides/${index}`);
       } else {
-        await revalidateSlidePath(boardId, currentSlideIndex);
-        router.replace(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
+        router.push(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
       }
     } catch (error: any) {
       console.error("Error deleting slide:", error);
@@ -75,7 +72,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handlePrevious = async () => {
     if (currentSlideIndex > 0) {
-      await revalidateSlidePath(boardId, currentSlideIndex);
       router.push(`/user-boards/${boardId}/slides/${currentSlideIndex - 1}`);
     }
   };
@@ -91,7 +87,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
     try {
-      await revalidateSlidePath(boardId, slideIndex);
       router.push(`/user-boards/${boardId}/slides/${slideIndex}`);
     } catch (error) {
       console.error("Error revalidating path:", error);

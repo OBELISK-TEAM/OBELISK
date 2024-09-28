@@ -85,7 +85,3 @@ export async function deleteSlide(slideId: string): Promise<SlideIdResponse> {
     throw error;
   }
 }
-
-export async function revalidateSlidePath(boardId: string, slideIndex: number) {
-  revalidatePath(`/user-boards/${boardId}/slides/${slideIndex}`);
-}
