@@ -8,10 +8,9 @@ import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import Board from "@/components/board/Board";
 import { useBoardData } from "@/hooks/board/useBoardData";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import LoadingBoard from "@/app/user-boards/[boardId]/loading";
 import { useBoardDataContext } from "@/contexts/BoardDataContext";
-import { SlideControlsProvider } from "@/contexts/SlideControlsContext";
 
 interface UserBoardPage {
   params: {
