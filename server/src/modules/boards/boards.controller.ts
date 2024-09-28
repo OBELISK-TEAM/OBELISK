@@ -14,7 +14,7 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { Permissions } from '../../shared/interfaces/Permissions';
+import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 @Controller('boards')
 export class BoardsController {
@@ -67,7 +67,7 @@ export class BoardsController {
   async updatePermissions(
     @User('_id') userId: string,
     @Param('id') boardId: string,
-    @Body() permissions: Permissions,
+    @Body() permissions: BoardPermissions,
   ): Promise<BoardResponseObject> {
     return this.boardsService.updatePermissions(userId, boardId, permissions);
   }

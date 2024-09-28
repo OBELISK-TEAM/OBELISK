@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
-  SlideObject,
-  SlideObjectDocument,
-} from 'src/schemas/slide-object.schema';
+  SuperObject,
+  SuperObjectDocument,
+} from 'src/schemas/object/super.object.schema';
 import { UsersService } from '../users/users.service';
 import { SlidesService } from '../slides/slides.service';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
@@ -17,8 +17,8 @@ import { WsException } from '@nestjs/websockets';
 @Injectable()
 export class WsObjectsService {
   constructor(
-    @InjectModel(SlideObject.name)
-    private readonly slideObjectModel: Model<SlideObject>,
+    @InjectModel(SuperObject.name)
+    private readonly slideObjectModel: Model<SuperObject>,
     private readonly usersService: UsersService,
     private readonly slidesService: SlidesService,
   ) {}
@@ -35,7 +35,7 @@ export class WsObjectsService {
       createdBy: user,
       slide,
     });
-    await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
+    // await this.usersService.addSlideObjectToUser(userId, createdSlideObject);
     await this.slidesService.addSlideObjectToSlide(slideId, createdSlideObject);
     return createdSlideObject
       .save()
@@ -77,10 +77,10 @@ export class WsObjectsService {
   }
 
   private toResponseObject(
-    slideObject: SlideObjectDocument,
+    slideObject: SuperObjectDocument,
   ): SlideObjectResponseObject {
-    const { _id, slide, createdBy, createdAt, updatedAt, ...objectProperties } =
-      slideObject.toObject() as SlideObjectDocument;
+    const { _id, createdAt, updatedAt, ...objectProperties } =
+      slideObject.toObject() as SuperObjectDocument;
     return {
       _id: _id as string,
       ...objectProperties,

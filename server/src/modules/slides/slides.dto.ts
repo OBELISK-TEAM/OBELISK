@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { SlideObject } from '../../schemas/slide-object.schema';
+import { SuperObject } from '../../schemas/object/super.object.schema';
 
 export class CreateSlideDto {
   @IsString({
@@ -18,5 +18,5 @@ export class CreateSlideDto {
   })
   boardId: string;
 
-  objects: SlideObject[];
+  objects: SuperObject[];
 }

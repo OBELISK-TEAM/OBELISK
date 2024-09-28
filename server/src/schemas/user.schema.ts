@@ -52,13 +52,13 @@ export class User {
 
   // relations
 
-  @Prop({
-    required: false,
-    type: [MongooseSchema.Types.ObjectId],
-    ref: 'Board',
-    default: [],
-  })
-  boards: string[];
+  // @Prop({
+  //   required: false,
+  //   type: [MongooseSchema.Types.ObjectId],
+  //   ref: 'Board',
+  //   default: [],
+  // })
+  // boards: string[];
 
   @Prop({
     required: false,

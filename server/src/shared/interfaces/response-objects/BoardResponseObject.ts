@@ -1,5 +1,5 @@
 import { SlideResponseObject } from './SlideResponseObject';
-import { SlideDocument } from '../../../schemas/slide.schema';
+import { SuperSlideDocument } from '../../../schemas/slide/super.slide.schema';
 
 export interface BoardResponseObject {
   _id: string;
@@ -11,7 +11,7 @@ export interface BoardResponseObject {
     moderator: string[];
   };
   slides?: string[];
-  slide?: SlideResponseObject | string | SlideDocument;
+  slide?: SlideResponseObject | string | SuperSlideDocument;
   createdAt?: Date | string | boolean | undefined;
   updatedAt?: Date | string | boolean | undefined;
 }

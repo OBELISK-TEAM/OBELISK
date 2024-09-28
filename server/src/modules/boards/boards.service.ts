@@ -2,20 +2,23 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
-import { Board, BoardDocument } from '../../schemas/board.schema';
+import {
+  SuperBoard,
+  SuperBoardDocument,
+} from '../../schemas/board/super.board.schema';
 import { UsersService } from '../users/users.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { SlideDocument } from '../../schemas/slide.schema';
-import { BoardPermission } from '../../enums/board.permission';
 import { UserDocument } from '../../schemas/user.schema';
-import { Permissions } from '../../shared/interfaces/Permissions';
+import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
+import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class BoardsService {
   private readonly pageSize = 10;
   constructor(
-    @InjectModel(Board.name) private readonly boardModel: Model<Board>,
+    @InjectModel(SuperBoard.name)
+    private readonly boardModel: Model<SuperBoard>,
     private readonly usersService: UsersService,
   ) {}
 
@@ -69,11 +72,11 @@ export class BoardsService {
   private async findBoards(
     skip: number,
     limit: number,
-  ): Promise<BoardDocument[]> {
+  ): Promise<SuperBoardDocument[]> {
     return this.boardModel.find().skip(skip).limit(limit).exec();
   }
 
-  async findBoardById(boardId: string): Promise<BoardDocument> {
+  async findBoardById(boardId: string): Promise<SuperBoardDocument> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
     if (!existingBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
@@ -83,7 +86,7 @@ export class BoardsService {
   private async createNewBoard(
     owner: string,
     createBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
+  ): Promise<SuperBoardDocument> {
     const createdBoard = new this.boardModel({ ...createBoardDto, owner });
     return createdBoard.save();
   }
@@ -91,7 +94,7 @@ export class BoardsService {
   async updateBoardById(
     boardId: string,
     updateBoardDto: CreateBoardDto,
-  ): Promise<BoardDocument> {
+  ): Promise<SuperBoardDocument> {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
       .exec();
@@ -100,7 +103,7 @@ export class BoardsService {
     return updatedBoard;
   }
 
-  private async deleteBoardById(boardId: string): Promise<BoardDocument> {
+  private async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
     const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
       .exec();
@@ -136,7 +139,7 @@ export class BoardsService {
   }
 
   verifyBoardPermission(
-    board: BoardDocument,
+    board: SuperBoardDocument,
     user: UserDocument,
     permission: BoardPermission,
   ): void {
@@ -153,7 +156,7 @@ export class BoardsService {
 
   private hasUserPermission(
     userId: string,
-    permissions: Permissions,
+    permissions: BoardPermissions,
     permission: BoardPermission,
   ): boolean {
     const userPermission = this.getUserHighestPermission(userId, permissions);
@@ -162,7 +165,7 @@ export class BoardsService {
 
   private getUserHighestPermission(
     userId: string,
-    permissions: Permissions,
+    permissions: BoardPermissions,
   ): BoardPermission {
     if (permissions.moderator.includes(userId))
       return BoardPermission.MODERATOR;
@@ -174,7 +177,7 @@ export class BoardsService {
   async updatePermissions(
     userId: string,
     boardId: string,
-    permissions: Permissions,
+    permissions: BoardPermissions,
   ): Promise<BoardResponseObject> {
     const user = await this.usersService.findUserById(userId);
     const board = await this.findBoardById(boardId);
@@ -186,8 +189,8 @@ export class BoardsService {
 
   private async updateBoardPermissions(
     boardId: string,
-    permissions: Permissions,
-  ): Promise<BoardDocument> {
+    permissions: BoardPermissions,
+  ): Promise<SuperBoardDocument> {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, { permissions }, { new: true })
       .exec();
@@ -218,7 +221,7 @@ export class BoardsService {
   }
 
   private assignBoardToRoles(
-    board: BoardDocument,
+    board: SuperBoardDocument,
     userId: string,
     userBoardRolesMap: AvailableBoards,
   ): void {
@@ -241,7 +244,9 @@ export class BoardsService {
     if (ownerId === userId) userBoardRolesMap.owner.push(boardId);
   }
 
-  private async fetchBoardsForUser(userId: string): Promise<BoardDocument[]> {
+  private async fetchBoardsForUser(
+    userId: string,
+  ): Promise<SuperBoardDocument[]> {
     return this.boardModel
       .find({
         $or: [
@@ -267,28 +272,18 @@ export class BoardsService {
   }
 
   async toResponseBoard(
-    board: BoardDocument,
+    board: SuperBoardDocument,
     showSlide: number = -1,
     showTimestamps: boolean = false,
   ): Promise<BoardResponseObject> {
     const { _id, name, owner, permissions, slides } =
-      board.toObject() as BoardDocument;
+      board.toObject() as SuperBoardDocument;
     const responseObject: BoardResponseObject = {
       _id: _id as string,
       name,
       owner,
       permissions,
-      slides,
     };
-
-    if (showSlide >= 0) {
-      await board.populate({
-        path: 'slides',
-        match: { _id: slides[showSlide] },
-        populate: { path: 'objects' },
-      });
-      responseObject.slide = board.slides[0] as unknown as SlideDocument;
-    }
 
     if (showTimestamps) {
       responseObject.createdAt = board.createdAt;

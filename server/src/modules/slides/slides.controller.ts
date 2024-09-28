@@ -41,12 +41,12 @@ export class SlidesController {
     return this.slidesService.createSlide(userId, createSlideDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async deleteSlide(
-    @User('_id') userId: string,
-    @Param('id') slideId: string,
-  ): Promise<SlideResponseObject> {
-    return this.slidesService.deleteSlide(userId, slideId);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Delete(':id')
+  // async deleteSlide(
+  //   @User('_id') userId: string,
+  //   @Param('id') slideId: string,
+  // ): Promise<SlideResponseObject> {
+  //   return this.slidesService.deleteSlide(userId, slideId);
+  // }
 }

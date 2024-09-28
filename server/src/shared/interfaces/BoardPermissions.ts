@@ -1,4 +1,4 @@
-export interface Permissions {
+export interface BoardPermissions {
   viewer: string[];
   editor: string[];
   moderator: string[];

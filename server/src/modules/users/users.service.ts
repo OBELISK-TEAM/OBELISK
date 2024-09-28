@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
 import { User, UserDocument } from '../../schemas/user.schema';
 import { UserAuthProvider } from '../../enums/user.auth.provider';
-import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 
 @Injectable()
@@ -112,20 +111,20 @@ export class UsersService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
-  async addSlideObjectToUser(
-    userId: string,
-    slideObject: SlideObjectDocument,
-  ): Promise<void> {
-    const updatedUser = await this.userModel
-      .findByIdAndUpdate(
-        userId,
-        { $push: { slideObjects: slideObject } },
-        { new: true },
-      )
-      .exec();
-    if (!updatedUser)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-  }
+  // async addSlideObjectToUser(
+  //   userId: string,
+  //   slideObject: SlideObjectDocument,
+  // ): Promise<void> {
+  //   const updatedUser = await this.userModel
+  //     .findByIdAndUpdate(
+  //       userId,
+  //       { $push: { slideObjects: slideObject } },
+  //       { new: true },
+  //     )
+  //     .exec();
+  //   if (!updatedUser)
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  // }
 
   async deleteSlideObjectFromUser(
     userId: string,
@@ -173,7 +172,7 @@ export class UsersService {
       userAuthProvider,
     };
 
-    if (showBoards) responseObject.boards = user.boards;
+    // if (showBoards) responseObject.boards = user.boards;
     if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
       responseObject.createdAt = user.createdAt;

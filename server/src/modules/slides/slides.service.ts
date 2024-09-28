@@ -1,22 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Slide, SlideDocument } from '../../schemas/slide.schema';
+import {
+  SuperSlide,
+  SuperSlideDocument,
+} from '../../schemas/slide/super.slide.schema';
 import { CreateSlideDto } from './slides.dto';
 import { BoardsService } from '../boards/boards.service';
-import { BoardDocument } from '../../schemas/board.schema';
-import { SlideObject } from 'src/schemas/slide-object.schema';
+import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { UsersService } from '../users/users.service';
 import { BoardPermission } from '../../enums/board.permission';
+import { SuperObject } from '../../schemas/object/super.object.schema';
 
 @Injectable()
 export class SlidesService {
   private readonly pageSize = 5;
   private readonly slidesLimitPerBoard = 10;
   constructor(
-    @InjectModel(Slide.name)
-    private readonly slideModel: Model<Slide>,
+    @InjectModel(SuperSlide.name)
+    private readonly slideModel: Model<SuperSlide>,
     private readonly usersService: UsersService,
     private readonly boardsService: BoardsService,
   ) {}
@@ -55,36 +58,36 @@ export class SlidesService {
     return createdSlide.save().then(slide => this.toResponseSlide(slide));
   }
 
-  async deleteSlide(
-    userId: string,
-    slideId: string,
-  ): Promise<SlideResponseObject> {
-    const slide = await this.findSlideById(slideId);
-    const user = await this.usersService.findUserById(userId);
-    const board = await this.boardsService.findBoardById(slide.board);
-    this.boardsService.verifyBoardPermission(
-      board,
-      user,
-      BoardPermission.EDITOR,
-    );
-    await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
-    return this.deleteSlideById(slideId).then(slide =>
-      this.toResponseSlide(slide),
-    );
-  }
+  // async deleteSlide(
+  //   userId: string,
+  //   slideId: string,
+  // ): Promise<SlideResponseObject> {
+  //   const slide = await this.findSlideById(slideId);
+  //   const user = await this.usersService.findUserById(userId);
+  //   const board = await this.boardsService.findBoardById(slide.board);
+  //   this.boardsService.verifyBoardPermission(
+  //     board,
+  //     user,
+  //     BoardPermission.EDITOR,
+  //   );
+  //   await this.boardsService.deleteSlideFromBoard(slide.board, slideId);
+  //   return this.deleteSlideById(slideId).then(slide =>
+  //     this.toResponseSlide(slide),
+  //   );
+  // }
 
-  async findSlides(skip: number, limit: number): Promise<SlideDocument[]> {
+  async findSlides(skip: number, limit: number): Promise<SuperSlideDocument[]> {
     return this.slideModel.find().skip(skip).limit(limit).exec();
   }
 
-  async findSlideById(slideId: string): Promise<SlideDocument> {
+  async findSlideById(slideId: string): Promise<SuperSlideDocument> {
     const existingSlide = await this.slideModel.findById(slideId).exec();
     if (!existingSlide)
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     return existingSlide;
   }
 
-  async createNewSlide(slide: CreateSlideDto): Promise<SlideDocument> {
+  async createNewSlide(slide: CreateSlideDto): Promise<SuperSlideDocument> {
     const { boardId, ...rest } = slide;
     const createdSlide = new this.slideModel({
       ...rest,
@@ -93,7 +96,7 @@ export class SlidesService {
     return createdSlide.save();
   }
 
-  async deleteSlideById(slideId: string): Promise<SlideDocument> {
+  async deleteSlideById(slideId: string): Promise<SuperSlideDocument> {
     const deletedSlide = await this.slideModel
       .findByIdAndDelete(slideId)
       .exec();
@@ -104,7 +107,7 @@ export class SlidesService {
 
   async addSlideObjectToSlide(
     slideId: string,
-    slideObject: SlideObject,
+    slideObject: SuperObject,
   ): Promise<void> {
     const updatedSlide = await this.slideModel
       .findByIdAndUpdate(
@@ -149,31 +152,24 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
   }
 
-  private validateSlidesLimit(board: BoardDocument): void {
+  private validateSlidesLimit(board: SuperBoardDocument): void {
     const slidesCount = board.slides.length;
     if (slidesCount >= this.slidesLimitPerBoard)
       throw new HttpException('Slides limit reached', HttpStatus.BAD_REQUEST);
   }
 
   private async toResponseSlide(
-    slide: SlideDocument,
+    slide: SuperSlideDocument,
     showBoard: boolean = false,
     showObjects: boolean = false,
     showTimestamps: boolean = false,
   ): Promise<SlideResponseObject> {
-    const { _id, board, objects } = slide.toObject() as SlideDocument;
+    const { _id, objects } = slide.toObject() as SuperSlideDocument;
     const responseObject: SlideResponseObject = { _id: _id as string };
-
-    if (showBoard) {
-      await slide.populate('board');
-      responseObject.board = await this.boardsService.toResponseBoard(
-        board as unknown as BoardDocument,
-      );
-    }
 
     if (showObjects) {
       await slide.populate('objects');
-      responseObject.objects = objects;
+      // responseObject.objects = objects;
       // responseObject.objects = await Promise.all(
       //   objects.map(object =>
       //     this.slideObjectsService.toResponseSlideObject(

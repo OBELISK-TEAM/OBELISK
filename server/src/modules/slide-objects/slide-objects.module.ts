@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  SlideObject,
-  SlideObjectSchema,
-} from 'src/schemas/slide-object.schema';
+
 import { SlideObjectsController } from './slide-objects.controller';
 import { SlideObjectsService } from './slide-objects.service';
+import {
+  SuperObject,
+  SuperObjectSchema,
+} from '../../schemas/object/super.object.schema';
 import { UsersModule } from '../users/users.module';
 import { SlidesModule } from '../slides/slides.module';
 import { BoardsModule } from '../boards/boards.module';
@@ -15,8 +16,8 @@ import { WsObjectsService } from './ws.objects.service';
   imports: [
     MongooseModule.forFeature([
       {
-        name: SlideObject.name,
-        schema: SlideObjectSchema,
+        name: SuperObject.name,
+        schema: SuperObjectSchema,
       },
     ]),
     UsersModule,
