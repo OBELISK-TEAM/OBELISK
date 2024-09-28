@@ -5,8 +5,6 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    //console.log("body", JSON.stringify({ email, password }));
-
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/auth/register`, {
       method: "POST",
       headers: {

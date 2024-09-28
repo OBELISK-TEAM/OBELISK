@@ -67,7 +67,7 @@ export function SlidePagination() {
   const pageItems = getPageItems(currentSlideIndex, totalSlides);
 
   return (
-    <div className="flex max-w-[33%] flex-grow justify-center">
+    <div className={`relative flex max-w-[33%] flex-grow justify-center`}>
       <Pagination className="flex items-center space-x-2">
         <PaginationContent>
           {currentSlideIndex > 0 && (

@@ -8,7 +8,6 @@ import BoardToolBar from "@/components/board/Toolbar/Toolbar";
 import SlideCanvas from "@/components/board/Canvas";
 import { SlideControls } from "@/components/board/SlideControls/SlideControls";
 import React from "react";
-import { LoadingSpinner } from "@/components/loading/loading-spinner";
 
 const Board: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   return (

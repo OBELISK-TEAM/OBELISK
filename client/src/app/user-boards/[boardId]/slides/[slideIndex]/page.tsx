@@ -7,11 +7,11 @@ import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import Board from "@/components/board/Board";
-import { defaultBoardData } from "@/data/default-board-data";
 import { useBoardData } from "@/hooks/board/useBoardData";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoadingBoard from "@/app/user-boards/[boardId]/loading";
 import { useBoardDataContext } from "@/contexts/BoardDataContext";
+import { SlideControlsProvider } from "@/contexts/SlideControlsContext";
 
 interface UserBoardPage {
   params: {
@@ -24,7 +24,6 @@ const BoardPage = ({ params }: UserBoardPage) => {
   const { boardId, slideIndex } = params;
   const { data: fetchedBoardData, isLoading, isError, mutateBoardData } = useBoardData(boardId, slideIndex);
   const { boardData, setBoardData } = useBoardDataContext();
-
   useEffect(() => {
     if (fetchedBoardData) {
       setBoardData(fetchedBoardData);
@@ -36,8 +35,7 @@ const BoardPage = ({ params }: UserBoardPage) => {
   if (isError || !slideId) {
     return notFound();
   }
-  console.log("boardDataResponse_id:", boardDataResponse._id);
-  console.log("isLoading:", isLoading);
+
   if (isLoading && boardDataResponse._id === "-1") {
     return <LoadingBoard />;
   }
