@@ -8,7 +8,6 @@ import {
 } from '../../schemas/board/super.board.schema';
 import { UsersService } from '../users/users.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { UserDocument } from '../../schemas/user.schema';
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
@@ -56,12 +55,22 @@ export class BoardsService {
     );
   }
 
-  async getBoards(page: number = 1): Promise<BoardResponseObject[]> {
-    const skip = (page - 1) * this.pageSize;
-    return this.findBoards(skip, this.pageSize).then(boards =>
-      Promise.all(boards.map(board => this.toResponseBoard(board))),
+  //////////////////
+
+  async getSlide(boardId: string, slideNumber: number = 1): Promise<any> {
+    const board = await this.boardModel.findOne(
+      { _id: boardId },
+      {
+        slides: { $slice: [slideNumber, 1] },
+      },
     );
+    if (!board || !board.slides || board.slides.length === 0) {
+      throw new Error('Slide not found');
+    }
+    return board.slides[0];
   }
+
+  ///////////////////////
 
   async getBoardById(
     boardId: string,
@@ -72,136 +81,11 @@ export class BoardsService {
     );
   }
 
-  async updateBoard(
-    userId: string,
-    boardId: string,
-    updateBoardDto: CreateBoardDto,
-  ): Promise<BoardResponseObject> {
-    await this.verifyBoardOwner(userId, boardId);
-    return this.updateBoardById(boardId, updateBoardDto).then(updatedBoard =>
-      this.toResponseBoard(updatedBoard),
-    );
-  }
-
-  async deleteBoard(
-    userId: string,
-    boardId: string,
-  ): Promise<BoardResponseObject> {
-    await this.verifyBoardOwner(userId, boardId);
-    await this.usersService.deleteBoardFromUser(userId, boardId);
-    return this.deleteBoardById(boardId).then(board =>
-      this.toResponseBoard(board),
-    );
-  }
-
-  private async findBoards(
-    skip: number,
-    limit: number,
-  ): Promise<SuperBoardDocument[]> {
-    return this.boardModel.find().skip(skip).limit(limit).exec();
-  }
-
   async findBoardById(boardId: string): Promise<SuperBoardDocument> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
     if (!existingBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
-  }
-
-  async updateBoardById(
-    boardId: string,
-    updateBoardDto: CreateBoardDto,
-  ): Promise<SuperBoardDocument> {
-    const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, updateBoardDto, { new: true })
-      .exec();
-    if (!updatedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return updatedBoard;
-  }
-
-  private async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
-    const deletedBoard = await this.boardModel
-      .findByIdAndDelete(boardId)
-      .exec();
-    if (!deletedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return deletedBoard;
-  }
-
-  async addSlideToBoard(boardId: string, slideId: string): Promise<void> {
-    const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, { $push: { slides: slideId } }, { new: true })
-      .exec();
-    if (!updatedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-  }
-
-  async deleteSlideFromBoard(boardId: string, slideId: string): Promise<void> {
-    const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, { $pull: { slides: slideId } }, { new: true })
-      .exec();
-    if (!updatedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-  }
-
-  async verifyBoardOwner(userId: string, boardId: string): Promise<void> {
-    const owner = await this.usersService.findUserById(userId);
-    const board = await this.findBoardById(boardId);
-    if (board.owner.toString() !== (owner._id as string).toString())
-      throw new HttpException(
-        'You are not the owner of this board',
-        HttpStatus.FORBIDDEN,
-      );
-  }
-
-  verifyBoardPermission(
-    board: SuperBoardDocument,
-    user: UserDocument,
-    permission: BoardPermission,
-  ): void {
-    const isOwner = board.owner.toString() === (user._id as string).toString();
-    if (isOwner) return;
-    const permissions = board.permissions;
-    const userId = user._id as string;
-    if (!this.hasUserPermission(userId, permissions, permission))
-      throw new HttpException(
-        'You do not have permission to perform this action',
-        HttpStatus.FORBIDDEN,
-      );
-  }
-
-  private hasUserPermission(
-    userId: string,
-    permissions: BoardPermissions,
-    permission: BoardPermission,
-  ): boolean {
-    const userPermission = this.getUserHighestPermission(userId, permissions);
-    return userPermission >= permission;
-  }
-
-  private getUserHighestPermission(
-    userId: string,
-    permissions: BoardPermissions,
-  ): BoardPermission {
-    if (permissions.moderator.includes(userId))
-      return BoardPermission.MODERATOR;
-    if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
-    if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
-    return BoardPermission.VIEWER - 1;
-  }
-
-  async updatePermissions(
-    userId: string,
-    boardId: string,
-    permissions: BoardPermissions,
-  ): Promise<BoardResponseObject> {
-    const user = await this.usersService.findUserById(userId);
-    const board = await this.findBoardById(boardId);
-    this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
-    return this.updateBoardPermissions(boardId, permissions).then(board =>
-      this.toResponseBoard(board),
-    );
   }
 
   private async updateBoardPermissions(

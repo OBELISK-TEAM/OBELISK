@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
@@ -43,6 +51,14 @@ export class BoardsController {
     @Body() objectProps: any,
   ): Promise<any> {
     return this.boardsService.createObject(boardId, slideId, objectProps);
+  }
+
+  @Get(':boardId')
+  getSlide(
+    @Param('boardId') boardId: string,
+    @Query('slide') slideNumber: number,
+  ): Promise<any> {
+    return this.boardsService.getSlide(boardId, slideNumber);
   }
 
   // @Put(':id')
