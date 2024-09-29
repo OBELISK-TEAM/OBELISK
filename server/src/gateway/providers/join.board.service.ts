@@ -37,8 +37,7 @@ export class JoinBoardService {
     boardId: string,
   ): Promise<boolean> {
     try {
-      await this.boardsService.findBoardById(boardId);
-      return true;
+      return !!(await this.boardsService.findBoardById(boardId));
     } catch {
       this.emitErrorAndDisconnect(client, 'Invalid board id');
       return false;
