@@ -10,12 +10,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ObjectsService } from './objects.service';
-import { CreateSlideObject } from './slide-objects.dto';
+import { CreateSlideObject } from './objects.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
 
-@Controller('slide-objects')
+@Controller('objects')
 export class ObjectsController {
   constructor(private readonly slideObjectsService: ObjectsService) {}
 

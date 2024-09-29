@@ -11,12 +11,10 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
-import { SuperSlide } from '../../schemas/slide/super.slide.schema';
 import { SuperObject } from '../../schemas/object/super.object.schema';
 
 @Injectable()
 export class BoardsService {
-  private readonly pageSize = 10;
   constructor(
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
@@ -33,13 +31,23 @@ export class BoardsService {
     });
   }
 
-  async createSlide(boardId: string): Promise<any> {
-    const newSlide = new SuperSlide();
-    return this.boardModel.findByIdAndUpdate(
-      boardId,
-      { $push: { slides: newSlide } },
-      { new: true },
+  async deleteBoard(userId: string, boardId: string): Promise<any> {
+    const board = await this.findBoardById(boardId);
+    // this.verifyBoardPermission(board, userId, BoardPermission.OWNER);
+    return this.boardModel.findByIdAndDelete(boardId).exec();
+  }
+
+  async getSlide(boardId: string, slideNumber: number = 1): Promise<any> {
+    const board = await this.boardModel.findOne(
+      { _id: boardId },
+      {
+        slides: { $slice: [slideNumber, 1] },
+      },
     );
+    if (!board || !board.slides || board.slides.length === 0) {
+      throw new Error('Slide not found');
+    }
+    return board.slides[0];
   }
 
   async createObject(
@@ -55,21 +63,7 @@ export class BoardsService {
     );
   }
 
-  //////////////////
-
-  async getSlide(boardId: string, slideNumber: number = 1): Promise<any> {
-    const board = await this.boardModel.findOne(
-      { _id: boardId },
-      {
-        slides: { $slice: [slideNumber, 1] },
-      },
-    );
-    if (!board || !board.slides || board.slides.length === 0) {
-      throw new Error('Slide not found');
-    }
-    return board.slides[0];
-  }
-
+  /////////////////
   ///////////////////////
 
   async getBoardById(
@@ -88,49 +82,46 @@ export class BoardsService {
     return existingBoard;
   }
 
-  // verifyBoardPermission(
-  //     board: BoardDocument,
-  //     user: UserDocument,
-  //     permission: BoardPermission,
-  // ): void {
-  //   const isOwner = board.owner.toString() === (user._id as string).toString();
-  //   if (isOwner) return;
-  //   const permissions = board.permissions;
-  //   const userId = user._id as string;
-  //   if (!this.hasUserPermission(userId, permissions, permission))
-  //     throw new HttpException(
-  //         'You do not have permission to perform this action',
-  //         HttpStatus.FORBIDDEN,
-  //     );
-  // }
-  //
-  // private hasUserPermission(
-  //     userId: string,
-  //     permissions: Permissions,
-  //     permission: BoardPermission,
-  // ): boolean {
-  //   const userPermission = this.getUserHighestPermission(userId, permissions);
-  //   return userPermission >= permission;
-  // }
-  //
-  // private getUserHighestPermission(
-  //     userId: string,
-  //     permissions: Permissions,
-  // ): BoardPermission {
-  //   if (permissions.moderator.includes(userId))
-  //     return BoardPermission.MODERATOR;
-  //   if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
-  //   if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
-  //   return BoardPermission.VIEWER - 1;
-  // }
+  verifyBoardPermission(
+    board: SuperBoardDocument,
+    userId: string,
+    permission: BoardPermission,
+  ): void {
+    const isOwner = board.owner.toString() === userId.toString();
+    if (isOwner) return;
+    const permissions = board.permissions;
+    if (!this.hasUserPermission(userId, permissions, permission))
+      throw new HttpException(
+        'You do not have permission to perform this action',
+        HttpStatus.FORBIDDEN,
+      );
+  }
+
+  private hasUserPermission(
+    userId: string,
+    permissions: BoardPermissions,
+    permission: BoardPermission,
+  ): boolean {
+    const userPermission = this.getUserHighestPermission(userId, permissions);
+    return userPermission >= permission;
+  }
+
+  private getUserHighestPermission(
+    userId: string,
+    permissions: BoardPermissions,
+  ): BoardPermission {
+    if (permissions.moderator.includes(userId))
+      return BoardPermission.MODERATOR;
+    if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
+    if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
+    return BoardPermission.VIEWER - 1;
+  }
 
   async updatePermissions(
     userId: string,
     boardId: string,
     permissions: BoardPermissions,
   ): Promise<BoardResponseObject> {
-    const user = await this.usersService.findUserById(userId);
-    const board = await this.findBoardById(boardId);
     // this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
     return this.updateBoardPermissions(boardId, permissions).then(board =>
       this.toResponseBoard(board),
