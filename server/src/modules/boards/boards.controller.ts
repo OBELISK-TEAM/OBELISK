@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 @Controller('boards')
 export class BoardsController {
@@ -81,13 +83,13 @@ export class BoardsController {
   // }
 
   // // TODO add proper dto!!! with class validator - now its for testing purposes
-  // @Put(':id/permissions')
-  // @UseGuards(JwtAuthGuard)
-  // async updatePermissions(
-  //   @User('_id') userId: string,
-  //   @Param('id') boardId: string,
-  //   @Body() permissions: BoardPermissions,
-  // ): Promise<BoardResponseObject> {
-  //   return this.boardsService.updatePermissions(userId, boardId, permissions);
-  // }
+  @Put(':id/permissions')
+  @UseGuards(JwtAuthGuard)
+  async updatePermissions(
+    @User('_id') userId: string,
+    @Param('id') boardId: string,
+    @Body() permissions: BoardPermissions,
+  ): Promise<any> {
+    return this.boardsService.updatePermissions(userId, boardId, permissions);
+  }
 }

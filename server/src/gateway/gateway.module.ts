@@ -8,12 +8,13 @@ import { ObjectActionService } from './providers/object.action.service';
 import { SlideObjectsModule } from '../modules/slide-objects/slide-objects.module';
 
 @Module({
-  imports: [AuthModule, BoardsModule, SlideObjectsModule],
+  imports: [AuthModule],
+  // imports: [AuthModule, BoardsModule, SlideObjectsModule],
   providers: [
     Gateway,
     ConnectionService,
-    JoinBoardService,
-    ObjectActionService,
+    // JoinBoardService,
+    // ObjectActionService,
   ],
 })
 export class GatewayModule {}

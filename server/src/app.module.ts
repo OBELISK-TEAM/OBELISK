@@ -29,7 +29,7 @@ const DEFAULT_DB_HOST = 'localhost';
     BoardsModule,
     // SlidesModule,
     // SlideObjectsModule,
-    // GatewayModule,
+    GatewayModule,
   ],
   providers: [
     {

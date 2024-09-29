@@ -88,10 +88,59 @@ export class BoardsService {
     return existingBoard;
   }
 
+  // verifyBoardPermission(
+  //     board: BoardDocument,
+  //     user: UserDocument,
+  //     permission: BoardPermission,
+  // ): void {
+  //   const isOwner = board.owner.toString() === (user._id as string).toString();
+  //   if (isOwner) return;
+  //   const permissions = board.permissions;
+  //   const userId = user._id as string;
+  //   if (!this.hasUserPermission(userId, permissions, permission))
+  //     throw new HttpException(
+  //         'You do not have permission to perform this action',
+  //         HttpStatus.FORBIDDEN,
+  //     );
+  // }
+  //
+  // private hasUserPermission(
+  //     userId: string,
+  //     permissions: Permissions,
+  //     permission: BoardPermission,
+  // ): boolean {
+  //   const userPermission = this.getUserHighestPermission(userId, permissions);
+  //   return userPermission >= permission;
+  // }
+  //
+  // private getUserHighestPermission(
+  //     userId: string,
+  //     permissions: Permissions,
+  // ): BoardPermission {
+  //   if (permissions.moderator.includes(userId))
+  //     return BoardPermission.MODERATOR;
+  //   if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
+  //   if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
+  //   return BoardPermission.VIEWER - 1;
+  // }
+
+  async updatePermissions(
+    userId: string,
+    boardId: string,
+    permissions: BoardPermissions,
+  ): Promise<BoardResponseObject> {
+    const user = await this.usersService.findUserById(userId);
+    const board = await this.findBoardById(boardId);
+    // this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
+    return this.updateBoardPermissions(boardId, permissions).then(board =>
+      this.toResponseBoard(board),
+    );
+  }
+
   private async updateBoardPermissions(
     boardId: string,
     permissions: BoardPermissions,
-  ): Promise<SuperBoardDocument> {
+  ): Promise<any> {
     const updatedBoard = await this.boardModel
       .findByIdAndUpdate(boardId, { permissions }, { new: true })
       .exec();
@@ -102,8 +151,8 @@ export class BoardsService {
 
   async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
     const boards = await this.fetchBoardsForUser(userId);
-
     const boardRolesMap = this.initializeUserBoardRolesMap();
+
     userId = userId.toString();
 
     boards.forEach(board =>
@@ -122,7 +171,7 @@ export class BoardsService {
   }
 
   private assignBoardToRoles(
-    board: SuperBoardDocument,
+    board: BoardPermissionsInfo,
     userId: string,
     userBoardRolesMap: AvailableBoards,
   ): void {
@@ -147,16 +196,19 @@ export class BoardsService {
 
   private async fetchBoardsForUser(
     userId: string,
-  ): Promise<SuperBoardDocument[]> {
+  ): Promise<BoardPermissionsInfo[]> {
     return this.boardModel
-      .find({
-        $or: [
-          { owner: userId },
-          { 'permissions.viewer': userId },
-          { 'permissions.editor': userId },
-          { 'permissions.moderator': userId },
-        ],
-      })
+      .find(
+        {
+          $or: [
+            { owner: userId },
+            { 'permissions.viewer': userId },
+            { 'permissions.editor': userId },
+            { 'permissions.moderator': userId },
+          ],
+        },
+        '_id permissions owner',
+      )
       .exec();
   }
 
@@ -193,3 +245,6 @@ export class BoardsService {
     return responseObject;
   }
 }
+
+export interface BoardPermissionsInfo
+  extends Pick<SuperBoardDocument, '_id' | 'permissions' | 'owner'> {}
