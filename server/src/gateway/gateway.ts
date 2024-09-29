@@ -32,7 +32,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly connectionService: ConnectionService,
     private readonly joinBoardService: JoinBoardService,
-    // private readonly objectActionService: ObjectActionService,
+    private readonly objectActionService: ObjectActionService,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -53,39 +53,39 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinBoardService.handleLeaveBoard(client);
   }
 
-  // @SubscribeMessage('add-object')
-  // async handleAddObject(
-  //   client: GwSocketWithTarget,
-  //   data: AddObjectData,
-  // ): Promise<void> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.ADD,
-  //   );
-  // }
-  //
-  // @SubscribeMessage('update-object')
-  // async handleUpdateObject(
-  //   client: GwSocketWithTarget,
-  //   data: UpdateObjectData,
-  // ): Promise<void> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.UPDATE,
-  //   );
-  // }
-  //
-  // @SubscribeMessage('delete-object')
-  // async handleDeleteObject(
-  //   client: GwSocketWithTarget,
-  //   data: DeleteObjectData,
-  // ): Promise<void> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.DELETE,
-  //   );
-  // }
+  @SubscribeMessage('add-object')
+  async handleAddObject(
+    client: GwSocketWithTarget,
+    data: AddObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.ADD,
+    );
+  }
+
+  @SubscribeMessage('update-object')
+  async handleUpdateObject(
+    client: GwSocketWithTarget,
+    data: UpdateObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.UPDATE,
+    );
+  }
+
+  @SubscribeMessage('delete-object')
+  async handleDeleteObject(
+    client: GwSocketWithTarget,
+    data: DeleteObjectData,
+  ): Promise<void> {
+    return this.objectActionService.handleActionObject(
+      client,
+      data,
+      ObjectAction.DELETE,
+    );
+  }
 }

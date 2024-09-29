@@ -14,6 +14,7 @@ export interface AddObjectData {
 
 export interface UpdateObjectData {
   object: ObjectDataPropsWithId;
+  slide: SlideOnlyId;
 }
 
 export interface DeleteObjectData {

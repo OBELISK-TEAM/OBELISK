@@ -5,16 +5,15 @@ import { BoardsModule } from '../modules/boards/boards.module';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { ObjectActionService } from './providers/object.action.service';
-import { SlideObjectsModule } from '../modules/slide-objects/slide-objects.module';
+import { ObjectsModule } from '../modules/objects/objects.module';
 
 @Module({
-  imports: [AuthModule, BoardsModule],
-  // imports: [AuthModule, BoardsModule, SlideObjectsModule],
+  imports: [AuthModule, BoardsModule, ObjectsModule],
   providers: [
     Gateway,
     ConnectionService,
     JoinBoardService,
-    // ObjectActionService,
+    ObjectActionService,
   ],
 })
 export class GatewayModule {}

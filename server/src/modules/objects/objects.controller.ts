@@ -9,15 +9,15 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { SlideObjectsService } from './slide-objects.service';
+import { ObjectsService } from './objects.service';
 import { CreateSlideObject } from './slide-objects.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { SlideObjectResponseObject } from '../../shared/interfaces/response-objects/SlideObjectResponseObject';
 
 @Controller('slide-objects')
-export class SlideObjectsController {
-  constructor(private readonly slideObjectsService: SlideObjectsService) {}
+export class ObjectsController {
+  constructor(private readonly slideObjectsService: ObjectsService) {}
 
   // @Get()
   // async getSlideObjects(
