@@ -9,9 +9,9 @@ import {
   SuperObject,
   SuperObjectDocument,
 } from '../../schemas/object/super.object.schema';
-import { CreateSlideObject, UpdateSlideObject } from './slide-objects.dto';
 import { SlideObjectResponseObject } from 'src/shared/interfaces/response-objects/SlideObjectResponseObject';
 import { WsException } from '@nestjs/websockets';
+import { CreateSlideObject, UpdateSlideObject } from './objects.dto';
 
 @Injectable()
 export class ObjectsService {
