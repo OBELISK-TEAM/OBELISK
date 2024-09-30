@@ -11,6 +11,7 @@ import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { BoardsResponse } from "@/interfaces/boards/boards-response";
 import { BoardResponse } from "@/interfaces/boards/board-response";
+import { toast } from "sonner";
 
 interface IBoardTable {
   activeTab: string;
@@ -47,7 +48,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   if (error) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <p className="text-red-500">Failed to load data.</p>
+        <p className={"text-red-600"}>Failed to load data.</p>
       </div>
     );
   }
