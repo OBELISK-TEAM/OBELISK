@@ -66,6 +66,7 @@ export class ObjectActionService {
     client: GwSocketWithTarget,
     data: UpdateObjectData,
   ): Promise<void> {
+    console.log(data);
     const boardId = client.data.user.targetBoard.boardId;
     const slideId = data.slide._id;
     const objectId = data.object._id;
