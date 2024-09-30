@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import Cookies from 'js-cookie';
 
 interface SocketContextProps {
   socket: Socket | null;
@@ -13,9 +14,9 @@ const SocketContext = createContext<SocketContextProps | undefined>(undefined);
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const token = Cookies.get("accessToken");
 
   useEffect(() => {
-    const token = "some-hardcoded-token";
     let socketInstance: Socket | null = null;
 
     socketInstance = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
@@ -31,7 +32,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => {
       socketInstance?.disconnect();
     };
-  }, []);
+  }, [token]);
 
   const connect = () => {
     socket?.connect();
