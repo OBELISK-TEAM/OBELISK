@@ -11,6 +11,19 @@ export class SlidesService {
     private readonly boardModel: Model<SuperBoard>,
   ) {}
 
+  async getSlide(boardId: string, slideNumber: number = 1): Promise<any> {
+    const board = await this.boardModel.findOne(
+      { _id: boardId },
+      {
+        slides: { $slice: [slideNumber, 1] },
+      },
+    );
+    if (!board || !board.slides || board.slides.length === 0) {
+      throw new Error('Slide not found');
+    }
+    return board.slides[0];
+  }
+
   async createSlide(boardId: string): Promise<any> {
     const newSlide = new SuperSlide();
     return this.boardModel.findOneAndUpdate(

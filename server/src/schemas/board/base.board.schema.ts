@@ -1,6 +1,9 @@
 import { Prop } from '@nestjs/mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
-import { SuperSlide } from '../slide/super.slide.schema';
+import {
+  SuperSlideDocument,
+  SuperSlideSchema,
+} from '../slide/super.slide.schema';
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 export class BaseBoard {
@@ -20,11 +23,11 @@ export class BaseBoard {
 
 export class BaseBoardWithSlides extends BaseBoard {
   @Prop({
-    type: [SuperSlide],
+    type: [SuperSlideSchema],
     required: false,
     default: [],
   })
-  slides: SuperSlide[];
+  slides: SuperSlideDocument[];
 }
 
 export class BaseBoardWithSlidesAndPermissions extends BaseBoardWithSlides {

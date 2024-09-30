@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
@@ -15,9 +14,25 @@ import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
+// TODO - verify permissions for endpoints
+
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
+
+  // TODO - implement
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  getUserBoards(@User('_id') userId: string): string {
+    return 'implement me';
+    // return this.boardsService.getUserBoards(userId);
+  }
+
+  // TODO - check permissions to fetch board
+  @Get(':boardId')
+  getBoard(@Param('boardId') boardId: string): Promise<any> {
+    return this.boardsService.getBoardById(boardId);
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -28,6 +43,7 @@ export class BoardsController {
     return this.boardsService.createBoard(userId, createBoardDto);
   }
 
+  // TODO - check permissions to delete board
   @Delete(':boardId')
   @UseGuards(JwtAuthGuard)
   async deleteBoard(
@@ -37,14 +53,7 @@ export class BoardsController {
     return this.boardsService.deleteBoard(userId, boardId);
   }
 
-  @Get(':boardId')
-  getSlide(
-    @Param('boardId') boardId: string,
-    @Query('slide') slideNumber: number,
-  ): Promise<any> {
-    return this.boardsService.getSlide(boardId, slideNumber);
-  }
-
+  // TODO - check permissions to delete board
   @Put(':boardId/permissions')
   @UseGuards(JwtAuthGuard)
   async updatePermissions(

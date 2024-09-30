@@ -1,7 +1,7 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document as MongooseDocument, SchemaTimestampsConfig } from 'mongoose';
 import { BaseBoardWithSlidesAndPermissions } from './base.board.schema';
-import { SuperSlide } from '../slide/super.slide.schema';
+import { SuperSlide, SuperSlideDocument } from '../slide/super.slide.schema';
 
 export type SuperBoardDocument = SuperBoard &
   MongooseDocument &
@@ -18,7 +18,7 @@ export const SuperBoardSchema = SchemaFactory.createForClass(SuperBoard);
 
 SuperBoardSchema.pre('save', async function (next) {
   if (this.isNew && this.slides.length === 0) {
-    this.slides.push(new SuperSlide());
+    this.slides.push(new SuperSlide() as SuperSlideDocument);
   }
   next();
 });

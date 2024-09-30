@@ -10,7 +10,7 @@ export interface BoardResponseObject {
     editor: string[];
     moderator: string[];
   };
-  slides?: string[];
+  slides: string[];
   slide?: SlideResponseObject | string | SuperSlideDocument;
   createdAt?: Date | string | boolean | undefined;
   updatedAt?: Date | string | boolean | undefined;

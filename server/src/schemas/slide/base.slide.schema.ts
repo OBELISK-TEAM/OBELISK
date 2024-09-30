@@ -1,5 +1,9 @@
 import { Prop } from '@nestjs/mongoose';
-import { SuperObject } from '../object/super.object.schema';
+import {
+  SuperObject,
+  SuperObjectDocument,
+  SuperObjectSchema,
+} from '../object/super.object.schema';
 
 export class BaseSlide {
   @Prop({
@@ -13,9 +17,9 @@ export class BaseSlide {
 
 export class BaseSlideWithObjects extends BaseSlide {
   @Prop({
-    type: [SuperObject],
+    type: [SuperObjectSchema],
     required: false,
     default: [],
   })
-  objects: SuperObject[];
+  objects: SuperObjectDocument[];
 }

@@ -6,7 +6,6 @@ import {
   SuperBoard,
   SuperBoardDocument,
 } from '../../schemas/board/super.board.schema';
-import { UsersService } from '../users/users.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
@@ -18,37 +17,50 @@ export class BoardsService {
   constructor(
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
-    private readonly usersService: UsersService,
   ) {}
+
+  // TODO - implement
+  // async getUserBoards(userId: string): Promise<any[]> {
+  //   return await this.fetchBoardsForUser(userId);
+  // }
+
+  async getBoardById(boardId: string): Promise<BoardResponseObject> {
+    const board = await this.findBoardById(boardId);
+    return this.toResponseBoard(board);
+  }
 
   async createBoard(
     owner: string,
     createBoardDto: CreateBoardDto,
-  ): Promise<any> {
-    return this.boardModel.create({
-      ...createBoardDto,
-      owner,
-    });
-  }
-
-  async deleteBoard(userId: string, boardId: string): Promise<any> {
-    const board = await this.findBoardById(boardId);
-    // this.verifyBoardPermission(board, userId, BoardPermission.OWNER);
-    return this.boardModel.findByIdAndDelete(boardId).exec();
-  }
-
-  async getSlide(boardId: string, slideNumber: number = 1): Promise<any> {
-    const board = await this.boardModel.findOne(
-      { _id: boardId },
-      {
-        slides: { $slice: [slideNumber, 1] },
-      },
+  ): Promise<BoardResponseObject> {
+    return this.toResponseBoard(
+      await this.boardModel.create({
+        ...createBoardDto,
+        owner,
+      }),
     );
-    if (!board || !board.slides || board.slides.length === 0) {
-      throw new Error('Slide not found');
-    }
-    return board.slides[0];
   }
+
+  async deleteBoard(
+    owner: string,
+    boardId: string,
+  ): Promise<BoardResponseObject> {
+    const deletedBoard = await this.deleteBoardById(boardId);
+    return this.toResponseBoard(deletedBoard);
+  }
+
+  // async getBoardSlide(boardId: string, slideNumber: number = 1): Promise<any> {
+  //   const board = await this.boardModel.findOne(
+  //     { _id: boardId },
+  //     {
+  //       slides: { $slice: [slideNumber, 1] },
+  //     },
+  //   );
+  //   if (!board || !board.slides || board.slides.length === 0) {
+  //     throw new Error('Slide not found');
+  //   }
+  //   return board.slides[0];
+  // }
 
   async createObject(
     boardId: string,
@@ -64,16 +76,6 @@ export class BoardsService {
   }
 
   /////////////////
-  ///////////////////////
-
-  async getBoardById(
-    boardId: string,
-    slideNumber: number = -1,
-  ): Promise<BoardResponseObject> {
-    return this.findBoardById(boardId).then(board =>
-      this.toResponseBoard(board, slideNumber),
-    );
-  }
 
   async findBoardById(boardId: string): Promise<SuperBoardDocument> {
     const existingBoard = await this.boardModel.findById(boardId).exec();
@@ -82,50 +84,22 @@ export class BoardsService {
     return existingBoard;
   }
 
-  verifyBoardPermission(
-    board: SuperBoardDocument,
-    userId: string,
-    permission: BoardPermission,
-  ): void {
-    const isOwner = board.owner.toString() === userId.toString();
-    if (isOwner) return;
-    const permissions = board.permissions;
-    if (!this.hasUserPermission(userId, permissions, permission))
-      throw new HttpException(
-        'You do not have permission to perform this action',
-        HttpStatus.FORBIDDEN,
-      );
+  async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
+    const deletedBoard = await this.boardModel
+      .findByIdAndDelete(boardId)
+      .exec();
+    if (!deletedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return deletedBoard;
   }
 
-  private hasUserPermission(
-    userId: string,
-    permissions: BoardPermissions,
-    permission: BoardPermission,
-  ): boolean {
-    const userPermission = this.getUserHighestPermission(userId, permissions);
-    return userPermission >= permission;
-  }
-
-  private getUserHighestPermission(
-    userId: string,
-    permissions: BoardPermissions,
-  ): BoardPermission {
-    if (permissions.moderator.includes(userId))
-      return BoardPermission.MODERATOR;
-    if (permissions.editor.includes(userId)) return BoardPermission.EDITOR;
-    if (permissions.viewer.includes(userId)) return BoardPermission.VIEWER;
-    return BoardPermission.VIEWER - 1;
-  }
-
+  // TODO -  check if user ids exists
   async updatePermissions(
     userId: string,
     boardId: string,
     permissions: BoardPermissions,
-  ): Promise<BoardResponseObject> {
-    // this.verifyBoardPermission(board, user, BoardPermission.MODERATOR);
-    return this.updateBoardPermissions(boardId, permissions).then(board =>
-      this.toResponseBoard(board),
-    );
+  ): Promise<any> {
+    return this.updateBoardPermissions(boardId, permissions);
   }
 
   private async updateBoardPermissions(
@@ -198,7 +172,7 @@ export class BoardsService {
             { 'permissions.moderator': userId },
           ],
         },
-        '_id permissions owner',
+        '_id name permissions owner',
       )
       .exec();
   }
@@ -217,25 +191,21 @@ export class BoardsService {
 
   async toResponseBoard(
     board: SuperBoardDocument,
-    showSlide: number = -1,
-    showTimestamps: boolean = false,
   ): Promise<BoardResponseObject> {
     const { _id, name, owner, permissions, slides } =
-      board.toObject() as SuperBoardDocument;
-    const responseObject: BoardResponseObject = {
+      board.toObject<SuperBoardDocument>();
+
+    const newSlides = slides.map(slide => slide._id as string);
+
+    return {
       _id: _id as string,
       name,
       owner,
       permissions,
+      slides: newSlides,
     };
-
-    if (showTimestamps) {
-      responseObject.createdAt = board.createdAt;
-      responseObject.updatedAt = board.updatedAt;
-    }
-    return responseObject;
   }
 }
 
 export interface BoardPermissionsInfo
-  extends Pick<SuperBoardDocument, '_id' | 'permissions' | 'owner'> {}
+  extends Pick<SuperBoardDocument, '_id' | 'name' | 'permissions' | 'owner'> {}
