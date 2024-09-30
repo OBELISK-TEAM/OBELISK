@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { toast } from "sonner";
 import { createSlide as createSlideAction, deleteSlide as deleteSlideAction } from "@/app/actions/slideActions";
-import { useServerAction } from "@/hooks/useServerAction"; // Importuj hook
+import { useServerAction } from "@/hooks/useServerAction";
+import { complexToast } from "@/contexts/complexToast";
+import { ToastTypes } from "@/enums/ToastType";
+import { ApiError } from "@/errors/ApiError"; // Importuj hook
 
 interface SlideControlsContext {
   currentSlideIndex: number;
@@ -28,8 +31,17 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const SLIDE_LIMIT = 10;
 
   const [createSlide, isCreatingSlide] = useServerAction(async () => {
-    await createSlideAction(boardId);
-    router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
+    try {
+      await createSlideAction(boardId);
+      router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
+    } catch (error: any) {
+      console.error("Error creating new slide:", error);
+      if (error instanceof ApiError) {
+        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+      } else {
+        toast.error(error.message || "Failed to create a new slide");
+      }
+    }
   });
 
   const [deleteSlide, isDeletingSlide] = useServerAction(async () => {
@@ -40,16 +52,24 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       toast.error("You cannot delete the slide as it is the only slide in the board");
       return;
     }
+    try {
+      await deleteSlideAction(slide._id);
+      toast.success(`Slide deleted successfully`, { duration: 1200 });
 
-    await deleteSlideAction(slide._id);
-    toast.success(`Slide deleted successfully`, { duration: 1200 });
-
-    if (currentSlideIndex === totalSlides - 1) {
-      const index = Math.max(totalSlides - 2, 0);
-      router.push(`/user-boards/${boardId}/slides/${index}`);
-    } else {
-      await mutateBoardData();
-      router.push(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
+      if (currentSlideIndex === totalSlides - 1) {
+        const index = Math.max(totalSlides - 2, 0);
+        router.push(`/user-boards/${boardId}/slides/${index}`);
+      } else {
+        await mutateBoardData();
+        router.push(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
+      }
+    } catch (error: any) {
+      console.error("Error deleting slide:", error);
+      if (error instanceof ApiError) {
+        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+      } else {
+        toast.error(error.message || "Failed to delete slide");
+      }
     }
   });
 
