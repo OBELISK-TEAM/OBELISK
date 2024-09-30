@@ -1,4 +1,4 @@
-import { FilterIcon, TrashIcon, ViewIcon } from "lucide-react";
+import { FilterIcon, TrashIcon, ViewIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -86,11 +86,11 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
             <TableHeader className="text-muted-foreground">
               <TableRow className="border-b">
                 {columns.map((col) => (
-                  <TableHead key={col} className="py-2 text-left">
+                  <TableHead key={col} className="left py-2">
                     {col}
                   </TableHead>
                 ))}
-                <TableHead className="py-2 text-left">Actions</TableHead>
+                <TableHead className="py-2 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -103,9 +103,12 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
                         {CellContent(col, board)}
                       </TableCell>
                     ))}
-                    <TableCell className="">
+                    <TableCell className="flex items-center justify-center space-x-1">
                       <Button variant={"outline"} className="hover:text-muted-foreground">
                         <TrashIcon />
+                      </Button>
+                      <Button variant={"outline"} className="hover:text-muted-foreground">
+                        <ChevronRightIcon />
                       </Button>
                     </TableCell>
                   </TableRow>
