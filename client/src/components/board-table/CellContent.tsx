@@ -1,8 +1,8 @@
-import { LatestBoard, OwnedBoard, SharedBoard } from "@/interfaces/boards/interfaces";
 import { getPermissionBgColor } from "@/lib/UserBoardsUtils";
 import React from "react";
+import { BoardResponse } from "@/interfaces/boards/board-response";
 
-export const CellContent = (column: string, board: LatestBoard | OwnedBoard | SharedBoard) => {
+export const CellContent = (column: string, board: BoardResponse) => {
   switch (column) {
     case "Name":
       return board.name;
