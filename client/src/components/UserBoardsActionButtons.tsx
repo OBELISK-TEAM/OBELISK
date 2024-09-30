@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FilterIcon, ViewIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -32,20 +32,10 @@ const UserBoardsActionButtons = () => {
   };
 
   return (
-    <div className="flex space-x-2">
-      <Button variant="outline">
-        <FilterIcon className="mr-2 h-5 w-5" />
-        Filter
-      </Button>
-      <Button variant="outline">
-        <ViewIcon className="mr-2 h-5 w-5" />
-        View
-      </Button>
-      <Button onClick={handleCreateNewBoard} disabled={isLoading}>
-        <PlusIcon className="mr-2 h-5 w-5" />
-        {isLoading ? "Creating..." : "Create new board"}
-      </Button>
-    </div>
+    <Button onClick={handleCreateNewBoard} disabled={isLoading}>
+      <PlusIcon className="mr-2 h-5 w-5" />
+      {isLoading ? "Creating..." : "Create new board"}
+    </Button>
   );
 };
 

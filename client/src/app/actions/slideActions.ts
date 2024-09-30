@@ -1,6 +1,6 @@
 "use server";
 
-import { getCookie } from "@/utils/authApi";
+import { getCookie } from "@/lib/authApi";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { ApiError } from "@/errors/ApiError";
 import { SlideIdResponse } from "@/interfaces/responses/slide-id-response";

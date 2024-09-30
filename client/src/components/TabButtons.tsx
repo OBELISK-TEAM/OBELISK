@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
-interface TabButtonProps {
+interface TabButton {
   tabs: { label: string }[];
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
-const TabButtons: React.FC<TabButtonProps> = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.label || "");
 
+const TabButtons: React.FC<TabButton> = ({ tabs, activeTab, onTabChange }) => {
   const tabClasses =
     "px-4 py-2 text-sm bg-muted text-muted-foreground rounded-md hover:bg-background hover:text-foreground";
   const activeTabClasses = "px-4 py-2 text-sm bg-background text-foreground font-semibold rounded-md shadow-sm";
@@ -17,7 +18,7 @@ const TabButtons: React.FC<TabButtonProps> = ({ tabs }) => {
         <button
           key={tab.label}
           className={activeTab === tab.label ? activeTabClasses : tabClasses}
-          onClick={() => setActiveTab(tab.label)}
+          onClick={() => onTabChange(tab.label)}
         >
           {tab.label}
         </button>
