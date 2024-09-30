@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
@@ -13,7 +12,6 @@ export const useHandleAuth = (): HandleAuth => {
   const { email, password, loading, setEmail, setPassword, setLoading } = authForm;
   const { login, signup, logout } = useAuth();
   const { googleAuth } = useGoogleAuth(); //special wrapper for google auth, inside it uses loginGoogleUser from useAuth
-  const router = useRouter();
 
   const handleAuth = useCallback(
     (authFunc: AuthAction) => {
@@ -54,7 +52,7 @@ export const useHandleAuth = (): HandleAuth => {
         }
       };
     },
-    [email, password, setLoading, login, signup, logout, router, googleAuth]
+    [email, password, setLoading, login, signup, logout, googleAuth]
   );
 
   return {

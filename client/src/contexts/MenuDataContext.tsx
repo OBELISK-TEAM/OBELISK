@@ -30,8 +30,8 @@ import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
-export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { performAction } = useMenuActions();
+export const MenuDataProvider: React.FC<{ children: React.ReactNode; slideId: string }> = ({ children, slideId }) => {
+  const { performAction } = useMenuActions(slideId);
   const { undo, redo } = useUndoRedo();
   const menuList: MenuGroup[] = [
     {

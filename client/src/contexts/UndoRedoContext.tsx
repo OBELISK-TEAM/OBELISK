@@ -61,7 +61,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode; slideId: st
     canvas.renderAll();
   }, []);
 
-  // Use the custom hook
   useCanvasEventHandlers(canvas, saveCommand, handleStyleChange, slideId);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;

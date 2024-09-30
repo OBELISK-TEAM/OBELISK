@@ -6,6 +6,7 @@ import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 interface UserBoardLayout {
   children: React.ReactNode;
@@ -70,13 +71,15 @@ const SliderLayout = async ({ children, params }: UserBoardLayout) => {
   return (
     <ZoomUIProvider>
       <CanvasProvider boardData={boardData}>
-        <UndoRedoProvider slideId={slide._id}>
-          <MenuDataProvider>
-            <FileProvider>
-              <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
-            </FileProvider>
-          </MenuDataProvider>
-        </UndoRedoProvider>
+        <SocketProvider boardId={boardId}>
+          <UndoRedoProvider slideId={slide._id}>
+            <MenuDataProvider slideId={slide._id}>
+              <FileProvider>
+                <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+              </FileProvider>
+            </MenuDataProvider>
+          </UndoRedoProvider>
+        </SocketProvider>
       </CanvasProvider>
     </ZoomUIProvider>
   );

@@ -6,6 +6,7 @@ import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { FileContext as IFileContext } from "@/interfaces/file-context";
 import { toast } from "sonner";
+import { useSocket } from "./SocketContext";
 
 const FileContext = createContext<IFileContext | undefined>(undefined);
 
@@ -18,6 +19,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (activeItem === MenuActions.ADD_IMAGE_DISK) {
@@ -51,7 +53,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const result = e.target?.result;
         if (result) {
           fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
-            await addImage(canvas, slide._id, resizedImage, undefined, saveCommand);
+            await addImage(canvas, slide._id, resizedImage, socket, undefined, saveCommand);
           });
         }
       };
@@ -65,7 +67,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     if (canvas) {
-      await addImage(canvas, slide._id, url, undefined, saveCommand);
+      await addImage(canvas, slide._id, url, socket, undefined, saveCommand);
     }
   };
 

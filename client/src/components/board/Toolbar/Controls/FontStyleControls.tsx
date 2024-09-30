@@ -5,8 +5,8 @@ import { Toggle } from "@/components/ui/toggle";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { fabric } from "fabric";
 import { setObjectStyle } from "@/utils/board/canvasUtils";
-import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
-import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useSocket } from "@/contexts/SocketContext";
+import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 
 const FontStyleControls: React.FC = () => {
   const {
@@ -14,7 +14,9 @@ const FontStyleControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
-  const { saveCommand } = useUndoRedo();
+  const { socket } = useSocket();
+
+  // const { saveCommand } = useUndoRedo();
 
   const styleToggle = (
     styleKey: "fontWeight" | "fontStyle" | "underline",
@@ -43,8 +45,13 @@ const FontStyleControls: React.FC = () => {
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [styleKey]: oldValue });
 
-    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
-    saveCommand(command);
+    const updateObjectData: UpdateObjectData = {
+      object: modifiedObjectJSON,
+    };
+    socket?.emit("update-object", updateObjectData);
+
+    // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    // saveCommand(command);
   };
 
   const onBoldClick = () => styleToggle("fontWeight", "bold", "normal");

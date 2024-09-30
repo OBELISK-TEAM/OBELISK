@@ -1,17 +1,16 @@
 import { useEffect, useReducer } from "react";
 import { fabric } from "fabric";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
-import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
-import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
 
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
-import { createCanvasObject } from "@/app/actions/slideActions";
 import { toast } from "sonner";
-import { assignId } from "@/utils/utils";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { ApiError } from "@/errors/ApiError";
+import { useSocket } from "@/contexts/SocketContext";
+import { AddObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { assignId } from "@/utils/utils";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -20,9 +19,10 @@ const useCanvasEventHandlers = (
   slideId: string
 ) => {
   const [state, dispatch] = useReducer(canvasEventListenersReducer, initialState);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    if (!canvas) {
+    if (!canvas || !socket) {
       return;
     }
 
@@ -32,10 +32,16 @@ const useCanvasEventHandlers = (
       }
       try {
         const objectData = e.path.toJSON();
-        const responseData = await createCanvasObject(slideId, objectData);
-        assignId(e.path, responseData._id);
-        const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
-        saveCommand(command);
+        const addObjectData: AddObjectData = {
+          object: objectData,
+          slide: { _id: slideId },
+        };
+
+        socket.emit("add-object", addObjectData, (res: string) => {
+          assignId(e.path, res);
+          const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
+          saveCommand(command);
+        });
       } catch (error: any) {
         console.error("Error while creating object:", error);
         if (error instanceof ApiError) {
@@ -53,12 +59,20 @@ const useCanvasEventHandlers = (
       }
 
       const activeObjectsJSONs = activeObjects.map((obj) => getJsonWithAbsoluteProperties(obj));
-      const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
-        const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
-        return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, handleStyleChange);
-      });
 
-      saveCommand(new ComplexCommand(commands));
+      for (const activeObjectJSON of activeObjectsJSONs) {
+        const updateObjectData: UpdateObjectData = {
+          object: activeObjectJSON,
+        };
+        socket?.emit("update-object", updateObjectData);
+      }
+
+      // const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
+      //   const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
+      //   return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, handleStyleChange);
+      // });
+
+      // saveCommand(new ComplexCommand(commands));
     };
 
     const handleObjectModified = (e: fabric.IEvent) => {
@@ -75,10 +89,14 @@ const useCanvasEventHandlers = (
       }
 
       const targetJSON = target.toJSON(["_id"]);
-      const clonedJSON = { ...targetJSON, ...oldValues };
+      // const clonedJSON = { ...targetJSON, ...oldValues };
 
-      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-      saveCommand(command);
+      const updateObjectData: UpdateObjectData = {
+        object: targetJSON,
+      };
+      socket.emit("update-object", updateObjectData);
+      // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+      // saveCommand(command);
 
       handleStyleChange();
     };
@@ -107,8 +125,13 @@ const useCanvasEventHandlers = (
           delete clonedJSON.eraser;
         }
 
-        const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-        saveCommand(modifyCommand);
+        const updateObjectData: UpdateObjectData = {
+          object: targetJSON,
+        };
+        socket.emit("update-object", updateObjectData);
+
+        // const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+        // saveCommand(modifyCommand);
       });
     };
 
@@ -118,37 +141,40 @@ const useCanvasEventHandlers = (
     };
 
     const handleTextEditingExited = (e: any) => {
-      if (e.target._id !== state.observedTextId || e.target.text === state.observedTextContent) {
+      if (e.target.text === state.observedTextContent) {
         return;
       }
 
       const targetJSON = e.target.toJSON(["_id"]);
-      const clonedJSON = { ...targetJSON, text: state.observedTextContent };
+      // const clonedJSON = { ...targetJSON, text: state.observedTextContent };
 
-      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-      saveCommand(command);
+      const updateObjectData: UpdateObjectData = {
+        object: targetJSON,
+      };
+      socket.emit("update-object", updateObjectData);
+
+      // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
+      // saveCommand(command);
 
       dispatch({ type: "SET_OBSERVED_TEXT_CONTENT", payload: e.target.text });
     };
 
+    const listeners = [
+      { event: "path:created", handler: handlePathCreated },
+      { event: "object:modified", handler: handleObjectModified },
+      { event: "erasing:end", handler: handleEraserAdded },
+      { event: "text:editing:entered", handler: handleTextEditingEntered },
+      { event: "text:editing:exited", handler: handleTextEditingExited },
+      { event: "selection:created", handler: handleMultipleSelections },
+      { event: "selection:updated", handler: handleMultipleSelections },
+    ];
+
     // Register event listeners
-    canvas.on("path:created", handlePathCreated);
-    canvas.on("object:modified", handleObjectModified);
-    canvas.on("erasing:end", handleEraserAdded);
-    canvas.on("text:editing:entered", handleTextEditingEntered);
-    canvas.on("text:editing:exited", handleTextEditingExited);
-    canvas.on("selection:created", handleMultipleSelections);
-    canvas.on("selection:updated", handleMultipleSelections);
+    listeners.forEach(({ event, handler }) => canvas.on(event, handler));
 
     // Cleanup event listeners on unmount
     return () => {
-      canvas.off("path:created", handlePathCreated);
-      canvas.off("object:modified", handleObjectModified);
-      canvas.off("erasing:end", handleEraserAdded);
-      canvas.off("text:editing:entered", handleTextEditingEntered);
-      canvas.off("text:editing:exited", handleTextEditingExited);
-      canvas.off("selection:created", handleMultipleSelections);
-      canvas.off("selection:updated", handleMultipleSelections);
+      listeners.forEach(({ event, handler }) => canvas.off(event, handler));
     };
   }, [
     canvas,
@@ -157,6 +183,8 @@ const useCanvasEventHandlers = (
     state.observedTextContent,
     state.observedTextId,
     state.recentlyActiveObjects,
+    socket,
+    slideId,
   ]);
 };
 
