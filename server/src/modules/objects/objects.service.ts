@@ -76,7 +76,7 @@ export class ObjectsService {
     const slide = board.slides[0];
 
     const objectToDelete = slide.objects.find(
-      (obj: SuperObject & { _id: string }) => obj._id.toString() === objectId,
+      (obj: SuperObjectDocument & {_id: string}) => obj._id.toString() === objectId,
     );
 
     if (!objectToDelete) {
