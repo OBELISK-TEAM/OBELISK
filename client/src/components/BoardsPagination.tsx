@@ -1,19 +1,12 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { ExtendedPagination } from "@/components/ExtendedPagination";
 
-interface PaginationDemoProps {
+interface BoardsPaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-export function BoardsPagination({ currentPage, totalPages, onPageChange }: PaginationDemoProps) {
+export function BoardsPagination({ currentPage, totalPages, onPageChange }: BoardsPaginationProps) {
   const handlePrevious = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
@@ -27,21 +20,14 @@ export function BoardsPagination({ currentPage, totalPages, onPageChange }: Pagi
   };
 
   return (
-    <Pagination className="w-fit">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" onClick={handlePrevious} />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            {currentPage}
-          </PaginationLink>
-        </PaginationItem>
-        {/* Optionally, you can add more page links here */}
-        <PaginationItem>
-          <PaginationNext href="#" onClick={handleNext} />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+    <ExtendedPagination
+      className="w-fit"
+      currentPage={currentPage - 1}
+      totalPages={totalPages}
+      onPageChange={(page) => onPageChange(page + 1)}
+      handlePrevious={handlePrevious}
+      handleNext={handleNext}
+      text="page"
+    />
   );
 }

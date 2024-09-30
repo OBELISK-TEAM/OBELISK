@@ -11,7 +11,6 @@ import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { BoardsResponse } from "@/interfaces/boards/boards-response";
 import { BoardResponse } from "@/interfaces/boards/board-response";
-import { toast } from "sonner";
 
 interface IBoardTable {
   activeTab: string;
@@ -19,9 +18,8 @@ interface IBoardTable {
 
 const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 5;
+  const perPage = 6;
 
-  // Stan do przechowywania poprzednich danych
   const [previousData, setPreviousData] = useState<BoardsResponse | undefined>(undefined);
 
   useEffect(() => {
