@@ -18,7 +18,7 @@ interface IBoardTable {
 
 const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 6;
+  const perPage = 5;
 
   const [previousData, setPreviousData] = useState<BoardsResponse | undefined>(undefined);
 
@@ -94,7 +94,8 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {displayData && displayData.data.length > 0 ? (
+              {displayData &&
+                displayData.data.length > 0 &&
                 displayData.data.map((board: BoardResponse) => (
                   <TableRow key={board.id} className="border-b text-card-foreground hover:bg-muted/50">
                     {columns.map((col) => (
@@ -102,20 +103,13 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
                         {CellContent(col, board)}
                       </TableCell>
                     ))}
-                    <TableCell className="py-2 text-right">
+                    <TableCell className="">
                       <Button variant={"outline"} className="hover:text-muted-foreground">
                         <TrashIcon />
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length + 1} className="py-4 text-center">
-                    No data available.
-                  </TableCell>
-                </TableRow>
-              )}
+                ))}
             </TableBody>
           </Table>
           {showOverlay && (
