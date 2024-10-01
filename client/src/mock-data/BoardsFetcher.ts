@@ -1,5 +1,5 @@
-import { BoardResponse } from "@/interfaces/boards/board-response";
-import { BoardsResponse } from "@/interfaces/boards/boards-response";
+import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
+import { BoardsResponse } from "@/interfaces/responses/user-boards/boards-response";
 
 export const fetchBoards = (url: string): Promise<BoardsResponse> => {
   return new Promise((resolve) => {

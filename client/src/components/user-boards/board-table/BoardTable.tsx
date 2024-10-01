@@ -6,11 +6,11 @@ import { BoardsPagination } from "../BoardsPagination";
 import { fetchBoards } from "@/mock-data/BoardsFetcher";
 import { getColumnsForTab, getDescriptionForTab, getTitleForTab } from "@/lib/userBoardsUtils";
 import { Button } from "@/components/ui/button";
-import { CellContent } from "@/components/board-table/CellContent";
+import { CellContent } from "@/components/user-boards/board-table/CellContent";
 import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { BoardsResponse } from "@/interfaces/boards/boards-response";
-import { BoardResponse } from "@/interfaces/boards/board-response";
+import { BoardsResponse } from "@/interfaces/responses/user-boards/boards-response";
+import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 
 interface IBoardTable {
   activeTab: string;

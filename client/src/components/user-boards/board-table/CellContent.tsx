@@ -1,8 +1,7 @@
-// CellContent.tsx
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { BoardResponse } from "@/interfaces/boards/board-response";
 import { getPermissionVariant } from "@/lib/userBoardsUtils";
+import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 
 export const CellContent = (column: string, board: BoardResponse) => {
   switch (column) {

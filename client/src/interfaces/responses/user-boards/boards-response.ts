@@ -1,4 +1,4 @@
-import { BoardResponse } from "@/interfaces/boards/board-response";
+import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 
 export interface BoardsResponse {
   data: BoardResponse[];
