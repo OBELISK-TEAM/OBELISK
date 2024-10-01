@@ -46,7 +46,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   if (error) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <p className={"text-red-600"}>Failed to load data.</p>
+        <p className={"text-red-600"}>{error.message} || Failed to load data.</p>
       </div>
     );
   }
@@ -116,7 +116,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
             </TableBody>
           </Table>
           {showOverlay && (
-            <div className="pointer-events-auto absolute inset-0 z-50 flex items-center justify-center bg-white opacity-60">
+            <div className="pointer-events-auto absolute inset-0 z-50 flex items-center justify-center bg-background opacity-60">
               <LoadingSpinner className="h-8 w-8 text-gray-500" />
             </div>
           )}
