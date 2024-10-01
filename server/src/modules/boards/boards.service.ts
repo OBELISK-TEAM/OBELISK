@@ -11,6 +11,7 @@ import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
 import { SuperObject } from '../../schemas/object/super.object.schema';
+import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 
 @Injectable()
 export class BoardsService {
@@ -206,6 +207,3 @@ export class BoardsService {
     };
   }
 }
-
-export interface BoardPermissionsInfo
-  extends Pick<SuperBoardDocument, '_id' | 'permissions' | 'owner'> {}
