@@ -48,20 +48,20 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         badge: {
-          DEFAULT: "hsl(var(--badge-bg))",
-          foreground: "hsl(var(--badge-foreground))",
+          DEFAULT: "var(--badge-bg)",
+          foreground: "var(--badge-foreground)",
         },
         "badge-editing": {
-          DEFAULT: "hsl(var(--badge-editing-bg))",
-          foreground: "hsl(var(--badge-editing-foreground))",
+          DEFAULT: "var(--badge-editing-bg)",
+          foreground: "var(--badge-editing-foreground)",
         },
         "badge-sharing": {
-          DEFAULT: "hsl(var(--badge-sharing-bg))",
-          foreground: "hsl(var(--badge-sharing-foreground))",
+          DEFAULT: "var(--badge-sharing-bg)",
+          foreground: "var(--badge-sharing-foreground)",
         },
         "badge-reading": {
-          DEFAULT: "hsl(var(--badge-reading-bg))",
-          foreground: "hsl(var(--badge-reading-foreground))",
+          DEFAULT: "var(--badge-reading-bg)",
+          foreground: "var(--badge-reading-foreground)",
         },
       },
       borderRadius: {

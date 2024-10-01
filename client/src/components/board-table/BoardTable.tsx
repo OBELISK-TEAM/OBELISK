@@ -97,7 +97,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
               {displayData &&
                 displayData.data.length > 0 &&
                 displayData.data.map((board: BoardResponse) => (
-                  <TableRow key={board.id} className="border-b text-card-foreground hover:bg-muted/50">
+                  <TableRow key={board.id} className="border-b hover:bg-muted/50">
                     {columns.map((col) => (
                       <TableCell key={col} className="py-2">
                         {CellContent(col, board)}
