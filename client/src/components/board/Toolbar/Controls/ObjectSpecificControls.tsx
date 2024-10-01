@@ -3,7 +3,7 @@ import ToolbarInput from "@/components/board/Toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
-import { setObjectStyle } from "@/utils/board/canvasUtils";
+import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { fabric } from "fabric";

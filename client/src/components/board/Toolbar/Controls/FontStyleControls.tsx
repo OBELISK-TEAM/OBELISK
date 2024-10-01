@@ -4,7 +4,7 @@ import StyledLabel from "@/components/board/Toolbar/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { fabric } from "fabric";
-import { setObjectStyle } from "@/utils/board/canvasUtils";
+import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
