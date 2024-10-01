@@ -27,15 +27,11 @@ export const CellContent = (column: string, board: BoardResponse) => {
             <>
               {board.sharedWith.length > 2 ? (
                 <>
-                  <Badge variant="owner">{board.sharedWith[0]}</Badge>
+                  <Badge>{board.sharedWith[0]}</Badge>
                   <span className="text-xs text-muted-foreground">... (+{board.sharedWith.length - 1} more)</span>
                 </>
               ) : (
-                board.sharedWith.map((user: string) => (
-                  <Badge key={user} variant="owner">
-                    {user}
-                  </Badge>
-                ))
+                board.sharedWith.map((user: string) => <Badge key={user}>{user}</Badge>)
               )}
             </>
           ) : (

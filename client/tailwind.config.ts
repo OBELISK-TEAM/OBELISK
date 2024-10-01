@@ -47,9 +47,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        "badge-owner": {
-          DEFAULT: "hsl(var(--badge-owner-bg))",
-          foreground: "hsl(var(--badge-owner-foreground))",
+        badge: {
+          DEFAULT: "hsl(var(--badge-bg))",
+          foreground: "hsl(var(--badge-foreground))",
         },
         "badge-editing": {
           DEFAULT: "hsl(var(--badge-editing-bg))",

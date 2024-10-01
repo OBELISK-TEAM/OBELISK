@@ -34,17 +34,17 @@
 
     --radius: 0.5rem;
 
-    --badge-owner-bg: 0 0% 0%;
-    --badge-owner-foreground: 0 0% 100%;
+    --badge-bg: 210 50% 85%;
+    --badge-foreground: 210 20% 20%;
 
-    --badge-editing-bg: 120 60% 40%;
-    --badge-editing-foreground: 0 0% 100%;
+    --badge-editing-bg: 30 100% 50%;
+    --badge-editing-foreground: 0 0% 0%;
 
-    --badge-sharing-bg: 30 100% 50%;
-    --badge-sharing-foreground: 0 0% 100%;
+    --badge-sharing-bg: 200 100% 50%;
+    --badge-sharing-foreground: 0 0% 0%;
 
-    --badge-reading-bg: 220 100% 50%;
-    --badge-reading-foreground: 0 0% 100%;
+    --badge-reading-bg: 120 100% 40%;
+    --badge-reading-foreground: 0 0% 0%;
 
   }
 
@@ -77,16 +77,16 @@
     --input: 215 25% 27%; /* slate/700 */
     --ring: 215 20% 65%; /* slate/400 */
 
-    --badge-owner-bg: 0 0% 0%;
-    --badge-owner-foreground: 0 0% 100%;
+    --badge-bg: 210 50% 35%;
+    --badge-foreground: 210 20% 90%;
 
-    --badge-editing-bg: 120 60% 15%;
+    --badge-editing-bg: 30 70% 35%;
     --badge-editing-foreground: 0 0% 100%;
 
-    --badge-sharing-bg: 30 100% 15%;
+    --badge-sharing-bg: 220 60% 30%;
     --badge-sharing-foreground: 0 0% 100%;
 
-    --badge-reading-bg: 220 100% 15%;
+    --badge-reading-bg: 120 50% 30%;
     --badge-reading-foreground: 0 0% 100%;
 
   }

@@ -35,8 +35,6 @@ export const getDescriptionForTab = (tab: string): string => {
 
 export const getPermissionVariant = (permission: string) => {
   switch (permission) {
-    case "Owner":
-      return "owner";
     case "Editing":
       return "editing";
     case "Sharing":
