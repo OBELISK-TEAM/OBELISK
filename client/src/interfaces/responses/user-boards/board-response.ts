@@ -1,5 +1,5 @@
 export interface BoardResponse {
-  id: number;
+  id: string;
   name: string;
   modifiedAt: string;
   createdAt: string;
