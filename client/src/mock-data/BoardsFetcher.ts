@@ -45,7 +45,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 01:00 PM`,
             createdAt: `2023-09-05 12:00 PM`,
             yourPermissions: i % 2 === 0 ? "Sharing" : "Reading",
-            sharedWith: [],
+            sharedWith: i % 3 === 0 ? ["Bob", "Charlie", "Megan"] : ["Alice", "Josh", "Liam", "Mateo"],
             size: i * 20,
           });
         }

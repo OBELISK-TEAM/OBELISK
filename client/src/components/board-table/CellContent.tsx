@@ -29,15 +29,27 @@ export const CellContent = (column: string, board: BoardResponse) => {
     case "Shared with":
       return (
         <div className="flex flex-col items-center space-y-1">
-          {board.sharedWith && board.sharedWith.length > 0
-            ? board.sharedWith.map((user: string) => (
-                <span key={user} className="rounded-full bg-black px-2 py-1 text-xs text-white">
-                  {user}
-                </span>
-              ))
-            : "---"}
+          {board.sharedWith && board.sharedWith.length > 0 ? (
+            <>
+              {board.sharedWith.length > 2 ? (
+                <>
+                  <span className="rounded-full bg-black px-2 py-1 text-xs text-white">{board.sharedWith[0]}</span>
+                  <span className="text-xs text-muted-foreground">... (+{board.sharedWith.length - 1} more)</span>
+                </>
+              ) : (
+                board.sharedWith.map((user: string) => (
+                  <span key={user} className="rounded-full bg-black px-2 py-1 text-xs text-white">
+                    {user}
+                  </span>
+                ))
+              )}
+            </>
+          ) : (
+            "---"
+          )}
         </div>
       );
+
     case "Size (in kB)":
       return `${board.size} kB`;
     default:
