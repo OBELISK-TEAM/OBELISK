@@ -15,6 +15,7 @@ const CreateBoardContext = createContext<CreateBoardContextType | undefined>(und
 
 export const CreateBoardProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const createNewBoard = async (values: { boardName: string }) => {
     setIsLoading(true);
