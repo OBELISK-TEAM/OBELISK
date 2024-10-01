@@ -15,7 +15,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
       if (tab === "Latest") {
         for (let i = 1; i <= 27; i++) {
           data.push({
-            id: i,
+            id: "" + i,
             name: `Latest Board ${i}`,
             owner: `Owner ${i}`,
             modifiedAt: `2023-10-${i.toString().padStart(2, "0")} 10:00 AM`,
@@ -28,7 +28,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
       } else if (tab === "Owned by you") {
         for (let i = 1; i <= 40; i++) {
           data.push({
-            id: i,
+            id: "" + i,
             name: `Your Board ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 08:00 PM`,
             createdAt: `2023-09-10 07:00 PM`,
@@ -39,7 +39,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
       } else if (tab === "Shared by others") {
         for (let i = 1; i <= 30; i++) {
           data.push({
-            id: i,
+            id: "" + i,
             name: `Shared Board ${i}`,
             owner: `User ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 01:00 PM`,
