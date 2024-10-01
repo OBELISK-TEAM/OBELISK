@@ -12,7 +12,7 @@ export class BaseSlide {
     default: '5.3.0',
   })
   // canvas version
-  version?: string;
+  version: string;
 }
 
 export class BaseSlideWithObjects extends BaseSlide {

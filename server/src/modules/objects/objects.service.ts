@@ -76,7 +76,8 @@ export class ObjectsService {
     const slide = board.slides[0];
 
     const objectToDelete = slide.objects.find(
-      (obj: SuperObjectDocument & {_id: string}) => obj._id.toString() === objectId,
+      (obj: SuperObjectDocument & { _id: string }) =>
+        obj._id.toString() === objectId,
     );
 
     if (!objectToDelete) {
@@ -95,14 +96,13 @@ export class ObjectsService {
     return board.slides[0].objects.slice(-1)[0] as SuperObjectDocument;
   }
 
-  private toResponseObject(
-    slideObject: SuperObjectDocument,
-  ): SlideObjectResponseObject {
-    const { _id, createdAt, updatedAt, ...objectProperties } =
-      slideObject.toObject() as SuperObjectDocument;
+  toResponseObject(object: SuperObjectDocument): SlideObjectResponseObject {
+    const { _id, createdAt, updatedAt, ...props } =
+      object as SuperObjectDocument;
+    // object.toObject<SuperObjectDocument>();
     return {
       _id: _id as string,
-      ...objectProperties,
+      ...props,
     };
   }
 }

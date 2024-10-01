@@ -208,4 +208,4 @@ export class BoardsService {
 }
 
 export interface BoardPermissionsInfo
-  extends Pick<SuperBoardDocument, '_id' | 'name' | 'permissions' | 'owner'> {}
+  extends Pick<SuperBoardDocument, '_id' | 'permissions' | 'owner'> {}

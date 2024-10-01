@@ -1,6 +1,0 @@
-ignores: [
-    "uglify-js",
-    "prettier-plugin-tailwindcss",
-    "sonner"
-]
-skip-missing: true
