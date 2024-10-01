@@ -1,12 +1,20 @@
 // UserBoardsUtils.ts
 
+const detailedBoards: string[] = [
+  "Name",
+  "Owner",
+  "Modified at",
+  "Created at",
+  "Your Permission",
+  "Shared with",
+  "Size (in kB)",
+];
+const ownedBoards: string[] = ["Name", "Modified at", "Created at", "Shared with", "Size (in kB)"];
 export const getColumnsForTab = (tab: string): string[] => {
-  if (tab === "Latest") {
-    return ["Name", "Owner", "Modified at", "Created at", "Your Permissions", "Shared with", "Size (in kB)"];
+  if (tab === "Latest" || tab === "Shared by others") {
+    return detailedBoards;
   } else if (tab === "Owned by you") {
-    return ["Name", "Modified at", "Created at", "Shared with", "Size (in kB)"];
-  } else if (tab === "Shared by others") {
-    return ["Name", "Owner", "Modified at", "Created at", "Your Permissions", "Shared with", "Size (in kB)"];
+    return ownedBoards;
   }
   return [];
 };

@@ -6,5 +6,5 @@ export interface BoardResponse {
   size: number;
   sharedWith: string[];
   owner?: string;
-  yourPermissions?: string;
+  yourPermission?: string;
 }

@@ -20,7 +20,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
             owner: `Owner ${i}`,
             modifiedAt: `2023-10-${i.toString().padStart(2, "0")} 10:00 AM`,
             createdAt: `2023-09-15 09:00 AM`,
-            yourPermissions: i % 4 === 0 ? "Editing" : i % 4 === 1 ? "Reading" : i % 4 === 2 ? "Sharing" : "Owner",
+            yourPermission: i % 4 === 0 ? "Editing" : i % 4 === 1 ? "Reading" : i % 4 === 2 ? "Sharing" : "Owner",
             sharedWith: i % 3 === 0 ? ["Bob", "Charlie"] : ["Alice"],
             size: i * 10,
           });
@@ -44,7 +44,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
             owner: `User ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 01:00 PM`,
             createdAt: `2023-09-05 12:00 PM`,
-            yourPermissions: i % 2 === 0 ? "Sharing" : "Reading",
+            yourPermission: i % 2 === 0 ? "Sharing" : "Reading",
             sharedWith: i % 3 === 0 ? ["Bob", "Charlie", "Megan"] : ["Alice", "Josh", "Liam", "Mateo"],
             size: i * 20,
           });

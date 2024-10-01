@@ -14,15 +14,15 @@ export const CellContent = (column: string, board: BoardResponse) => {
       return board.modifiedAt;
     case "Created at":
       return board.createdAt;
-    case "Your Permissions":
-      if ("yourPermissions" in board && board.yourPermissions) {
-        return <Badge variant={getPermissionVariant(board.yourPermissions)}>{board.yourPermissions}</Badge>;
+    case "Your Permission":
+      if ("yourPermission" in board && board.yourPermission) {
+        return <Badge variant={getPermissionVariant(board.yourPermission)}>{board.yourPermission}</Badge>;
       } else {
         return "---";
       }
     case "Shared with":
       return (
-        <div className="flex flex-col items-center space-y-1">
+        <div className="flex flex-col items-start space-y-1">
           {board.sharedWith && board.sharedWith.length > 0 ? (
             <>
               {board.sharedWith.length > 2 ? (
