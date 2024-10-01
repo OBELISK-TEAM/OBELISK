@@ -33,17 +33,17 @@ export const getDescriptionForTab = (tab: string): string => {
   return "";
 };
 
-export const getPermissionBgColor = (permission: string) => {
+export const getPermissionVariant = (permission: string) => {
   switch (permission) {
-    case "Editing":
-      return "bg-green-500";
-    case "Sharing":
-      return "bg-orange-500";
-    case "Reading":
-      return "bg-blue-500";
     case "Owner":
-      return "bg-black";
+      return "owner";
+    case "Editing":
+      return "editing";
+    case "Sharing":
+      return "sharing";
+    case "Reading":
+      return "reading";
     default:
-      return "bg-gray-500";
+      return "default";
   }
 };

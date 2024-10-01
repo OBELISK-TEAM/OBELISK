@@ -1,6 +1,8 @@
-import { getPermissionBgColor } from "@/lib/UserBoardsUtils";
+// CellContent.tsx
 import React from "react";
+import { Badge } from "@/components/ui/badge";
 import { BoardResponse } from "@/interfaces/boards/board-response";
+import { getPermissionVariant } from "@/lib/UserBoardsUtils";
 
 export const CellContent = (column: string, board: BoardResponse) => {
   switch (column) {
@@ -14,15 +16,7 @@ export const CellContent = (column: string, board: BoardResponse) => {
       return board.createdAt;
     case "Your Permissions":
       if ("yourPermissions" in board && board.yourPermissions) {
-        return (
-          <div className="flex items-center">
-            <span
-              className={`rounded-full px-2 py-1 text-xs text-white ${getPermissionBgColor(board.yourPermissions)}`}
-            >
-              {board.yourPermissions}
-            </span>
-          </div>
-        );
+        return <Badge variant={getPermissionVariant(board.yourPermissions)}>{board.yourPermissions}</Badge>;
       } else {
         return "---";
       }
@@ -33,14 +27,14 @@ export const CellContent = (column: string, board: BoardResponse) => {
             <>
               {board.sharedWith.length > 2 ? (
                 <>
-                  <span className="rounded-full bg-black px-2 py-1 text-xs text-white">{board.sharedWith[0]}</span>
+                  <Badge variant="owner">{board.sharedWith[0]}</Badge>
                   <span className="text-xs text-muted-foreground">... (+{board.sharedWith.length - 1} more)</span>
                 </>
               ) : (
                 board.sharedWith.map((user: string) => (
-                  <span key={user} className="rounded-full bg-black px-2 py-1 text-xs text-white">
+                  <Badge key={user} variant="owner">
                     {user}
-                  </span>
+                  </Badge>
                 ))
               )}
             </>
@@ -49,7 +43,6 @@ export const CellContent = (column: string, board: BoardResponse) => {
           )}
         </div>
       );
-
     case "Size (in kB)":
       return `${board.size} kB`;
     default:

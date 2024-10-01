@@ -1,13 +1,8 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
-  darkMode: 'class',
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+  darkMode: "class",
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
     container: {
@@ -51,7 +46,23 @@ const config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        }
+        },
+        "badge-owner": {
+          DEFAULT: "hsl(var(--badge-owner-bg))",
+          foreground: "hsl(var(--badge-owner-foreground))",
+        },
+        "badge-editing": {
+          DEFAULT: "hsl(var(--badge-editing-bg))",
+          foreground: "hsl(var(--badge-editing-foreground))",
+        },
+        "badge-sharing": {
+          DEFAULT: "hsl(var(--badge-sharing-bg))",
+          foreground: "hsl(var(--badge-sharing-foreground))",
+        },
+        "badge-reading": {
+          DEFAULT: "hsl(var(--badge-reading-bg))",
+          foreground: "hsl(var(--badge-reading-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -75,6 +86,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;

@@ -13,6 +13,10 @@ const badgeVariants = cva(
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         mild: "text-gray-600 hover:bg-gray-200 p-2 rounded hover:text-black text-[14px] font-[500] ",
+        owner: "bg-badge-owner text-badge-owner-foreground",
+        editing: "bg-badge-editing text-badge-editing-foreground",
+        sharing: "bg-badge-sharing text-badge-sharing-foreground",
+        reading: "bg-badge-reading text-badge-reading-foreground",
       },
     },
     defaultVariants: {
