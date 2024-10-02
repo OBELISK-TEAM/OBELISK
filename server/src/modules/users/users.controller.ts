@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { CreateUserDto } from './users.dto';
 import { UsersService } from './users.service';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';

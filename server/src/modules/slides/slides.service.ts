@@ -1,6 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import {
   SuperBoard,
   SuperBoardDocument,
@@ -16,10 +14,7 @@ import { BoardsService } from '../boards/boards.service';
 @Injectable()
 export class SlidesService {
   private readonly slideLimitPerBoard = 10;
-
   constructor(
-    @InjectModel(SuperBoard.name)
-    private readonly boardModel: Model<SuperBoard>,
     private readonly boardsService: BoardsService,
     private readonly res: ResponseService,
   ) {}
@@ -125,6 +120,13 @@ export class SlidesService {
     }
   }
 
+  private removeSlideFromBoard(
+    board: SuperBoardDocument,
+    slideNumber: number,
+  ): SuperSlideDocument {
+    return board.slides.splice(slideNumber - 1, 1)[0];
+  }
+
   async findSlideById(
     boardId: string,
     slideId: string,
@@ -140,12 +142,5 @@ export class SlidesService {
       throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
     }
     return { board, slide };
-  }
-
-  private removeSlideFromBoard(
-    board: SuperBoardDocument,
-    slideNumber: number,
-  ): SuperSlideDocument {
-    return board.slides.splice(slideNumber - 1, 1)[0];
   }
 }

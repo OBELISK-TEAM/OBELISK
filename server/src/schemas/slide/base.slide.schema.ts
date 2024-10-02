@@ -1,6 +1,5 @@
 import { Prop } from '@nestjs/mongoose';
 import {
-  SuperObject,
   SuperObjectDocument,
   SuperObjectSchema,
 } from '../object/super.object.schema';

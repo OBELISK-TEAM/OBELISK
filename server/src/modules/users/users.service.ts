@@ -84,8 +84,6 @@ export class UsersService {
 
   public toResponseUser(
     user: UserDocument,
-    showBoards: boolean = false,
-    showSlideObjects: boolean = false,
     showTimestamps: boolean = false,
   ): UserResponseObject {
     const { _id, email, userRole, userAuthProvider } =
@@ -97,8 +95,6 @@ export class UsersService {
       userAuthProvider,
     };
 
-    // if (showBoards) responseObject.boards = user.boards;
-    // if (showSlideObjects) responseObject.slideObjects = user.slideObjects;
     if (showTimestamps) {
       responseObject.createdAt = user.createdAt;
       responseObject.updatedAt = user.updatedAt;

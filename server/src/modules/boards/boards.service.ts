@@ -7,33 +7,29 @@ import {
   SuperBoardDocument,
 } from '../../schemas/board/super.board.schema';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
+import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
+    private readonly res: ResponseService,
   ) {}
-
-  // TODO - implement
-  // async getUserBoards(userId: string): Promise<any[]> {
-  //   return await this.fetchBoardsForUser(userId);
-  // }
 
   async getBoardById(boardId: string): Promise<BoardResponseObject> {
     const board = await this.findBoardById(boardId);
-    return this.toResponseBoard(board);
+    return this.res.toResponseBoard(board);
   }
 
   async createBoard(
     owner: string,
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseObject> {
-    return this.toResponseBoard(
+    return this.res.toResponseBoard(
       await this.boardModel.create({
         ...createBoardDto,
         owner,
@@ -46,17 +42,10 @@ export class BoardsService {
     boardId: string,
   ): Promise<BoardResponseObject> {
     const deletedBoard = await this.deleteBoardById(boardId);
-    return this.toResponseBoard(deletedBoard);
+    return this.res.toResponseBoard(deletedBoard);
   }
 
   /////////////////
-
-  async findBoardById(boardId: string): Promise<SuperBoardDocument> {
-    const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
-  }
 
   async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
     const deletedBoard = await this.boardModel
@@ -67,26 +56,32 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  // TODO -  check if user ids exists
-  async updatePermissions(
-    userId: string,
-    boardId: string,
-    permissions: BoardPermissions,
-  ): Promise<any> {
-    return this.updateBoardPermissions(boardId, permissions);
-  }
+  // TODO - implement
+  // async getUserBoards(userId: string): Promise<any[]> {
+  //   return await this.fetchBoardsForUser(userId);
+  // }
 
-  private async updateBoardPermissions(
-    boardId: string,
-    permissions: BoardPermissions,
-  ): Promise<any> {
-    const updatedBoard = await this.boardModel
-      .findByIdAndUpdate(boardId, { permissions }, { new: true })
-      .exec();
-    if (!updatedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return updatedBoard;
-  }
+  // // TODO -  check if user ids exists
+  // async updatePermissions(
+  //   userId: string,
+  //   boardId: string,
+  //   permissions: BoardPermissions,
+  // ): Promise<any> {
+  //   console.log(userId);
+  //   return this.updateBoardPermissions(boardId, permissions);
+  // }
+
+  // private async updateBoardPermissions(
+  //   boardId: string,
+  //   permissions: BoardPermissions,
+  // ): Promise<any> {
+  //   const updatedBoard = await this.boardModel
+  //     .findByIdAndUpdate(boardId, { permissions }, { new: true })
+  //     .exec();
+  //   if (!updatedBoard)
+  //     throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+  //   return updatedBoard;
+  // }
 
   async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
     const boards = await this.fetchBoardsForUser(userId);
@@ -163,20 +158,10 @@ export class BoardsService {
     return BoardPermission.NONE;
   }
 
-  async toResponseBoard(
-    board: SuperBoardDocument,
-  ): Promise<BoardResponseObject> {
-    const { _id, name, owner, permissions, slides } =
-      board.toObject<SuperBoardDocument>();
-
-    const newSlides = slides.map(slide => slide._id as string);
-
-    return {
-      _id: _id as string,
-      name,
-      owner,
-      permissions,
-      slides: newSlides,
-    };
+  async findBoardById(boardId: string): Promise<SuperBoardDocument> {
+    const existingBoard = await this.boardModel.findById(boardId).exec();
+    if (!existingBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return existingBoard;
   }
 }

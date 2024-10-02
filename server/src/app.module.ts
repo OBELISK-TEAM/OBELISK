@@ -9,8 +9,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { GatewayModule } from './gateway/gateway.module';
-import { ObjectsModule } from './modules/objects/objects.module';
-import { SlidesModule } from './modules/slides/slides.module';
 
 const DEFAULT_DB_HOST = 'localhost';
 
@@ -27,8 +25,6 @@ const DEFAULT_DB_HOST = 'localhost';
     AuthModule,
     UsersModule,
     BoardsModule,
-    SlidesModule,
-    // ObjectsModule,
     GatewayModule,
   ],
   providers: [

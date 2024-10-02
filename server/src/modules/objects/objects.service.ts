@@ -1,10 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  SuperBoard,
-  SuperBoardDocument,
-} from '../../schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
 import {
   SuperObject,
   SuperObjectDocument,
@@ -18,8 +13,6 @@ import { SlidesService } from '../slides/slides.service';
 @Injectable()
 export class ObjectsService {
   constructor(
-    @InjectModel(SuperBoard.name)
-    private readonly boardModel: Model<SuperBoardDocument>,
     private readonly slidesService: SlidesService,
     private readonly res: ResponseService,
   ) {}

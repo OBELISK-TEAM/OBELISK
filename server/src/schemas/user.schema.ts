@@ -3,7 +3,6 @@ import { UserRole } from '../enums/user.role';
 import { UserAuthProvider } from '../enums/user.auth.provider';
 import { hashSync } from 'bcrypt';
 import {
-  Schema as MongooseSchema,
   Document as MongooseDocument,
   UpdateQuery,
   SchemaTimestampsConfig,

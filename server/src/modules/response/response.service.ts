@@ -10,9 +10,7 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 export class ResponseService {
   constructor() {}
 
-  async toResponseBoard(
-    board: SuperBoardDocument,
-  ): Promise<BoardResponseObject> {
+  toResponseBoard(board: SuperBoardDocument): BoardResponseObject {
     const { _id, name, owner, permissions, slides } =
       board.toObject<SuperBoardDocument>();
 
@@ -32,7 +30,7 @@ export class ResponseService {
     return {
       _id: _id as string,
       version,
-      objects: objects.map(this.toResponseObject),
+      objects: objects.map(obj => this.toResponseObject(obj)),
     };
   }
 
