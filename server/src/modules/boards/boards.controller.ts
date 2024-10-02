@@ -52,7 +52,6 @@ export class BoardsController {
     return this.boardsService.deleteBoard(userId, boardId);
   }
 
-  // // TODO - check permissions to delete board
   // @Put(':boardId/permissions')
   // @UseGuards(JwtAuthGuard)
   // async updatePermissions(

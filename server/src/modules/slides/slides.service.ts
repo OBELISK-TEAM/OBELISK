@@ -25,10 +25,8 @@ export class SlidesService {
   ): Promise<SlideResponseObject> {
     this.validateSlideNumber(slideNumber);
     const board = await this.boardsService.findBoardById(boardId);
-
     this.validateExistingSlide(board, slideNumber);
     const slide = this.getSlideByNumber(board, slideNumber);
-
     return this.res.toResponseSlide(slide);
   }
 

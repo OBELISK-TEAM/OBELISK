@@ -16,9 +16,10 @@ export class SuperBoard extends BaseBoardWithSlidesAndPermissions {}
 
 export const SuperBoardSchema = SchemaFactory.createForClass(SuperBoard);
 
-SuperBoardSchema.pre('save', function (next) {
-  if (this.isNew && this.slides.length === 0) {
-    this.slides.push(new SuperSlide() as SuperSlideDocument);
+SuperBoardSchema.post('save', async function (doc, next) {
+  if (doc.slides.length === 0) {
+    doc.slides.push(new SuperSlide() as SuperSlideDocument);
+    await doc.save();
   }
   next();
 });
