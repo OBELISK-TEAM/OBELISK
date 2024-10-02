@@ -14,7 +14,7 @@ const FontStyleControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
-  const { socket } = useSocket();
+  const { socketEmitUpdateObject } = useSocket();
 
   // const { saveCommand } = useUndoRedo();
 
@@ -48,7 +48,7 @@ const FontStyleControls: React.FC = () => {
     const updateObjectData: UpdateObjectData = {
       object: modifiedObjectJSON,
     };
-    socket?.emit("update-object", updateObjectData);
+    socketEmitUpdateObject(updateObjectData);
 
     // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
     // saveCommand(command);

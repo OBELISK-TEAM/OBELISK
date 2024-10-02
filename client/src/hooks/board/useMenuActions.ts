@@ -41,7 +41,7 @@ export const useMenuActions = (slideId: string) => {
     setCanvasMode,
   } = useCanvas();
   // const { saveCommand } = useUndoRedo();
-  const { socket } = useSocket();
+  const { socket, socketEmitAddObject, socketEmitDeleteObject } = useSocket();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
     const handleSimpleObjectAdding = (canvas: fabric.Canvas, objectToAdd: fabric.Object) => {
@@ -65,11 +65,12 @@ export const useMenuActions = (slideId: string) => {
         slide: { _id: slideId },
       };
 
-      socket.emit("add-object", addObjectData, (res: string) => {
+      const callback = (res: string) => {
         assignId(objectToAdd, res);
         // const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
         // saveCommand(command);
-      });
+      };
+      socketEmitAddObject(addObjectData, callback);
     };
 
     const handleObjectDeleting = (canvas: fabric.Canvas, objectToDelete: fabric.Object) => {
@@ -91,7 +92,7 @@ export const useMenuActions = (slideId: string) => {
         slide: { _id: slideId },
       };
 
-      socket.emit("delete-object", deleteObjectData);
+      socketEmitDeleteObject(deleteObjectData);
       // const command = new RemoveCommand(canvas, objectToAdd.toJSON(["_id"]));
       // saveCommand(command);
     };
@@ -198,7 +199,7 @@ export const useMenuActions = (slideId: string) => {
             object: { _id: obj._id },
             slide: { _id: slideId },
           };
-          socket?.emit("delete-object", deleteObjectData);
+          socketEmitDeleteObject(deleteObjectData);
         });
 
         // const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
@@ -276,7 +277,7 @@ export const useMenuActions = (slideId: string) => {
       },
     };
     return actionHandlers;
-  }, [slideId, socket]);
+  }, [slideId, socket, socketEmitAddObject, socketEmitDeleteObject]);
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {

@@ -19,7 +19,7 @@ const useCanvasEventHandlers = (
   slideId: string
 ) => {
   const [state, dispatch] = useReducer(canvasEventListenersReducer, initialState);
-  const { socket } = useSocket();
+  const { socket, socketEmitAddObject, socketEmitUpdateObject } = useSocket();
 
   useEffect(() => {
     if (!canvas || !socket) {
@@ -37,11 +37,12 @@ const useCanvasEventHandlers = (
           slide: { _id: slideId },
         };
 
-        socket.emit("add-object", addObjectData, (res: string) => {
+        const callback = (res: string) => {
           assignId(e.path, res);
           const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
           saveCommand(command);
-        });
+        };
+        socketEmitAddObject(addObjectData, callback);
       } catch (error: any) {
         console.error("Error while creating object:", error);
         if (error instanceof ApiError) {
@@ -64,7 +65,7 @@ const useCanvasEventHandlers = (
         const updateObjectData: UpdateObjectData = {
           object: activeObjectJSON,
         };
-        socket?.emit("update-object", updateObjectData);
+        socketEmitUpdateObject(updateObjectData);
       }
 
       // const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
@@ -94,7 +95,7 @@ const useCanvasEventHandlers = (
       const updateObjectData: UpdateObjectData = {
         object: targetJSON,
       };
-      socket.emit("update-object", updateObjectData);
+      socketEmitUpdateObject(updateObjectData);
       // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
       // saveCommand(command);
 
@@ -128,7 +129,7 @@ const useCanvasEventHandlers = (
         const updateObjectData: UpdateObjectData = {
           object: targetJSON,
         };
-        socket.emit("update-object", updateObjectData);
+        socketEmitUpdateObject(updateObjectData);
 
         // const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
         // saveCommand(modifyCommand);
@@ -151,7 +152,7 @@ const useCanvasEventHandlers = (
       const updateObjectData: UpdateObjectData = {
         object: targetJSON,
       };
-      socket.emit("update-object", updateObjectData);
+      socketEmitUpdateObject(updateObjectData);
 
       // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
       // saveCommand(command);
@@ -184,6 +185,8 @@ const useCanvasEventHandlers = (
     state.observedTextId,
     state.recentlyActiveObjects,
     socket,
+    socketEmitAddObject,
+    socketEmitUpdateObject,
     slideId,
   ]);
 };

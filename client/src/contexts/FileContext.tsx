@@ -19,7 +19,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
-  const { socket } = useSocket();
+  const { socketEmitAddObject } = useSocket();
 
   useEffect(() => {
     if (activeItem === MenuActions.ADD_IMAGE_DISK) {
@@ -53,7 +53,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const result = e.target?.result;
         if (result) {
           fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
-            await addImage(canvas, slide._id, resizedImage, socket, undefined, saveCommand);
+            await addImage(canvas, slide._id, resizedImage, socketEmitAddObject, undefined, saveCommand);
           });
         }
       };
@@ -67,7 +67,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     if (canvas) {
-      await addImage(canvas, slide._id, url, socket, undefined, saveCommand);
+      await addImage(canvas, slide._id, url, socketEmitAddObject, undefined, saveCommand);
     }
   };
 

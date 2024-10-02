@@ -3,7 +3,6 @@ import { CanvasImage } from "@/interfaces/file-context";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { toast } from "sonner";
-import { Socket } from "socket.io-client";
 import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { assignId } from "../utils";
 
@@ -32,7 +31,7 @@ export const addImage = async (
   canvas: fabric.Canvas | null,
   slideId: string,
   imageUrl: string,
-  socket: Socket | null,
+  socketEmitAddObject: (addObjectData: AddObjectData, callback: (res: string) => void) => void,
   options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
   saveCommand?: (command: UndoRedoCommand) => void
 ): Promise<void> => {
@@ -61,10 +60,6 @@ export const addImage = async (
       if (!saveCommand) {
         return;
       }
-      if (!socket) {
-        toast.error("No socket found");
-        return;
-      }
 
       try {
         // const responseData = await createCanvasObject(slideId, objectData);
@@ -74,11 +69,13 @@ export const addImage = async (
           object: img.toJSON(),
           slide: { _id: slideId },
         };
-        socket.emit('"add-object', addObjectData, (res: string) => {
+        const callback = (res: string) => {
           assignId(img, res);
           const command = new AddCommand(canvas, img.toJSON(["_id"]));
           saveCommand(command);
-        });
+        };
+
+        socketEmitAddObject(addObjectData, callback);
       } catch (error: any) {
         console.error("Error creating image object:", error);
         toast.error(error.message || "Failed to create image");
