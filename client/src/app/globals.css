@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* base/white */
+    --foreground: 229 84% 5%; /* slate/950 */
+
+    --card: 0 0% 100%; /* base/white */
+    --card-foreground: 229 84% 5%; /* slate/950 */
+
+    --popover: 0 0% 100%; /* base/white */
+    --popover-foreground: 229 84% 5%; /* slate/950 */
+
+    --primary: 222 47% 11%; /* slate/900 */
+    --primary-foreground: 210 40% 98%; /* slate/50 */
+
+    --secondary: 210 40% 96%; /* slate/100 */
+    --secondary-foreground: 222 47% 11%; /* slate/900 */
+
+    --muted: 210 40% 96%; /* slate/100 */
+    --muted-foreground: 215 16% 47%; /* slate/500 */
+
+    --accent: 210 40% 96%; /* slate/100 */
+    --accent-foreground: 222 47% 11%; /* slate/900 */
+
+    --destructive: 0 84% 60%; /* red/500 */
+    --destructive-foreground: 210 40% 98%; /* slate/50 */
+
+    --border: 214 32% 91%; /* slate/200 */
+    --input: 214 32% 91%; /* slate/200 */
+    --ring: 215 16% 47%; /* slate/500 */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 229 84% 5%; /* slate/950 */
+    --foreground: 210 40% 98%; /* slate/50 */
+
+    --card: 229 84% 5%; /* slate/950 */
+    --card-foreground: 210 40% 98%; /* slate/50 */
+
+    --popover: 229 84% 5%; /* slate/950 */
+    --popover-foreground: 210 40% 98%; /* slate/50 */
+
+    --primary: 210 40% 98%; /* slate/50 */
+    --primary-foreground: 222 47% 11%; /* slate/900 */
+
+    --secondary: 217 33% 17%; /* slate/800 */
+    --secondary-foreground: 210 40% 98%; /* slate/50 */
+
+    --muted: 217 33% 17%; /* slate/800 */
+    --muted-foreground: 215 20% 65%; /* slate/400 */
+
+    --accent: 217 33% 17%; /* slate/800 */
+    --accent-foreground: 210 40% 98%; /* slate/50 */
+
+    --destructive: 0 63% 31%; /* red/900 */
+    --destructive-foreground: 210 40% 98%; /* slate/50 */
+
+    --border: 215 25% 27%; /* slate/700 */
+    --input: 215 25% 27%; /* slate/700 */
+    --ring: 215 20% 65%; /* slate/400 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #111827;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #090d14;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f9fafb;
+  border-radius: 4px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-in forwards;
+}
+
+.zoom-badge {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  background-color: rgba(55, 65, 81, 0.9);
+  color: white;
+  padding: 0.5rem 1rem;
+  width: 10em;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease;
+  pointer-events: none;
+}
+
+.zoom-badge.show {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.zoom-badge.hide {
+  opacity: 0;
+  filter: blur(5px);
+}
