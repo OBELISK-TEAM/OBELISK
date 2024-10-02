@@ -1,7 +1,7 @@
-import { SlideObjectResponseObject } from './SlideObjectResponseObject';
+import { ObjectResponseObject } from './ObjectResponseObject';
 
 export interface SlideResponseObject {
   _id: string;
   version: string;
-  objects: SlideObjectResponseObject[];
+  objects: ObjectResponseObject[];
 }

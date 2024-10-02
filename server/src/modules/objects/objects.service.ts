@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -9,100 +9,97 @@ import {
   SuperObject,
   SuperObjectDocument,
 } from '../../schemas/object/super.object.schema';
-import { SlideObjectResponseObject } from 'src/shared/interfaces/response-objects/SlideObjectResponseObject';
-import { WsException } from '@nestjs/websockets';
-import { CreateSlideObject, UpdateSlideObject } from './objects.dto';
+import { ObjectResponseObject } from 'src/shared/interfaces/response-objects/ObjectResponseObject';
+import { CreateObjectDto } from './objects.dto';
+import { SuperSlideDocument } from '../../schemas/slide/super.slide.schema';
+import { ResponseService } from '../response/response.service';
+import { SlidesService } from '../slides/slides.service';
 
 @Injectable()
 export class ObjectsService {
   constructor(
     @InjectModel(SuperBoard.name)
-    private readonly boardModel: Model<SuperBoard>,
+    private readonly boardModel: Model<SuperBoardDocument>,
+    private readonly slidesService: SlidesService,
+    private readonly res: ResponseService,
   ) {}
+
+  async getObject(
+    boardId: string,
+    slideId: string,
+    objectId: string,
+  ): Promise<ObjectResponseObject> {
+    const { object } = await this.findObjectById(boardId, slideId, objectId);
+    return this.res.toResponseObject(object);
+  }
 
   async createObject(
     boardId: string,
     slideId: string,
-    objectProps: CreateSlideObject,
-  ): Promise<SlideObjectResponseObject> {
-    const newObject = new SuperObject({ ...objectProps });
-
-    const updatedBoard = await this.boardModel.findOneAndUpdate(
-      { _id: boardId, 'slides._id': slideId },
-      { $push: { 'slides.$.objects': newObject } },
-      { new: true },
+    objectProps: CreateObjectDto,
+  ): Promise<ObjectResponseObject> {
+    const { board, slide } = await this.slidesService.findSlideById(
+      boardId,
+      slideId,
     );
-
-    if (!updatedBoard) {
-      throw new WsException('Board or Slide not found');
-    }
-
-    return this.toResponseObject(this.getObjectFromBoard(updatedBoard));
+    const newObject = new SuperObject({ ...objectProps });
+    slide.objects.push(newObject as SuperObjectDocument);
+    await board.save();
+    return this.res.toResponseObject(slide.objects.slice(-1)[0]);
   }
 
   async updateObject(
     boardId: string,
     slideId: string,
     objectId: string,
-    objectProps: UpdateSlideObject,
-  ): Promise<SlideObjectResponseObject> {
-    const updatedBoard = await this.boardModel.findOneAndUpdate(
-      { _id: boardId, 'slides._id': slideId, 'slides.objects._id': objectId },
-      { $set: { 'slides.$.objects': objectProps } },
-      { new: true },
+    objectProps: CreateObjectDto,
+  ): Promise<ObjectResponseObject> {
+    const { board, object } = await this.findObjectById(
+      boardId,
+      slideId,
+      objectId,
     );
-
-    if (!updatedBoard) {
-      throw new WsException('Board or Slide not found');
-    }
-
-    return this.toResponseObject(this.getObjectFromBoard(updatedBoard));
+    Object.assign(object, objectProps);
+    await board.save();
+    return this.res.toResponseObject(object);
   }
 
   async deleteObject(
     boardId: string,
     slideId: string,
     objectId: string,
-  ): Promise<SlideObjectResponseObject> {
-    const board = await this.boardModel.findOne(
-      { _id: boardId, 'slides._id': slideId },
-      { 'slides.$': 1 },
+  ): Promise<ObjectResponseObject> {
+    const { board, slide, object } = await this.findObjectById(
+      boardId,
+      slideId,
+      objectId,
     );
+    const index = slide.objects.indexOf(object);
+    const deletedObject = slide.objects.splice(index, 1)[0];
+    await board.save();
+    return this.res.toResponseObject(deletedObject);
+  }
 
-    if (!board || !board.slides.length) {
-      throw new WsException('Board or Slide not found');
-    }
-
-    const slide = board.slides[0];
-
-    const objectToDelete = slide.objects.find(
+  private async findObjectById(
+    boardId: string,
+    slideId: string,
+    objectId: string,
+  ): Promise<{
+    board: SuperBoardDocument;
+    slide: SuperSlideDocument;
+    object: SuperObjectDocument;
+  }> {
+    const { board, slide } = await this.slidesService.findSlideById(
+      boardId,
+      slideId,
+    );
+    const object = slide.objects.find(
       (obj: SuperObjectDocument & { _id: string }) =>
         obj._id.toString() === objectId,
     );
-
-    if (!objectToDelete) {
-      throw new WsException('Object not found');
+    if (!object) {
+      throw new HttpException('Object not found', HttpStatus.NOT_FOUND);
     }
-
-    await this.boardModel.updateOne(
-      { _id: boardId, 'slides._id': slideId },
-      { $pull: { 'slides.$.objects': { _id: objectId } } },
-    );
-
-    return this.toResponseObject(objectToDelete as SuperObjectDocument);
-  }
-
-  private getObjectFromBoard(board: SuperBoardDocument): SuperObjectDocument {
-    return board.slides[0].objects.slice(-1)[0] as SuperObjectDocument;
-  }
-
-  toResponseObject(object: SuperObjectDocument): SlideObjectResponseObject {
-    const { _id, createdAt, updatedAt, ...props } =
-      object as SuperObjectDocument;
-    // object.toObject<SuperObjectDocument>();
-    return {
-      _id: _id as string,
-      ...props,
-    };
+    return { board, slide, object };
   }
 }

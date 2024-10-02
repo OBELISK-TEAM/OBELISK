@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { SlidesController } from './slides.controller';
 import { SlidesService } from './slides.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ResponseModule } from '../response/response.module';
 import {
   SuperBoard,
   SuperBoardSchema,
 } from '../../schemas/board/super.board.schema';
-import { ObjectsModule } from '../objects/objects.module';
+import { BoardsModule } from '../boards/boards.module';
 
 @Module({
   imports: [
@@ -16,10 +17,11 @@ import { ObjectsModule } from '../objects/objects.module';
         schema: SuperBoardSchema,
       },
     ]),
-    ObjectsModule,
+    BoardsModule,
+    ResponseModule,
   ],
   controllers: [SlidesController],
   providers: [SlidesService],
-  // exports: [SlidesService],
+  exports: [SlidesService],
 })
 export class SlidesModule {}

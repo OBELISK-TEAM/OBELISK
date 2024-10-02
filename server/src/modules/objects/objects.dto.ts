@@ -15,7 +15,7 @@ import { SlideObjectFilter } from '../../shared/interfaces/fabric-js/SlideObject
 import { SlideObjectTextStyles } from '../../shared/interfaces/fabric-js/SlideObjectTextStyles';
 import { Eraser } from '../../schemas/object/base.object.schema';
 
-export class CreateSlideObject {
+export class CreateObjectDto {
   @IsOptional()
   @IsString()
   type?: string;

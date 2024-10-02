@@ -3,6 +3,7 @@ import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from '../users/users.module';
+import { ResponseModule } from '../response/response.module';
 import {
   SuperBoard,
   SuperBoardSchema,
@@ -17,6 +18,7 @@ import {
       },
     ]),
     UsersModule,
+    ResponseModule,
   ],
   controllers: [BoardsController],
   providers: [BoardsService],

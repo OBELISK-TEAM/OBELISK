@@ -4,13 +4,8 @@ import { SlideObjectTextStyles } from '../fabric-js/SlideObjectTextStyles';
 import { SlideObjectFilter } from '../fabric-js/SlideObjectFilter';
 import { Eraser } from '../../../schemas/object/base.object.schema';
 
-export interface SlideObjectResponseObject {
+export interface ObjectResponseObject {
   _id: string;
-  slide?: string;
-  createdBy?: string;
-  createdAt?: Date | string | boolean | undefined;
-  updatedAt?: Date | string | boolean | undefined;
-  // fabric.js object properties
   type?: string;
   version?: string;
   originX?: string;

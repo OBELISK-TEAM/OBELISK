@@ -10,7 +10,6 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
-import { SuperObject } from '../../schemas/object/super.object.schema';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 
 @Injectable()
@@ -48,32 +47,6 @@ export class BoardsService {
   ): Promise<BoardResponseObject> {
     const deletedBoard = await this.deleteBoardById(boardId);
     return this.toResponseBoard(deletedBoard);
-  }
-
-  // async getBoardSlide(boardId: string, slideNumber: number = 1): Promise<any> {
-  //   const board = await this.boardModel.findOne(
-  //     { _id: boardId },
-  //     {
-  //       slides: { $slice: [slideNumber, 1] },
-  //     },
-  //   );
-  //   if (!board || !board.slides || board.slides.length === 0) {
-  //     throw new Error('Slide not found');
-  //   }
-  //   return board.slides[0];
-  // }
-
-  async createObject(
-    boardId: string,
-    slideId: string,
-    objectProps: any,
-  ): Promise<any> {
-    const newObject = new SuperObject({ ...objectProps });
-    return this.boardModel.findOneAndUpdate(
-      { _id: boardId, 'slides._id': slideId },
-      { $push: { 'slides.$.objects': newObject } },
-      { new: true },
-    );
   }
 
   /////////////////

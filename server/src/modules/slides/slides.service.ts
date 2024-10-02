@@ -9,8 +9,9 @@ import {
   SuperSlide,
   SuperSlideDocument,
 } from '../../schemas/slide/super.slide.schema';
-import { ObjectsService } from '../objects/objects.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { ResponseService } from '../response/response.service';
+import { BoardsService } from '../boards/boards.service';
 
 @Injectable()
 export class SlidesService {
@@ -19,7 +20,8 @@ export class SlidesService {
   constructor(
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
-    private readonly objectsService: ObjectsService,
+    private readonly boardsService: BoardsService,
+    private readonly res: ResponseService,
   ) {}
 
   async getSlide(
@@ -27,19 +29,19 @@ export class SlidesService {
     slideNumber: number,
   ): Promise<SlideResponseObject> {
     this.validateSlideNumber(slideNumber);
-    const board = await this.findBoardById(boardId);
+    const board = await this.boardsService.findBoardById(boardId);
 
     this.validateExistingSlide(board, slideNumber);
     const slide = this.getSlideByNumber(board, slideNumber);
 
-    return this.toResponseSlide(slide);
+    return this.res.toResponseSlide(slide);
   }
 
   async createSlide(
     boardId: string,
     slideNumber: number,
   ): Promise<SlideResponseObject> {
-    const board = await this.findBoardById(boardId);
+    const board = await this.boardsService.findBoardById(boardId);
     this.validateSlideLimit(board);
     this.validateNewSlidePosition(board, slideNumber);
 
@@ -47,7 +49,7 @@ export class SlidesService {
     this.addSlideToBoard(board, newSlide, slideNumber);
     await board.save();
 
-    return this.toResponseSlide(
+    return this.res.toResponseSlide(
       this.getSlideByNumber(
         board,
         slideNumber > 0 ? slideNumber : board.slides.length,
@@ -61,13 +63,13 @@ export class SlidesService {
   ): Promise<SlideResponseObject> {
     this.validateSlideNumber(slideNumber);
 
-    const board = await this.findBoardById(boardId);
+    const board = await this.boardsService.findBoardById(boardId);
     this.validateExistingSlide(board, slideNumber);
 
     const deletedSlide = this.removeSlideFromBoard(board, slideNumber);
     await board.save();
 
-    return this.toResponseSlide(deletedSlide);
+    return this.res.toResponseSlide(deletedSlide);
   }
 
   private validateSlideNumber(slideNumber: number): void {
@@ -80,14 +82,6 @@ export class SlidesService {
     if (board.slides.length >= this.slideLimitPerBoard) {
       throw new HttpException('Slide limit reached', HttpStatus.BAD_REQUEST);
     }
-  }
-
-  private async findBoardById(boardId: string): Promise<SuperBoardDocument> {
-    const board = await this.boardModel.findById(boardId);
-    if (!board) {
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    }
-    return board;
   }
 
   private validateNewSlidePosition(
@@ -131,19 +125,27 @@ export class SlidesService {
     }
   }
 
+  async findSlideById(
+    boardId: string,
+    slideId: string,
+  ): Promise<{ board: SuperBoardDocument; slide: SuperSlideDocument }> {
+    const board = await this.boardsService.findBoardById(boardId);
+
+    const slide = board.slides.find(
+      (slide: SuperSlideDocument & { _id: string }) =>
+        slide._id.toString() === slideId,
+    );
+
+    if (!slide) {
+      throw new HttpException('Slide not found', HttpStatus.NOT_FOUND);
+    }
+    return { board, slide };
+  }
+
   private removeSlideFromBoard(
     board: SuperBoardDocument,
     slideNumber: number,
   ): SuperSlideDocument {
     return board.slides.splice(slideNumber - 1, 1)[0];
-  }
-
-  private toResponseSlide(slide: SuperSlideDocument): SlideResponseObject {
-    const { _id, objects, version } = slide.toObject<SuperSlideDocument>();
-    return {
-      _id: _id as string,
-      version,
-      objects: objects.map(this.objectsService.toResponseObject),
-    };
   }
 }
