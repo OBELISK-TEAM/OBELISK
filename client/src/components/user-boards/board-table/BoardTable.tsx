@@ -11,9 +11,10 @@ import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { BoardsResponse } from "@/interfaces/responses/user-boards/boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
+import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 
 interface IBoardTable {
-  activeTab: string;
+  activeTab: BoardsActiveTab;
 }
 
 const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
@@ -97,7 +98,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
               {displayData &&
                 displayData.data.length > 0 &&
                 displayData.data.map((board: BoardResponse) => (
-                  <TableRow key={board.id} className="border-b hover:bg-muted/50">
+                  <TableRow key={board._id} className="border-b hover:bg-muted/50">
                     {columns.map((col) => (
                       <TableCell key={col} className="py-2">
                         {CellContent(col, board)}

@@ -55,17 +55,17 @@ const config = {
           DEFAULT: "var(--badge-bg)",
           foreground: "var(--badge-foreground)",
         },
-        "badge-editing": {
-          DEFAULT: "var(--badge-editing-bg)",
-          foreground: "var(--badge-editing-foreground)",
+        "badge-editor": {
+          DEFAULT: "var(--badge-editor-bg)",
+          foreground: "var(--badge-editor-foreground)",
         },
-        "badge-sharing": {
-          DEFAULT: "var(--badge-sharing-bg)",
-          foreground: "var(--badge-sharing-foreground)",
+        "badge-moderator": {
+          DEFAULT: "var(--badge-moderator-bg)",
+          foreground: "var(--badge-moderator-foreground)",
         },
-        "badge-reading": {
-          DEFAULT: "var(--badge-reading-bg)",
-          foreground: "var(--badge-reading-foreground)",
+        "badge-viewer": {
+          DEFAULT: "var(--badge-viewer-bg)",
+          foreground: "var(--badge-viewer-foreground)",
         },
       },
       borderRadius: {

@@ -40,14 +40,14 @@
     --badge-bg: #4B5563;  /* gray/600 */
     --badge-foreground: #FFFFFF; /* base/white */
 
-    --badge-editing-bg: #356246;
-    --badge-editing-foreground: #FFFFFF; /* base/white */
+    --badge-editor-bg: #356246;
+    --badge-editor-foreground: #FFFFFF; /* base/white */
 
-    --badge-sharing-bg: #8C4419 ;
-    --badge-sharing-foreground: #FFFFFF; /* base/white */
+    --badge-moderator-bg: #8C4419 ;
+    --badge-moderator-foreground: #FFFFFF; /* base/white */
 
-    --badge-reading-bg: #3B5388;
-    --badge-reading-foreground: #FFFFFF; /* base/white */
+    --badge-viewer-bg: #3B5388;
+    --badge-viewer-foreground: #FFFFFF; /* base/white */
   }
 
   .dark {
@@ -84,14 +84,14 @@
     --badge-bg: #4B5563;  /* gray/600 */
     --badge-foreground: #FFFFFF; /* base/white */
 
-    --badge-editing-bg: #1C432B;
-    --badge-editing-foreground: #FFFFFF; /* base/white */
+    --badge-editor-bg: #1C432B;
+    --badge-editor-foreground: #FFFFFF; /* base/white */
 
-    --badge-sharing-bg: #522A13;
-    --badge-sharing-foreground: #FFFFFF; /* base/white */
+    --badge-moderator-bg: #522A13;
+    --badge-moderator-foreground: #FFFFFF; /* base/white */
 
-    --badge-reading-bg: #203563;
-    --badge-reading-foreground: #FFFFFF; /* base/white */
+    --badge-viewer-bg: #203563;
+    --badge-viewer-foreground: #FFFFFF; /* base/white */
   }
 }
 

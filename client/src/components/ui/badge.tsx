@@ -14,9 +14,9 @@ const badgeVariants = cva(
         outline: "text-foreground",
         mild: "text-gray-600 hover:bg-gray-200 p-2 rounded hover:text-black text-[14px] font-[500] ",
         default: "bg-badge text-badge-foreground",
-        editing: "bg-badge-editing text-badge-editing-foreground",
-        sharing: "bg-badge-sharing text-badge-sharing-foreground",
-        reading: "bg-badge-reading text-badge-reading-foreground",
+        editor: "bg-badge-editor text-badge-editor-foreground",
+        moderator: "bg-badge-moderator text-badge-moderator-foreground",
+        viewer: "bg-badge-viewer text-badge-viewer-foreground",
       },
     },
     defaultVariants: {

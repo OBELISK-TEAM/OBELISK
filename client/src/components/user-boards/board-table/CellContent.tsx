@@ -1,36 +1,44 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { getPermissionVariant } from "@/lib/userBoardsUtils";
+import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
-
-export const CellContent = (column: string, board: BoardResponse) => {
+import { BoardTableColumns } from "@/enums/BoardTableColumns";
+export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
+  const sharedUsers = concatenatePermissions(board.sharedWith);
   switch (column) {
-    case "Name":
+    case BoardTableColumns.NAME:
       return board.name;
-    case "Owner":
-      return "owner" in board ? board.owner : "You";
-    case "Modified at":
+
+    case BoardTableColumns.OWNER:
+      return board.owner ? board.owner : "You";
+
+    case BoardTableColumns.MODIFIED_AT:
       return board.modifiedAt;
-    case "Created at":
+
+    case BoardTableColumns.CREATED_AT:
       return board.createdAt;
-    case "Your Permission":
-      if ("yourPermission" in board && board.yourPermission) {
-        return <Badge variant={getPermissionVariant(board.yourPermission)}>{board.yourPermission}</Badge>;
+
+    case BoardTableColumns.MY_PERMISSION:
+      if (board.myPermission) {
+        return (
+          <Badge variant={getPermissionVariant(board.myPermission)}>{getPermissionLabel(board.myPermission)}</Badge>
+        );
       } else {
         return "---";
       }
-    case "Shared with":
+
+    case BoardTableColumns.SHARED_WITH:
       return (
         <div className="flex flex-col items-start space-y-1">
-          {board.sharedWith && board.sharedWith.length > 0 ? (
+          {sharedUsers && sharedUsers.length > 0 ? (
             <>
-              {board.sharedWith.length > 2 ? (
+              {sharedUsers.length > 2 ? (
                 <>
-                  <Badge>{board.sharedWith[0]}</Badge>
-                  <span className="text-xs text-muted-foreground">... (+{board.sharedWith.length - 1} more)</span>
+                  <Badge>{sharedUsers[0]}</Badge>
+                  <span className="text-xs text-muted-foreground">... (+{sharedUsers.length - 1} more)</span>
                 </>
               ) : (
-                board.sharedWith.map((user: string) => <Badge key={user}>{user}</Badge>)
+                sharedUsers.map((user: string) => <Badge key={user}>{user}</Badge>)
               )}
             </>
           ) : (
@@ -38,8 +46,10 @@ export const CellContent = (column: string, board: BoardResponse) => {
           )}
         </div>
       );
-    case "Size (in kB)":
+
+    case BoardTableColumns.SIZE_IN_KB:
       return `${board.size} kB`;
+
     default:
       return "";
   }

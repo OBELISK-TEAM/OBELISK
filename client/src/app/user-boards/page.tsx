@@ -5,13 +5,20 @@ import UserBoardsActionButtons from "@/components/user-boards/UserBoardsActionBu
 import TabButtons from "@/components/user-boards/TabButtons";
 import { CreateBoardProvider } from "@/contexts/CreateBoardContext";
 import { useState } from "react";
+import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 
-const tabs = [{ label: "Latest" }, { label: "Owned by you" }, { label: "Shared by others" }];
+const tabs = [
+  { label: "Owned by you", value: BoardsActiveTab.OWNED_BY_YOU },
+  { label: "Shared by others", value: BoardsActiveTab.SHARED_BY_OTHERS },
+];
+
 export default function UserBoards() {
-  const [activeTab, setActiveTab] = useState(tabs[0].label);
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
+  const [activeTab, setActiveTab] = useState<BoardsActiveTab>(BoardsActiveTab.OWNED_BY_YOU);
+
+  const handleTabChange = (tabValue: BoardsActiveTab) => {
+    setActiveTab(tabValue);
   };
+
   return (
     <div className="h-min-[100vh] flex flex-col">
       <CreateBoardProvider>

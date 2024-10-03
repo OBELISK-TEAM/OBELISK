@@ -1,10 +1,13 @@
+import { PermissionsResponse } from "@/interfaces/responses/permissions-response";
+import { BoardPermission } from "@/enums/BoardPermission";
+
 export interface BoardResponse {
-  id: string;
+  _id: string;
   name: string;
   modifiedAt: string;
   createdAt: string;
   size: number;
-  sharedWith: string[];
+  sharedWith: PermissionsResponse;
   owner?: string;
-  yourPermission?: string;
+  myPermission?: BoardPermission;
 }
