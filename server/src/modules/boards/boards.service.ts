@@ -11,6 +11,7 @@ import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 import { ResponseService } from '../response/response.service';
+import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 @Injectable()
 export class BoardsService {
@@ -61,27 +62,27 @@ export class BoardsService {
   //   return await this.fetchBoardsForUser(userId);
   // }
 
-  // // TODO -  check if user ids exists
-  // async updatePermissions(
-  //   userId: string,
-  //   boardId: string,
-  //   permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   console.log(userId);
-  //   return this.updateBoardPermissions(boardId, permissions);
-  // }
+  // TODO -  check if user ids exists
+  async updatePermissions(
+    userId: string,
+    boardId: string,
+    permissions: BoardPermissions,
+  ): Promise<any> {
+    console.log(userId);
+    return this.updateBoardPermissions(boardId, permissions);
+  }
 
-  // private async updateBoardPermissions(
-  //   boardId: string,
-  //   permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   const updatedBoard = await this.boardModel
-  //     .findByIdAndUpdate(boardId, { permissions }, { new: true })
-  //     .exec();
-  //   if (!updatedBoard)
-  //     throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-  //   return updatedBoard;
-  // }
+  private async updateBoardPermissions(
+    boardId: string,
+    permissions: BoardPermissions,
+  ): Promise<any> {
+    const updatedBoard = await this.boardModel
+      .findByIdAndUpdate(boardId, { permissions }, { new: true })
+      .exec();
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return updatedBoard;
+  }
 
   async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
     const boards = await this.fetchBoardsForUser(userId);

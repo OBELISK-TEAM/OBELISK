@@ -23,6 +23,7 @@ import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.gu
 import { UseGuards } from '@nestjs/common';
 import { MinimumBoardPermission } from '../modules/auth/decorators/permissions.decorator';
 import { BoardPermission } from '../enums/board.permission';
+import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
 
 // no need to use @UseGuards() decorator here
 // because the WsAuthGuard is already applied in the ConnectionService
@@ -43,6 +44,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectionService.handleConnection(client);
   }
 
+  // TODO - leave board before disconnect
   handleDisconnect(client: Socket): void {
     return this.connectionService.handleDisconnect(client);
   }
@@ -59,11 +61,11 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('add-object')
   @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.OWNER)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     return this.objectActionService.handleActionObject(
       client,
       data,
@@ -77,7 +79,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     return this.objectActionService.handleActionObject(
       client,
       data,
@@ -91,7 +93,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDeleteObject(
     client: GwSocketWithTarget,
     data: DeleteObjectData,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     return this.objectActionService.handleActionObject(
       client,
       data,

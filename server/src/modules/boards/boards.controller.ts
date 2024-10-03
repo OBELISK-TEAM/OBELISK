@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
@@ -12,6 +13,7 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
 
 // TODO - verify permissions for endpointss
 
@@ -52,13 +54,13 @@ export class BoardsController {
     return this.boardsService.deleteBoard(userId, boardId);
   }
 
-  // @Put(':boardId/permissions')
-  // @UseGuards(JwtAuthGuard)
-  // async updatePermissions(
-  //   @User('_id') userId: string,
-  //   @Param('boardId') boardId: string,
-  //   @Body() permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   return this.boardsService.updatePermissions(userId, boardId, permissions);
-  // }
+  @Put(':boardId/permissions')
+  @UseGuards(JwtAuthGuard)
+  async updatePermissions(
+    @User('_id') userId: string,
+    @Param('boardId') boardId: string,
+    @Body() permissions: BoardPermissions,
+  ): Promise<any> {
+    return this.boardsService.updatePermissions(userId, boardId, permissions);
+  }
 }
