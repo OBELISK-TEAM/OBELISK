@@ -2,8 +2,8 @@
 import { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import ThemeToggle from "../ThemeToggle";
-import { AppLogo } from "../AppLogo";
+import ThemeToggle from "../user-boards/ThemeToggle";
+import { AppLogo } from "../user-boards/AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";

@@ -19,6 +19,10 @@ import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { ObjectActionService } from './providers/object.action.service';
 import { ObjectAction } from '../enums/object.action';
+import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
+import { UseGuards } from '@nestjs/common';
+import { MinimumBoardPermission } from '../modules/auth/decorators/permissions.decorator';
+import { BoardPermission } from '../enums/board.permission';
 
 // no need to use @UseGuards() decorator here
 // because the WsAuthGuard is already applied in the ConnectionService
@@ -54,6 +58,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('add-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.OWNER)
   async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
@@ -66,6 +72,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('update-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
@@ -78,6 +86,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('delete-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleDeleteObject(
     client: GwSocketWithTarget,
     data: DeleteObjectData,

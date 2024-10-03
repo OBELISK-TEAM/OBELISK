@@ -3,12 +3,12 @@ import { fabric } from "fabric";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
-import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
+import { getJsonWithAbsoluteProperties } from "@/lib/board/undoRedoUtils";
 
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
 import { createCanvasObject } from "@/app/actions/slideActions";
 import { toast } from "sonner";
-import { assignId } from "@/utils/utils";
+import { assignId } from "@/lib/utils";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { ApiError } from "@/errors/ApiError";

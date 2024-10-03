@@ -10,8 +10,8 @@ import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class JoinBoardService {
-  private readonly logger = new Logger(JoinBoardService.name);
   constructor(private readonly boardsService: BoardsService) {}
+  private readonly logger = new Logger(JoinBoardService.name);
 
   async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
     const boardId = data.board._id;

@@ -1,9 +1,9 @@
 import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { getItemById } from "@/utils/board/canvasUtils";
+import { getItemById } from "@/lib/board/canvasUtils";
 import { toast } from "sonner";
 import { fabric } from "fabric";
-import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
+import { addListenersBack, removeListenersTemporarily } from "@/lib/board/undoRedoUtils";
 
 /**
  * Its purpose is to encompass removing objects DIRECTLY from the canvas.

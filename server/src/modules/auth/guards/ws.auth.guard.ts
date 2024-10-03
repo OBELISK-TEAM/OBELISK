@@ -16,7 +16,7 @@ export class WsAuthGuard implements CanActivate {
     private readonly boardsService: BoardsService,
   ) {}
 
-  // fetching the available boards for the user after successful authentication
+  // fetch the available boards for the user after successful authentication
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client = context.switchToWs().getClient<GwSocket>();
     try {

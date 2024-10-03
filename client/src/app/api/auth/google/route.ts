@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setTokenCookie } from "@/utils/authApi";
+import { setTokenCookie } from "@/lib/authApiUtils";
 
 export async function POST(req: NextRequest) {
   try {
