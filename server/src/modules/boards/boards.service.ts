@@ -70,7 +70,7 @@ export class BoardsService {
   //   console.log(userId);
   //   return this.updateBoardPermissions(boardId, permissions);
   // }
-
+  //
   // private async updateBoardPermissions(
   //   boardId: string,
   //   permissions: BoardPermissions,

@@ -8,6 +8,8 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { Socket } from 'socket.io';
 import { ObjectAction } from '../../enums/object.action';
 import { ObjectsService } from '../../modules/objects/objects.service';
+import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class ObjectActionService {
@@ -18,7 +20,7 @@ export class ObjectActionService {
     client: GwSocketWithTarget,
     data: AddObjectData | UpdateObjectData | DeleteObjectData,
     action: ObjectAction,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     try {
       switch (action) {
         case ObjectAction.ADD:
@@ -28,22 +30,22 @@ export class ObjectActionService {
         case ObjectAction.DELETE:
           return this.handleDeleteObject(client, data as DeleteObjectData);
         default:
-          this.emitErrorAndDisconnect(client, 'Invalid action');
+          this.emitErrorAndDisconnect(client, 'Something went wrong');
+          throw new WsException('Invalid action');
       }
     } catch (error) {
       this.emitErrorAndDisconnect(client, 'Something went wrong');
+      throw error;
     }
   }
 
   private async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     const boardId = client.data.user.targetBoard.boardId;
     const slideId = data.slide._id;
     const objectProps = data.object;
-
-    console.log(boardId, slideId, objectProps);
 
     const createdObject = await this.objectsService.createObject(
       boardId,
@@ -51,19 +53,17 @@ export class ObjectActionService {
       objectProps,
     );
 
-    console.log(createdObject);
-
-    // this.logger.log(
-    //   `Object added: ${createdObject._id} by ${client.data.user.email}`,
-    // );
-    // client.to(boardId).emit('object-added', createdObject);
+    this.logger.log(
+      `Object added: ${createdObject._id} by ${client.data.user.email}`,
+    );
+    client.to(boardId).emit('object-added', createdObject);
+    return createdObject;
   }
 
   private async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
-  ): Promise<void> {
-    console.log(data);
+  ): Promise<ObjectResponseObject> {
     const boardId = client.data.user.targetBoard.boardId;
     const slideId = data.slide._id;
     const objectId = data.object._id;
@@ -80,12 +80,13 @@ export class ObjectActionService {
       `Object updated: ${updatedObject._id} by ${client.data.user.email}`,
     );
     client.to(boardId).emit('object-updated', updatedObject);
+    return updatedObject;
   }
 
   private async handleDeleteObject(
     client: GwSocketWithTarget,
     data: DeleteObjectData,
-  ): Promise<void> {
+  ): Promise<ObjectResponseObject> {
     const boardId = client.data.user.targetBoard.boardId;
     const slideId = data.slide._id;
     const objectId = data.object._id;
@@ -100,6 +101,7 @@ export class ObjectActionService {
       `Object deleted: ${deletedObject._id} by ${client.data.user.email}`,
     );
     client.to(boardId).emit('object-deleted', deletedObject);
+    return deletedObject;
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {
