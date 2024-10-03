@@ -13,7 +13,7 @@ import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 
-// TODO - verify permissions for endpoints
+// TODO - verify permissions for endpointss
 
 @Controller('boards')
 export class BoardsController {
