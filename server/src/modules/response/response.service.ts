@@ -11,8 +11,7 @@ export class ResponseService {
   constructor() {}
 
   toResponseBoard(board: SuperBoardDocument): BoardResponseObject {
-    const { _id, name, owner, permissions, slides } =
-      board as SuperBoardDocument;
+    const { _id, name, owner, permissions, slides } = board;
 
     const newSlides = slides.map(slide => slide._id as string);
 
@@ -26,7 +25,7 @@ export class ResponseService {
   }
 
   toResponseSlide(slide: SuperSlideDocument): SlideResponseObject {
-    const { _id, objects, version } = slide as SuperSlideDocument;
+    const { _id, objects, version } = slide;
     return {
       _id: _id as string,
       version,
@@ -35,8 +34,7 @@ export class ResponseService {
   }
 
   toResponseObject(object: SuperObjectDocument): ObjectResponseObject {
-    const { _id, createdAt, updatedAt, ...props } =
-      object as SuperObjectDocument;
+    const { _id, createdAt, updatedAt, ...props } = object;
     return {
       _id: _id as string,
       ...props,
