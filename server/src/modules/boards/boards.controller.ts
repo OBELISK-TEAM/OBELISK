@@ -5,8 +5,6 @@ import {
   Get,
   Param,
   Post,
-  Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
@@ -14,23 +12,25 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { Permissions } from '../../shared/interfaces/Permissions';
+
+// TODO - verify permissions for endpointss
 
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
+  // TODO - implement
   @Get()
-  async getBoards(@Query('page') page: number): Promise<BoardResponseObject[]> {
-    return this.boardsService.getBoards(page);
+  @UseGuards(JwtAuthGuard)
+  getUserBoards(@User('_id') userId: string): string {
+    return `User ${userId} boards IMPLEMENT ME`;
+    // return this.boardsService.getUserBoards(userId);
   }
 
-  @Get(':id')
-  async getBoardById(
-    @Param('id') boardId: string,
-    @Query('slide') slideNumber: number,
-  ): Promise<BoardResponseObject> {
-    return this.boardsService.getBoardById(boardId, slideNumber);
+  // TODO - check permissions to fetch board
+  @Get(':boardId')
+  getBoard(@Param('boardId') boardId: string): Promise<BoardResponseObject> {
+    return this.boardsService.getBoardById(boardId);
   }
 
   @Post()
@@ -42,33 +42,23 @@ export class BoardsController {
     return this.boardsService.createBoard(userId, createBoardDto);
   }
 
-  @Put(':id')
-  @UseGuards(JwtAuthGuard)
-  updateBoard(
-    @User('_id') userId: string,
-    @Param('id') boardId: string,
-    @Body() createBoardDto: CreateBoardDto,
-  ): Promise<BoardResponseObject> {
-    return this.boardsService.updateBoard(userId, boardId, createBoardDto);
-  }
-
-  @Delete(':id')
+  // TODO - check permissions to delete board
+  @Delete(':boardId')
   @UseGuards(JwtAuthGuard)
   async deleteBoard(
     @User('_id') userId: string,
-    @Param('id') boardId: string,
+    @Param('boardId') boardId: string,
   ): Promise<BoardResponseObject> {
     return this.boardsService.deleteBoard(userId, boardId);
   }
 
-  // TODO add proper dto!!! with class validator - now its for testing purposes
-  @Put(':id/permissions')
-  @UseGuards(JwtAuthGuard)
-  async updatePermissions(
-    @User('_id') userId: string,
-    @Param('id') boardId: string,
-    @Body() permissions: Permissions,
-  ): Promise<BoardResponseObject> {
-    return this.boardsService.updatePermissions(userId, boardId, permissions);
-  }
+  // @Put(':boardId/permissions')
+  // @UseGuards(JwtAuthGuard)
+  // async updatePermissions(
+  //   @User('_id') userId: string,
+  //   @Param('boardId') boardId: string,
+  //   @Body() permissions: BoardPermissions,
+  // ): Promise<any> {
+  //   return this.boardsService.updatePermissions(userId, boardId, permissions);
+  // }
 }

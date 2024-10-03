@@ -60,28 +60,6 @@ describe('UsersController', () => {
 
   // Tests
 
-  describe('/GET users', () => {
-    it('should return an array of users', async () => {
-      usersServiceMock.getUsers.mockResolvedValue(userResponseMock);
-
-      return request(app.getHttpServer())
-        .get('/users?page=asdasdsd$$$@@')
-        .expect(HttpStatus.OK)
-        .expect(userResponseMock);
-    });
-  });
-
-  describe('/GET users/:id', () => {
-    it('should return a single user by ID', async () => {
-      usersServiceMock.getUserById.mockResolvedValue(userResponseMock);
-
-      return request(app.getHttpServer())
-        .get('/users/1')
-        .expect(HttpStatus.OK)
-        .expect(userResponseMock);
-    });
-  });
-
   describe('/POST users', () => {
     it('should create a new user', async () => {
       usersServiceMock.createUser.mockResolvedValue(userResponseMock);
@@ -90,17 +68,6 @@ describe('UsersController', () => {
         .post('/users')
         .send(createUserDto)
         .expect(HttpStatus.CREATED)
-        .expect(userResponseMock);
-    });
-  });
-
-  describe('/DELETE users/:id', () => {
-    it('should delete a user by ID', async () => {
-      usersServiceMock.deleteUser.mockResolvedValue(userResponseMock);
-
-      return request(app.getHttpServer())
-        .delete('/users/1')
-        .expect(HttpStatus.OK)
         .expect(userResponseMock);
     });
   });

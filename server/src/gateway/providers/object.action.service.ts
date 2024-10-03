@@ -7,12 +7,12 @@ import {
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { Socket } from 'socket.io';
 import { ObjectAction } from '../../enums/object.action';
-import { WsObjectsService } from '../../modules/slide-objects/ws.objects.service';
+import { ObjectsService } from '../../modules/objects/objects.service';
 
 @Injectable()
 export class ObjectActionService {
   private readonly logger = new Logger(ObjectActionService.name);
-  constructor(private readonly wsObjectsService: WsObjectsService) {}
+  constructor(private readonly objectsService: ObjectsService) {}
 
   async handleActionObject(
     client: GwSocketWithTarget,
@@ -40,29 +40,41 @@ export class ObjectActionService {
     data: AddObjectData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
-    const userId = client.data.user._id as string;
     const slideId = data.slide._id;
     const objectProps = data.object;
 
-    const createdObject = await this.wsObjectsService.createObject(
-      userId,
+    console.log(boardId, slideId, objectProps);
+
+    const createdObject = await this.objectsService.createObject(
+      boardId,
       slideId,
       objectProps,
     );
 
-    this.logger.log(
-      `Object added: ${createdObject._id} by ${client.data.user.email}`,
-    );
-    client.to(boardId).emit('object-added', createdObject);
+    console.log(createdObject);
+
+    // this.logger.log(
+    //   `Object added: ${createdObject._id} by ${client.data.user.email}`,
+    // );
+    // client.to(boardId).emit('object-added', createdObject);
   }
 
   private async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
   ): Promise<void> {
-    const object = data.object;
-    const updatedObject = await this.wsObjectsService.updateObject(object);
+    console.log(data);
     const boardId = client.data.user.targetBoard.boardId;
+    const slideId = data.slide._id;
+    const objectId = data.object._id;
+    const objectProps = data.object;
+
+    const updatedObject = await this.objectsService.updateObject(
+      boardId,
+      slideId,
+      objectId,
+      objectProps,
+    );
 
     this.logger.log(
       `Object updated: ${updatedObject._id} by ${client.data.user.email}`,
@@ -75,12 +87,11 @@ export class ObjectActionService {
     data: DeleteObjectData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
-    const userId = client.data.user._id as string;
     const slideId = data.slide._id;
     const objectId = data.object._id;
 
-    const deletedObject = await this.wsObjectsService.deleteObject(
-      userId,
+    const deletedObject = await this.objectsService.deleteObject(
+      boardId,
       slideId,
       objectId,
     );

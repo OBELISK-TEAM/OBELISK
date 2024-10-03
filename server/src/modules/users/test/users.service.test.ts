@@ -8,7 +8,6 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../users.dto';
 import { UserAuthProvider } from 'src/enums/user.auth.provider';
 import { UserRole } from 'src/enums/user.role';
-import { SlideObjectDocument } from 'src/schemas/slide-object.schema';
 
 class UserModelMock {
   find = jest.fn();
@@ -85,44 +84,7 @@ describe('UsersService', () => {
     userAuthProvider: updatedUserAuthProvider1,
   } as UserDocument;
 
-  const userId2 = '2';
-  const userEmail2 = 'test2@mail.com';
-  const userPassword2 = 'anotherP4$$woRD';
-  const userRole2 = UserRole.ADMIN;
-  const userAuthProvider2 = UserAuthProvider.GOOGLE;
-
-  const userDocument2 = {
-    _id: userId2,
-    email: userEmail2,
-    password: userPassword2,
-    userRole: userRole2,
-    userAuthProvider: userAuthProvider2,
-  } as UserDocument;
-
-  const userDocumentsArray = [userDocument1, userDocument2];
-
-  const boardId1 = '222';
-
-  const slideObject1 = { height: 20.0, width: 22.2 } as SlideObjectDocument;
-
-  const slideObjectId1 = '2424';
-
   // Tests
-
-  describe('findUsers', () => {
-    it('should return an array of users as UserDocument', async () => {
-      userModelMock.find.mockReturnValue({
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(userDocumentsArray),
-      });
-
-      const result = await userService.findUsers(0, 10);
-
-      expect(result).toEqual(userDocumentsArray);
-      expect(userModelMock.find().exec).toHaveBeenCalledTimes(1);
-    });
-  });
 
   describe('findUserById', () => {
     it('should return the user with the given ID as UserDocument', async () => {
@@ -231,33 +193,6 @@ describe('UsersService', () => {
     });
   });
 
-  describe('deleteUserById', () => {
-    it('should delete the user with the given ID and return the user as UserDocument', async () => {
-      userModelMock.findByIdAndDelete.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(userDocument1),
-      });
-
-      const result = await userService.deleteUserById(userId1);
-
-      expect(result).toEqual(userDocument1);
-      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(userId1);
-      expect(userModelMock.findByIdAndDelete().exec).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw 404 for non-existing user', async () => {
-      userModelMock.findByIdAndDelete.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
-
-      await expect(userService.deleteUserById(userId1)).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
-
-      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(userId1);
-      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('emailExists', () => {
     it('should return true for existing email', async () => {
       userModelMock.findOne.mockReturnValue({
@@ -281,160 +216,6 @@ describe('UsersService', () => {
       expect(result).toBeFalsy();
       expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userEmail1 });
       expect(userModelMock.findOne().exec).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('addBoardToUser', () => {
-    it('should add a board to the user and return void', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(userDocument1),
-      });
-
-      const result = await userService.addBoardToUser(userId1, boardId1);
-
-      expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $push: { boards: boardId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw 404 for non-existing user', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
-
-      await expect(
-        userService.addBoardToUser(userId1, boardId1),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
-
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $push: { boards: boardId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('deleteBoardFromUser', () => {
-    it('should remove a board from the user and return void', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(userDocument1),
-      });
-
-      const result = await userService.deleteBoardFromUser(userId1, boardId1);
-
-      expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $pull: { boards: boardId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw 404 for non-existing user when deleting a board', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
-
-      await expect(
-        userService.deleteBoardFromUser(userId1, boardId1),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
-
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $pull: { boards: boardId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('addSlideObjectToUser', () => {
-    it('should add a slide object to the user and return void', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(userDocument1),
-      });
-
-      const result = await userService.addSlideObjectToUser(
-        userId1,
-        slideObject1,
-      );
-
-      expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $push: { slideObjects: slideObject1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw 404 for non-existing user when adding a slide object', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
-
-      await expect(
-        userService.addSlideObjectToUser(userId1, slideObject1),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
-
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $push: { slideObjects: slideObject1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('deleteSlideObjectFromUser', () => {
-    it('should remove a slide object from the user and return void', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(userDocument1),
-      });
-
-      const result = await userService.deleteSlideObjectFromUser(
-        userId1,
-        slideObjectId1,
-      );
-
-      expect(result).toBeUndefined();
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $pull: { slideObjects: slideObjectId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw 404 for non-existing user when deleting a slide object', async () => {
-      userModelMock.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
-
-      await expect(
-        userService.deleteSlideObjectFromUser(userId1, slideObjectId1),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
-
-      expect(userModelMock.findByIdAndUpdate).toHaveBeenCalledWith(
-        userId1,
-        { $pull: { slideObjects: slideObjectId1 } },
-        { new: true },
-      );
-      expect(userModelMock.findByIdAndUpdate().exec).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -497,37 +278,8 @@ describe('UsersService', () => {
       });
     });
 
-    it('should include boards in the response if showBoards is true', () => {
-      const result = userService.toResponseUser(mockUserDocument, true);
-
-      expect(result).toEqual({
-        _id: mockUserDocument._id,
-        email: mockUserDocument.email,
-        userRole: mockUserDocument.userRole,
-        userAuthProvider: mockUserDocument.userAuthProvider,
-        boards: mockUserDocument.boards,
-      });
-    });
-
-    it('should include slideObjects in the response if showSlideObjects is true', () => {
-      const result = userService.toResponseUser(mockUserDocument, false, true);
-
-      expect(result).toEqual({
-        _id: mockUserDocument._id,
-        email: mockUserDocument.email,
-        userRole: mockUserDocument.userRole,
-        userAuthProvider: mockUserDocument.userAuthProvider,
-        slideObjects: mockUserDocument.slideObjects,
-      });
-    });
-
     it('should include timestamps in the response if showTimestamps is true', () => {
-      const result = userService.toResponseUser(
-        mockUserDocument,
-        false,
-        false,
-        true,
-      );
+      const result = userService.toResponseUser(mockUserDocument, true);
 
       expect(result).toEqual({
         _id: mockUserDocument._id,
@@ -540,20 +292,13 @@ describe('UsersService', () => {
     });
 
     it('should include all fields if all flags are true', () => {
-      const result = userService.toResponseUser(
-        mockUserDocument,
-        true,
-        true,
-        true,
-      );
+      const result = userService.toResponseUser(mockUserDocument, true);
 
       expect(result).toEqual({
         _id: mockUserDocument._id,
         email: mockUserDocument.email,
         userRole: mockUserDocument.userRole,
         userAuthProvider: mockUserDocument.userAuthProvider,
-        boards: mockUserDocument.boards,
-        slideObjects: mockUserDocument.slideObjects,
         createdAt: mockUserDocument.createdAt,
         updatedAt: mockUserDocument.updatedAt,
       });

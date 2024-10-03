@@ -5,11 +5,9 @@ import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { UsersModule } from './modules/users/users.module';
 import { BoardsModule } from './modules/boards/boards.module';
-import { SlidesModule } from './modules/slides/slides.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-import { SlideObjectsModule } from './modules/slide-objects/slide-objects.module';
 import { GatewayModule } from './gateway/gateway.module';
 
 const DEFAULT_DB_HOST = 'localhost';
@@ -27,8 +25,6 @@ const DEFAULT_DB_HOST = 'localhost';
     AuthModule,
     UsersModule,
     BoardsModule,
-    SlidesModule,
-    SlideObjectsModule,
     GatewayModule,
   ],
   providers: [
