@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  SuperBoard,
-  SuperBoardDocument,
-} from '../../schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
 import { SuperSlideDocument } from '../../schemas/slide/super.slide.schema';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { SuperObjectDocument } from '../../schemas/object/super.object.schema';
