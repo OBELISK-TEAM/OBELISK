@@ -48,12 +48,12 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-board')
-  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<string> {
     return this.joinBoardService.handleJoinBoard(client, data);
   }
 
   @SubscribeMessage('leave-board')
-  async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
+  async handleLeaveBoard(client: GwSocketWithTarget): Promise<string> {
     return this.joinBoardService.handleLeaveBoard(client);
   }
 
@@ -63,7 +63,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
-  ): Promise<void> {
+  ): Promise<unknown> {
     return this.objectActionService.handleActionObject(
       client,
       data,
@@ -77,7 +77,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
-  ): Promise<void> {
+  ): Promise<unknown> {
     return this.objectActionService.handleActionObject(
       client,
       data,
@@ -91,7 +91,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDeleteObject(
     client: GwSocketWithTarget,
     data: DeleteObjectData,
-  ): Promise<void> {
+  ): Promise<unknown> {
     return this.objectActionService.handleActionObject(
       client,
       data,

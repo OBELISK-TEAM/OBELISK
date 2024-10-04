@@ -18,7 +18,7 @@ export class ObjectActionService {
     client: GwSocketWithTarget,
     data: AddObjectData | UpdateObjectData | DeleteObjectData,
     action: ObjectAction,
-  ): Promise<void> {
+  ): Promise<unknown> {
     try {
       switch (action) {
         case ObjectAction.ADD:
@@ -38,7 +38,7 @@ export class ObjectActionService {
   private async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
-  ): Promise<void> {
+  ): Promise<unknown> {
     const boardId = client.data.user.targetBoard.boardId;
     const userId = client.data.user._id as string;
     const slideId = data.slide._id;
@@ -54,6 +54,8 @@ export class ObjectActionService {
       `Object added: ${createdObject._id} by ${client.data.user.email}`,
     );
     client.to(boardId).emit('object-added', createdObject);
+
+    return createdObject._id;
   }
 
   private async handleUpdateObject(

@@ -13,15 +13,14 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
   }
 
   async validate(handshake: Socket['handshake']): Promise<SafeUserDoc> {
-    if (!handshake.headers.authorization) {
+    if (!handshake.auth || !handshake.auth.token) {
       throw new WsException('Missing token');
     }
 
-    if (!handshake.headers.authorization.startsWith('Bearer ')) {
-      throw new WsException('Invalid token format');
-    }
+    // @ts-expect-error I promise that frontend sends an auth object with token field. It's our protocol
+    const auth: {token: string} = handshake.auth;
 
-    const token = handshake.headers.authorization.split(' ')[1];
+    const token = auth.token;
     const user = await this.authService.validateToken(token);
     if (!user) throw new WsException('Invalid token');
     return user;

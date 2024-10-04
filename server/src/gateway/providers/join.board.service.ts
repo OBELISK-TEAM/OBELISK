@@ -7,29 +7,32 @@ import {
 import { JoinBoardData } from '../gateway.dto';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
+import { debug } from 'console';
 
 @Injectable()
 export class JoinBoardService {
   constructor(private readonly boardsService: BoardsService) {}
   private readonly logger = new Logger(JoinBoardService.name);
 
-  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<string> {
     const boardId = data.board._id;
 
     if (!(await this.isBoardValid(client, boardId))) {
       this.emitErrorAndDisconnect(client, 'Invalid board id');
-      return;
+      return "failure";
     }
 
+    debug("boardId", boardId);
     const permission = this.getBoardPermission(boardId, client);
-
+    debug("permission", permission);
     if (!this.isPermissionValid(client, permission)) {
       this.emitErrorAndDisconnect(client, 'Invalid permission');
-      return;
+      return "failure";
     }
 
     this.assignClientBoardAndPermission(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
+    return "success";
   }
 
   private async isBoardValid(
@@ -54,6 +57,7 @@ export class JoinBoardService {
     boardId: string,
     client: GwSocket,
   ): BoardPermission {
+    debug("available boards", client.data.user.availableBoards)
     if (!client.data.user.availableBoards) {
       return BoardPermission.NONE;
     }
@@ -98,7 +102,7 @@ export class JoinBoardService {
     });
   }
 
-  async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
+  async handleLeaveBoard(client: GwSocketWithTarget): Promise<string> {
     const user = client.data.user;
     const boardId = user.targetBoard.boardId;
     this.logger.log(`${user.email} is leaving the board...`);
@@ -106,5 +110,6 @@ export class JoinBoardService {
     client.to(boardId).emit('left-board', {
       message: `${user.email} has left the board`,
     });
+    return "succ";
   }
 }

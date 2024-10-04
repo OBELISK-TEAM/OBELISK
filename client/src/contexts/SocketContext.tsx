@@ -31,8 +31,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const token = Cookies.get("accessToken");
 
   // Define socket emit functions here
-  const socketEmitAddObject = useCallback((addObjectData: AddObjectData, callback: (res: string) => void) => {
-    socketRef.current?.emit("add-object", addObjectData, callback);
+  const socketEmitAddObject = useCallback((addObjectData: AddObjectData, socketCallback: (res: string) => void) => {
+    socketRef.current?.emit("add-object", addObjectData, socketCallback);
   }, []);
 
   const socketEmitUpdateObject = useCallback((updateObjectData: UpdateObjectData) => {
@@ -58,27 +58,36 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       toast.error(val.message);
     }
 
-    socketInstance.on("error", onError);
+    socketRef.current.on("error", onError);
 
     const joinBoardData: JoinBoardData = {
       board: {
         _id: boardId,
       },
     };
-
-    setTimeout(() => {
+    
+    function handleConnect() {
       socketInstance.emit("join-board", joinBoardData, () => {
         toast.success(`Joined the board ${boardId}`);
-      });
-    }, 1500);
+      })
+    }
+
+    socketRef.current.on('connect', handleConnect);
+
+    // setTimeout(() => {
+    //   socketInstance.emit("join-board", joinBoardData, () => {
+    //     toast.success(`Joined the board ${boardId}`);
+    //   });
+    // }, 1500);
 
     return () => {
-      socketInstance.emit("leave-board");
+      socketRef.current?.emit("leave-board");
 
-      socketInstance.off("error", onError);
-      socketInstance.disconnect();
+      socketRef.current?.off("error", onError);
+      socketRef.current?.off('connect', handleConnect);
+      socketRef.current?.disconnect();
     };
-  }, [token, boardId]);
+  }, [token, boardId, socketRef.current?.connected]);
 
   useSocketListeners(socketRef.current, canvas);
 

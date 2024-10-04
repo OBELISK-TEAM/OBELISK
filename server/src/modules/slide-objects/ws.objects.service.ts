@@ -83,6 +83,7 @@ export class WsObjectsService {
       slideObject.toObject() as SlideObjectDocument;
     return {
       _id: _id as string,
+      slide: slide,
       ...objectProperties,
     };
   }
