@@ -8,9 +8,15 @@ type TargetBoard = {
   permission: BoardPermission;
 };
 
+type TargetSlide = {
+  slideId: string | null; // null only for the first slide
+  slideNumber: number;
+};
+
 interface UserWithBoards extends SafeUserDoc {
   availableBoards?: AvailableBoards;
   targetBoard?: TargetBoard;
+  targetSlide?: TargetSlide;
 }
 
 export interface GwSocket extends Socket {
@@ -21,6 +27,9 @@ export interface GwSocket extends Socket {
 
 export interface GwSocketWithTarget extends Socket {
   data: {
-    user: UserWithBoards & { targetBoard: TargetBoard };
+    user: UserWithBoards & {
+      targetBoard: TargetBoard;
+      targetSlide: TargetSlide;
+    };
   };
 }

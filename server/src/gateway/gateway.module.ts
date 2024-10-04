@@ -4,16 +4,18 @@ import { AuthModule } from '../modules/auth/auth.module';
 import { BoardsModule } from '../modules/boards/boards.module';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
-import { ObjectActionService } from './providers/object.action.service';
-import { ObjectsModule } from '../modules/objects/objects.module';
+import { JoinSlideService } from './providers/join.slide.service';
+import { SlidesModule } from '../modules/slides/slides.module';
+import { SlideActionService } from './providers/slide.action.service';
 
 @Module({
-  imports: [AuthModule, BoardsModule, ObjectsModule],
+  imports: [AuthModule, BoardsModule, SlidesModule],
   providers: [
     Gateway,
     ConnectionService,
     JoinBoardService,
-    ObjectActionService,
+    JoinSlideService,
+    SlideActionService,
   ],
 })
 export class GatewayModule {}

@@ -81,6 +81,7 @@ export class JoinBoardService {
     boardId: string,
   ): void {
     client.data.user.targetBoard = { boardId, permission };
+    client.data.user.targetSlide = { slideNumber: 1, slideId: null };
     this.logger.log(
       `${client.data.user.email} is ${BoardPermission[permission]} of board ${boardId}`,
     );
@@ -99,6 +100,7 @@ export class JoinBoardService {
 
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
     const user = client.data.user;
+
     const boardId = user.targetBoard.boardId;
     this.logger.log(`${user.email} is leaving the board...`);
     await client.leave(boardId);

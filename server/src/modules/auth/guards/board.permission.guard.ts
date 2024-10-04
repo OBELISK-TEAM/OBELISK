@@ -13,7 +13,12 @@ export class BoardPermissionGuard implements CanActivate {
     const client: GwSocketWithTarget = context.switchToWs().getClient();
     const user = client.data.user;
 
-    if (!user || !user.availableBoards || !user.targetBoard) {
+    if (
+      !user ||
+      !user.availableBoards ||
+      !user.targetBoard ||
+      !user.targetSlide
+    ) {
       throw new WsException('Try to reconnect');
     }
 
