@@ -3,7 +3,6 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { JoinSlideData } from '../gateway.dto';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
-import { use } from 'passport';
 
 @Injectable()
 export class JoinSlideService {
@@ -21,7 +20,7 @@ export class JoinSlideService {
     const newSlide = await this.slidesService.getSlide(boardId, newSlideNumber);
 
     await this.leaveCurrentSlide(client);
-    await this.joinNewSlide(client, newSlide._id.toString(), newSlideNumber);
+    await this.joinNewSlide(client, newSlide._id.toString());
 
     client.data.user.targetSlide = {
       slideNumber: newSlideNumber,
@@ -34,26 +33,24 @@ export class JoinSlideService {
   async joinNewSlide(
     client: GwSocketWithTarget,
     slideId: string,
-    slideNumber: number,
   ): Promise<void> {
-    // if (client.data.user.targetSlide.slideId === slideId) return;
+    const user = client.data.user;
     await client.join(slideId);
     client.to(slideId).emit('joined-slide', {
-      message: `${client.data.user.email} has joined the slide`,
+      message: `${user.email} has joined the slide`,
     });
-    this.logger.log(
-      `${client.data.user.email} is joining slide ${slideNumber} with id ${slideId}`,
-    );
+    this.logger.log(`${user.email} has joined the slide ${slideId}`);
   }
 
   async leaveCurrentSlide(client: GwSocketWithTarget): Promise<void> {
-    const slideId = client.data.user.targetSlide.slideId;
+    const user = client.data.user;
+    const slideId = user.targetSlide.slideId;
     if (!slideId) return;
-    this.logger.log(`${client.data.user.email} is leaving the slide...`);
     await client.leave(slideId);
     client.to(slideId).emit('left-slide', {
-      message: `${client.data.user.email} has left the slide`,
+      message: `${user.email} has left the slide`,
     });
+    this.logger.log(`${user.email} has left the slide ${slideId}`);
   }
 
   async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
