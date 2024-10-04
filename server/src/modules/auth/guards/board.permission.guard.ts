@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { WsException } from '@nestjs/websockets';
 import { BoardPermission } from '../../../enums/board.permission';
 import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
 import { MINIMUM_BOARD_PERMISSION_KEY } from '../decorators/permissions.decorator';
@@ -19,7 +18,8 @@ export class BoardPermissionGuard implements CanActivate {
       !user.targetBoard ||
       !user.targetSlide
     ) {
-      throw new WsException('Try to reconnect');
+      this.emitErrorAndDisconnect(client, 'You need to join a board first');
+      return false;
     }
 
     const minimumPermission = this.getMinimumPermission(context);
@@ -42,12 +42,21 @@ export class BoardPermissionGuard implements CanActivate {
   ): boolean {
     const userBoardPermission = client.data.user.targetBoard.permission;
     if (userBoardPermission < requiredPermission) {
-      client.emit('error', {
-        message: `You need at least ${BoardPermission[requiredPermission]} permission to perform this action`,
-      });
-      client.disconnect(true);
+      const permissionString = BoardPermission[userBoardPermission];
+      this.emitErrorAndDisconnect(
+        client,
+        `Invalid permission, at least ${permissionString} permission is required`,
+      );
       return false;
     }
     return true;
+  }
+
+  private emitErrorAndDisconnect(
+    client: GwSocketWithTarget,
+    message: string,
+  ): void {
+    client.emit('error', { message });
+    client.disconnect(true);
   }
 }
