@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -11,6 +12,7 @@ import {
   GwSocketWithTarget,
 } from '../shared/interfaces/auth/GwSocket';
 import {
+  AddObjectData,
   AddSlideData,
   DeleteSlideData,
   JoinBoardData,
@@ -25,6 +27,8 @@ import { BoardPermission } from '../enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
 import { SlideResponseObject } from '../shared/interfaces/response-objects/SlideResponseObject';
 import { SlideActionService } from './providers/slide.action.service';
+import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
+import { ObjectActionService } from './providers/object.action.service';
 
 // no need to use @UseGuards() decorator here
 // because the WsAuthGuard is already applied in the ConnectionService
@@ -43,6 +47,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly joinBoardService: JoinBoardService,
     private readonly joinSlideService: JoinSlideService,
     private readonly slideActionService: SlideActionService,
+    private readonly objectActionService: ObjectActionService,
   ) {}
 
   // CONNECTION
@@ -109,20 +114,16 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // OBJECTS
 
-  // @SubscribeMessage('add-object')
-  // @UseGuards(BoardPermissionGuard)
-  // @MinimumBoardPermission(BoardPermission.EDITOR)
-  // async handleAddObject(
-  //   client: GwSocketWithTarget,
-  //   data: AddObjectData,
-  // ): Promise<ObjectResponseObject> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.ADD,
-  //   );
-  // }
-  //
+  @SubscribeMessage('add-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
+  async handleAddObject(
+    client: GwSocketWithTarget,
+    data: AddObjectData,
+  ): Promise<ObjectResponseObject> {
+    return this.objectActionService.handleAddObject(client, data);
+  }
+
   // @SubscribeMessage('update-object')
   // @UseGuards(BoardPermissionGuard)
   // @MinimumBoardPermission(BoardPermission.EDITOR)
