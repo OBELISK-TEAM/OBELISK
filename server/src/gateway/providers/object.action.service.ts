@@ -8,7 +8,6 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { ObjectsService } from '../../modules/objects/objects.service';
 import { WsException } from '@nestjs/websockets';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
-import { Socket } from 'socket.io';
 
 @Injectable()
 export class ObjectActionService {
