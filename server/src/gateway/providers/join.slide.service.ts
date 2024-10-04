@@ -20,7 +20,7 @@ export class JoinSlideService {
     const newSlide = await this.slidesService.getSlide(boardId, newSlideNumber);
 
     await this.leaveCurrentSlide(client);
-    await this.joinNewSlide(client, newSlide._id, newSlideNumber);
+    await this.joinNewSlide(client, newSlide._id.toString(), newSlideNumber);
 
     client.data.user.targetSlide = {
       slideNumber: newSlideNumber,
@@ -36,11 +36,13 @@ export class JoinSlideService {
     slideNumber: number,
   ): Promise<void> {
     // if (client.data.user.targetSlide.slideId === slideId) return;
-    this.logger.log(`Joining the ${slideNumber} slide with id ${slideId}...`);
     await client.join(slideId);
     client.to(slideId).emit('joined-slide', {
       message: `${client.data.user.email} has joined the slide`,
     });
+    this.logger.log(
+      `${client.data.user.email} is joining slide ${slideNumber} with id ${slideId}`,
+    );
   }
 
   async leaveCurrentSlide(client: GwSocketWithTarget): Promise<void> {
