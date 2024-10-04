@@ -3,6 +3,7 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { JoinSlideData } from '../gateway.dto';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { use } from 'passport';
 
 @Injectable()
 export class JoinSlideService {
@@ -24,7 +25,7 @@ export class JoinSlideService {
 
     client.data.user.targetSlide = {
       slideNumber: newSlideNumber,
-      slideId: newSlide._id,
+      slideId: newSlide._id.toString(),
     };
 
     return newSlide;
@@ -53,5 +54,9 @@ export class JoinSlideService {
     client.to(slideId).emit('left-slide', {
       message: `${client.data.user.email} has left the slide`,
     });
+  }
+
+  async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
+    await this.leaveCurrentSlide(client);
   }
 }

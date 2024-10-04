@@ -80,12 +80,12 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinSlideService.handleJoinSlide(client, data);
   }
 
-  // @UseGuards(BoardPermissionGuard)
-  // @MinimumBoardPermission(BoardPermission.VIEWER)
-  // @SubscribeMessage('leave-slide')
-  // async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
-  //   return this.joinSlideService.handleLeaveSlide(client);
-  // }
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.VIEWER)
+  @SubscribeMessage('leave-slide')
+  async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
+    return this.joinSlideService.handleLeaveSlide(client);
+  }
 
   @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.EDITOR)
