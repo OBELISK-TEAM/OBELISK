@@ -102,6 +102,16 @@ export class JoinBoardService {
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
     const user = client.data.user;
     const boardId = user.targetBoard.boardId;
+    const slideId = user.targetSlide.slideId;
+
+    if (slideId) {
+      await client.leave(slideId);
+      client.to(slideId).emit('left-slide', {
+        message: `${user.email} has left the slide`,
+      });
+      this.logger.log(`${user.email} has left the slide`);
+    }
+
     await client.leave(boardId);
     client.to(boardId).emit('left-board', {
       message: `${user.email} has left the board`,
