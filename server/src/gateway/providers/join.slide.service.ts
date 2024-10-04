@@ -14,6 +14,7 @@ export class JoinSlideService {
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
     // use try-catch block to catch errors especially for get slide!!
+    // add ws error filter to catch errors
 
     const newSlideNumber = data.slide.slideNumber;
     const boardId = client.data.user.targetBoard.boardId;
