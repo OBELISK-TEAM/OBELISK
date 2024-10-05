@@ -26,7 +26,7 @@ export class ResponseService {
   }
 
   toResponseSlide(slide: SuperSlideDocument): SlideResponseObject {
-    const { _id, objects, version } = slide;
+    const { _id, objects, version } = slide as SuperSlideDocument;
     return {
       _id: _id as string,
       version,
