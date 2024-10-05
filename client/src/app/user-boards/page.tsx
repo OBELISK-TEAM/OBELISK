@@ -1,26 +1,35 @@
 "use client";
-import Sidebar from "@/components/user-boards/Sidebar";
 import Header from "@/components/user-boards/Header";
-import BoardTable from "@/components/user-boards/BoardTable";
-import UserBoardsActionButtons from "@/components/user-boards/UserBoardsActionButtons";
+import BoardTable from "@/components/user-boards/board-table/BoardTable";
+import CreateBoardButton from "@/components/user-boards/CreateBoardButton";
 import TabButtons from "@/components/user-boards/TabButtons";
 import { CreateBoardProvider } from "@/contexts/CreateBoardContext";
+import { useState } from "react";
+import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
+
+const tabs = [
+  { label: "Owned by you", value: BoardsActiveTab.OWNED_BY_CURRENT_USER },
+  { label: "Shared by others", value: BoardsActiveTab.SHARED_FOR_CURRENT_USER },
+];
 
 export default function UserBoards() {
-  const tabs = [{ label: "All" }, { label: "Shared by others" }, { label: "Archived" }];
+  const [activeTab, setActiveTab] = useState<BoardsActiveTab>(BoardsActiveTab.OWNED_BY_CURRENT_USER);
+
+  const handleTabChange = (tabValue: BoardsActiveTab) => {
+    setActiveTab(tabValue);
+  };
 
   return (
     <div className="h-min-[100vh] flex flex-col">
       <CreateBoardProvider>
         <Header />
         <div className="flex">
-          <Sidebar />
           <main className="flex-1 bg-background p-6">
             <div className="mb-2 flex items-center justify-between">
-              <TabButtons tabs={tabs} />
-              <UserBoardsActionButtons />
+              <TabButtons tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+              <CreateBoardButton />
             </div>
-            <BoardTable />
+            <BoardTable activeTab={activeTab} />
           </main>
         </div>
       </CreateBoardProvider>
