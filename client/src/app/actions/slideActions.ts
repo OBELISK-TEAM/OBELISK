@@ -5,12 +5,13 @@ import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { ApiError } from "@/errors/ApiError";
 import { SlideIdResponse } from "@/interfaces/responses/slide-id-response";
 import { revalidatePath } from "next/cache";
+import logger from "@/lib/logger";
 
 export async function createCanvasObject(slideId: string, objectData: any): Promise<any> {
   const accessToken = getCookie("accessToken");
   //console.log("token", accessToken);
   const { erasable, ...objectWithoutErasable } = objectData;
-  console.log("erasable", erasable); // i want to use it otherwise i will receive an error
+  logger.log("erasable", erasable); // i want to use it otherwise i will receive an error
   const body = JSON.stringify({ slideId, ...objectWithoutErasable });
   try {
     const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/slide-objects`, {

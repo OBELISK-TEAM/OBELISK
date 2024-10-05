@@ -10,7 +10,6 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-
   const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",

@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { ImageData } from "@/interfaces/menu-data-context";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { BrushOptions } from "@/enums/BrushOptions";
+import logger from "@/lib/logger";
 
 const configureBrush = (brush: fabric.BaseBrush, size: number, color?: string) => {
   brush.width = size;
@@ -50,15 +51,14 @@ export const setEraserMode = (
 export const handleSave = (canvas: fabric.Canvas | null): void => {
   if (canvas) {
     const json = JSON.stringify(canvas.toJSON());
-    console.log("Saved JSON:", json);
+    logger.log("Saved JSON:", json);
   }
 };
 
 export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<void> => {
-  console.log("WYKONUJE SIE");
   const response = await fetch("/saved.json");
   const jsonData = await response.json();
-  console.log("Loaded JSON:", jsonData);
+  logger.log("Loaded JSON:", jsonData);
   if (canvas) {
     canvas.loadFromJSON(jsonData, () => canvas.renderAll());
   }
