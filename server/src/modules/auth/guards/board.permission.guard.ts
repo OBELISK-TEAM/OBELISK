@@ -12,12 +12,7 @@ export class BoardPermissionGuard implements CanActivate {
     const client: GwSocketWithTarget = context.switchToWs().getClient();
     const user = client.data.user;
 
-    if (
-      !user ||
-      !user.availableBoards ||
-      !user.targetBoard ||
-      !user.targetSlide
-    ) {
+    if (!user || !user.targetBoard || !user.targetSlide) {
       this.emitErrorAndDisconnect(client, 'You need to join a board first');
       return false;
     }

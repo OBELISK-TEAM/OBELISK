@@ -7,10 +7,9 @@ import {
   SuperBoardDocument,
 } from '../../schemas/board/super.board.schema';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { AvailableBoards } from '../../shared/interfaces/AvailableBoards';
 import { BoardPermission } from '../../enums/board.permission';
-import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 import { ResponseService } from '../response/response.service';
+import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 
 @Injectable()
 export class BoardsService {
@@ -56,84 +55,24 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  // TODO - implement
-  // async getUserBoards(userId: string): Promise<any[]> {
-  //   return await this.fetchBoardsForUser(userId);
-  // }
-
-  // // TODO -  check if user ids exists
-  // async updatePermissions(
-  //   userId: string,
-  //   boardId: string,
-  //   permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   console.log(userId);
-  //   return this.updateBoardPermissions(boardId, permissions);
-  // }
-  //
-  // private async updateBoardPermissions(
-  //   boardId: string,
-  //   permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   const updatedBoard = await this.boardModel
-  //     .findByIdAndUpdate(boardId, { permissions }, { new: true })
-  //     .exec();
-  //   if (!updatedBoard)
-  //     throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-  //   return updatedBoard;
-  // }
-
-  async getAvailableBoardsForUser(userId: string): Promise<AvailableBoards> {
-    const boards = await this.fetchBoardsForUser(userId);
-    const boardRolesMap = this.initializeUserBoardRolesMap();
-
-    userId = userId.toString();
-
-    boards.forEach(board =>
-      this.assignBoardToRoles(board, userId, boardRolesMap),
-    );
-    return boardRolesMap;
-  }
-
-  private initializeUserBoardRolesMap(): AvailableBoards {
-    return {
-      viewer: [] as string[],
-      editor: [] as string[],
-      moderator: [] as string[],
-      owner: [] as string[],
-    };
-  }
-
-  private assignBoardToRoles(
-    board: BoardPermissionsInfo,
+  async getClientBoardPermission(
     userId: string,
-    userBoardRolesMap: AvailableBoards,
-  ): void {
-    const boardId = (board._id as string).toString();
-    const ownerId = board.owner.toString();
-    const viewerIds = board.permissions.viewer.map((id: string) =>
-      id.toString(),
-    );
-    const editorIds = board.permissions.editor.map((id: string) =>
-      id.toString(),
-    );
-    const moderatorIds = board.permissions.moderator.map((id: string) =>
-      id.toString(),
-    );
-
-    if (viewerIds.includes(userId)) userBoardRolesMap.viewer.push(boardId);
-    if (editorIds.includes(userId)) userBoardRolesMap.editor.push(boardId);
-    if (moderatorIds.includes(userId))
-      userBoardRolesMap.moderator.push(boardId);
-    if (ownerId === userId) userBoardRolesMap.owner.push(boardId);
+    boardId: string,
+  ): Promise<BoardPermission> {
+    const board = await this.findBoardWithPermissions(userId, boardId);
+    if (!board)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return this.determineUserPermission(board, userId);
   }
 
-  private async fetchBoardsForUser(
+  private async findBoardWithPermissions(
     userId: string,
-  ): Promise<BoardPermissionsInfo[]> {
+    boardId: string,
+  ): Promise<BoardPermissionsInfo | null> {
     return this.boardModel
-      .find(
+      .findOne(
         {
+          _id: boardId,
           $or: [
             { owner: userId },
             { 'permissions.viewer': userId },
@@ -141,20 +80,24 @@ export class BoardsService {
             { 'permissions.moderator': userId },
           ],
         },
-        '_id name permissions owner',
+        'permissions owner',
       )
       .exec();
   }
 
-  getBoardPermission(
-    boardId: string,
-    boardWithPermission: AvailableBoards,
+  private determineUserPermission(
+    board: BoardPermissionsInfo,
+    userId: string,
   ): BoardPermission {
-    const { owner, viewer, editor, moderator } = boardWithPermission;
-    if (owner.includes(boardId)) return BoardPermission.OWNER;
-    if (moderator.includes(boardId)) return BoardPermission.MODERATOR;
-    if (editor.includes(boardId)) return BoardPermission.EDITOR;
-    if (viewer.includes(boardId)) return BoardPermission.VIEWER;
+    if (board.owner === userId) {
+      return BoardPermission.OWNER;
+    } else if (board.permissions.moderator.includes(userId)) {
+      return BoardPermission.MODERATOR;
+    } else if (board.permissions.editor.includes(userId)) {
+      return BoardPermission.EDITOR;
+    } else if (board.permissions.viewer.includes(userId)) {
+      return BoardPermission.VIEWER;
+    }
     return BoardPermission.NONE;
   }
 

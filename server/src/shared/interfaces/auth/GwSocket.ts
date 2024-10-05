@@ -1,6 +1,5 @@
 import { Socket } from 'socket.io';
 import { SafeUserDoc } from './SafeUserDoc';
-import { AvailableBoards } from '../AvailableBoards';
 import { BoardPermission } from '../../../enums/board.permission';
 
 type TargetBoard = {
@@ -13,23 +12,23 @@ type TargetSlide = {
   slideNumber: number;
 };
 
-interface UserWithBoards extends SafeUserDoc {
-  availableBoards?: AvailableBoards;
-  targetBoard?: TargetBoard;
-  targetSlide?: TargetSlide;
+interface UserWithTarget extends SafeUserDoc {
+  targetBoard: TargetBoard;
+  targetSlide: TargetSlide;
 }
+
+interface SafeUserWithOptionalTarget
+  extends SafeUserDoc,
+    Partial<Pick<UserWithTarget, 'targetBoard' | 'targetSlide'>> {}
 
 export interface GwSocket extends Socket {
   data: {
-    user: UserWithBoards;
+    user: SafeUserWithOptionalTarget;
   };
 }
 
 export interface GwSocketWithTarget extends Socket {
   data: {
-    user: UserWithBoards & {
-      targetBoard: TargetBoard;
-      targetSlide: TargetSlide;
-    };
+    user: UserWithTarget;
   };
 }
