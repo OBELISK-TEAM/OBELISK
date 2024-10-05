@@ -52,9 +52,6 @@ export class ObjectActionService {
       throw new WsException('No slide selected');
     }
 
-    console.log('id', _id);
-    console.log('props', props);
-
     const updatedObject = await this.objectsService.updateObject(
       boardId,
       slideId,

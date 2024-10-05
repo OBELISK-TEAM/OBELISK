@@ -12,6 +12,7 @@ export class ConnectionService {
     try {
       await this.validateClient(client);
       this.logClientConnection(client);
+      this.sendAuthMessage(client);
     } catch {
       this.emitErrorAndDisconnect(client, 'Connection failed to authenticate');
     }
@@ -32,6 +33,10 @@ export class ConnectionService {
         getClient: () => client,
       }),
     } as ExecutionContext;
+  }
+
+  private sendAuthMessage(client: Socket): void {
+    client.emit('auth', { message: 'Connection established' });
   }
 
   private logClientConnection(client: GwSocket): void {
