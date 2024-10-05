@@ -1,5 +1,6 @@
 import { PermissionsResponse } from "@/interfaces/responses/permissions-response";
 import { BoardPermission } from "@/enums/BoardPermission";
+import { SlideResponse } from "@/interfaces/responses/slide-response";
 
 export interface BoardResponse {
   _id: string;
@@ -7,7 +8,9 @@ export interface BoardResponse {
   modifiedAt: string;
   createdAt: string;
   size: number;
-  sharedWith: PermissionsResponse;
+  permissions: PermissionsResponse;
+  slides: string[];
+  slide?: SlideResponse | string;
   owner?: string;
-  myPermission?: BoardPermission;
+  currentUserPermission?: BoardPermission;
 }

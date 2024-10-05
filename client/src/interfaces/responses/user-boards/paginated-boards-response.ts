@@ -1,8 +1,8 @@
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 
-export interface BoardsResponse {
+export interface PaginatedBoardsResponse {
   data: BoardResponse[];
-  currentPage: number;
-  perPage: number;
+  page: number;
+  limit: number;
   total: number;
 }

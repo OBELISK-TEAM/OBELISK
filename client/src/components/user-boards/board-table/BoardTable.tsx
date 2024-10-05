@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CellContent } from "@/components/user-boards/board-table/CellContent";
 import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { BoardsResponse } from "@/interfaces/responses/user-boards/boards-response";
+import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 
@@ -21,13 +21,13 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
 
-  const [previousData, setPreviousData] = useState<BoardsResponse | undefined>(undefined);
+  const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab]);
 
-  const { data, error, isLoading } = useSWR<BoardsResponse>(
+  const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
     `/api/boards?tab=${activeTab}&page=${currentPage}&perPage=${perPage}`,
     fetchBoards,
     {
@@ -125,13 +125,12 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
           {displayData && (
             <div className="mt-4 flex items-center justify-between">
               <span className="w-[18em] grow text-muted-foreground" style={{ fontSize: "15px" }}>
-                Showing {(displayData.currentPage - 1) * displayData.perPage + 1}-
-                {Math.min(displayData.currentPage * displayData.perPage, displayData.total)} of {displayData.total}{" "}
-                boards
+                Showing {(displayData.page - 1) * displayData.limit + 1}-
+                {Math.min(displayData.page * displayData.limit, displayData.total)} of {displayData.total} boards
               </span>
               <BoardsPagination
-                currentPage={displayData.currentPage}
-                totalPages={Math.ceil(displayData.total / displayData.perPage)}
+                currentPage={displayData.page}
+                totalPages={Math.ceil(displayData.total / displayData.limit)}
                 onPageChange={setCurrentPage}
               />
             </div>

@@ -1,4 +1,4 @@
 export enum BoardsActiveTab {
-  OWNED_BY_YOU = "owned-by-you",
-  SHARED_BY_OTHERS = "shared-by-others",
+  OWNED_BY_CURRENT_USER = "owned-by-current-user",
+  SHARED_FOR_CURRENT_USER = "shared-by-current-user",
 }

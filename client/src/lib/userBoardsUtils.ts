@@ -22,9 +22,9 @@ const ownedBoards: BoardTableColumns[] = [
 ];
 
 export const getColumnsForTab = (tab: BoardsActiveTab): BoardTableColumns[] => {
-  if (tab === BoardsActiveTab.SHARED_BY_OTHERS) {
+  if (tab === BoardsActiveTab.SHARED_FOR_CURRENT_USER) {
     return detailedBoards;
-  } else if (tab === BoardsActiveTab.OWNED_BY_YOU) {
+  } else if (tab === BoardsActiveTab.OWNED_BY_CURRENT_USER) {
     return ownedBoards;
   }
   return [];
@@ -32,9 +32,9 @@ export const getColumnsForTab = (tab: BoardsActiveTab): BoardTableColumns[] => {
 
 export const getTitleForTab = (tab: BoardsActiveTab): string => {
   switch (tab) {
-    case BoardsActiveTab.OWNED_BY_YOU:
+    case BoardsActiveTab.OWNED_BY_CURRENT_USER:
       return "Your boards";
-    case BoardsActiveTab.SHARED_BY_OTHERS:
+    case BoardsActiveTab.SHARED_FOR_CURRENT_USER:
       return "Boards shared with you";
     default:
       return "";
@@ -43,9 +43,9 @@ export const getTitleForTab = (tab: BoardsActiveTab): string => {
 
 export const getDescriptionForTab = (tab: BoardsActiveTab): string => {
   switch (tab) {
-    case BoardsActiveTab.OWNED_BY_YOU:
+    case BoardsActiveTab.OWNED_BY_CURRENT_USER:
       return "Boards created by you";
-    case BoardsActiveTab.SHARED_BY_OTHERS:
+    case BoardsActiveTab.SHARED_FOR_CURRENT_USER:
       return "By other users";
     default:
       return "";

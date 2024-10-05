@@ -1,11 +1,11 @@
 // fetchBoards.ts
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
-import { BoardsResponse } from "@/interfaces/responses/user-boards/boards-response";
+import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { PermissionsResponse } from "@/interfaces/responses/permissions-response";
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 import { BoardPermission } from "@/enums/BoardPermission";
 
-export const fetchBoards = (url: string): Promise<BoardsResponse> => {
+export const fetchBoards = (url: string): Promise<PaginatedBoardsResponse> => {
   return new Promise((resolve) => {
     const urlParams = new URLSearchParams(url.split("?")[1]);
     const tab = urlParams.get("tab") as BoardsActiveTab;
@@ -24,19 +24,20 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
         };
       };
 
-      if (tab === BoardsActiveTab.OWNED_BY_YOU) {
+      if (tab === BoardsActiveTab.OWNED_BY_CURRENT_USER) {
         for (let i = 1; i <= 40; i++) {
           data.push({
             _id: "" + i,
             name: `Your Board ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 08:00 PM`,
             createdAt: `2023-09-10 07:00 PM`,
-            sharedWith: generatePermissionsResponse(i),
+            permissions: generatePermissionsResponse(i),
             size: i * 15,
-            myPermission: BoardPermission.OWNER,
+            currentUserPermission: BoardPermission.OWNER,
+            slides: [],
           });
         }
-      } else if (tab === BoardsActiveTab.SHARED_BY_OTHERS) {
+      } else if (tab === BoardsActiveTab.SHARED_FOR_CURRENT_USER) {
         for (let i = 1; i <= 30; i++) {
           data.push({
             _id: "" + i,
@@ -44,7 +45,7 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
             owner: `User ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 01:00 PM`,
             createdAt: `2023-09-05 12:00 PM`,
-            myPermission:
+            currentUserPermission:
               i % 4 === 0
                 ? BoardPermission.EDITOR
                 : i % 4 === 1
@@ -52,8 +53,9 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
                   : i % 4 === 2
                     ? BoardPermission.MODERATOR
                     : BoardPermission.OWNER,
-            sharedWith: generatePermissionsResponse(i),
+            permissions: generatePermissionsResponse(i),
             size: i * 20,
+            slides: [],
           });
         }
       } else {
@@ -68,8 +70,8 @@ export const fetchBoards = (url: string): Promise<BoardsResponse> => {
       resolve({
         data: paginatedData,
         total,
-        currentPage: page,
-        perPage,
+        page: page,
+        limit: perPage,
       });
     }, 1000);
   });
