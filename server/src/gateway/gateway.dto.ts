@@ -2,10 +2,23 @@ import { SlideObjectTextStyles } from '../shared/interfaces/fabric-js/SlideObjec
 import { SlideObjectFilter } from '../shared/interfaces/fabric-js/SlideObjectFilter';
 import { SlideObjectPath } from '../shared/interfaces/fabric-js/SlideObjectPath';
 import { SlideObjectShadow } from '../shared/interfaces/fabric-js/SlideObjectShadow';
+import { Eraser } from 'src/schemas/object/base.object.schema';
 
 export interface JoinBoardData {
   board: BoardOnlyId;
 }
+
+export interface JoinSlideData {
+  slide: { slideNumber: number };
+}
+
+export interface AddSlideData {
+  slide?: {
+    slideNumber: number;
+  };
+}
+
+export interface DeleteSlideData extends AddSlideData {}
 
 export interface AddObjectData {
   object: ObjectDataProps;
@@ -14,6 +27,7 @@ export interface AddObjectData {
 
 export interface UpdateObjectData {
   object: ObjectDataPropsWithId;
+  slide: SlideOnlyId;
 }
 
 export interface DeleteObjectData {
@@ -97,4 +111,6 @@ export interface ObjectDataProps {
   cropX?: number;
   cropY?: number;
   filters?: SlideObjectFilter[];
+  erasable?: boolean;
+  eraser?: Eraser;
 }

@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/utils/board/fileUtils";
+import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/lib/board/fileUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { FileContext as IFileContext } from "@/interfaces/file-context";
 import { toast } from "sonner";

@@ -13,15 +13,19 @@ export class WsAuthStrategy extends PassportStrategy(Strategy, 'ws') {
   }
 
   async validate(handshake: Socket['handshake']): Promise<SafeUserDoc> {
-    if (!handshake.headers.authorization) {
+    if (!handshake.auth || !handshake.auth.token) {
       throw new WsException('Missing token');
     }
 
-    if (!handshake.headers.authorization.startsWith('Bearer ')) {
+    if (typeof handshake.auth.token !== 'string') {
       throw new WsException('Invalid token format');
     }
 
-    const token = handshake.headers.authorization.split(' ')[1];
+    if (!handshake.auth.token.startsWith('Bearer ')) {
+      throw new WsException('Invalid token format');
+    }
+
+    const token = handshake.auth.token.split(' ')[1];
     const user = await this.authService.validateToken(token);
     if (!user) throw new WsException('Invalid token');
     return user;

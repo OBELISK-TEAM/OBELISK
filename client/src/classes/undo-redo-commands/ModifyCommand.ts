@@ -1,6 +1,6 @@
 import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { getItemById, updateDimensions } from "@/utils/board/canvasUtils";
+import { getItemById, updateDimensions } from "@/lib/board/canvasUtils";
 import { AddCommand } from "./AddCommand";
 import { toast } from "sonner";
 

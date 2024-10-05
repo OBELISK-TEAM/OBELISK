@@ -1,9 +1,9 @@
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { getItemById } from "@/utils/board/canvasUtils";
+import { getItemById } from "@/lib/board/canvasUtils";
 import { toast } from "sonner";
 import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { fabric } from "fabric";
-import { addListenersBack, removeListenersTemporarily } from "@/utils/board/undoRedoUtils";
+import { addListenersBack, removeListenersTemporarily } from "@/lib/board/undoRedoUtils";
 
 /**
  * The purpose of this class is to encompass adding objects DIRECTLY to the canvas.

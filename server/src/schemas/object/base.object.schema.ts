@@ -1,21 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SlideObjectShadow } from '../shared/interfaces/fabric-js/SlideObjectShadow';
-import { SlideObjectPath } from '../shared/interfaces/fabric-js/SlideObjectPath';
-import { SlideObjectFilter } from '../shared/interfaces/fabric-js/SlideObjectFilter';
-import { SlideObjectTextStyles } from '../shared/interfaces/fabric-js/SlideObjectTextStyles';
-import {
-  Schema as MongooseSchema,
-  Document as MongooseDocument,
-  SchemaTimestampsConfig,
-} from 'mongoose';
+import { Prop } from '@nestjs/mongoose';
+import { SlideObjectShadow } from '../../shared/interfaces/fabric-js/SlideObjectShadow';
+import { SlideObjectTextStyles } from '../../shared/interfaces/fabric-js/SlideObjectTextStyles';
+import { SlideObjectFilter } from '../../shared/interfaces/fabric-js/SlideObjectFilter';
+import { SlideObjectPath } from '../../shared/interfaces/fabric-js/SlideObjectPath';
+import { Schema as MongooseSchema } from 'mongoose';
 
-export type SlideObjectDocument = SlideObject &
-  MongooseDocument &
-  SchemaTimestampsConfig;
-
-export class FabricJsCanvasObjectBase {
-  // Fabric.js - specific properties
-
+export class BaseObject {
   @Prop({
     type: String,
   })
@@ -341,43 +331,16 @@ export class FabricJsCanvasObjectBase {
   erasable?: boolean;
 }
 
-export class Eraser extends FabricJsCanvasObjectBase {
-  // Fabric.js - specific properties
-
+export class Eraser extends BaseObject {
   @Prop({
     type: [MongooseSchema.Types.Mixed],
   })
-  objects?: FabricJsCanvasObjectBase[];
+  objects?: BaseObject[];
 }
 
-export class FabricJsCanvasObjectWithEraser extends FabricJsCanvasObjectBase {
-  // Fabric.js - specific properties
-
+export class BaseObjectWithEraser extends BaseObject {
   @Prop({
     type: MongooseSchema.Types.Mixed,
   })
   eraser?: Eraser;
 }
-
-@Schema({
-  timestamps: true,
-  versionKey: false,
-  validateBeforeSave: true,
-})
-export class SlideObject extends FabricJsCanvasObjectWithEraser {
-  @Prop({
-    required: true,
-    type: MongooseSchema.Types.ObjectId,
-    ref: 'User',
-  })
-  createdBy: string;
-
-  @Prop({
-    required: true,
-    type: MongooseSchema.Types.ObjectId,
-    ref: 'Slide',
-  })
-  slide: string;
-}
-
-export const SlideObjectSchema = SchemaFactory.createForClass(SlideObject);

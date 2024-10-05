@@ -37,8 +37,7 @@ export class JoinBoardService {
     boardId: string,
   ): Promise<boolean> {
     try {
-      await this.boardsService.findBoardById(boardId);
-      return true;
+      return !!(await this.boardsService.findBoardById(boardId));
     } catch {
       this.emitErrorAndDisconnect(client, 'Invalid board id');
       return false;
@@ -81,30 +80,42 @@ export class JoinBoardService {
     permission: BoardPermission,
     boardId: string,
   ): void {
-    client.data.user.targetBoard = { boardId, permission };
-    this.logger.log(
-      `${client.data.user.email} is ${BoardPermission[permission]} of board ${boardId}`,
-    );
+    const user = client.data.user;
+    const permissionString = BoardPermission[permission];
+    user.targetBoard = { boardId, permission };
+    user.targetSlide = { slideNumber: 1, slideId: null };
+    this.logger.log(`${user.email} is ${permissionString} of board ${boardId}`);
   }
 
   private async joinClientToBoard(
     client: GwSocket,
     boardId: string,
   ): Promise<void> {
-    this.logger.log(`Joining the board...`);
+    const user = client.data.user;
     await client.join(boardId);
     client.to(boardId).emit('joined-board', {
-      message: `${client.data.user.email} has joined the board`,
+      message: `${user.email} has joined the board`,
     });
+    this.logger.log(`${user.email} has joined the board`);
   }
 
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
     const user = client.data.user;
     const boardId = user.targetBoard.boardId;
-    this.logger.log(`${user.email} is leaving the board...`);
+    const slideId = user.targetSlide.slideId;
+
+    if (slideId) {
+      await client.leave(slideId);
+      client.to(slideId).emit('left-slide', {
+        message: `${user.email} has left the slide`,
+      });
+      this.logger.log(`${user.email} has left the slide`);
+    }
+
     await client.leave(boardId);
     client.to(boardId).emit('left-board', {
       message: `${user.email} has left the board`,
     });
+    this.logger.log(`${user.email} has left the board`);
   }
 }

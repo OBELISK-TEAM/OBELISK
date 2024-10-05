@@ -1,16 +1,16 @@
 import { useEffect, useReducer } from "react";
 import { fabric } from "fabric";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
-import { getJsonWithAbsoluteProperties } from "@/utils/board/undoRedoUtils";
+import { getJsonWithAbsoluteProperties } from "@/lib/board/undoRedoUtils";
 
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
 import { toast } from "sonner";
+import { assignId } from "@/lib/utils";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { ApiError } from "@/errors/ApiError";
 import { useSocket } from "@/contexts/SocketContext";
 import { AddObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { assignId } from "@/utils/utils";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,

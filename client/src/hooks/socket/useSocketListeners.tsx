@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { fabric } from "fabric";
 import { Socket } from "socket.io-client";
 import { toast } from "sonner";
-import { getItemById } from "@/utils/board/canvasUtils";
+import { getItemById } from "@/lib/board/canvasUtils";
 
 const useSocketListeners = (socket: Socket | null, canvas: fabric.Canvas | null) => {
   useEffect(() => {

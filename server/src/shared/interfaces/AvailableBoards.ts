@@ -1,5 +1,5 @@
-import { Permissions } from './Permissions';
+import { BoardPermissions } from './BoardPermissions';
 
-export interface AvailableBoards extends Permissions {
+export interface AvailableBoards extends BoardPermissions {
   owner: string[];
 }

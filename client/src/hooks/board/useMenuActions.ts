@@ -18,9 +18,9 @@ import {
   setDrawingMode,
   setEraserMode,
   setSelectionMode,
-} from "@/utils/board/menuDataUtils";
+} from "@/lib/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
-import { assignId } from "@/utils/utils";
+import { assignId } from "@/lib/utils";
 import { toast } from "sonner";
 import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { useSocket } from "@/contexts/SocketContext";

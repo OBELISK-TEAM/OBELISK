@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearCookie } from "@/utils/authApi";
+import { clearCookie } from "@/lib/authApiUtils";
 
 export async function POST() {
   await clearCookie();
