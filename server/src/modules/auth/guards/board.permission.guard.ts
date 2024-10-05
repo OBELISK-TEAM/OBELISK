@@ -42,7 +42,7 @@ export class BoardPermissionGuard implements CanActivate {
   ): boolean {
     const userBoardPermission = client.data.user.targetBoard.permission;
     if (userBoardPermission < requiredPermission) {
-      const permissionString = BoardPermission[userBoardPermission];
+      const permissionString = BoardPermission[requiredPermission];
       this.emitErrorAndDisconnect(
         client,
         `Invalid permission, at least ${permissionString} permission is required`,

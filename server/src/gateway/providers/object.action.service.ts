@@ -5,47 +5,27 @@ import {
   UpdateObjectData,
 } from '../gateway.dto';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { Socket } from 'socket.io';
-import { ObjectAction } from '../../enums/object.action';
 import { ObjectsService } from '../../modules/objects/objects.service';
-import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { WsException } from '@nestjs/websockets';
+import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 
 @Injectable()
 export class ObjectActionService {
   private readonly logger = new Logger(ObjectActionService.name);
   constructor(private readonly objectsService: ObjectsService) {}
 
-  async handleActionObject(
-    client: GwSocketWithTarget,
-    data: AddObjectData | UpdateObjectData | DeleteObjectData,
-    action: ObjectAction,
-  ): Promise<ObjectResponseObject> {
-    try {
-      switch (action) {
-        case ObjectAction.ADD:
-          return this.handleAddObject(client, data as AddObjectData);
-        case ObjectAction.UPDATE:
-          return this.handleUpdateObject(client, data as UpdateObjectData);
-        case ObjectAction.DELETE:
-          return this.handleDeleteObject(client, data as DeleteObjectData);
-        default:
-          this.emitErrorAndDisconnect(client, 'Something went wrong');
-          throw new WsException('Invalid action');
-      }
-    } catch (error) {
-      this.emitErrorAndDisconnect(client, 'Something went wrong');
-      throw error;
-    }
-  }
-
-  private async handleAddObject(
+  async handleAddObject(
     client: GwSocketWithTarget,
     data: AddObjectData,
   ): Promise<ObjectResponseObject> {
-    const boardId = client.data.user.targetBoard.boardId;
-    const slideId = data.slide._id;
+    const user = client.data.user;
+    const boardId = user.targetBoard.boardId;
+    const slideId = user.targetSlide.slideId;
     const objectProps = data.object;
+
+    if (!slideId) {
+      throw new WsException('No slide selected');
+    }
 
     const createdObject = await this.objectsService.createObject(
       boardId,
@@ -53,43 +33,52 @@ export class ObjectActionService {
       objectProps,
     );
 
-    this.logger.log(
-      `Object added: ${createdObject._id} by ${client.data.user.email}`,
-    );
-    client.to(boardId).emit('object-added', createdObject);
+    this.logger.log(`Object added: ${createdObject._id} by ${user.email}`);
+    client.to(slideId).emit('object-added', createdObject);
     return createdObject;
   }
 
-  private async handleUpdateObject(
+  async handleUpdateObject(
     client: GwSocketWithTarget,
     data: UpdateObjectData,
   ): Promise<ObjectResponseObject> {
-    const boardId = client.data.user.targetBoard.boardId;
-    const slideId = data.slide._id;
-    const objectId = data.object._id;
-    const objectProps = data.object;
+    const user = client.data.user;
+    const boardId = user.targetBoard.boardId;
+    const slideId = user.targetSlide.slideId;
+
+    const { _id, ...props } = data.object;
+
+    if (!slideId) {
+      throw new WsException('No slide selected');
+    }
+
+    console.log('id', _id);
+    console.log('props', props);
 
     const updatedObject = await this.objectsService.updateObject(
       boardId,
       slideId,
-      objectId,
-      objectProps,
+      _id,
+      props,
     );
 
-    this.logger.log(
-      `Object updated: ${updatedObject._id} by ${client.data.user.email}`,
-    );
-    client.to(boardId).emit('object-updated', updatedObject);
+    this.logger.log(`Object updated: ${updatedObject._id} by ${user.email}`);
+    client.to(slideId).emit('object-added', updatedObject);
     return updatedObject;
   }
 
-  private async handleDeleteObject(
+  async handleDeleteObject(
     client: GwSocketWithTarget,
     data: DeleteObjectData,
   ): Promise<ObjectResponseObject> {
-    const boardId = client.data.user.targetBoard.boardId;
-    const slideId = data.slide._id;
+    const user = client.data.user;
+    const boardId = user.targetBoard.boardId;
+    const slideId = user.targetSlide.slideId;
     const objectId = data.object._id;
+
+    if (!slideId) {
+      throw new WsException('No slide selected');
+    }
 
     const deletedObject = await this.objectsService.deleteObject(
       boardId,
@@ -97,15 +86,8 @@ export class ObjectActionService {
       objectId,
     );
 
-    this.logger.log(
-      `Object deleted: ${deletedObject._id} by ${client.data.user.email}`,
-    );
-    client.to(boardId).emit('object-deleted', deletedObject);
+    this.logger.log(`Object deleted: ${objectId} by ${user.email}`);
+    client.to(slideId).emit('object-deleted', deletedObject);
     return deletedObject;
-  }
-
-  private emitErrorAndDisconnect(client: Socket, message: string): void {
-    client.emit('error', { message });
-    client.disconnect(true);
   }
 }
