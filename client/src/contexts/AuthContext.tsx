@@ -2,7 +2,7 @@ import React, { createContext, useContext } from "react";
 import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
 import { complexToast } from "./complexToast";
-import { extractMessagesFromApiError } from "../lib/toastsUtils";
+import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
+
   const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
