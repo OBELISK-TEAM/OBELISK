@@ -22,17 +22,14 @@ export interface DeleteSlideData extends AddSlideData {}
 
 export interface AddObjectData {
   object: ObjectDataProps;
-  slide: SlideOnlyId;
 }
 
 export interface UpdateObjectData {
   object: ObjectDataPropsWithId;
-  slide: SlideOnlyId;
 }
 
 export interface DeleteObjectData {
   object: ObjectOnlyId;
-  slide: SlideOnlyId;
 }
 
 export interface BoardOnlyId extends OnlyId {}

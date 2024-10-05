@@ -15,50 +15,17 @@ export class JoinBoardService {
 
   async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
     const boardId = data.board._id;
+    const userId = client.data.user._id as string;
 
-    if (!(await this.isBoardValid(client, boardId))) {
-      this.emitErrorAndDisconnect(client, 'Invalid board id');
-      return;
-    }
+    const permission = await this.boardsService.getClientBoardPermission(
+      userId,
+      boardId,
+    );
 
-    const permission = this.getBoardPermission(boardId, client);
+    if (!this.isPermissionValid(client, permission)) return;
 
-    if (!this.isPermissionValid(client, permission)) {
-      this.emitErrorAndDisconnect(client, 'Invalid permission');
-      return;
-    }
-
-    this.assignClientBoardAndPermission(client, permission, boardId);
+    this.assignDataToClient(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
-  }
-
-  private async isBoardValid(
-    client: GwSocket,
-    boardId: string,
-  ): Promise<boolean> {
-    try {
-      return !!(await this.boardsService.findBoardById(boardId));
-    } catch {
-      this.emitErrorAndDisconnect(client, 'Invalid board id');
-      return false;
-    }
-  }
-
-  private emitErrorAndDisconnect(client: Socket, message: string): void {
-    client.emit('error', { message });
-    client.disconnect(true);
-  }
-
-  private getBoardPermission(
-    boardId: string,
-    client: GwSocket,
-  ): BoardPermission {
-    if (!client.data.user.availableBoards) {
-      return BoardPermission.NONE;
-    }
-
-    const availableBoards = client.data.user.availableBoards;
-    return this.boardsService.getBoardPermission(boardId, availableBoards);
   }
 
   private isPermissionValid(
@@ -75,7 +42,7 @@ export class JoinBoardService {
     return true;
   }
 
-  private assignClientBoardAndPermission(
+  private assignDataToClient(
     client: GwSocket,
     permission: BoardPermission,
     boardId: string,
@@ -96,7 +63,7 @@ export class JoinBoardService {
     client.to(boardId).emit('joined-board', {
       message: `${user.email} has joined the board`,
     });
-    this.logger.log(`${user.email} has joined the board`);
+    this.logger.log(`${user.email} has joined the board ${boardId}`);
   }
 
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
@@ -117,5 +84,10 @@ export class JoinBoardService {
       message: `${user.email} has left the board`,
     });
     this.logger.log(`${user.email} has left the board`);
+  }
+
+  private emitErrorAndDisconnect(client: Socket, message: string): void {
+    client.emit('error', { message });
+    client.disconnect(true);
   }
 }

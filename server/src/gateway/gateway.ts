@@ -11,10 +11,13 @@ import {
   GwSocketWithTarget,
 } from '../shared/interfaces/auth/GwSocket';
 import {
+  AddObjectData,
   AddSlideData,
+  DeleteObjectData,
   DeleteSlideData,
   JoinBoardData,
   JoinSlideData,
+  UpdateObjectData,
 } from './gateway.dto';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
@@ -25,11 +28,8 @@ import { BoardPermission } from '../enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
 import { SlideResponseObject } from '../shared/interfaces/response-objects/SlideResponseObject';
 import { SlideActionService } from './providers/slide.action.service';
-
-// no need to use @UseGuards() decorator here
-// because the WsAuthGuard is already applied in the ConnectionService
-// auth is done on connection, not on message
-// so no need to authenticate every message
+import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
+import { ObjectActionService } from './providers/object.action.service';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -43,6 +43,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly joinBoardService: JoinBoardService,
     private readonly joinSlideService: JoinSlideService,
     private readonly slideActionService: SlideActionService,
+    private readonly objectActionService: ObjectActionService,
   ) {}
 
   // CONNECTION
@@ -55,9 +56,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectionService.handleDisconnect(client);
   }
 
-  // BOARDS
-
-  // ??? after joining the board - join first slide?
   @SubscribeMessage('join-board')
   async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
     return this.joinBoardService.handleJoinBoard(client, data);
@@ -68,9 +66,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinBoardService.handleLeaveBoard(client);
   }
 
-  // SLIDES (be at least a viewer to join a slide)
-
-  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.VIEWER)
   @SubscribeMessage('join-slide')
   async handleJoinSlide(
@@ -107,47 +102,33 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.slideActionService.handleDeleteSlide(client, data);
   }
 
-  // OBJECTS
+  @SubscribeMessage('add-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
+  async handleAddObject(
+    client: GwSocketWithTarget,
+    data: AddObjectData,
+  ): Promise<ObjectResponseObject> {
+    return this.objectActionService.handleAddObject(client, data);
+  }
 
-  // @SubscribeMessage('add-object')
-  // @UseGuards(BoardPermissionGuard)
-  // @MinimumBoardPermission(BoardPermission.EDITOR)
-  // async handleAddObject(
-  //   client: GwSocketWithTarget,
-  //   data: AddObjectData,
-  // ): Promise<ObjectResponseObject> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.ADD,
-  //   );
-  // }
-  //
-  // @SubscribeMessage('update-object')
-  // @UseGuards(BoardPermissionGuard)
-  // @MinimumBoardPermission(BoardPermission.EDITOR)
-  // async handleUpdateObject(
-  //   client: GwSocketWithTarget,
-  //   data: UpdateObjectData,
-  // ): Promise<ObjectResponseObject> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.UPDATE,
-  //   );
-  // }
-  //
-  // @SubscribeMessage('delete-object')
-  // @UseGuards(BoardPermissionGuard)
-  // @MinimumBoardPermission(BoardPermission.EDITOR)
-  // async handleDeleteObject(
-  //   client: GwSocketWithTarget,
-  //   data: DeleteObjectData,
-  // ): Promise<ObjectResponseObject> {
-  //   return this.objectActionService.handleActionObject(
-  //     client,
-  //     data,
-  //     ObjectAction.DELETE,
-  //   );
-  // }
+  @SubscribeMessage('update-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
+  async handleUpdateObject(
+    client: GwSocketWithTarget,
+    data: UpdateObjectData,
+  ): Promise<ObjectResponseObject> {
+    return this.objectActionService.handleUpdateObject(client, data);
+  }
+
+  @SubscribeMessage('delete-object')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
+  async handleDeleteObject(
+    client: GwSocketWithTarget,
+    data: DeleteObjectData,
+  ): Promise<ObjectResponseObject> {
+    return this.objectActionService.handleDeleteObject(client, data);
+  }
 }
