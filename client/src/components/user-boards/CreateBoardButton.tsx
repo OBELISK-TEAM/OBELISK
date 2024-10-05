@@ -4,7 +4,7 @@ import { PlusIcon } from "lucide-react";
 import { CreateBoardDialog } from "@/components/user-boards/CreateBoardDialog";
 import { useCreateBoard } from "@/contexts/CreateBoardContext";
 
-export const CreateBoardButton = () => {
+const CreateBoardButton = () => {
   const { isLoading, createNewBoard } = useCreateBoard();
 
   return (
