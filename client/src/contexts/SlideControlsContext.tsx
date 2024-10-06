@@ -22,7 +22,7 @@ const SlideControlsContext = createContext<SlideControlsContext | undefined>(und
 
 export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { socket, totalSlidesNumber: totalSlides } = useSocket();
-  const { slideNumber: currentSlide, boardId } = useCanvas();
+  const { slideNumber: currentSlide, boardId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
   const router = useRouter();
   const SLIDE_LIMIT = 10;
 
@@ -60,8 +60,10 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handleChangeSlide = (slideIndex: number) => {
-    if (slideIndex !== currentSlide) {
-      router.push(`/user-boards/${boardId}/slides/${slideIndex}`);
+    if (slideIndex + 1 !== currentSlide) {
+      router.push(`/user-boards/${boardId}/slides/${slideIndex + 1}`);
+    } else {
+      toast.info("You already are on slide no " + currentSlide);
     }
   };
 

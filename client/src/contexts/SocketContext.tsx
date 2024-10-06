@@ -69,7 +69,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
 
     setTimeout(() => {
       socketRef.current?.emit("join-board", joinBoardData, handleJoinBoard);
-      setTotalSlidesNumber(6);
+      setTotalSlidesNumber(6); // TODO: this can't be hardcoded, but has to be for now as backend doesn't provide this info anywhere
       setIsSocketReady(true);
     }, 2000);
 
