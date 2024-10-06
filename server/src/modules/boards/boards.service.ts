@@ -61,7 +61,10 @@ export class BoardsService {
   ): Promise<BoardPermission> {
     const board = await this.findBoardWithPermissions(userId, boardId);
     if (!board)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Board not found or insufficient permissions',
+        HttpStatus.NOT_FOUND,
+      );
     return this.determineUserPermission(board, userId);
   }
 

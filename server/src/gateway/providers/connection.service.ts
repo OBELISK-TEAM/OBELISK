@@ -3,6 +3,9 @@ import { WsAuthGuard } from '../../modules/auth/guards/ws.auth.guard';
 import { Socket } from 'socket.io';
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
 
+// unfortunately, filters cannot be applied to connection handlers
+// so we have to use try-catch blocks to handle errors
+
 @Injectable()
 export class ConnectionService {
   private readonly logger = new Logger(ConnectionService.name);
