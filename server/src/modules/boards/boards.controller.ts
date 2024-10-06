@@ -14,7 +14,6 @@ import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { BoardsFilter } from 'src/enums/boardsFilter';
-import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 
 // TODO - verify permissions for endpointss
 

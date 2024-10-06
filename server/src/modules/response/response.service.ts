@@ -5,11 +5,6 @@ import { SlideResponseObject } from '../../shared/interfaces/response-objects/Sl
 import { SuperObjectDocument } from '../../schemas/object/super.object.schema';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermissions } from 'src/shared/interfaces/BoardPermissions';
-import { BoardPermission } from 'src/enums/board.permission';
-import { Types } from 'mongoose';
-import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
-import { UserRelatedBoardResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardResponseObject';
 
 @Injectable()
 export class ResponseService {

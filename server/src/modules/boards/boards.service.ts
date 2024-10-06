@@ -11,7 +11,6 @@ import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 import { BoardsFilter } from 'src/enums/boardsFilter';
-import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 import { FilterQueryBuilder } from './filter.query.builder';
 
 @Injectable()
