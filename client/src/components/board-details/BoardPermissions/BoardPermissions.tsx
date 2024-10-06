@@ -2,7 +2,7 @@
 import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
 import { useState } from "react";
 import { BoardPermission } from "@/enums/BoardPermission";
-import { BoardHeader } from "@/components/user-boards/board-table/BoardHeader";
+import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/BoardPermissions/BoardPermissionsInfoDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

@@ -12,7 +12,7 @@ import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
-import { BoardHeader } from "@/components/user-boards/board-table/BoardHeader";
+import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useRouter } from "next/navigation";
