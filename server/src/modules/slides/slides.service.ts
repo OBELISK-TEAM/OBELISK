@@ -1,8 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {
-  SuperBoard,
-  SuperBoardDocument,
-} from '../../schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
 import {
   SuperSlide,
   SuperSlideDocument,
@@ -71,14 +68,14 @@ export class SlidesService {
     }
   }
 
-  private validateSlideLimit(board: SuperBoard): void {
+  private validateSlideLimit(board: SuperBoardDocument): void {
     if (board.slides.length >= this.slideLimitPerBoard) {
       throw new HttpException('Slide limit reached', HttpStatus.BAD_REQUEST);
     }
   }
 
   private validateNewSlidePosition(
-    board: SuperBoard,
+    board: SuperBoardDocument,
     slideNumber: number,
   ): void {
     if (slideNumber === -1) return; // -1 means append to the end
