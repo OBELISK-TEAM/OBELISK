@@ -20,10 +20,10 @@ import {
   setSelectionMode,
 } from "@/lib/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
-import { assignId } from "@/lib/utils";
-import { toast } from "sonner";
-import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { useSocket } from "@/contexts/SocketContext";
+// import { assignId } from "@/lib/utils";
+// import { toast } from "sonner";
+// import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
+// import { useSocket } from "@/contexts/SocketContext";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -35,64 +35,64 @@ const getProperties = (color: string, size: number): CanvasActionProperties => (
   radius: size * 5,
 });
 
-export const useMenuActions = (slideId: string) => {
+export const useMenuActions = () => {
   const {
     state: { canvas, color, size },
     setCanvasMode,
   } = useCanvas();
   // const { saveCommand } = useUndoRedo();
-  const { socket, socketEmitAddObject, socketEmitDeleteObject } = useSocket();
+  // const { socket, socketEmitAddObject, socketEmitDeleteObject } = useSocket();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
     const handleSimpleObjectAdding = (canvas: fabric.Canvas, objectToAdd: fabric.Object) => {
-      if (!slideId) {
-        toast.error("No slide found");
-        return;
-      }
+      // if (!slideId) {
+      //   toast.error("No slide found");
+      //   return;
+      // }
 
-      if (!socket) {
-        toast.error("No socket found");
-        return;
-      }
+      // if (!socket) {
+      //   toast.error("No socket found");
+      //   return;
+      // }
 
       canvas.add(objectToAdd);
       canvas.setActiveObject(objectToAdd);
       canvas.requestRenderAll();
 
-      const objectData = objectToAdd.toJSON();
-      const addObjectData: AddObjectData = {
-        object: objectData,
-        slide: { _id: slideId },
-      };
+      // const objectData = objectToAdd.toJSON();
+      // const addObjectData: AddObjectData = {
+      //   object: objectData,
+      //   slide: { _id: slideId },
+      // };
 
-      const callback = (res: string) => {
-        assignId(objectToAdd, res);
-        // const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
-        // saveCommand(command);
-      };
-      socketEmitAddObject(addObjectData, callback);
+      // const callback = (res: string) => {
+      //   assignId(objectToAdd, res);
+      // const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
+      // saveCommand(command);
+      // };
+      // socketEmitAddObject(addObjectData, callback);
     };
 
     const handleObjectDeleting = (canvas: fabric.Canvas, objectToDelete: fabric.Object) => {
-      if (!slideId) {
-        toast.error("No slide found");
-        return;
-      }
+      // if (!slideId) {
+      //   toast.error("No slide found");
+      //   return;
+      // }
 
-      if (!socket) {
-        toast.error("No socket found");
-        return;
-      }
+      // if (!socket) {
+      //   toast.error("No socket found");
+      //   return;
+      // }
 
       canvas.remove(objectToDelete);
 
-      const deleteObjectData: DeleteObjectData = {
-        // @ts-expect-error Object has to have _id
-        object: { _id: objectToDelete._id },
-        slide: { _id: slideId },
-      };
+      // const deleteObjectData: DeleteObjectData = {
+      //   // @ts-expect-error Object has to have _id
+      //   object: { _id: objectToDelete._id },
+      //   slide: { _id: slideId },
+      // };
 
-      socketEmitDeleteObject(deleteObjectData);
+      // socketEmitDeleteObject(deleteObjectData);
       // const command = new RemoveCommand(canvas, objectToAdd.toJSON(["_id"]));
       // saveCommand(command);
     };
@@ -193,14 +193,14 @@ export const useMenuActions = (slideId: string) => {
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
 
-        allObjects.forEach((obj) => {
-          const deleteObjectData: DeleteObjectData = {
-            // @ts-expect-error Every fabric object should have _id
-            object: { _id: obj._id },
-            slide: { _id: slideId },
-          };
-          socketEmitDeleteObject(deleteObjectData);
-        });
+        // allObjects.forEach((obj) => {
+        //   // const deleteObjectData: DeleteObjectData = {
+        //   //   // @ts-expect-error Every fabric object should have _id
+        //   //   object: { _id: obj._id },
+        //   //   slide: { _id: slideId },
+        //   // };
+        //   // socketEmitDeleteObject(deleteObjectData);
+        // });
 
         // const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
         // const command = new ComplexCommand(removeObjectsCommands);
@@ -277,7 +277,7 @@ export const useMenuActions = (slideId: string) => {
       },
     };
     return actionHandlers;
-  }, [slideId, socket, socketEmitAddObject, socketEmitDeleteObject]);
+  }, []);
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {

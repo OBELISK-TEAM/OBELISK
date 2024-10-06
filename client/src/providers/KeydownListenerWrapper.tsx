@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect } from "react";
 import { MenuActions } from "@/enums/MenuActions";
-import { useUndoRedo } from "@/contexts/UndoRedoContext";
+// import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 
 const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { undo, redo } = useUndoRedo();
+  // const { undo, redo } = useUndoRedo();
   const { performAction } = useMenuData();
 
   useEffect(() => {
@@ -13,14 +13,14 @@ const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ child
       if (event.ctrlKey) {
         switch (event.key) {
           case "z":
-            undo();
+            // undo();
             break;
           case "y":
-            redo();
+            // redo();
             break;
           case "Z":
             if (event.shiftKey) {
-              redo();
+              // redo();
             }
             break;
         }
@@ -33,7 +33,7 @@ const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ child
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [performAction, undo, redo]);
+  }, [performAction]);
 
   return <>{children}</>;
 };

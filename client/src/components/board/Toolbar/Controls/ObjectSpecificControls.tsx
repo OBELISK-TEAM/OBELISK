@@ -5,8 +5,8 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { fabric } from "fabric";
-import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { useSocket } from "@/contexts/SocketContext";
+// import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+// import { useSocket } from "@/contexts/SocketContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -15,7 +15,7 @@ const ObjectSpecificControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
-  const { socketEmitUpdateObject } = useSocket();
+  // const { socketEmitUpdateObject } = useSocket();
 
   // const { saveCommand } = useUndoRedo();
 
@@ -47,10 +47,10 @@ const ObjectSpecificControls: React.FC = () => {
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [key]: oldValue });
 
-    const updateObjectData: UpdateObjectData = {
-      object: modifiedObjectJSON,
-    };
-    socketEmitUpdateObject(updateObjectData);
+    // const updateObjectData: UpdateObjectData = {
+    //   object: modifiedObjectJSON,
+    // };
+    // socketEmitUpdateObject(updateObjectData);
 
     // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
     // saveCommand(command);

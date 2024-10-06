@@ -12,14 +12,18 @@ import {
 } from "@/lib/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
-import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+// import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
-export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResponse }> = ({
-  children,
-  boardData,
-}) => {
+interface CanvasProviderProps {
+  children: React.ReactNode;
+  slideData: any;
+  slideNumber: number;
+  boardId: string;
+}
+
+export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children, slideData, slideNumber, boardId }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
@@ -101,10 +105,10 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
   }, [handleZoom]);
 
   useEffect(() => {
-    if (boardData.slide && canvasRef.current && state.canvas) {
-      state.canvas.loadFromJSON(boardData.slide, () => state.canvas?.renderAll());
+    if (slideData && canvasRef.current && state.canvas) {
+      state.canvas.loadFromJSON(slideData, () => state.canvas?.renderAll());
     }
-  }, [state.canvas, boardData.slide]);
+  }, [state.canvas, slideData]);
   useEffect(() => {
     if (state.canvas) {
       toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);
@@ -138,7 +142,17 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
 
   return (
     <CanvasContext.Provider
-      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem, boardData }}
+      value={{
+        state,
+        canvasRef,
+        setCanvasMode,
+        setColor,
+        setSize,
+        handleStyleChange,
+        setActiveItem,
+        slideNumber,
+        boardId,
+      }}
     >
       {children}
     </CanvasContext.Provider>

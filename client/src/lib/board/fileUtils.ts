@@ -1,10 +1,10 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
-import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
+// import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
+// import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { toast } from "sonner";
-import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { assignId } from "../utils";
+// import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
+// import { assignId } from "../utils";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
@@ -29,11 +29,10 @@ export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) =
 
 export const addImage = async (
   canvas: fabric.Canvas | null,
-  slideId: string,
   imageUrl: string,
-  socketEmitAddObject: (addObjectData: AddObjectData, callback: (res: string) => void) => void,
-  options?: { scaleX?: number; scaleY?: number; left?: number; top?: number },
-  saveCommand?: (command: UndoRedoCommand) => void
+  // socketEmitAddObject: (addObjectData: AddObjectData, callback: (res: string) => void) => void,
+  options?: { scaleX?: number; scaleY?: number; left?: number; top?: number }
+  // saveCommand?: (command: UndoRedoCommand) => void
 ): Promise<void> => {
   if (!canvas) {
     return;
@@ -57,25 +56,23 @@ export const addImage = async (
       canvas.add(img);
       canvas.setActiveObject(img);
 
-      if (!saveCommand) {
-        return;
-      }
+      // if (!saveCommand) {
+      //   return;
+      // }
 
       try {
         // const responseData = await createCanvasObject(slideId, objectData);
         // Object.assign(img, { _id: responseData._id });
-
-        const addObjectData: AddObjectData = {
-          object: img.toJSON(),
-          slide: { _id: slideId },
-        };
-        const callback = (res: string) => {
-          assignId(img, res);
-          const command = new AddCommand(canvas, img.toJSON(["_id"]));
-          saveCommand(command);
-        };
-
-        socketEmitAddObject(addObjectData, callback);
+        // const addObjectData: AddObjectData = {
+        //   object: img.toJSON(),
+        //   slide: { _id: slideId },
+        // };
+        // const callback = (res: string) => {
+        //   assignId(img, res);
+        //   const command = new AddCommand(canvas, img.toJSON(["_id"]));
+        //   saveCommand(command);
+        // };
+        // socketEmitAddObject(addObjectData, callback);
       } catch (error: any) {
         console.error("Error creating image object:", error);
         toast.error(error.message || "Failed to create image");

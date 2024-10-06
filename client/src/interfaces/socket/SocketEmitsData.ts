@@ -1,10 +1,19 @@
 export interface JoinBoardData {
-  board: OnlyId;
+  board: { _id: string };
 }
+
+export interface JoinSlideData {
+  slide: { slideNumber: number };
+}
+
+export interface AddSlideData {
+  slide?: { slideNumber: number };
+}
+
+export interface DeleteSlideData extends AddSlideData {}
 
 export interface AddObjectData {
   object: any;
-  slide: OnlyId;
 }
 
 export interface UpdateObjectData {
@@ -12,10 +21,5 @@ export interface UpdateObjectData {
 }
 
 export interface DeleteObjectData {
-  object: OnlyId;
-  slide: OnlyId;
-}
-
-export interface OnlyId {
-  _id: string;
+  object: { _id: string };
 }

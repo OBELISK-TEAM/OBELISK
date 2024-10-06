@@ -1,16 +1,16 @@
 import { useEffect, useReducer } from "react";
 import { fabric } from "fabric";
-import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
+// import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { getJsonWithAbsoluteProperties } from "@/lib/board/undoRedoUtils";
 
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
 import { toast } from "sonner";
-import { assignId } from "@/lib/utils";
+// import { assignId } from "@/lib/utils";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import { ApiError } from "@/errors/ApiError";
-import { useSocket } from "@/contexts/SocketContext";
-import { AddObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+// import { useSocket } from "@/contexts/SocketContext";
+// import { AddObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -19,10 +19,10 @@ const useCanvasEventHandlers = (
   slideId: string
 ) => {
   const [state, dispatch] = useReducer(canvasEventListenersReducer, initialState);
-  const { socket, socketEmitAddObject, socketEmitUpdateObject } = useSocket();
+  // const { socket, socketEmitAddObject, socketEmitUpdateObject } = useSocket();
 
   useEffect(() => {
-    if (!canvas || !socket) {
+    if (!canvas) {
       return;
     }
 
@@ -31,18 +31,17 @@ const useCanvasEventHandlers = (
         return;
       }
       try {
-        const objectData = e.path.toJSON();
-        const addObjectData: AddObjectData = {
-          object: objectData,
-          slide: { _id: slideId },
-        };
-
-        const callback = (res: string) => {
-          assignId(e.path, res);
-          const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
-          saveCommand(command);
-        };
-        socketEmitAddObject(addObjectData, callback);
+        // const objectData = e.path.toJSON();
+        // const addObjectData: AddObjectData = {
+        //   object: objectData,
+        //   slide: { _id: slideId },
+        // };
+        // const callback = (res: string) => {
+        //   assignId(e.path, res);
+        //   const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
+        //   saveCommand(command);
+        // };
+        // socketEmitAddObject(addObjectData, callback);
       } catch (error: any) {
         console.error("Error while creating object:", error);
         if (error instanceof ApiError) {
@@ -56,17 +55,17 @@ const useCanvasEventHandlers = (
     const handleActiveSelectionModification = () => {
       const activeObjects: fabric.Object[] = canvas.getActiveObjects();
       if (activeObjects.length <= 1) {
-        return;
+        // return;
       }
 
-      const activeObjectsJSONs = activeObjects.map((obj) => getJsonWithAbsoluteProperties(obj));
+      // const activeObjectsJSONs = activeObjects.map((obj) => getJsonWithAbsoluteProperties(obj));
 
-      for (const activeObjectJSON of activeObjectsJSONs) {
-        const updateObjectData: UpdateObjectData = {
-          object: activeObjectJSON,
-        };
-        socketEmitUpdateObject(updateObjectData);
-      }
+      // for (const activeObjectJSON of activeObjectsJSONs) {
+      // const updateObjectData: UpdateObjectData = {
+      //   object: activeObjectJSON,
+      // };
+      // socketEmitUpdateObject(updateObjectData);
+      // }
 
       // const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
       //   const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
@@ -89,13 +88,13 @@ const useCanvasEventHandlers = (
         return;
       }
 
-      const targetJSON = target.toJSON(["_id"]);
+      // const targetJSON = target.toJSON(["_id"]);
       // const clonedJSON = { ...targetJSON, ...oldValues };
 
-      const updateObjectData: UpdateObjectData = {
-        object: targetJSON,
-      };
-      socketEmitUpdateObject(updateObjectData);
+      // const updateObjectData: UpdateObjectData = {
+      //   object: targetJSON,
+      // };
+      // socketEmitUpdateObject(updateObjectData);
       // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
       // saveCommand(command);
 
@@ -126,10 +125,10 @@ const useCanvasEventHandlers = (
           delete clonedJSON.eraser;
         }
 
-        const updateObjectData: UpdateObjectData = {
-          object: targetJSON,
-        };
-        socketEmitUpdateObject(updateObjectData);
+        // const updateObjectData: UpdateObjectData = {
+        //   object: targetJSON,
+        // };
+        // socketEmitUpdateObject(updateObjectData);
 
         // const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
         // saveCommand(modifyCommand);
@@ -146,13 +145,13 @@ const useCanvasEventHandlers = (
         return;
       }
 
-      const targetJSON = e.target.toJSON(["_id"]);
+      // const targetJSON = e.target.toJSON(["_id"]);
       // const clonedJSON = { ...targetJSON, text: state.observedTextContent };
 
-      const updateObjectData: UpdateObjectData = {
-        object: targetJSON,
-      };
-      socketEmitUpdateObject(updateObjectData);
+      // const updateObjectData: UpdateObjectData = {
+      //   object: targetJSON,
+      // };
+      // socketEmitUpdateObject(updateObjectData);
 
       // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
       // saveCommand(command);
@@ -184,9 +183,6 @@ const useCanvasEventHandlers = (
     state.observedTextContent,
     state.observedTextId,
     state.recentlyActiveObjects,
-    socket,
-    socketEmitAddObject,
-    socketEmitUpdateObject,
     slideId,
   ]);
 };

@@ -15,7 +15,13 @@ import { Button } from "@/components/ui/button";
 import { useSlideControls } from "@/contexts/SlideControlsContext";
 
 export function SlidePagination() {
-  const { currentSlideIndex, totalSlides, handleChangeSlide, handlePrevious, handleNext } = useSlideControls();
+  const {
+    currentSlide: currentSlideIndex,
+    totalSlides,
+    handleChangeSlide,
+    handlePrevious,
+    handleNext,
+  } = useSlideControls();
   const slideInputRef = useRef<HTMLInputElement>(null);
 
   const handleShowSlide = async () => {
@@ -23,7 +29,7 @@ export function SlidePagination() {
     if (slideNumber) {
       const index = parseInt(slideNumber, 10) - 1;
       if (index >= 0 && index < totalSlides) {
-        await handleChangeSlide(index);
+        handleChangeSlide(index);
       }
     }
   };
