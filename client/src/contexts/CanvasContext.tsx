@@ -12,6 +12,8 @@ import {
 } from "@/lib/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
+import useSocketListeners from "@/hooks/socket/useSocketListeners";
+import { useSocket } from "./SocketContext";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -26,6 +28,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children, slideD
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
+  const { socket } = useSocket();
+
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
@@ -138,6 +142,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children, slideD
       styles: getSelectedObjectStyles(state.canvas),
     });
   };
+
+  useSocketListeners(socket, state.canvas);
 
   return (
     <CanvasContext.Provider

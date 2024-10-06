@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { fabric } from "fabric";
 import { Socket } from "socket.io-client";
 import { getItemById } from "@/lib/board/canvasUtils";
+import { toast } from "sonner";
 
 const useSocketListeners = (socket: Socket | null, canvas: fabric.Canvas | null) => {
   useEffect(() => {
@@ -28,6 +29,8 @@ const useSocketListeners = (socket: Socket | null, canvas: fabric.Canvas | null)
         if (canvas.getActiveObjects().includes(obj)) {
           canvas.discardActiveObject();
         }
+      } else {
+        toast.warning(`Object with id ${id} not found during update`);
       }
     }
 

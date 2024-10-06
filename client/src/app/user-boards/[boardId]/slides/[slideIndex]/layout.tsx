@@ -3,14 +3,13 @@
 import { MenuDataProvider } from "@/contexts/MenuDataContext";
 import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
-// import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
+import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
 import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSlides } from "@/contexts/SlidesProvider";
 import { socketEmitJoinSlide, socketEmitLeaveSlide } from "@/lib/board/socketEmitUtils";
 
 interface UserBoardLayout {
@@ -61,13 +60,13 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
   return (
     <ZoomUIProvider>
       <CanvasProvider slideData={slideData} slideNumber={slideIndexNumber} boardId={boardId}>
-        {/* <UndoRedoProvider slideId={slide._id}> */}
-        <MenuDataProvider>
-          <FileProvider>
-            <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
-          </FileProvider>
-        </MenuDataProvider>
-        {/* </UndoRedoProvider> */}
+        <UndoRedoProvider>
+          <MenuDataProvider>
+            <FileProvider>
+              <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+            </FileProvider>
+          </MenuDataProvider>
+        </UndoRedoProvider>
       </CanvasProvider>
     </ZoomUIProvider>
   );

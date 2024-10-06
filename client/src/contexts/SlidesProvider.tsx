@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import { useSocket } from "./SocketContext";
 import { socketEmitLeaveSlide } from "@/lib/board/socketEmitUtils";
@@ -19,7 +19,6 @@ export const SlidesProvider: React.FC<SlidesProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!socket) {
-      console.error("SlideProvider found no socket!");
       return;
     }
 
@@ -44,9 +43,11 @@ export const SlidesProvider: React.FC<SlidesProviderProps> = ({ children }) => {
 
   return (
     <SlidesContext.Provider
-      value={{
-        // totalSlidesNumber,
-      }}
+      value={
+        {
+          // totalSlidesNumber,
+        }
+      }
     >
       {children}
     </SlidesContext.Provider>

@@ -7,7 +7,7 @@ import useCanvasEventHandlers from "@/hooks/board/useCanvasEventListeners";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
-export const UndoRedoProvider: React.FC<{ children: React.ReactNode; slideId: string }> = ({ children, slideId }) => {
+export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
     state: { canvas },
     handleStyleChange,
@@ -61,7 +61,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode; slideId: st
     canvas.renderAll();
   }, []);
 
-  useCanvasEventHandlers(canvas, saveCommand, handleStyleChange, slideId);
+  useCanvasEventHandlers(canvas, saveCommand, handleStyleChange);
 
   return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
 };

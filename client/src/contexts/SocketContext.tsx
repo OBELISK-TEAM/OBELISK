@@ -40,8 +40,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       toast.info(res.message);
     }
     function onUserLeftBoard(res: any) {
-      console.log("lb");
-
+      console.log(res.message);
       toast.info(res.message);
     }
     // function onUserJoinedSlide(res: any) {
