@@ -1,12 +1,14 @@
-import React from "react";
-import { BoardDetailsSidebar } from "@/components/board-details/BoardDetailsSidebar";
+import React, { FC } from "react";
+import BoardSidebar from "@/components/board-details/BoardSidebar";
+
 interface LayoutProps {
   children: React.ReactNode;
+  params: { boardId: string };
 }
-const BoardLayout = ({ children }: LayoutProps) => {
+const BoardLayout: FC<LayoutProps> = ({ children, params: { boardId } }) => {
   return (
     <div className="flex flex-1">
-      <BoardDetailsSidebar />
+      <BoardSidebar boardId={boardId} />
       <main className="flex-1 overflow-auto p-6">{children}</main>
     </div>
   );
