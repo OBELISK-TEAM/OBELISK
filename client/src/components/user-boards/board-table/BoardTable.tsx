@@ -1,7 +1,7 @@
 import { FilterIcon, TrashIcon, ViewIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BoardsPagination } from "../BoardsPagination";
 import { fetchBoards } from "@/mock-data/BoardsFetcher";
 import { getColumnsForTab, getDescriptionForTab, getTitleForTab } from "@/lib/userBoardsUtils";
@@ -12,6 +12,10 @@ import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
+import { BoardHeader } from "@/components/user-boards/board-table/BoardHeader";
+import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { useRouter } from "next/navigation";
 
 interface IBoardTable {
   activeTab: BoardsActiveTab;
@@ -20,7 +24,7 @@ interface IBoardTable {
 const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
-
+  const router = useRouter();
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
 
   useEffect(() => {
@@ -42,6 +46,13 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
     }
   }, [data]);
 
+  const handleRowClick = (boardId: string) => {
+    router.push(`/user-boards/${boardId}/slides/0`);
+  };
+  const handleDetailsButtonClick = (e: React.MouseEvent, boardId: string) => {
+    e.stopPropagation(); // Prevent triggering row's onClick
+    router.push(`/user-boards/${boardId}`);
+  };
   const showOverlay = isLoading && previousData;
 
   if (error) {
@@ -63,14 +74,7 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
     <div className="relative">
       <div className="rounded-lg border bg-card p-4">
         <div className="flex items-start justify-between">
-          <div>
-            <h1 className="font-bold text-card-foreground" style={{ fontSize: "20px" }}>
-              {getTitleForTab(activeTab)}
-            </h1>
-            <span className="text-muted-foreground" style={{ fontSize: "15px" }}>
-              {getDescriptionForTab(activeTab)}
-            </span>
-          </div>
+          <BoardHeader title={getTitleForTab(activeTab)} description={getDescriptionForTab(activeTab)} />
           <div className="flex space-x-2">
             <Button variant="outline">
               <FilterIcon className="mr-2 h-5 w-5" />
@@ -84,21 +88,16 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
         </div>
         <div className="relative">
           <Table className="w-full">
-            <TableHeader className="text-muted-foreground">
-              <TableRow className="border-b">
-                {columns.map((col) => (
-                  <TableHead key={col} className="left py-2">
-                    {col}
-                  </TableHead>
-                ))}
-                <TableHead className="py-2 text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+            <BoardTableLeadRow columns={columns} />
             <TableBody>
               {displayData &&
                 displayData.data.length > 0 &&
                 displayData.data.map((board: BoardResponse) => (
-                  <TableRow key={board._id} className="border-b hover:bg-muted/50">
+                  <TableRow
+                    key={board._id}
+                    className="cursor-pointer border-b hover:bg-muted/50"
+                    onClick={() => handleRowClick(board._id)}
+                  >
                     {columns.map((col) => (
                       <TableCell key={col} className="py-2">
                         {CellContent(col, board)}
@@ -108,9 +107,21 @@ const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
                       <Button variant={"outline"} className="hover:text-muted-foreground">
                         <TrashIcon />
                       </Button>
-                      <Button variant={"outline"} className="hover:text-muted-foreground">
-                        <ChevronRightIcon />
-                      </Button>
+                      <HoverCard openDelay={100} closeDelay={200}>
+                        <HoverCardTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className="hover:text-muted-foreground"
+                            onClick={(e) => handleDetailsButtonClick(e, board._id)}
+                            aria-label="Go to board details"
+                          >
+                            <ChevronRightIcon className="h-4 w-4" />
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent side="top" className="max-w-36">
+                          Go to board details
+                        </HoverCardContent>
+                      </HoverCard>
                     </TableCell>
                   </TableRow>
                 ))}
