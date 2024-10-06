@@ -7,17 +7,12 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-
-interface ErrorResponse {
-  code: number;
-  path: string;
-  method: string;
-  message: string | null;
-  details?: string | object | null;
-}
+import { ErrorResponse } from '../interfaces/errors/ErrorResponse';
 
 @Catch()
 export class HttpErrorFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpErrorFilter.name);
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request: Request = ctx.getRequest<Request>();
@@ -42,7 +37,7 @@ Message: ${exception.message}
 --------------------------------------------
 `;
 
-    Logger.error(logMessage, 'ExceptionFilter');
+    this.logger.error(logMessage);
 
     if (errorResponse.details === null) {
       delete errorResponse.details;
