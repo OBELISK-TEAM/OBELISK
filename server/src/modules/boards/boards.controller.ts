@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
@@ -12,6 +13,8 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { BoardsOwnerShipFilterOption as GetBoardsOwnershipFilter } from 'src/enums/boards.ownership.filter.option';
+import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 
 // TODO - verify permissions for endpointss
 
@@ -19,12 +22,20 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
-  // TODO - implement
   @Get()
   @UseGuards(JwtAuthGuard)
-  getUserBoards(@User('_id') userId: string): string {
-    return `User ${userId} boards IMPLEMENT ME`;
-    // return this.boardsService.getUserBoards(userId);
+  getUserRelatedBoards(
+    @User('_id') userId: string,
+    @Query('activeTab') boardsOwnershipFilterOption: GetBoardsOwnershipFilter,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Promise<UserRelatedBoardsPaginatedResponseObject> {
+    return this.boardsService.getUserRelatedBoards(
+      userId,
+      boardsOwnershipFilterOption,
+      page,
+      limit,
+    );
   }
 
   // TODO - check permissions to fetch board

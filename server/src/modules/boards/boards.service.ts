@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
 import {
   SuperBoard,
@@ -10,6 +10,8 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
+import { BoardsOwnerShipFilterOption as BoardsOwnerShipFilterOption } from 'src/enums/boards.ownership.filter.option';
+import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 
 @Injectable()
 export class BoardsService {
@@ -42,6 +44,70 @@ export class BoardsService {
   ): Promise<BoardResponseObject> {
     const deletedBoard = await this.deleteBoardById(boardId);
     return this.res.toResponseBoard(deletedBoard);
+  }
+
+  async getUserRelatedBoards(
+    userId: string,
+    boardsOwnershipFilterOption: BoardsOwnerShipFilterOption,
+    page: number,
+    limit: number,
+  ): Promise<UserRelatedBoardsPaginatedResponseObject> {
+    let userRelatedBoards: SuperBoardDocument[] = [];
+    let userRelatedBoardsCount: number;
+    let query;
+
+    switch (boardsOwnershipFilterOption) {
+      case BoardsOwnerShipFilterOption.OWNED_BY_CURRENT_USER:
+        query = { owner: userId };
+        userRelatedBoards = await this.findUserRelatedBoards(
+          query,
+          page,
+          limit,
+        );
+        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
+        break;
+
+      case BoardsOwnerShipFilterOption.SHARED_FOR_CURRENT_USER:
+        query = {
+          $or: [
+            { 'permissions.viewer': userId },
+            { 'permissions.editor': userId },
+            { 'permissions.moderator': userId },
+          ],
+        };
+        userRelatedBoards = await this.findUserRelatedBoards(
+          query,
+          page,
+          limit,
+        );
+        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
+        break;
+
+      default:
+        query = {
+          $or: [
+            { owner: userId },
+            { 'permissions.viewer': userId },
+            { 'permissions.editor': userId },
+            { 'permissions.moderator': userId },
+          ],
+        };
+        userRelatedBoards = await this.findUserRelatedBoards(
+          query,
+          page,
+          limit,
+        );
+        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
+        break;
+    }
+
+    return this.res.toResponseUserRelatedBoardsPaginated(
+      userRelatedBoards,
+      userId,
+      page,
+      limit,
+      Math.ceil(userRelatedBoardsCount / limit),
+    );
   }
 
   /////////////////
@@ -106,5 +172,27 @@ export class BoardsService {
     if (!existingBoard)
       throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
     return existingBoard;
+  }
+
+  async findUserRelatedBoards(
+    query: FilterQuery<SuperBoard>,
+    page: number,
+    limit: number,
+  ): Promise<SuperBoardDocument[]> {
+    if (limit == 0) return [];
+
+    const skip = (page - 1) * limit;
+    return this.boardModel
+      .find(query)
+      .sort([['updatedAt', 'descending']])
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
+  async countUserRelatedBoards(
+    query: FilterQuery<SuperBoard>,
+  ): Promise<number> {
+    return this.boardModel.countDocuments(query).exec();
   }
 }
