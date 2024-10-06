@@ -10,8 +10,9 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
-import { BoardsOwnerShipFilterOption as BoardsOwnerShipFilterOption } from 'src/enums/boards.ownership.filter.option';
+import { BoardsFilter } from 'src/enums/boardsFilter';
 import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
+import { FilterQueryBuilder } from './filter.query.builder';
 
 @Injectable()
 export class BoardsService {
@@ -48,69 +49,53 @@ export class BoardsService {
 
   async getUserRelatedBoards(
     userId: string,
-    boardsOwnershipFilterOption: BoardsOwnerShipFilterOption,
     page: number,
     limit: number,
-  ): Promise<UserRelatedBoardsPaginatedResponseObject> {
-    let userRelatedBoards: SuperBoardDocument[] = [];
-    let userRelatedBoardsCount: number;
-    let query;
+    order: string,
+    tab: BoardsFilter,
+  ): Promise<any> {
+    // add validation for ALL query params!
+    // if (order !== 'ascending' && order !== 'descending') {
+    //   throw new HttpException('Invalid order', HttpStatus.BAD_REQUEST);
+    // }
 
-    switch (boardsOwnershipFilterOption) {
-      case BoardsOwnerShipFilterOption.OWNED_BY_CURRENT_USER:
-        query = { owner: userId };
-        userRelatedBoards = await this.findUserRelatedBoards(
-          query,
-          page,
-          limit,
-        );
-        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
-        break;
+    const query = this.getFilterQuery(userId, tab);
+    const [total, boards] = await Promise.all([
+      this.queryCountDocuments(query),
+      this.findUserRelatedBoards(query, page, limit, order),
+    ]);
 
-      case BoardsOwnerShipFilterOption.SHARED_FOR_CURRENT_USER:
-        query = {
-          $or: [
-            { 'permissions.viewer': userId },
-            { 'permissions.editor': userId },
-            { 'permissions.moderator': userId },
-          ],
-        };
-        userRelatedBoards = await this.findUserRelatedBoards(
-          query,
-          page,
-          limit,
-        );
-        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
-        break;
+    const abc = boards.map(board => {
+      const userPermission = this.determineUserPermission(board, userId);
+      return {
+        _id: board._id,
+        name: board.name,
+        permission: BoardPermission[userPermission],
+        createdAt: board.createdAt,
+        updatedAt: board.updatedAt,
+      };
+    });
 
-      default:
-        query = {
-          $or: [
-            { owner: userId },
-            { 'permissions.viewer': userId },
-            { 'permissions.editor': userId },
-            { 'permissions.moderator': userId },
-          ],
-        };
-        userRelatedBoards = await this.findUserRelatedBoards(
-          query,
-          page,
-          limit,
-        );
-        userRelatedBoardsCount = await this.countUserRelatedBoards(query);
-        break;
-    }
-
-    return this.res.toResponseUserRelatedBoardsPaginated(
-      userRelatedBoards,
-      userId,
-      page,
-      limit,
-      Math.ceil(userRelatedBoardsCount / limit),
-    );
+    return { boards: abc, page, limit, order, total };
   }
 
-  /////////////////
+  private getFilterQuery(
+    userId: string,
+    tab: BoardsFilter,
+  ): FilterQuery<SuperBoardDocument> {
+    const builder = new FilterQueryBuilder();
+
+    switch (tab) {
+      case BoardsFilter.OWNED_BY:
+        return builder.ownedBy(userId).build();
+
+      case BoardsFilter.SHARED_FOR:
+        return builder.sharedWith(userId).build();
+
+      default:
+        return builder.accessibleTo(userId).build();
+    }
+  }
 
   async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
     const deletedBoard = await this.boardModel
@@ -155,7 +140,7 @@ export class BoardsService {
     board: BoardPermissionsInfo,
     userId: string,
   ): BoardPermission {
-    if (board.owner === userId) {
+    if (board.owner.toString() === userId.toString()) {
       return BoardPermission.OWNER;
     } else if (board.permissions.moderator.includes(userId)) {
       return BoardPermission.MODERATOR;
@@ -178,21 +163,21 @@ export class BoardsService {
     query: FilterQuery<SuperBoard>,
     page: number,
     limit: number,
-  ): Promise<SuperBoardDocument[]> {
-    if (limit == 0) return [];
-
+    order: string,
+  ): Promise<SuperBoardWithoutSlides[]> {
     const skip = (page - 1) * limit;
     return this.boardModel
       .find(query)
-      .sort([['updatedAt', 'descending']])
+      .sort([['updatedAt', order === 'ascending' ? 'ascending' : 'descending']])
       .skip(skip)
       .limit(limit)
+      .select('-slides')
       .exec();
   }
 
-  async countUserRelatedBoards(
-    query: FilterQuery<SuperBoard>,
-  ): Promise<number> {
+  async queryCountDocuments(query: FilterQuery<SuperBoard>): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
   }
 }
+
+export type SuperBoardWithoutSlides = Omit<SuperBoardDocument, 'slides'>;

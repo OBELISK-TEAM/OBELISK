@@ -13,7 +13,7 @@ import { CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardsOwnerShipFilterOption as GetBoardsOwnershipFilter } from 'src/enums/boards.ownership.filter.option';
+import { BoardsFilter } from 'src/enums/boardsFilter';
 import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 
 // TODO - verify permissions for endpointss
@@ -25,16 +25,20 @@ export class BoardsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   getUserRelatedBoards(
+    // better to use @Query() { page, limit, order, tab }: QueryDto
+    // instead of multiple @Query
     @User('_id') userId: string,
-    @Query('activeTab') boardsOwnershipFilterOption: GetBoardsOwnershipFilter,
     @Query('page') page: number,
     @Query('limit') limit: number,
-  ): Promise<UserRelatedBoardsPaginatedResponseObject> {
+    @Query('order') order: string,
+    @Query('tab') filter: BoardsFilter,
+  ): Promise<any> {
     return this.boardsService.getUserRelatedBoards(
       userId,
-      boardsOwnershipFilterOption,
       page,
       limit,
+      order,
+      filter,
     );
   }
 
