@@ -17,15 +17,18 @@ export class JoinBoardService {
     const boardId = data.board._id;
     const userId = client.data.user._id as string;
 
-    const permission = await this.boardsService.getClientBoardPermission(
+    const boardInfo = await this.boardsService.getClientBoardInfo(
       userId,
       boardId,
     );
 
+    const permission = boardInfo.permission;
+    console.log(boardInfo);
     if (!this.isPermissionValid(client, permission)) return;
-
     this.assignDataToClient(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
+
+    console.log(BoardPermission[boardInfo.permission]);
   }
 
   private isPermissionValid(
