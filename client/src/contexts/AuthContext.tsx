@@ -2,7 +2,7 @@ import React, { createContext, useContext } from "react";
 import { ToastTypes } from "@/enums/ToastType";
 import { useRouter } from "next/navigation";
 import { complexToast } from "./complexToast";
-import { extractMessagesFromApiError } from "../lib/toastsUtils";
+import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
 
