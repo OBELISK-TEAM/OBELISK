@@ -47,7 +47,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab }) => {
   }, [data]);
 
   const handleRowClick = (boardId: string) => {
-    router.push(`/user-boards/${boardId}/slides/0`);
+    router.push(`/user-boards/${boardId}/slides/1`);
   };
   const handleDetailsButtonClick = (e: React.MouseEvent, boardId: string) => {
     e.stopPropagation(); // Prevent triggering row's onClick
