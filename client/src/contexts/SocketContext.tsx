@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
 import { AddObjectData, DeleteObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { toast } from "sonner";
+import SocketLoading from "@/components/loading/SocketLoading";
 
 interface SocketContextProps {
   totalSlidesNumber: number;
@@ -22,7 +23,7 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
   const socketRef = useRef<Socket | null>(null);
   const [isSocketReady, setIsSocketReady] = useState(false);
-  const [totalSlidesNumber, setTotalSlidesNumber] = useState<number>(1);
+  const [totalSlidesNumber, setTotalSlidesNumber] = useState<number>(1); // TODO: this is temporary; when backend starts to send total number of board slides, decide what to do with this code
 
   const token = `Bearer ${Cookies.get("accessToken")}`;
 
@@ -40,7 +41,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   }, []);
 
   useEffect(() => {
-    const socketInstance = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
+    socketRef.current = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
       autoConnect: true,
       transports: ["websocket"],
       auth: {
@@ -48,17 +49,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       },
     });
 
-    socketRef.current = socketInstance;
-
     function onError(val: any) {
       toast.error(val.message);
     }
     socketRef.current.on("error", onError);
 
-    function onSlideAdded(res: object) {
-      console.log(JSON.stringify(res));
+    function onUserJoinedBoard(res: any) {
+      toast.info(res.message);
     }
-    socketRef.current.on("slide-added", onSlideAdded);
+    socketRef.current.on("joined-board", onUserJoinedBoard);
+
+    function onUserLeftBoard(res: any) {
+      toast.info(res.message);
+    }
+    socketRef.current.on("left-board", onUserLeftBoard);
 
     function handleJoinBoard(res: any) {
       console.log(JSON.stringify(res));
@@ -77,13 +81,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socketRef.current?.emit("leave-board");
 
       socketRef.current?.off("error", onError);
-      socketRef.current?.off("slide-added", onSlideAdded);
+      socketRef.current?.off("joined-board", onUserJoinedBoard);
+      socketRef.current?.off("left-board", onUserLeftBoard);
       socketRef.current?.disconnect();
     };
   }, [token, boardId]);
 
   if (!isSocketReady) {
-    return <div>Loading...</div>;
+    return <SocketLoading />;
   }
 
   return (
