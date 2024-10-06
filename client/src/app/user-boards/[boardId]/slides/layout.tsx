@@ -1,7 +1,7 @@
 "use client";
 
 import { SocketProvider } from "@/contexts/SocketContext";
-import { SlidesProvider } from "@/contexts/SlidesProvider"
+import { SlidesProvider } from "@/contexts/SlidesProvider";
 
 interface UserBoardLayout {
   children: React.ReactNode;
@@ -13,11 +13,11 @@ interface UserBoardLayout {
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { boardId } = params;
 
-  return <SocketProvider boardId={boardId}>
-    <SlidesProvider>
-      {children}
-    </SlidesProvider>
-  </SocketProvider>;
+  return (
+    <SocketProvider boardId={boardId}>
+      <SlidesProvider>{children}</SlidesProvider>
+    </SocketProvider>
+  );
 };
 
 export default SliderLayout;

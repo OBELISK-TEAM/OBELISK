@@ -7,6 +7,7 @@ import { fabric } from "fabric";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { useSocket } from "@/contexts/SocketContext";
 import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 
 const FontStyleControls: React.FC = () => {
   const {
@@ -14,7 +15,7 @@ const FontStyleControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
-  const { socketEmitUpdateObject } = useSocket();
+  const { socket } = useSocket();
 
   // const { saveCommand } = useUndoRedo();
 
@@ -23,7 +24,7 @@ const FontStyleControls: React.FC = () => {
     valueTrue: string | boolean,
     valueFalse: string | boolean
   ) => {
-    if (!canvas) {
+    if (!canvas || !socket) {
       return;
     }
 
@@ -48,7 +49,7 @@ const FontStyleControls: React.FC = () => {
     const updateObjectData: UpdateObjectData = {
       object: modifiedObjectJSON,
     };
-    socketEmitUpdateObject(updateObjectData);
+    socketEmitUpdateObject(socket, updateObjectData);
 
     // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
     // saveCommand(command);

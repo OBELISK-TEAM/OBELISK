@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { fabric } from "fabric";
 import { Socket } from "socket.io-client";
-import { toast } from "sonner";
 import { getItemById } from "@/lib/board/canvasUtils";
 
 const useSocketListeners = (socket: Socket | null, canvas: fabric.Canvas | null) => {
@@ -56,20 +55,10 @@ const useSocketListeners = (socket: Socket | null, canvas: fabric.Canvas | null)
       deleteObjectFromCanvas(canvas, res._id);
     }
 
-    function handleUserJoinedBoard(res: any) {
-      toast.info(res.message);
-    }
-
-    function handleUserLeftBoard(res: any) {
-      toast.info(res.message);
-    }
-
     const handlers = [
       { eventName: "object-added", handler: handleObjectAdded },
       { eventName: "object-updated", handler: handleObjectUpdated },
       { eventName: "object-deleted", handler: handleObjectDeleted },
-      { eventName: "joined-board", handler: handleUserJoinedBoard },
-      { eventName: "left-board", handler: handleUserLeftBoard },
     ];
 
     handlers.forEach(({ eventName, handler }) => {

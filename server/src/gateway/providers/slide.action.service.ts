@@ -17,8 +17,9 @@ export class SlideActionService {
       boardId,
       data.slide ? data.slide.slideNumber : -1,
     );
-    this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);
+    this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);    
     client.to(boardId).emit('slide-added', slide);
+    this.logger.log(`Send to room ${boardId}`);
   }
 
   async handleDeleteSlide(

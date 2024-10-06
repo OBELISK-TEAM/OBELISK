@@ -1,16 +1,13 @@
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
-import { AddObjectData, DeleteObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { toast } from "sonner";
 import SocketLoading from "@/components/loading/SocketLoading";
+import { socketEmitJoinBoard, socketEmitLeaveBoard } from "@/lib/board/socketEmitUtils";
 
 interface SocketContextProps {
   totalSlidesNumber: number;
   socket: Socket | null;
-  socketEmitAddObject: (addObjectData: AddObjectData, callback: (res: string) => void) => void;
-  socketEmitUpdateObject: (updateObjectData: UpdateObjectData) => void;
-  socketEmitDeleteObject: (deleteObjectData: DeleteObjectData) => void;
 }
 
 const SocketContext = createContext<SocketContextProps | undefined>(undefined);
@@ -27,19 +24,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
 
   const token = `Bearer ${Cookies.get("accessToken")}`;
 
-  // Define socket emit functions here
-  const socketEmitAddObject = useCallback((addObjectData: AddObjectData, callback: (res: string) => void) => {
-    socketRef.current?.emit("add-object", addObjectData, callback);
-  }, []);
-
-  const socketEmitUpdateObject = useCallback((updateObjectData: UpdateObjectData) => {
-    socketRef.current?.emit("update-object", updateObjectData);
-  }, []);
-
-  const socketEmitDeleteObject = useCallback((deleteObjectData: DeleteObjectData) => {
-    socketRef.current?.emit("delete-object", deleteObjectData);
-  }, []);
-
   useEffect(() => {
     socketRef.current = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
       autoConnect: true,
@@ -52,17 +36,26 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     function onError(val: any) {
       toast.error(val.message);
     }
-    socketRef.current.on("error", onError);
-
     function onUserJoinedBoard(res: any) {
       toast.info(res.message);
     }
-    socketRef.current.on("joined-board", onUserJoinedBoard);
-
     function onUserLeftBoard(res: any) {
+      console.log("lb");
+
       toast.info(res.message);
     }
+    // function onUserJoinedSlide(res: any) {
+    //   toast.info(res.message);
+    // }
+    // function onUserLeftSlide(res: any) {
+    //   toast.info(res.message);
+    // }
+
+    socketRef.current.on("error", onError);
+    socketRef.current.on("joined-board", onUserJoinedBoard);
     socketRef.current.on("left-board", onUserLeftBoard);
+    // socketRef.current.on("joined-slide", onUserJoinedSlide);
+    // socketRef.current.on("left-slide", onUserLeftSlide);
 
     function handleJoinBoard(res: any) {
       console.log(JSON.stringify(res));
@@ -72,18 +65,25 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     const joinBoardData = { board: { _id: boardId } };
 
     setTimeout(() => {
-      socketRef.current?.emit("join-board", joinBoardData, handleJoinBoard);
-      setTotalSlidesNumber(6); // TODO: this can't be hardcoded, but has to be for now as backend doesn't provide this info anywhere
+      if (socketRef.current) {
+        socketEmitJoinBoard(socketRef.current, joinBoardData, handleJoinBoard);
+      }
+      setTotalSlidesNumber(9); // TODO: this can't be hardcoded, but has to be for now as backend doesn't provide this info anywhere
       setIsSocketReady(true);
     }, 2000);
 
     return () => {
-      socketRef.current?.emit("leave-board");
+      if (!socketRef.current) {
+        return;
+      }
+      socketEmitLeaveBoard(socketRef.current, {});
 
-      socketRef.current?.off("error", onError);
-      socketRef.current?.off("joined-board", onUserJoinedBoard);
-      socketRef.current?.off("left-board", onUserLeftBoard);
-      socketRef.current?.disconnect();
+      socketRef.current.off("error", onError);
+      socketRef.current.off("joined-board", onUserJoinedBoard);
+      socketRef.current.off("left-board", onUserLeftBoard);
+      // socketRef.current.off("joined-slide", onUserJoinedSlide);
+      // socketRef.current.off("left-slide", onUserLeftSlide);
+      socketRef.current.disconnect();
     };
   }, [token, boardId]);
 
@@ -96,9 +96,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       value={{
         totalSlidesNumber,
         socket: socketRef.current,
-        socketEmitAddObject,
-        socketEmitUpdateObject,
-        socketEmitDeleteObject,
       }}
     >
       {children}

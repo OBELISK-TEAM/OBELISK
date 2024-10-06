@@ -1,14 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useSocket } from "./SocketContext";
+import { socketEmitLeaveSlide } from "@/lib/board/socketEmitUtils";
 
 interface SlidesContextProps {
-  slideIndex: number;
-  totalSlidesNumber: number;
-  setSlideIndex: (index: number) => void;
-  socketEmitAddObject: (addObjectData: any, callback: (res: string) => void) => void;
-  socketEmitUpdateObject: (updateObjectData: any) => void;
-  socketEmitDeleteObject: (deleteObjectData: any) => void;
+  // totalSlidesNumber: number;
 }
 
 const SlidesContext = createContext<SlidesContextProps | undefined>(undefined);
@@ -19,60 +15,37 @@ interface SlidesProviderProps {
 
 export const SlidesProvider: React.FC<SlidesProviderProps> = ({ children }) => {
   const { socket } = useSocket();
-  const [slideIndex, setSlideIndex] = useState<number>(0);
-  const [totalSlidesNumber, setTotalSlidesNumber] = useState<number>(6); // TODO: this is temporary; when backend starts to send total number of board slides, decide what to do with this code
-
-  const socketEmitAddObject = useCallback((addObjectData: any, callback: (res: string) => void) => {
-    socket?.emit("add-object", addObjectData, callback);
-  }, [socket]);
-
-  const socketEmitUpdateObject = useCallback((updateObjectData: any) => {
-    socket?.emit("update-object", updateObjectData);
-  }, [socket]);
-
-  const socketEmitDeleteObject = useCallback((deleteObjectData: any) => {
-    socket?.emit("delete-object", deleteObjectData);
-  }, [socket]);
+  // const [totalSlidesNumber] = useState<number>(9); // TODO: this is temporary; when backend starts to send total number of board slides, decide what to do with this code
 
   useEffect(() => {
-    if (!socket) return;
-
+    if (!socket) {
+      console.error("SlideProvider found no socket!");
+      return;
+    }
 
     function onSlideAdded(res: object) {
       console.log(JSON.stringify(res));
+      toast.info("New slide has been added");
     }
     socket.on("slide-added", onSlideAdded);
 
     function onSlideDeleted(res: object) {
       console.log(JSON.stringify(res));
+      toast.info("A slide has been deleted");
     }
     socket.on("slide-deleted", onSlideDeleted);
-
-
-    const joinSlideData = { slide: { slideNumber: slideIndex } };
-
-    function handleJoinSlide(res: any) {
-      toast.success("Joined slide " + slideIndex);
-    }
-
-    socket.emit("join-slide", joinSlideData, handleJoinSlide);
 
     return () => {
       socket.off("slide-added", onSlideAdded);
       socket.off("slide-deleted", onSlideDeleted);
-      socket.emit("leave-slide", joinSlideData);
+      socketEmitLeaveSlide(socket, {});
     };
-  }, [socket, slideIndex]);
+  }, [socket]);
 
   return (
     <SlidesContext.Provider
       value={{
-        slideIndex,
-        totalSlidesNumber,
-        setSlideIndex,
-        socketEmitAddObject,
-        socketEmitUpdateObject,
-        socketEmitDeleteObject,
+        // totalSlidesNumber,
       }}
     >
       {children}

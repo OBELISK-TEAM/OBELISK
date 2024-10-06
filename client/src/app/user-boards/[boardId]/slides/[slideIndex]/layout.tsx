@@ -10,9 +10,8 @@ import { notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-// import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
-// import useSocket from "@/hooks/socket/useSocket";
-// import { SocketProvider } from "@/contexts/SocketContext";
+import { useSlides } from "@/contexts/SlidesProvider";
+import { socketEmitJoinSlide, socketEmitLeaveSlide } from "@/lib/board/socketEmitUtils";
 
 interface UserBoardLayout {
   children: React.ReactNode;
@@ -26,11 +25,12 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
   const [slideData, setSlideData] = useState<object>({});
   const { socket } = useSocket();
+  const { totalSlidesNumber } = useSocket();
+
   const slideIndexNumber = parseInt(slideIndex);
 
   useEffect(() => {
     if (!socket) {
-      // console.log("Socket not available in slides/[slideIndex]/layout.tsx");
       toast.error("Socket not available in slides/[slideIndex]/layout.tsx");
       return;
     }
@@ -44,59 +44,19 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
       setSlideData(res);
     }
 
-    socket.emit("join-slide", joinSlideData, handleJoinBoard);
+    socketEmitJoinSlide(socket, joinSlideData, handleJoinBoard);
 
     return () => {
-      socket.emit("leave-board");
+      socketEmitLeaveSlide(socket, {});
     };
   }, [socket, slideIndexNumber]);
 
   if (isNaN(slideIndexNumber)) {
     return notFound();
   }
-
-  // let boardResponse: Response;
-
-  // try {
-  //   boardResponse = await fetch(
-  //     `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}?slide=${slideIndex}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       cache: "no-store",
-  //     }
-  //   );
-  // } catch (error) {
-  //   console.error("Error fetching board data:", error);
-  //   return notFound();
-  // }
-
-  // if (!boardResponse.ok) {
-  //   return notFound();
-  // }
-
-  // let boardData: BoardDataResponse;
-
-  // try {
-  //   boardData = await boardResponse.json();
-  // } catch (error) {
-  //   console.error("Error parsing board data:", error);
-  //   return notFound();
-  // }
-
-  // const totalSlides = boardData.slides.length;
-
-  // if (slideIndexNumber >= totalSlides || slideIndexNumber < 0) {
-  //   return notFound();
-  // }
-
-  // const slide = boardData.slide;
-
-  // if (!slide) {
-  //   return notFound();
-  // }
+  if (slideIndexNumber < 1 || slideIndexNumber > totalSlidesNumber) {
+    return notFound();
+  }
 
   return (
     <ZoomUIProvider>

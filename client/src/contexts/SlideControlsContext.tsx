@@ -1,11 +1,12 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCanvas } from "./CanvasContext";
 import { useSocket } from "./SocketContext";
 
 import { toast } from "sonner";
 import { AddSlideData, DeleteSlideData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitAddSlide, socketEmitDeleteSlide } from "@/lib/board/socketEmitUtils";
 
 interface SlideControlsContext {
   currentSlide: number;
@@ -27,12 +28,15 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const SLIDE_LIMIT = 10;
 
   function createSlide() {
+    if (!socket) {
+      return;
+    }
     const addSlideData: AddSlideData = {};
-    socket?.emit("add-slide", addSlideData);
+    socketEmitAddSlide(socket, addSlideData);
   }
 
   const deleteSlide = () => {
-    if (!currentSlide) {
+    if (!currentSlide || !socket) {
       return;
     }
     if (totalSlides === 1) {
@@ -41,7 +45,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     const deleteSlideData: DeleteSlideData = { slide: { slideNumber: currentSlide } };
-    socket?.emit("delete-slide", deleteSlideData);
+    socketEmitDeleteSlide(socket, deleteSlideData);
     toast.success(`Slide deleted successfully`, { duration: 1200 });
 
     router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
@@ -66,6 +70,22 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       toast.info("You already are on slide no " + currentSlide);
     }
   };
+
+  function onDeleteSlide() {
+    toast.warning("The slide you have been working on has been deleted");
+
+    if (currentSlide === totalSlides) {
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
+    }
+  }
+
+  useEffect(() => {
+    socket?.on("slide-deleted", onDeleteSlide);
+
+    return () => {
+      socket?.off("slide-deleted", onDeleteSlide);
+    };
+  }, []);
 
   return (
     <SlideControlsContext.Provider
