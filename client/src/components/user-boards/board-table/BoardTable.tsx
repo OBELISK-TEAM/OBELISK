@@ -17,11 +17,11 @@ import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTab
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useRouter } from "next/navigation";
 
-interface IBoardTable {
+interface BoardTableProps {
   activeTab: BoardsActiveTab;
 }
 
-const BoardTable: React.FC<IBoardTable> = ({ activeTab }) => {
+const BoardTable: React.FC<BoardTableProps> = ({ activeTab }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
   const router = useRouter();
