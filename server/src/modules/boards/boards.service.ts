@@ -89,7 +89,7 @@ export class BoardsService {
     board: BoardPermissionsInfo,
     userId: string,
   ): BoardPermission {
-    if (board.owner === userId) {
+    if (board.owner.toString() === userId.toString()) {
       return BoardPermission.OWNER;
     } else if (board.permissions.moderator.includes(userId)) {
       return BoardPermission.MODERATOR;

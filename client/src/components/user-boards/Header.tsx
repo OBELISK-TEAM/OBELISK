@@ -1,3 +1,4 @@
+"use client";
 import { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import HeaderLinks from "./HeaderLinks";

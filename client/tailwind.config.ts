@@ -51,6 +51,22 @@ const config = {
           border: "hsl(var(--error))",
           foreground: "hsl(var(--error))",
         },
+        badge: {
+          DEFAULT: "var(--badge-bg)",
+          foreground: "var(--badge-foreground)",
+        },
+        "badge-editor": {
+          DEFAULT: "var(--badge-editor-bg)",
+          foreground: "var(--badge-editor-foreground)",
+        },
+        "badge-moderator": {
+          DEFAULT: "var(--badge-moderator-bg)",
+          foreground: "var(--badge-moderator-foreground)",
+        },
+        "badge-viewer": {
+          DEFAULT: "var(--badge-viewer-bg)",
+          foreground: "var(--badge-viewer-foreground)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
