@@ -1,4 +1,5 @@
 import React from "react";
+
 import BoardDetails from "@/components/board-details/board-information/BoardDetails";
 
 interface BoardDetailsPageProps {
