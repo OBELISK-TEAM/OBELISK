@@ -4,7 +4,10 @@ import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
-  const sharedUsers = concatenatePermissions(board.permissions);
+  let sharedUsers: string[] = [];
+  if (board.permissions) {
+    sharedUsers = concatenatePermissions(board.permissions);
+  }
   switch (column) {
     case BoardTableColumns.NAME:
       return board.name;
@@ -19,12 +22,8 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
       return board.createdAt;
 
     case BoardTableColumns.MY_PERMISSION:
-      if (board.currentUserPermission) {
-        return (
-          <Badge variant={getPermissionVariant(board.currentUserPermission)}>
-            {getPermissionLabel(board.currentUserPermission)}
-          </Badge>
-        );
+      if (board.permission) {
+        return <Badge variant={getPermissionVariant(board.permission)}>{getPermissionLabel(board.permission)}</Badge>;
       } else {
         return "---";
       }

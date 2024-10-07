@@ -8,9 +8,9 @@ export interface BoardResponse {
   modifiedAt: string;
   createdAt: string;
   size: number;
-  permissions: PermissionsResponse;
+  permissions?: PermissionsResponse;
   slides: string[];
   slide?: SlideResponse | string;
   owner?: string;
-  currentUserPermission?: BoardPermission;
+  permission?: BoardPermission;
 }
