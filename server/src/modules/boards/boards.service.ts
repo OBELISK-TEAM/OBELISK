@@ -15,7 +15,6 @@ import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSli
 import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
-import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 
 @Injectable()
 export class BoardsService {
@@ -95,48 +94,6 @@ export class BoardsService {
     }
   }
 
-  async getClientBoardPermission(
-    userId: string,
-    boardId: string,
-  ): Promise<BoardPermission> {
-    const board = await this.findBoardWithPermissions(userId, boardId);
-    if (!board)
-      throw new HttpException(
-        'Board not found or insufficient permissions',
-        HttpStatus.NOT_FOUND,
-      );
-
-    console.log('---------------------------------------');
-    console.log('getClientBoardPermission ok');
-    console.log(userId);
-    console.log(boardId);
-    console.log(board);
-    console.log('---------------------------------------');
-    return this.determineUserPermission(board, userId);
-  }
-
-  private async findBoardWithPermissions(
-    userId: string,
-    boardId: string,
-  ): Promise<BoardPermissionsInfo | null> {
-    return this.boardModel
-      .findOne(
-        {
-          _id: boardId,
-          $or: [
-            { owner: userId },
-            { 'permissions.viewer': userId },
-            { 'permissions.editor': userId },
-            { 'permissions.moderator': userId },
-          ],
-        },
-        'permissions owner',
-      )
-      .exec();
-  }
-
-  //////////////
-
   async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
     const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
@@ -192,7 +149,7 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board: BoardWithSlidesCount | BoardPermissionsInfo,
+    board: BoardWithSlidesCount | SuperBoardWithoutSlides,
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
