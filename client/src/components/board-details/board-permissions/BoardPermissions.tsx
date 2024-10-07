@@ -10,7 +10,7 @@ import { PlusIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import BoardPermissionsSelect from "@/components/board-details/board-permissions/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
-import DeleteCollaboratorButton from "@/components/board-details/BoardPermissions/DeleteCollaboratorButton";
+import DeleteCollaboratorButton from "@/components/board-details/board-permissions/DeleteCollaboratorButton";
 export const BoardPermissions = () => {
   const [users, setUsers] = useState<BoardPermissionsUser[]>([
     {
