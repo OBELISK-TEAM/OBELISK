@@ -1,4 +1,4 @@
-import { FilterIcon, TrashIcon, ViewIcon, ChevronRightIcon } from "lucide-react";
+import { FilterIcon, ViewIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -14,8 +14,9 @@ import { BoardResponse } from "@/interfaces/responses/user-boards/board-response
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useRouter } from "next/navigation";
+import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardDeletionButton";
+import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
 
 interface BoardTableProps {
   activeTab: BoardsActiveTab;
@@ -49,10 +50,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab }) => {
   const handleRowClick = (boardId: string) => {
     router.push(`/user-boards/${boardId}/slides/1`);
   };
-  const handleDetailsButtonClick = (e: React.MouseEvent, boardId: string) => {
-    e.stopPropagation(); // Prevent triggering row's onClick
-    router.push(`/user-boards/${boardId}`);
-  };
+
   const showOverlay = isLoading && previousData;
 
   if (error) {
@@ -103,25 +101,18 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab }) => {
                         {CellContent(col, board)}
                       </TableCell>
                     ))}
-                    <TableCell className="flex items-center justify-center space-x-1">
-                      <Button variant={"outline"} className="hover:text-muted-foreground">
-                        <TrashIcon />
-                      </Button>
-                      <HoverCard openDelay={100} closeDelay={200}>
-                        <HoverCardTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className="hover:text-muted-foreground"
-                            onClick={(e) => handleDetailsButtonClick(e, board._id)}
-                            aria-label="Go to board details"
-                          >
-                            <ChevronRightIcon className="h-4 w-4" />
-                          </Button>
-                        </HoverCardTrigger>
-                        <HoverCardContent side="top" className="max-w-36">
-                          Go to board details
-                        </HoverCardContent>
-                      </HoverCard>
+                    <TableCell
+                      className="flex items-center justify-center space-x-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <BoardDeletionButton
+                        deleteBoard={() => {
+                          /*todo: implement board deletion*/
+                        }}
+                      />
+                      <BoardDetailsButton boardId={board._id} />
                     </TableCell>
                   </TableRow>
                 ))}
