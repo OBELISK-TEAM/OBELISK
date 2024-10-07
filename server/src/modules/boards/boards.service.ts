@@ -153,13 +153,6 @@ export class BoardsService {
     const board = await this.findBoardInfo(userId, boardId);
     const permission = this.determineUserPermission(board, userId);
     const { permissions, ...boardInfo } = board;
-    console.log('---------------------------------------');
-    console.log('getClientBoardInfo NOT ok');
-    console.log(userId);
-    console.log(boardId);
-    console.log(board);
-    console.log(permission);
-    console.log('---------------------------------------');
     return { ...boardInfo, permission };
   }
 
@@ -202,15 +195,17 @@ export class BoardsService {
     board: BoardWithSlidesCount | BoardPermissionsInfo,
     userId: string,
   ): BoardPermission {
-    if (board.owner.toString() === userId.toString()) {
-      return BoardPermission.OWNER;
-    } else if (board.permissions.moderator.includes(userId)) {
-      return BoardPermission.MODERATOR;
-    } else if (board.permissions.editor.includes(userId)) {
-      return BoardPermission.EDITOR;
-    } else if (board.permissions.viewer.includes(userId)) {
-      return BoardPermission.VIEWER;
-    }
+    const userIdStr = userId.toString();
+    const ownerStr = board.owner.toString();
+
+    const moderatorsStr = board.permissions.moderator.map(id => id.toString());
+    const editorsStr = board.permissions.editor.map(id => id.toString());
+    const viewersStr = board.permissions.viewer.map(id => id.toString());
+
+    if (ownerStr === userIdStr) return BoardPermission.OWNER;
+    if (moderatorsStr.includes(userIdStr)) return BoardPermission.MODERATOR;
+    if (editorsStr.includes(userIdStr)) return BoardPermission.EDITOR;
+    if (viewersStr.includes(userIdStr)) return BoardPermission.VIEWER;
     return BoardPermission.NONE;
   }
 

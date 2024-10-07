@@ -6,13 +6,15 @@ export interface BoardResponseObject {
   _id: string;
   name: string;
   owner: string;
-  permissions: {
+  permissions?: {
     viewer: string[];
     editor: string[];
     moderator: string[];
   };
-  slides: string[] | Types.ObjectId[];
+  slides?: string[] | Types.ObjectId[];
   slide?: SlideResponseObject | string | SuperSlideDocument;
   createdAt?: Date | string | boolean | undefined;
   updatedAt?: Date | string | boolean | undefined;
+  slidesCount?: number;
+  permission?: string;
 }
