@@ -12,10 +12,11 @@ import useSWR from "swr";
 import { fetchBoardDetails } from "@/mock-data/BoardDetailsFetcher";
 import BoardDetailsInfoSkeleton from "@/components/loading/BoardDetailsInfoSkeleton";
 import BoardInfoItem from "./BoardInfoItem";
+import { useRouter } from "next/navigation";
 
-const BoardDetailsInfo: React.FC<{ boardId: string }> = ({ boardId }) => {
+const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
   const { data: board, error, isLoading, mutate } = useSWR(`/mocked/boards/${boardId}`, fetchBoardDetails);
-
+  const router = useRouter();
   if (isLoading) {
     return <BoardDetailsInfoSkeleton />;
   }
@@ -57,7 +58,13 @@ const BoardDetailsInfo: React.FC<{ boardId: string }> = ({ boardId }) => {
           title="Board Details"
           description="Detailed information regarding everything connected to this board"
         />
-        <Button>Go to the board</Button>
+        <Button
+          onClick={() => {
+            router.push(`/board/${boardId}/slides/1`);
+          }}
+        >
+          Go to the board
+        </Button>
       </header>
 
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
@@ -119,4 +126,4 @@ const BoardDetailsInfo: React.FC<{ boardId: string }> = ({ boardId }) => {
   );
 };
 
-export default BoardDetailsInfo;
+export default BoardDetails;
