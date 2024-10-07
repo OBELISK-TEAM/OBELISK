@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { CreateBoardDto } from './boards.dto';
 import {
   SuperBoard,
@@ -9,11 +9,12 @@ import {
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
-import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 import { BoardsFilter } from 'src/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
 import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
 import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
+import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 
 @Injectable()
 export class BoardsService {
@@ -102,27 +103,24 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  async getClientBoardPermission(
+  async getClientBoardInfo(
     userId: string,
     boardId: string,
-  ): Promise<BoardPermission> {
-    const board = await this.findBoardWithPermissions(userId, boardId);
-    if (!board)
-      throw new HttpException(
-        'Board not found or insufficient permissions',
-        HttpStatus.NOT_FOUND,
-      );
-    return this.determineUserPermission(board, userId);
+  ): Promise<ClientBoardInfo> {
+    const board = await this.findBoardInfo(userId, boardId);
+    const permission = this.determineUserPermission(board, userId);
+    const { permissions, ...boardInfo } = board;
+    return { ...boardInfo, permission };
   }
 
-  private async findBoardWithPermissions(
+  private async findBoardInfo(
     userId: string,
     boardId: string,
-  ): Promise<BoardPermissionsInfo | null> {
-    return this.boardModel
-      .findOne(
-        {
-          _id: boardId,
+  ): Promise<BoardWithSlidesCount> {
+    const result = await this.boardModel.aggregate<BoardWithSlidesCount>([
+      {
+        $match: {
+          _id: new Types.ObjectId(boardId),
           $or: [
             { owner: userId },
             { 'permissions.viewer': userId },
@@ -130,24 +128,41 @@ export class BoardsService {
             { 'permissions.moderator': userId },
           ],
         },
-        'permissions owner',
-      )
-      .exec();
+      },
+      {
+        $addFields: {
+          slidesCount: { $size: '$slides' },
+        },
+      },
+      {
+        $project: {
+          slides: 0,
+        },
+      },
+    ]);
+    if (!result || result.length === 0)
+      throw new HttpException(
+        'Board not found or insufficient permissions',
+        HttpStatus.NOT_FOUND,
+      );
+    return result[0];
   }
 
   private determineUserPermission(
-    board: BoardPermissionsInfo,
+    board: BoardWithSlidesCount | SuperBoardWithoutSlides,
     userId: string,
   ): BoardPermission {
-    if (board.owner.toString() === userId.toString()) {
-      return BoardPermission.OWNER;
-    } else if (board.permissions.moderator.includes(userId)) {
-      return BoardPermission.MODERATOR;
-    } else if (board.permissions.editor.includes(userId)) {
-      return BoardPermission.EDITOR;
-    } else if (board.permissions.viewer.includes(userId)) {
-      return BoardPermission.VIEWER;
-    }
+    const userIdStr = userId.toString();
+    const ownerStr = board.owner.toString();
+
+    const moderatorsStr = board.permissions.moderator.map(id => id.toString());
+    const editorsStr = board.permissions.editor.map(id => id.toString());
+    const viewersStr = board.permissions.viewer.map(id => id.toString());
+
+    if (ownerStr === userIdStr) return BoardPermission.OWNER;
+    if (moderatorsStr.includes(userIdStr)) return BoardPermission.MODERATOR;
+    if (editorsStr.includes(userIdStr)) return BoardPermission.EDITOR;
+    if (viewersStr.includes(userIdStr)) return BoardPermission.VIEWER;
     return BoardPermission.NONE;
   }
 

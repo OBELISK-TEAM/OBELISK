@@ -35,6 +35,7 @@ import { SlideActionService } from './providers/slide.action.service';
 import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
 import { ObjectActionService } from './providers/object.action.service';
 import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
+import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -65,7 +66,10 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-board')
-  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+  async handleJoinBoard(
+    client: GwSocket,
+    data: JoinBoardData,
+  ): Promise<BoardResponseObject> {
     return this.joinBoardService.handleJoinBoard(client, data);
   }
 

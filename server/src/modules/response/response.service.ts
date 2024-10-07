@@ -5,6 +5,8 @@ import { SlideResponseObject } from '../../shared/interfaces/response-objects/Sl
 import { SuperObjectDocument } from '../../schemas/object/super.object.schema';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
+import { BoardPermission } from '../../enums/board.permission';
 
 @Injectable()
 export class ResponseService {
@@ -40,6 +42,17 @@ export class ResponseService {
     return {
       _id: _id as string,
       ...props,
+    };
+  }
+
+  toResponseClientBoardInfo(board: ClientBoardInfo): BoardResponseObject {
+    const { _id, name, owner, slidesCount, permission } = board;
+    return {
+      _id: _id as string,
+      name,
+      owner,
+      slidesCount,
+      permission: BoardPermission[permission],
     };
   }
 }

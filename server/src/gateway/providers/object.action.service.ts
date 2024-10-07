@@ -60,7 +60,7 @@ export class ObjectActionService {
     );
 
     this.logger.log(`Object updated: ${updatedObject._id} by ${user.email}`);
-    client.to(slideId).emit('object-added', updatedObject);
+    client.to(slideId).emit('object-updated', updatedObject);
     return updatedObject;
   }
 
