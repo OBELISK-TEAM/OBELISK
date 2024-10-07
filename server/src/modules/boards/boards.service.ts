@@ -117,16 +117,13 @@ export class BoardsService {
     userId: string,
     boardId: string,
   ): Promise<BoardWithSlidesCount> {
+    const queryBuilder = new FilterQueryBuilder();
+    const query = queryBuilder.accessibleTo(userId).build();
     const result = await this.boardModel.aggregate<BoardWithSlidesCount>([
       {
         $match: {
           _id: new Types.ObjectId(boardId),
-          $or: [
-            { owner: userId },
-            { 'permissions.viewer': userId },
-            { 'permissions.editor': userId },
-            { 'permissions.moderator': userId },
-          ],
+          ...query,
         },
       },
       {
