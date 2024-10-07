@@ -171,7 +171,7 @@ export class BoardsService {
   }
 
   async findUserRelatedBoards(
-    query: FilterQuery<SuperBoard>,
+    query: FilterQuery<SuperBoardDocument>,
     page: number,
     limit: number,
     order: string,
@@ -186,7 +186,9 @@ export class BoardsService {
       .exec();
   }
 
-  async queryCountDocuments(query: FilterQuery<SuperBoard>): Promise<number> {
+  async queryCountDocuments(
+    query: FilterQuery<SuperBoardDocument>,
+  ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
   }
 }
