@@ -13,7 +13,6 @@ import { BoardQueryDto, CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { UserRelatedBoardsPaginatedResponseObject } from '../../shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
 import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 // TODO - verify permissions for endpointss
