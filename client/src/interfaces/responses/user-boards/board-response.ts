@@ -11,6 +11,7 @@ export interface BoardResponse {
   permissions: PermissionsResponse;
   slides: string[];
   slide?: SlideResponse | string;
-  owner?: string;
+  owner: string;
   currentUserPermission?: BoardPermission;
+  maxSize?: number;
 }
