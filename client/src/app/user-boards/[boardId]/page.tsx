@@ -1,5 +1,5 @@
 import React from "react";
-import BoardDetailsInfo from "@/components/board-details/board-information/BoardDetailsInfo";
+import BoardDetails from "@/components/board-details/board-information/BoardDetails";
 
 interface BoardDetailsPageProps {
   params: {
@@ -7,6 +7,6 @@ interface BoardDetailsPageProps {
   };
 }
 const BoardDetailsPage = ({ params }: BoardDetailsPageProps) => {
-  return <BoardDetailsInfo boardId={params.boardId} />;
+  return <BoardDetails boardId={params.boardId} />;
 };
 export default BoardDetailsPage;
