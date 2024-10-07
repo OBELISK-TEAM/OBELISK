@@ -6,10 +6,11 @@ import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/BoardPermissions/BoardPermissionsInfoDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import BoardPermissionsSelect from "@/components/board-details/BoardPermissions/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
+import DeleteCollaboratorButton from "@/components/board-details/BoardPermissions/DeleteCollaboratorButton";
 export const BoardPermissions = () => {
   const [users, setUsers] = useState<BoardPermissionsUser[]>([
     {
@@ -86,9 +87,12 @@ export const BoardPermissions = () => {
               <TableCell className="text-foreground">{user.addedAt}</TableCell>
               <TableCell className="text-foreground">{user.invitedBy}</TableCell>
               <TableCell className="flex items-center justify-center">
-                <Button variant="outline" className="hover:text-muted-foreground">
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
+                <DeleteCollaboratorButton
+                  username={user.name}
+                  deleteUser={() => {
+                    /*todo: implement collaborator deletion*/
+                  }}
+                />
               </TableCell>
             </TableRow>
           ))}
