@@ -3,12 +3,12 @@ import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
 import { useState } from "react";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
-import BoardPermissionsInfoDialog from "@/components/board-details/BoardPermissions/BoardPermissionsInfoDialog";
+import BoardPermissionsInfoDialog from "@/components/board-details/board-permissions/BoardPermissionsInfoDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import BoardPermissionsSelect from "@/components/board-details/BoardPermissions/BoardPermissionsSelect";
+import BoardPermissionsSelect from "@/components/board-details/board-permissions/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
 import DeleteCollaboratorButton from "@/components/board-details/BoardPermissions/DeleteCollaboratorButton";
 export const BoardPermissions = () => {
