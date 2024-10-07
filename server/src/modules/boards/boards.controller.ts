@@ -5,13 +5,15 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { CreateBoardDto } from './boards.dto';
+import { BoardQueryDto, CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 // TODO - verify permissions for endpointss
 
@@ -19,12 +21,19 @@ import { BoardResponseObject } from '../../shared/interfaces/response-objects/Bo
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
-  // TODO - implement
   @Get()
   @UseGuards(JwtAuthGuard)
-  getUserBoards(@User('_id') userId: string): string {
-    return `User ${userId} boards IMPLEMENT ME`;
-    // return this.boardsService.getUserBoards(userId);
+  getUserRelatedBoards(
+    @User('_id') userId: string,
+    @Query() { page, limit, order, tab }: BoardQueryDto,
+  ): Promise<PaginatedBoardsResponse> {
+    return this.boardsService.getUserRelatedBoards(
+      userId,
+      page,
+      limit,
+      order,
+      tab,
+    );
   }
 
   // TODO - check permissions to fetch board
