@@ -1,10 +1,8 @@
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 
-export const fetchBoardDetails = async (url: string): Promise<BoardResponse> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const boardId = url.split("/").pop() || "";
-  const data = {
-    _id: boardId,
+const mockBoardData: Record<string, BoardResponse> = {
+  "123": {
+    _id: "123",
     name: "My Board",
     owner: "user123",
     permissions: {
@@ -17,7 +15,13 @@ export const fetchBoardDetails = async (url: string): Promise<BoardResponse> => 
     modifiedAt: String(new Date("2024-10-06T18:00:00Z")),
     maxSize: 100,
     size: 94,
-  };
+  },
+};
+
+export const fetchBoardDetails = async (url: string): Promise<BoardResponse> => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const boardId = url.split("/").pop() || "";
+  const data = mockBoardData[boardId];
   if (!data) {
     throw new Error("Board not found.");
   }

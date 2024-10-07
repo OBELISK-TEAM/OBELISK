@@ -46,6 +46,7 @@ export const useBoardName = (board: BoardResponse | undefined, action: (obj: any
     isEditing: false,
     updating: false,
   });
+
   const { name, isEditing, updating } = state;
 
   const setName = (name: string) => {
@@ -76,11 +77,8 @@ export const useBoardName = (board: BoardResponse | undefined, action: (obj: any
     try {
       dispatch({ type: "START_UPDATING" });
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // TODO: JIRA[OK-212] implement action of updating the board name
-      // await action({ name: trimmedName, _id: board._id });
-      logger.log("need to use somewhere action otherwise linter will do brrr", JSON.stringify(action));
-      throw new Error("Not implemented");
-      toast.success("Board name updated successfully");
+      await action({ name: trimmedName, _id: board._id });
+      dispatch({ type: "FINISH_UPDATING" });
     } catch (error: any) {
       logger.error("Error while creating object:", error);
       if (error instanceof ApiError) {
@@ -88,8 +86,6 @@ export const useBoardName = (board: BoardResponse | undefined, action: (obj: any
       } else {
         toast.error(error.message || "Failed to rename the board");
       }
-    } finally {
-      dispatch({ type: "FINISH_UPDATING" });
     }
   };
 
