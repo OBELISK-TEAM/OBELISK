@@ -1,47 +1,24 @@
 "use client";
 
-import React, { useEffect, KeyboardEvent } from "react";
+import React from "react";
 import { Calendar as FaCalendarAlt, User, DatabaseIcon, LayersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
-import BoardInfoItem from "./BoardInfoItem";
+import BoardInfoInputItem from "./BoardInfoInputItem";
 import CollaboratingUsers from "./CollaboratingUsers";
 import BoardNameField from "./BoardNameField";
-import { useBoardName } from "@/hooks/board-details/useBoardName";
 import useSWR from "swr";
 import { fetchBoardDetails } from "@/mock-data/BoardDetailsFetcher";
+import BoardDetailsInfoSkeleton from "@/components/loading/BoardDetailsInfoSkeleton";
+import BoardInfoItem from "./BoardInfoItem";
 
 const BoardDetails: React.FC = () => {
   const boardId = "123";
   const { data: board, error, isLoading, mutate } = useSWR(`/mocked/boards/${boardId}`, fetchBoardDetails);
 
-  const { name, isEditing, updating, setName, handleEditClick, handleCancel, handleConfirm } = useBoardName(
-    board,
-    mutate
-  );
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleConfirm();
-    } else if (e.key === "Escape") {
-      handleCancel();
-    }
-  };
-
-  useEffect(() => {
-    if (board) {
-      setName(board.name);
-    }
-  }, [board, setName]);
-
   if (isLoading) {
-    return (
-      <section className="rounded-lg border border-border bg-card p-6 shadow">
-        <BoardHeader title="Board Details" description="Board Information" />
-        <p>Loading...</p>
-      </section>
-    );
+    return <BoardDetailsInfoSkeleton />;
   }
 
   if (error) {
@@ -86,30 +63,23 @@ const BoardDetails: React.FC = () => {
 
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
-          <BoardNameField
-            name={name}
-            isEditing={isEditing}
-            updating={updating}
-            setName={setName}
-            handleKeyDown={handleKeyDown}
-            handleEditClick={handleEditClick}
-            handleConfirm={handleConfirm}
-            handleCancel={handleCancel}
-          />
+          <BoardNameField board={board} id={"board-name"} mutate={mutate} />
 
-          <BoardInfoItem
+          <BoardInfoInputItem
             icon={<User className="mr-1 h-4 w-4" />}
             label="Owner"
             value={board.owner}
+            id={"owner"}
             inputProps={{
               id: "owner",
               readOnly: true,
             }}
           />
 
-          <BoardInfoItem
+          <BoardInfoInputItem
             icon={<FaCalendarAlt className="mr-1 h-4 w-4" />}
             label="Creation Date"
+            id={"creation-date"}
             value={creationDate}
             inputProps={{
               id: "creation-date",
@@ -117,38 +87,31 @@ const BoardDetails: React.FC = () => {
             }}
           />
 
-          <BoardInfoItem
+          <BoardInfoInputItem
             icon={<FaCalendarAlt className="mr-1 h-4 w-4" />}
             label="Last Updated"
+            id={"last-updated"}
             value={lastUpdated}
             inputProps={{
               id: "last-updated",
               readOnly: true,
             }}
           />
-
-          <div className="mb-4 flex flex-col gap-1">
-            <div className="flex items-center">
-              <DatabaseIcon className="mr-1 h-4 w-4" />
-              <span className="text-sm font-semibold">Used space</span>
-            </div>
+          <BoardInfoItem icon={<DatabaseIcon className="mr-1 h-4 w-4" />} label="Used space">
             <div className="flex w-full items-center justify-between gap-4 text-xs">
-              <Progress value={usedPercentage} />
+              <Progress value={usedPercentage} className="w-full" />
               <Button variant="secondary" className="w-40 text-xs">
                 <span className="text-muted-foreground">{`${totalSizeUsed} / ${board.maxSize} MB`}</span>
               </Button>
             </div>
-          </div>
+          </BoardInfoItem>
 
-          <div className="mb-4 flex flex-col gap-1">
-            <div className="flex items-center">
-              <LayersIcon className="mr-1 h-4 w-4" />
-              <span className="text-sm font-semibold">No slides</span>
-            </div>
+          {/* Number of Slides */}
+          <BoardInfoItem icon={<LayersIcon className="mr-1 h-4 w-4" />} label="No slides">
             <Button variant="outline" className="w-fit text-xs">
               <span className="text-muted-foreground">{`${board.slides.length} / 10`}</span>
             </Button>
-          </div>
+          </BoardInfoItem>
         </article>
 
         <CollaboratingUsers users={collaboratingUsers} />
