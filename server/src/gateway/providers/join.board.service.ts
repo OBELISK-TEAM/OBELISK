@@ -22,13 +22,22 @@ export class JoinBoardService {
       boardId,
     );
 
-    const permission = boardInfo.permission;
-    console.log(boardInfo);
-    if (!this.isPermissionValid(client, permission)) return;
-    this.assignDataToClient(client, permission, boardId);
-    await this.joinClientToBoard(client, boardId);
+    const permission2 = await this.boardsService.getClientBoardPermission(
+      userId,
+      boardId,
+    );
 
+    console.log(boardInfo);
     console.log(BoardPermission[boardInfo.permission]);
+
+    console.log(permission2);
+    console.log(BoardPermission[permission2]);
+
+    // const permission = boardInfo.permission;
+    // console.log(boardInfo);
+    // if (!this.isPermissionValid(client, permission)) return;
+    // this.assignDataToClient(client, permission, boardId);
+    // await this.joinClientToBoard(client, boardId);
   }
 
   private isPermissionValid(

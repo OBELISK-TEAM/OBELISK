@@ -15,6 +15,7 @@ import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSli
 import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
+import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 
 @Injectable()
 export class BoardsService {
@@ -94,6 +95,48 @@ export class BoardsService {
     }
   }
 
+  async getClientBoardPermission(
+    userId: string,
+    boardId: string,
+  ): Promise<BoardPermission> {
+    const board = await this.findBoardWithPermissions(userId, boardId);
+    if (!board)
+      throw new HttpException(
+        'Board not found or insufficient permissions',
+        HttpStatus.NOT_FOUND,
+      );
+
+    console.log('---------------------------------------');
+    console.log('getClientBoardPermission ok');
+    console.log(userId);
+    console.log(boardId);
+    console.log(board);
+    console.log('---------------------------------------');
+    return this.determineUserPermission(board, userId);
+  }
+
+  private async findBoardWithPermissions(
+    userId: string,
+    boardId: string,
+  ): Promise<BoardPermissionsInfo | null> {
+    return this.boardModel
+      .findOne(
+        {
+          _id: boardId,
+          $or: [
+            { owner: userId },
+            { 'permissions.viewer': userId },
+            { 'permissions.editor': userId },
+            { 'permissions.moderator': userId },
+          ],
+        },
+        'permissions owner',
+      )
+      .exec();
+  }
+
+  //////////////
+
   async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
     const deletedBoard = await this.boardModel
       .findByIdAndDelete(boardId)
@@ -110,6 +153,13 @@ export class BoardsService {
     const board = await this.findBoardInfo(userId, boardId);
     const permission = this.determineUserPermission(board, userId);
     const { permissions, ...boardInfo } = board;
+    console.log('---------------------------------------');
+    console.log('getClientBoardInfo NOT ok');
+    console.log(userId);
+    console.log(boardId);
+    console.log(board);
+    console.log(permission);
+    console.log('---------------------------------------');
     return { ...boardInfo, permission };
   }
 
@@ -149,7 +199,7 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board: BoardWithSlidesCount,
+    board: BoardWithSlidesCount | BoardPermissionsInfo,
     userId: string,
   ): BoardPermission {
     if (board.owner.toString() === userId.toString()) {
