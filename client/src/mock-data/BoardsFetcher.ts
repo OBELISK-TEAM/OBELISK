@@ -35,6 +35,7 @@ export const fetchBoards = (url: string): Promise<PaginatedBoardsResponse> => {
             size: i * 15,
             currentUserPermission: BoardPermission.OWNER,
             slides: [],
+            owner: "You",
           });
         }
       } else if (tab === BoardsActiveTab.SHARED_FOR_CURRENT_USER) {
