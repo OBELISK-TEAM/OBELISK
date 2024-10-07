@@ -33,7 +33,7 @@ export const fetchBoards = (url: string): Promise<PaginatedBoardsResponse> => {
             createdAt: `2023-09-10 07:00 PM`,
             permissions: generatePermissionsResponse(i),
             size: i * 15,
-            currentUserPermission: BoardPermission.OWNER,
+            permission: BoardPermission.OWNER,
             slides: [],
           });
         }
@@ -45,7 +45,7 @@ export const fetchBoards = (url: string): Promise<PaginatedBoardsResponse> => {
             owner: `User ${i}`,
             modifiedAt: `2023-09-${i.toString().padStart(2, "0")} 01:00 PM`,
             createdAt: `2023-09-05 12:00 PM`,
-            currentUserPermission:
+            permission:
               i % 4 === 0
                 ? BoardPermission.EDITOR
                 : i % 4 === 1

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BoardsPagination } from "../BoardsPagination";
-import { fetchBoards } from "@/mock-data/BoardsFetcher";
 import { getColumnsForTab, getDescriptionForTab, getTitleForTab } from "@/lib/userBoardsUtils";
 import { Button } from "@/components/ui/button";
 import { CellContent } from "@/components/user-boards/board-table/CellContent";
@@ -17,29 +16,30 @@ import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTab
 import { useRouter } from "next/navigation";
 import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardDeletionButton";
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
-
+import { fetchBoards } from "@/services/fetchBoards";
 interface BoardTableProps {
   activeTab: BoardsActiveTab;
+  accessToken?: string;
 }
 
-const BoardTable: React.FC<BoardTableProps> = ({ activeTab }) => {
+const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
   const router = useRouter();
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
 
+  const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
+    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${1}&page=${currentPage}&limit=${perPage}&order=${activeTab === 1 ? "descending" : "ascending"}`,
+    fetchBoards(accessToken as string),
+    {
+      revalidateOnFocus: true,
+      keepPreviousData: true,
+      revalidateIfStale: true,
+    }
+  );
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab]);
-
-  const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
-    `/api/boards?tab=${activeTab}&page=${currentPage}&perPage=${perPage}`,
-    fetchBoards,
-    {
-      revalidateOnFocus: false,
-      keepPreviousData: true,
-    }
-  );
 
   useEffect(() => {
     if (data) {
