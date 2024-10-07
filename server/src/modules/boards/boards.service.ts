@@ -11,7 +11,10 @@ import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardsFilter } from 'src/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
-import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
+import {
+  BoardWithoutSlides,
+  BoardWithPopulatedPermissions,
+} from '../../shared/interfaces/BoardWithoutSlides';
 import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
@@ -53,7 +56,7 @@ export class BoardsService {
     userId: string,
     page: number = 1,
     limit: number = 5,
-    order: string = 'descending',
+    order: SortOrder = 'descending',
     tab: BoardsFilter = BoardsFilter.ALL,
   ): Promise<PaginatedBoardsResponse> {
     const query = this.getFilterQuery(userId, tab);
@@ -62,18 +65,36 @@ export class BoardsService {
       this.findUserRelatedBoards(query, page, limit, order),
     ]);
 
-    const boardWithPermission = boards.map(board => {
-      const userPermission = this.determineUserPermission(board, userId);
+    const populatedBoards = await Promise.all(
+      boards.map(board => this.populatePermissions(board)),
+    );
+
+    const boardsWithPermission = populatedBoards.map(board => {
+      const boardObject = board.toObject();
+      const userPermission = this.determineUserPermission(boardObject, userId);
       return {
-        _id: board._id,
-        name: board.name,
+        _id: boardObject._id,
+        name: boardObject.name,
         permission: BoardPermission[userPermission],
-        createdAt: board.createdAt,
-        updatedAt: board.updatedAt,
+        permissions: {
+          ...boardObject.permissions,
+          owner: boardObject.owner,
+        },
+        createdAt: boardObject.createdAt,
+        updatedAt: boardObject.updatedAt,
       };
     });
 
-    return { boards: boardWithPermission, page, limit, order, total };
+    return { boards: boardsWithPermission, page, limit, order, total };
+  }
+
+  private async populatePermissions(
+    board: BoardWithoutSlides,
+  ): Promise<BoardWithPopulatedPermissions> {
+    return board.populate({
+      path: 'permissions.viewer permissions.editor permissions.moderator owner',
+      select: 'name email',
+    });
   }
 
   private getFilterQuery(
@@ -146,7 +167,10 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board: BoardWithSlidesCount | SuperBoardWithoutSlides,
+    board:
+      | BoardWithSlidesCount
+      | BoardWithoutSlides
+      | BoardWithPopulatedPermissions,
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
@@ -174,12 +198,13 @@ export class BoardsService {
     query: FilterQuery<SuperBoardDocument>,
     page: number,
     limit: number,
-    order: string,
-  ): Promise<SuperBoardWithoutSlides[]> {
+    order: SortOrder,
+  ): Promise<BoardWithoutSlides[]> {
     const skip = (page - 1) * limit;
+    const sortOrder = order === 'ascending' ? 'ascending' : 'descending';
     return this.boardModel
       .find(query)
-      .sort([['updatedAt', order === 'ascending' ? 'ascending' : 'descending']])
+      .sort([['updatedAt', sortOrder]])
       .skip(skip)
       .limit(limit)
       .select('-slides')
@@ -192,3 +217,5 @@ export class BoardsService {
     return this.boardModel.countDocuments(query).exec();
   }
 }
+
+export type SortOrder = 'ascending' | 'descending';

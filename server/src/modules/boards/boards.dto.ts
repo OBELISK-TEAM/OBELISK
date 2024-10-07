@@ -9,6 +9,7 @@ import {
   Min,
 } from 'class-validator';
 import { BoardsFilter } from '../../enums/boardsFilter';
+import { SortOrder } from './boards.service';
 
 export class CreateBoardDto {
   @IsString({
@@ -50,7 +51,7 @@ export class BoardQueryDto {
   @IsString()
   @IsOptional()
   @IsIn(['ascending', 'descending'])
-  order: string;
+  order: SortOrder;
 
   @IsIn([BoardsFilter.OWNED_BY, BoardsFilter.SHARED_FOR, BoardsFilter.ALL])
   @IsOptional()
