@@ -160,7 +160,7 @@ export class BoardsService {
     userId: string,
     boardId: string,
   ): Promise<BoardWithSlidesCount> {
-    const result = await this.boardModel.aggregate([
+    const result = await this.boardModel.aggregate<BoardWithSlidesCount>([
       {
         $match: {
           _id: new Types.ObjectId(boardId),
@@ -183,7 +183,7 @@ export class BoardsService {
         },
       },
     ]);
-    if (!result)
+    if (!result || result.length === 0)
       throw new HttpException(
         'Board not found or insufficient permissions',
         HttpStatus.NOT_FOUND,
