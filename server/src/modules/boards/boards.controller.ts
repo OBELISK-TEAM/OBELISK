@@ -9,12 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { CreateBoardDto } from './boards.dto';
+import { BoardQueryDto, CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardsOwnerShipFilterOption as GetBoardsOwnershipFilter } from 'src/enums/boards.ownership.filter.option';
-import { UserRelatedBoardsPaginatedResponseObject } from 'src/shared/interfaces/response-objects/UserRelatedBoardsPaginatedResponseObject';
+import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 // TODO - verify permissions for endpointss
 
@@ -26,15 +25,14 @@ export class BoardsController {
   @UseGuards(JwtAuthGuard)
   getUserRelatedBoards(
     @User('_id') userId: string,
-    @Query('activeTab') boardsOwnershipFilterOption: GetBoardsOwnershipFilter,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ): Promise<UserRelatedBoardsPaginatedResponseObject> {
+    @Query() { page, limit, order, tab }: BoardQueryDto,
+  ): Promise<PaginatedBoardsResponse> {
     return this.boardsService.getUserRelatedBoards(
       userId,
-      boardsOwnershipFilterOption,
       page,
       limit,
+      order,
+      tab,
     );
   }
 
