@@ -43,6 +43,9 @@ async function bootstrap() {
       whitelist: true, // removes properties that are not defined in the DTO
       forbidNonWhitelisted: true, // throws an error if there are properties that are not defined in the DTO
       transform: true, // automatically transforms input data to the expected types based on the DTO
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 

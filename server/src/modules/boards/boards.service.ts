@@ -12,6 +12,8 @@ import { ResponseService } from '../response/response.service';
 import { BoardPermissionsInfo } from '../../shared/interfaces/BoardPermissionsInfo';
 import { BoardsFilter } from 'src/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
+import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
+import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 @Injectable()
 export class BoardsService {
@@ -48,23 +50,18 @@ export class BoardsService {
 
   async getUserRelatedBoards(
     userId: string,
-    page: number,
-    limit: number,
-    order: string,
-    tab: BoardsFilter,
-  ): Promise<any> {
-    // add validation for ALL query params!
-    // if (order !== 'ascending' && order !== 'descending') {
-    //   throw new HttpException('Invalid order', HttpStatus.BAD_REQUEST);
-    // }
-
+    page: number = 1,
+    limit: number = 5,
+    order: string = 'descending',
+    tab: BoardsFilter = BoardsFilter.ALL,
+  ): Promise<PaginatedBoardsResponse> {
     const query = this.getFilterQuery(userId, tab);
     const [total, boards] = await Promise.all([
       this.queryCountDocuments(query),
       this.findUserRelatedBoards(query, page, limit, order),
     ]);
 
-    const abc = boards.map(board => {
+    const boardWithPermission = boards.map(board => {
       const userPermission = this.determineUserPermission(board, userId);
       return {
         _id: board._id,
@@ -75,7 +72,7 @@ export class BoardsService {
       };
     });
 
-    return { boards: abc, page, limit, order, total };
+    return { boards: boardWithPermission, page, limit, order, total };
   }
 
   private getFilterQuery(
@@ -178,5 +175,3 @@ export class BoardsService {
     return this.boardModel.countDocuments(query).exec();
   }
 }
-
-export type SuperBoardWithoutSlides = Omit<SuperBoardDocument, 'slides'>;
