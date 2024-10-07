@@ -6,7 +6,7 @@ import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/BoardPermissions/BoardPermissionsInfoDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import BoardPermissionsSelect from "@/components/board-details/BoardPermissions/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
