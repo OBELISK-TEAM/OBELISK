@@ -60,7 +60,7 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
         />
         <Button
           onClick={() => {
-            router.push(`/board/${boardId}/slides/1`);
+            router.push(`/user-boards/${boardId}/slides/1`);
           }}
         >
           Go to the board
