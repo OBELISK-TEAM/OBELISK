@@ -13,8 +13,7 @@ import { fetchBoardDetails } from "@/mock-data/BoardDetailsFetcher";
 import BoardDetailsInfoSkeleton from "@/components/loading/BoardDetailsInfoSkeleton";
 import BoardInfoItem from "./BoardInfoItem";
 
-const BoardDetails: React.FC = () => {
-  const boardId = "123";
+const BoardDetailsInfo: React.FC<{ boardId: string }> = ({ boardId }) => {
   const { data: board, error, isLoading, mutate } = useSWR(`/mocked/boards/${boardId}`, fetchBoardDetails);
 
   if (isLoading) {
@@ -23,9 +22,9 @@ const BoardDetails: React.FC = () => {
 
   if (error) {
     return (
-      <section className="rounded-lg border border-destructive bg-card p-6 shadow">
+      <section className="rounded-lg border border-error-border bg-card p-6 shadow">
         <BoardHeader title="Board Details" description="Board Information" />
-        <p className="text-destructive">{error.message}</p>
+        <p className="text-error-foreground">{error.message}</p>
       </section>
     );
   }
@@ -120,4 +119,4 @@ const BoardDetails: React.FC = () => {
   );
 };
 
-export default BoardDetails;
+export default BoardDetailsInfo;
