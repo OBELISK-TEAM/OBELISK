@@ -25,7 +25,7 @@ export const fetchBoards =
       const boards = jsonData.boards.map((board: BoardResponse): BoardResponse => {
         return {
           ...board,
-          size: board.size ?? 100,
+          size: board.size ?? 100, //todo: remove "?? 100" line when the backend is ready
         };
       });
 
