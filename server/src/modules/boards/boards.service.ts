@@ -54,7 +54,7 @@ export class BoardsService {
     userId: string,
     page: number = 1,
     limit: number = 5,
-    order: SortOrder = 'descending',
+    order: SortOrder = 'desc',
     tab: BoardsFilter = BoardsFilter.ALL,
   ): Promise<PaginatedBoardsResponseObject> {
     const query = this.getFilterQuery(userId, tab);
@@ -186,7 +186,7 @@ export class BoardsService {
     order: SortOrder,
   ): Promise<BoardWithoutSlides[]> {
     const skip = (page - 1) * limit;
-    const sortOrder = order === 'ascending' ? 'ascending' : 'descending';
+    const sortOrder = order === 'asc' ? 1 : -1;
     return this.boardModel
       .find(query)
       .sort([['updatedAt', sortOrder]])
@@ -203,4 +203,4 @@ export class BoardsService {
   }
 }
 
-export type SortOrder = 'ascending' | 'descending';
+export type SortOrder = 'asc' | 'desc';
