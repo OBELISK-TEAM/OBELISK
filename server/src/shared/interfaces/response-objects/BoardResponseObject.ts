@@ -1,6 +1,6 @@
 import { SlideResponseObject } from './SlideResponseObject';
 import { SuperSlideDocument } from '../../../schemas/slide/super.slide.schema';
-import { Types } from 'mongoose';
+import { Schema, SchemaTimestampsConfig, Types } from 'mongoose';
 
 export interface BoardResponseObject {
   _id: string;
@@ -12,9 +12,9 @@ export interface BoardResponseObject {
     moderator: string[];
   };
   slides?: string[] | Types.ObjectId[];
-  slide?: SlideResponseObject | string | SuperSlideDocument;
-  createdAt?: Date | string | boolean | undefined;
-  updatedAt?: Date | string | boolean | undefined;
+  slide?: SlideResponseObject | string;
+  createdAt?: SchemaTimestampsConfig['createdAt'];
+  updatedAt?: SchemaTimestampsConfig['updatedAt'];
   slidesCount?: number;
   permission?: string;
 }

@@ -11,13 +11,11 @@ import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardsFilter } from 'src/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
-import {
-  BoardWithoutSlides,
-  BoardWithPopulatedPermissions,
-} from '../../shared/interfaces/BoardWithoutSlides';
-import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
+import { PaginatedBoardsResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
+import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 
 @Injectable()
 export class BoardsService {
@@ -58,7 +56,7 @@ export class BoardsService {
     limit: number = 5,
     order: SortOrder = 'descending',
     tab: BoardsFilter = BoardsFilter.ALL,
-  ): Promise<PaginatedBoardsResponse> {
+  ): Promise<PaginatedBoardsResponseObject> {
     const query = this.getFilterQuery(userId, tab);
     const [total, boards] = await Promise.all([
       this.queryCountDocuments(query),
@@ -66,26 +64,16 @@ export class BoardsService {
     ]);
 
     const populatedBoards = await Promise.all(
-      boards.map(board => this.populatePermissions(board)),
+      boards.map(async board => {
+        const permission = this.determineUserPermission(board, userId);
+        const populatedBoard = await this.populatePermissions(board);
+        return this.res.toResponseBoardWithPopulatedPermissions(
+          populatedBoard,
+          permission,
+        );
+      }),
     );
-
-    const boardsWithPermission = populatedBoards.map(board => {
-      const boardObject = board.toObject();
-      const userPermission = this.determineUserPermission(boardObject, userId);
-      return {
-        _id: boardObject._id,
-        name: boardObject.name,
-        permission: BoardPermission[userPermission],
-        permissions: {
-          ...boardObject.permissions,
-          owner: boardObject.owner,
-        },
-        createdAt: boardObject.createdAt,
-        updatedAt: boardObject.updatedAt,
-      };
-    });
-
-    return { boards: boardsWithPermission, page, limit, order, total };
+    return { boards: populatedBoards, page, limit, order, total };
   }
 
   private async populatePermissions(
@@ -124,7 +112,7 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  async getClientBoardInfo(
+  async getBoardWithSlidesCount(
     userId: string,
     boardId: string,
   ): Promise<ClientBoardInfo> {
