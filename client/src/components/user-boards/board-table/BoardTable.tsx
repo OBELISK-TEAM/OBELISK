@@ -29,7 +29,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
 
   const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
-    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${1}&page=${currentPage}&limit=${perPage}&order=${activeTab === 1 ? "descending" : "ascending"}`,
+    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
     fetchBoards(accessToken as string),
     {
       revalidateOnFocus: true,
@@ -56,13 +56,20 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   if (error) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <p className={"text-red-600"}>{error.message} || Failed to load data.</p>
+        <p className={"text-red-600"}>{error.message || "error while fetching boards"}</p>
       </div>
     );
   }
-
   if (!previousData && isLoading) {
     return <BoardTableSkeleton />;
+  }
+
+  if (!data || data.data.length === 0) {
+    return (
+      <div className="rounded-lg border bg-card p-4">
+        <p className="text-muted-foreground">No boards found</p>
+      </div>
+    );
   }
   const displayData = data || previousData;
 
