@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
-import { prettyDate } from "@/lib/datesUtils";
+import { prettyDate } from "@/lib/dateUtils";
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
   let sharedUsers: string[] = [];
   if (board.permissions) {
