@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../../../schemas/board/super.board.schema';
 import {
   SuperObject,
   SuperObjectDocument,
-} from '../../schemas/object/super.object.schema';
+} from '../../../../schemas/object/super.object.schema';
 import { ObjectResponseObject } from 'src/shared/interfaces/response-objects/ObjectResponseObject';
 import { CreateObjectDto } from './objects.dto';
-import { SuperSlideDocument } from '../../schemas/slide/super.slide.schema';
-import { ResponseService } from '../response/response.service';
-import { SlidesService } from '../slides/slides.service';
+import { SuperSlideDocument } from '../../../../schemas/slide/super.slide.schema';
+import { ResponseService } from '../../../response/response.service';
+import { SlidesService } from '../slides.service';
 
 @Injectable()
 export class ObjectsService {

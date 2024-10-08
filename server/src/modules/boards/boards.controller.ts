@@ -17,7 +17,8 @@ import { PaginatedBoardsResponseObject } from '../../shared/interfaces/response-
 
 // TODO - verify permissions for endpointss
 
-@Controller('boards')
+// @Controller('boards')
+@Controller()
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 

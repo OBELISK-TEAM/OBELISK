@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import {
+  APP_FILTER,
+  APP_INTERCEPTOR,
+  RouterModule,
+  Routes,
+} from '@nestjs/core';
 import { HttpErrorFilter } from './shared/filters/http.error.filter';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { UsersModule } from './modules/users/users.module';
@@ -10,11 +15,32 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { GatewayModule } from './gateway/gateway.module';
 import { StatsModule } from './modules/stats/stats.module';
+import { SlidesModule } from './modules/boards/slides/slides.module';
+import { ObjectsModule } from './modules/boards/slides/objects/objects.module';
 
 const DEFAULT_DB_HOST = 'localhost';
+const routes: Routes = [
+  {
+    path: 'boards',
+    module: BoardsModule,
+    children: [
+      {
+        path: '/:boardId/slides',
+        module: SlidesModule,
+        children: [
+          {
+            path: '/:slideId/objects',
+            module: ObjectsModule,
+          },
+        ],
+      },
+    ],
+  },
+];
 
 @Module({
   imports: [
+    RouterModule.register(routes),
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

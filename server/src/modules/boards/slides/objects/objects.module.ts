@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ObjectsController } from './objects.controller';
 import { ObjectsService } from './objects.service';
-import { ResponseModule } from '../response/response.module';
-
-import { SlidesModule } from '../slides/slides.module';
+import { SlidesModule } from '../slides.module';
+import { ResponseModule } from '../../../response/response.module';
 
 @Module({
   imports: [ResponseModule, SlidesModule],

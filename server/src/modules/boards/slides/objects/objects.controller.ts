@@ -8,10 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ObjectsService } from './objects.service';
-import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
+import { ObjectResponseObject } from '../../../../shared/interfaces/response-objects/ObjectResponseObject';
 import { CreateObjectDto } from './objects.dto';
 
-@Controller('boards/:boardId/slides/:slideId/objects')
+@Controller()
 export class ObjectsController {
   constructor(private readonly objectsService: ObjectsService) {}
 

@@ -5,7 +5,7 @@ import {
   UpdateObjectData,
 } from '../gateway.dto';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { ObjectsService } from '../../modules/objects/objects.service';
+import { ObjectsService } from '../../modules/boards/slides/objects/objects.service';
 import { WsException } from '@nestjs/websockets';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 
