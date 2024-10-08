@@ -9,7 +9,7 @@ interface LayoutProps {
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { boardId } = params;
-  //const boardData = await getBoardData(boardId); todo: retrieve board name for title
+  //const boardData = await getBoardData(boardId); todo: [JIRA OK-219] retrieve board name for title
   return {
     title: `User board - ${boardId} | Obelisk`,
     description: "User board main information",
