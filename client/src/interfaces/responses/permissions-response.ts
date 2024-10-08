@@ -1,5 +1,7 @@
+import { UserResponse } from "@/interfaces/responses/user-response";
+
 export interface PermissionsResponse {
-  viewer: string[];
-  editor: string[];
-  moderator: string[];
+  viewer: UserResponse[];
+  editor: UserResponse[];
+  moderator: UserResponse[];
 }

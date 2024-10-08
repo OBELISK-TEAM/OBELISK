@@ -81,5 +81,9 @@ export const getPermissionLabel = (permission: BoardPermission): string => {
 };
 
 export const concatenatePermissions = (permissions: PermissionsResponse): string[] => {
-  return [...(permissions.viewer || []), ...(permissions.editor || []), ...(permissions.moderator || [])];
+  return [
+    ...(permissions.viewer.map((e) => e.email) || []),
+    ...(permissions.editor.map((e) => e.email) || []),
+    ...(permissions.moderator.map((e) => e.email) || []),
+  ];
 };

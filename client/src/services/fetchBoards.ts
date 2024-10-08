@@ -1,41 +1,40 @@
-// fetchBoards.ts
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
-import { BoardPermission } from "@/enums/BoardPermission";
+import { extractMessagesFromApiError } from "@/lib/toastsUtils";
+import { ApiError } from "@/errors/ApiError";
+import logger from "@/lib/logger";
 
 export const fetchBoards =
   (accessToken: string) =>
   async (url: string): Promise<PaginatedBoardsResponse> => {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch boards");
-    }
+      if (!response.ok) {
+        const reasons = await extractMessagesFromApiError(response);
+        throw new ApiError(reasons);
+      }
 
-    const jsonData = await response.json();
+      const jsonData: PaginatedBoardsResponse = await response.json();
 
-    const boards = jsonData.boards.map((board: any): BoardResponse => {
+      const boards = jsonData.boards.map((board: BoardResponse): BoardResponse => {
+        return {
+          ...board,
+          size: board.size ?? 100,
+        };
+      });
+
       return {
-        _id: board._id,
-        name: board.name,
-        createdAt: board.createdAt,
-        modifiedAt: board.updatedAt,
-        permission: board.permission as BoardPermission,
-        size: 200,
-        slides: [],
-        owner: board.owner || "",
+        ...jsonData,
+        boards,
       };
-    });
-
-    return {
-      data: boards,
-      page: jsonData.page,
-      limit: jsonData.limit,
-      total: jsonData.total,
-    };
+    } catch (error) {
+      logger.error("Error while fetching boards:", error);
+      throw error;
+    }
   };
