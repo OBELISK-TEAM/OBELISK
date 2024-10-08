@@ -27,7 +27,7 @@ const DEFAULT_DB_HOST = 'localhost';
     UsersModule,
     BoardsModule,
     GatewayModule,
-    StatsModule
+    StatsModule,
   ],
   providers: [
     {
