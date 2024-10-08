@@ -27,7 +27,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   const perPage = 5;
   const router = useRouter();
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
-
+  //
   const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
     `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
     fetchBoards(accessToken as string),
