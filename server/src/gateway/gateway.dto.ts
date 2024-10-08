@@ -1,7 +1,7 @@
-import { SlideObjectTextStyles } from '../shared/interfaces/fabric-js/SlideObjectTextStyles';
-import { SlideObjectFilter } from '../shared/interfaces/fabric-js/SlideObjectFilter';
-import { SlideObjectPath } from '../shared/interfaces/fabric-js/SlideObjectPath';
-import { SlideObjectShadow } from '../shared/interfaces/fabric-js/SlideObjectShadow';
+import { ObjectTextStyles } from '../shared/interfaces/fabric-js/ObjectTextStyles';
+import { ObjectFilter } from '../shared/interfaces/fabric-js/ObjectFilter';
+import { ObjectPath } from '../shared/interfaces/fabric-js/ObjectPath';
+import { ObjectShadow } from '../shared/interfaces/fabric-js/ObjectShadow';
 import { Eraser } from 'src/schemas/object/base.object.schema';
 
 export interface JoinBoardData {
@@ -34,7 +34,6 @@ export interface DeleteObjectData {
 
 export interface BoardOnlyId extends OnlyId {}
 export interface ObjectOnlyId extends OnlyId {}
-export interface SlideOnlyId extends OnlyId {}
 
 export interface OnlyId {
   _id: string;
@@ -71,8 +70,8 @@ export interface ObjectDataProps {
   globalCompositeOperation?: string;
   skewX?: number;
   skewY?: number;
-  path?: SlideObjectPath[];
-  shadow?: SlideObjectShadow | null;
+  path?: ObjectPath[];
+  shadow?: ObjectShadow | null;
   strokeDashArray?: number[] | null;
   stroke?: string | null;
   fill?: string | null;
@@ -98,7 +97,7 @@ export interface ObjectDataProps {
   lineHeight?: number;
   textBackgroundColor?: string;
   charSpacing?: number;
-  styles?: SlideObjectTextStyles[];
+  styles?: ObjectTextStyles[];
   direction?: 'ltr' | 'rtl';
   pathStartOffset?: number;
   pathSide?: 'left' | 'right' | 'center';
@@ -107,7 +106,7 @@ export interface ObjectDataProps {
   crossOrigin?: 'null' | 'anonymous';
   cropX?: number;
   cropY?: number;
-  filters?: SlideObjectFilter[];
+  filters?: ObjectFilter[];
   erasable?: boolean;
   eraser?: Eraser;
 }

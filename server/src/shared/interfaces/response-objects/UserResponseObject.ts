@@ -6,7 +6,6 @@ export interface UserResponseObject {
   userRole: number;
   userAuthProvider: number;
   boards?: string[];
-  slideObjects?: string[];
   lastActive?: Date;
   createdAt?: SchemaTimestampsConfig['createdAt'];
   updatedAt?: SchemaTimestampsConfig['updatedAt'];

@@ -14,7 +14,6 @@ class UserModelMock {
   findOne = jest.fn();
   findById = jest.fn();
   findByIdAndUpdate = jest.fn();
-  findByIdAndDelete = jest.fn();
   create = jest.fn();
   save = jest.fn();
 }
@@ -261,13 +260,12 @@ describe('UsersService', () => {
       userRole: UserRole.USER,
       userAuthProvider: UserAuthProvider.INTERNAL,
       boards: ['boardId1', 'boardId2'],
-      slideObjects: ['slideObject1', 'slideObject2'],
       createdAt: new Date('2023-01-01T00:00:00Z'),
       updatedAt: new Date('2023-01-02T00:00:00Z'),
       toObject: jest.fn().mockReturnThis(),
     } as unknown as UserDocument;
 
-    it('should return the basic UserResponseObject without boards, slideObjects, or timestamps', () => {
+    it('should return the basic UserResponseObject without boards or timestamps', () => {
       const result = userService.toResponseUser(mockUserDocument);
 
       expect(result).toEqual({

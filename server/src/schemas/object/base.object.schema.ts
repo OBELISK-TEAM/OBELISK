@@ -1,8 +1,8 @@
 import { Prop } from '@nestjs/mongoose';
-import { SlideObjectShadow } from '../../shared/interfaces/fabric-js/SlideObjectShadow';
-import { SlideObjectTextStyles } from '../../shared/interfaces/fabric-js/SlideObjectTextStyles';
-import { SlideObjectFilter } from '../../shared/interfaces/fabric-js/SlideObjectFilter';
-import { SlideObjectPath } from '../../shared/interfaces/fabric-js/SlideObjectPath';
+import { ObjectShadow } from '../../shared/interfaces/fabric-js/ObjectShadow';
+import { ObjectTextStyles } from '../../shared/interfaces/fabric-js/ObjectTextStyles';
+import { ObjectFilter } from '../../shared/interfaces/fabric-js/ObjectFilter';
+import { ObjectPath } from '../../shared/interfaces/fabric-js/ObjectPath';
 import { Schema as MongooseSchema } from 'mongoose';
 
 export class BaseObject {
@@ -139,13 +139,13 @@ export class BaseObject {
   @Prop({
     type: [MongooseSchema.Types.Mixed],
   })
-  path?: SlideObjectPath[];
+  path?: ObjectPath[];
 
   @Prop({
     default: null,
-    type: SlideObjectShadow,
+    type: ObjectShadow,
   })
-  shadow?: SlideObjectShadow | null;
+  shadow?: ObjectShadow | null;
 
   @Prop({
     default: null,
@@ -278,7 +278,7 @@ export class BaseObject {
   @Prop({
     type: [MongooseSchema.Types.Mixed],
   })
-  styles?: SlideObjectTextStyles[];
+  styles?: ObjectTextStyles[];
 
   @Prop({
     enum: ['ltr', 'rtl'],
@@ -323,7 +323,7 @@ export class BaseObject {
   @Prop({
     type: [MongooseSchema.Types.Mixed],
   })
-  filters?: SlideObjectFilter[];
+  filters?: ObjectFilter[];
 
   @Prop({
     type: Boolean,

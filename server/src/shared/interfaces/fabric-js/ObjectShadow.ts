@@ -1,4 +1,4 @@
-export class SlideObjectShadow {
+export class ObjectShadow {
   color?: string;
   blur?: number;
   offsetX?: number;

@@ -1,7 +1,7 @@
-import { SlideObjectPath } from '../fabric-js/SlideObjectPath';
-import { SlideObjectShadow } from '../fabric-js/SlideObjectShadow';
-import { SlideObjectTextStyles } from '../fabric-js/SlideObjectTextStyles';
-import { SlideObjectFilter } from '../fabric-js/SlideObjectFilter';
+import { ObjectPath } from '../fabric-js/ObjectPath';
+import { ObjectShadow } from '../fabric-js/ObjectShadow';
+import { ObjectTextStyles } from '../fabric-js/ObjectTextStyles';
+import { ObjectFilter } from '../fabric-js/ObjectFilter';
 import { Eraser } from '../../../schemas/object/base.object.schema';
 
 export interface ObjectResponseObject {
@@ -32,8 +32,8 @@ export interface ObjectResponseObject {
   globalCompositeOperation?: string;
   skewX?: number;
   skewY?: number;
-  path?: SlideObjectPath[];
-  shadow?: SlideObjectShadow | null;
+  path?: ObjectPath[];
+  shadow?: ObjectShadow | null;
   strokeDashArray?: number[] | null;
   stroke?: string | null;
   fill?: string | null;
@@ -59,7 +59,7 @@ export interface ObjectResponseObject {
   lineHeight?: number;
   textBackgroundColor?: string;
   charSpacing?: number;
-  styles?: SlideObjectTextStyles[];
+  styles?: ObjectTextStyles[];
   direction?: 'ltr' | 'rtl';
   pathStartOffset?: number;
   pathSide?: 'left' | 'right' | 'center';
@@ -68,7 +68,7 @@ export interface ObjectResponseObject {
   crossOrigin?: 'null' | 'anonymous';
   cropX?: number;
   cropY?: number;
-  filters?: SlideObjectFilter[];
+  filters?: ObjectFilter[];
   erasable?: boolean;
   eraser?: Eraser;
 }
