@@ -7,6 +7,8 @@ import { ObjectResponseObject } from '../../shared/interfaces/response-objects/O
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardPermission } from '../../enums/board.permission';
+import { PopulatedBoardResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 
 @Injectable()
 export class ResponseService {
@@ -45,7 +47,7 @@ export class ResponseService {
     };
   }
 
-  toResponseClientBoardInfo(board: ClientBoardInfo): BoardResponseObject {
+  toResponseBoardWithSlidesCount(board: ClientBoardInfo): BoardResponseObject {
     const { _id, name, owner, slidesCount, permission } = board;
     return {
       _id: _id as string,
@@ -53,6 +55,25 @@ export class ResponseService {
       owner,
       slidesCount,
       permission: BoardPermission[permission],
+    };
+  }
+
+  toResponseBoardWithPopulatedPermissions(
+    board: BoardWithPopulatedPermissions,
+    permission: BoardPermission,
+  ): PopulatedBoardResponseObject {
+    const { _id, name, owner, permissions, createdAt, updatedAt } =
+      board.toObject<BoardWithPopulatedPermissions>();
+    return {
+      _id: _id as string,
+      name,
+      permission: BoardPermission[permission],
+      permissions: {
+        ...permissions,
+      },
+      owner,
+      createdAt,
+      updatedAt,
     };
   }
 }

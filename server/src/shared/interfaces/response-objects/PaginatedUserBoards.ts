@@ -1,14 +1,24 @@
-import { SuperBoard } from '../../../schemas/board/super.board.schema';
+import { SchemaTimestampsConfig } from 'mongoose';
+import { UserPermission } from '../UserPermission';
 
-export interface PaginatedBoardsResponse {
-  boards: BoardWithoutSlidesAndPermissions[];
+export interface PaginatedBoardsResponseObject {
+  boards: PopulatedBoardResponseObject[];
   page: number;
   limit: number;
   order: string;
   total: number;
 }
 
-interface BoardWithoutSlidesAndPermissions
-  extends Omit<SuperBoard, 'slides' | 'permissions' | 'owner'> {
+export interface PopulatedBoardResponseObject {
+  _id: string;
+  name: string;
   permission: string;
+  permissions: {
+    viewer: UserPermission[];
+    editor: UserPermission[];
+    moderator: UserPermission[];
+  };
+  owner: UserPermission;
+  createdAt: SchemaTimestampsConfig['createdAt'];
+  updatedAt: SchemaTimestampsConfig['updatedAt'];
 }

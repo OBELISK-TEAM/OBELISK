@@ -11,10 +11,11 @@ import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../response/response.service';
 import { BoardsFilter } from 'src/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
-import { SuperBoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
-import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithoutSlides } from '../../shared/interfaces/BoardWithoutSlides';
+import { PaginatedBoardsResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
+import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 
 @Injectable()
 export class BoardsService {
@@ -53,27 +54,35 @@ export class BoardsService {
     userId: string,
     page: number = 1,
     limit: number = 5,
-    order: string = 'descending',
+    order: SortOrder = 'desc',
     tab: BoardsFilter = BoardsFilter.ALL,
-  ): Promise<PaginatedBoardsResponse> {
+  ): Promise<PaginatedBoardsResponseObject> {
     const query = this.getFilterQuery(userId, tab);
     const [total, boards] = await Promise.all([
       this.queryCountDocuments(query),
       this.findUserRelatedBoards(query, page, limit, order),
     ]);
 
-    const boardWithPermission = boards.map(board => {
-      const userPermission = this.determineUserPermission(board, userId);
-      return {
-        _id: board._id,
-        name: board.name,
-        permission: BoardPermission[userPermission],
-        createdAt: board.createdAt,
-        updatedAt: board.updatedAt,
-      };
-    });
+    const populatedBoards = await Promise.all(
+      boards.map(async board => {
+        const permission = this.determineUserPermission(board, userId);
+        const populatedBoard = await this.populatePermissions(board);
+        return this.res.toResponseBoardWithPopulatedPermissions(
+          populatedBoard,
+          permission,
+        );
+      }),
+    );
+    return { boards: populatedBoards, page, limit, order, total };
+  }
 
-    return { boards: boardWithPermission, page, limit, order, total };
+  private async populatePermissions(
+    board: BoardWithoutSlides,
+  ): Promise<BoardWithPopulatedPermissions> {
+    return board.populate({
+      path: 'permissions.viewer permissions.editor permissions.moderator owner',
+      select: 'name email',
+    });
   }
 
   private getFilterQuery(
@@ -103,7 +112,7 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  async getClientBoardInfo(
+  async getBoardWithSlidesCount(
     userId: string,
     boardId: string,
   ): Promise<ClientBoardInfo> {
@@ -117,16 +126,13 @@ export class BoardsService {
     userId: string,
     boardId: string,
   ): Promise<BoardWithSlidesCount> {
+    const queryBuilder = new FilterQueryBuilder();
+    const query = queryBuilder.accessibleTo(userId).build();
     const result = await this.boardModel.aggregate<BoardWithSlidesCount>([
       {
         $match: {
           _id: new Types.ObjectId(boardId),
-          $or: [
-            { owner: userId },
-            { 'permissions.viewer': userId },
-            { 'permissions.editor': userId },
-            { 'permissions.moderator': userId },
-          ],
+          ...query,
         },
       },
       {
@@ -149,7 +155,7 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board: BoardWithSlidesCount | SuperBoardWithoutSlides,
+    board: BoardWithSlidesCount | BoardWithoutSlides,
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
@@ -174,22 +180,27 @@ export class BoardsService {
   }
 
   async findUserRelatedBoards(
-    query: FilterQuery<SuperBoard>,
+    query: FilterQuery<SuperBoardDocument>,
     page: number,
     limit: number,
-    order: string,
-  ): Promise<SuperBoardWithoutSlides[]> {
+    order: SortOrder,
+  ): Promise<BoardWithoutSlides[]> {
     const skip = (page - 1) * limit;
+    const sortOrder = order === 'asc' ? 1 : -1;
     return this.boardModel
       .find(query)
-      .sort([['updatedAt', order === 'ascending' ? 'ascending' : 'descending']])
+      .sort([['updatedAt', sortOrder]])
       .skip(skip)
       .limit(limit)
       .select('-slides')
       .exec();
   }
 
-  async queryCountDocuments(query: FilterQuery<SuperBoard>): Promise<number> {
+  async queryCountDocuments(
+    query: FilterQuery<SuperBoardDocument>,
+  ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
   }
 }
+
+export type SortOrder = 'asc' | 'desc';
