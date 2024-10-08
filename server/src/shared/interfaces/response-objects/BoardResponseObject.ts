@@ -1,6 +1,5 @@
 import { SlideResponseObject } from './SlideResponseObject';
-import { SuperSlideDocument } from '../../../schemas/slide/super.slide.schema';
-import { Schema, SchemaTimestampsConfig, Types } from 'mongoose';
+import { SchemaTimestampsConfig, Types } from 'mongoose';
 
 export interface BoardResponseObject {
   _id: string;

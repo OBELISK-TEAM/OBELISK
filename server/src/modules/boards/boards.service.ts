@@ -155,10 +155,7 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board:
-      | BoardWithSlidesCount
-      | BoardWithoutSlides
-      | BoardWithPopulatedPermissions,
+    board: BoardWithSlidesCount | BoardWithoutSlides,
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
