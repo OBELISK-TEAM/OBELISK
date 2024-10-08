@@ -8,8 +8,6 @@ import {
   SuperBoard,
   SuperBoardSchema,
 } from '../../schemas/board/super.board.schema';
-import { Routes } from '@nestjs/core';
-import { SlidesModule } from './slides/slides.module';
 
 @Module({
   imports: [
