@@ -70,8 +70,8 @@ export class ResponseService {
       permission: BoardPermission[permission],
       permissions: {
         ...permissions,
-        owner,
       },
+      owner,
       createdAt,
       updatedAt,
     };

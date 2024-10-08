@@ -17,8 +17,8 @@ export interface PopulatedBoardResponseObject {
     viewer: UserPermission[];
     editor: UserPermission[];
     moderator: UserPermission[];
-    owner: UserPermission;
   };
+  owner: UserPermission;
   createdAt: SchemaTimestampsConfig['createdAt'];
   updatedAt: SchemaTimestampsConfig['updatedAt'];
 }
