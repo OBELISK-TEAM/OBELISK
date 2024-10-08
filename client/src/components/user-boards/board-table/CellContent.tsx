@@ -3,23 +3,25 @@ import { Badge } from "@/components/ui/badge";
 import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
+import { prettyDate } from "@/lib/datesUtils";
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
   let sharedUsers: string[] = [];
   if (board.permissions) {
     sharedUsers = concatenatePermissions(board.permissions);
   }
+
   switch (column) {
     case BoardTableColumns.NAME:
       return board.name;
 
     case BoardTableColumns.OWNER:
-      return board.owner ? board.owner : "You";
+      return board?.owner?.email ?? "You";
 
     case BoardTableColumns.MODIFIED_AT:
-      return board.modifiedAt;
+      return prettyDate(board.updatedAt);
 
     case BoardTableColumns.CREATED_AT:
-      return board.createdAt;
+      return prettyDate(board.createdAt);
 
     case BoardTableColumns.MY_PERMISSION:
       if (board.permission) {

@@ -56,7 +56,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   if (error) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <p className={"text-red-600"}>{error.message || "error while fetching boards"}</p>
+        <p className={"text-red-600"}>{"Oops! " + error.message || "error while fetching boards"}</p>
       </div>
     );
   }
@@ -64,7 +64,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
     return <BoardTableSkeleton />;
   }
 
-  if (!data || data.data.length === 0) {
+  if (!data || data.boards.length === 0) {
     return (
       <div className="rounded-lg border bg-card p-4">
         <p className="text-muted-foreground">No boards found</p>
@@ -96,8 +96,8 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
             <BoardTableLeadRow columns={columns} />
             <TableBody>
               {displayData &&
-                displayData.data.length > 0 &&
-                displayData.data.map((board: BoardResponse) => (
+                displayData.boards.length > 0 &&
+                displayData.boards.map((board: BoardResponse) => (
                   <TableRow
                     key={board._id}
                     className="cursor-pointer border-b hover:bg-muted/50"
