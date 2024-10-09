@@ -2,7 +2,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 
 interface BoardInfoItemProps {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   label: string;
   children: React.ReactNode;
 }

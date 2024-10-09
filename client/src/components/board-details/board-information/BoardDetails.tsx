@@ -72,7 +72,6 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
           <BoardNameField board={board} id={"board-name"} mutate={mutate} />
 
           <BoardInfoInputItem
-            icon={<User className="mr-1 h-4 w-4" />}
             label="Owner"
             value={board.owner}
             id={"owner"}
@@ -83,7 +82,6 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
           />
 
           <BoardInfoInputItem
-            icon={<FaCalendarAlt className="mr-1 h-4 w-4" />}
             label="Creation Date"
             id={"creation-date"}
             value={creationDate}
@@ -94,7 +92,6 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
           />
 
           <BoardInfoInputItem
-            icon={<FaCalendarAlt className="mr-1 h-4 w-4" />}
             label="Last Updated"
             id={"last-updated"}
             value={lastUpdated}
@@ -103,7 +100,7 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
               readOnly: true,
             }}
           />
-          <BoardInfoItem icon={<DatabaseIcon className="mr-1 h-4 w-4" />} label="Used space">
+          <BoardInfoItem label="Used space">
             <div className="flex w-full items-center justify-between gap-4 text-xs">
               <Progress value={usedPercentage} className="w-full" />
               <Button variant="secondary" className="w-40 text-xs">
@@ -113,7 +110,7 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
           </BoardInfoItem>
 
           {/* Number of Slides */}
-          <BoardInfoItem icon={<LayersIcon className="mr-1 h-4 w-4" />} label="No slides">
+          <BoardInfoItem label="No slides">
             <Button variant="outline" className="w-fit text-xs">
               <span className="text-muted-foreground">{`${board.slides.length} / 10`}</span>
             </Button>
