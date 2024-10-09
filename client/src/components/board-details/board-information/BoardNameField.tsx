@@ -1,6 +1,6 @@
 "use client";
 import React, { KeyboardEvent, useEffect } from "react";
-import { Square, Pencil, Save, XCircle } from "lucide-react";
+import { Pencil, Save, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BoardInfoInputItem from "@/components/board-details/board-information/BoardInfoInputItem";
 import { useBoardName } from "@/hooks/board-details/useBoardName";
