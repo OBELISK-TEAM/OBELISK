@@ -34,7 +34,6 @@ const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id, mutate }) =>
 
   return (
     <BoardInfoInputItem
-      icon={<Square className="mr-1 h-4 w-4" />}
       label="Board name"
       value={name}
       isEditing={isEditing}
