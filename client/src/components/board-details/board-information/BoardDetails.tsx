@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Calendar as FaCalendarAlt, User, DatabaseIcon, LayersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
