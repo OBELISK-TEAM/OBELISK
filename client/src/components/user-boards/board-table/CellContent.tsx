@@ -4,6 +4,7 @@ import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
 import { prettyDate } from "@/lib/dateUtils";
+import { bytesToKilobytes } from "@/lib/bytesConverter";
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
   let sharedUsers: string[] = [];
   if (board.permissions) {
@@ -50,8 +51,8 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
         </div>
       );
 
-    case BoardTableColumns.SIZE_IN_KB:
-      return `${board.size} kB`;
+    case BoardTableColumns.SIZE:
+      return `${bytesToKilobytes(board.size ?? 0)} kB`;
 
     default:
       return "";

@@ -6,12 +6,12 @@ import { useState } from "react";
 import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
 
 const tabs = [
-  { label: "Owned by you", value: BoardsActiveTab.OWNED_BY_CURRENT_USER },
-  { label: "Shared by others", value: BoardsActiveTab.SHARED_FOR_CURRENT_USER },
+  { label: "Owned by you", value: BoardsActiveTab.OWNED_BY },
+  { label: "Shared by others", value: BoardsActiveTab.SHARED_FOR },
 ];
 
 export default function UserBoards({ accessToken }: { accessToken?: string }) {
-  const [activeTab, setActiveTab] = useState<BoardsActiveTab>(BoardsActiveTab.OWNED_BY_CURRENT_USER);
+  const [activeTab, setActiveTab] = useState<BoardsActiveTab>(BoardsActiveTab.OWNED_BY);
 
   const handleTabChange = (tabValue: BoardsActiveTab) => {
     setActiveTab(tabValue);
