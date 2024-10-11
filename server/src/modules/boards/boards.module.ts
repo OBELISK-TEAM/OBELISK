@@ -10,16 +10,16 @@ import {
 } from '../../schemas/board/super.board.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: SuperBoard.name,
-        schema: SuperBoardSchema,
-      },
-    ]),
-    UsersModule,
-    ResponseModule,
-  ],
+  // imports: [
+  //   MongooseModule.forFeature([
+  //     {
+  //       name: SuperBoard.name,
+  //       schema: SuperBoardSchema,
+  //     },
+  //   ]),
+  //   UsersModule,
+  //   ResponseModule,
+  // ],
   controllers: [BoardsController],
   providers: [BoardsService],
   exports: [BoardsService],
