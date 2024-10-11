@@ -122,7 +122,7 @@ export class BoardStatsService {
       { boardId },
       {
         $push: {
-          timeSpend: {
+          timeSpent: {
             userId,
             startDate,
             endDate: null,
