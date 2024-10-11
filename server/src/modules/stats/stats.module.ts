@@ -9,7 +9,7 @@ import { UsersStatsModule } from './users/users.stats.module';
     BoardsStatsModule,
     ObjectsStatsModule,
     SlidesStatsModule,
-    UsersStatsModule
-  ]
+    UsersStatsModule,
+  ],
 })
 export class StatsModule {}

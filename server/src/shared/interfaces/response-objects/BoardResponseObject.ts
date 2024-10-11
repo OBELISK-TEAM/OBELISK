@@ -1,18 +1,19 @@
 import { SlideResponseObject } from './SlideResponseObject';
-import { SuperSlideDocument } from '../../../schemas/slide/super.slide.schema';
-import { Types } from 'mongoose';
+import { SchemaTimestampsConfig, Types } from 'mongoose';
 
 export interface BoardResponseObject {
   _id: string;
   name: string;
   owner: string;
-  permissions: {
+  permissions?: {
     viewer: string[];
     editor: string[];
     moderator: string[];
   };
-  slides: string[] | Types.ObjectId[];
-  slide?: SlideResponseObject | string | SuperSlideDocument;
-  createdAt?: Date | string | boolean | undefined;
-  updatedAt?: Date | string | boolean | undefined;
+  slides?: string[] | Types.ObjectId[];
+  slide?: SlideResponseObject | string;
+  createdAt?: SchemaTimestampsConfig['createdAt'];
+  updatedAt?: SchemaTimestampsConfig['updatedAt'];
+  slidesCount?: number;
+  permission?: string;
 }

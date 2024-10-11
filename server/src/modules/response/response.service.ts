@@ -5,6 +5,10 @@ import { SlideResponseObject } from '../../shared/interfaces/response-objects/Sl
 import { SuperObjectDocument } from '../../schemas/object/super.object.schema';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
+import { BoardPermission } from '../../enums/board.permission';
+import { PopulatedBoardResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 
 @Injectable()
 export class ResponseService {
@@ -40,6 +44,36 @@ export class ResponseService {
     return {
       _id: _id as string,
       ...props,
+    };
+  }
+
+  toResponseBoardWithSlidesCount(board: ClientBoardInfo): BoardResponseObject {
+    const { _id, name, owner, slidesCount, permission } = board;
+    return {
+      _id: _id as string,
+      name,
+      owner,
+      slidesCount,
+      permission: BoardPermission[permission],
+    };
+  }
+
+  toResponseBoardWithPopulatedPermissions(
+    board: BoardWithPopulatedPermissions,
+    permission: BoardPermission,
+  ): PopulatedBoardResponseObject {
+    const { _id, name, owner, permissions, createdAt, updatedAt } =
+      board.toObject<BoardWithPopulatedPermissions>();
+    return {
+      _id: _id as string,
+      name,
+      permission: BoardPermission[permission],
+      permissions: {
+        ...permissions,
+      },
+      owner,
+      createdAt,
+      updatedAt,
     };
   }
 }

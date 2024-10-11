@@ -3,7 +3,6 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import {
@@ -22,7 +21,12 @@ import {
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
-import { UseGuards } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { MinimumBoardPermission } from '../modules/auth/decorators/permissions.decorator';
 import { BoardPermission } from '../enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
@@ -30,14 +34,21 @@ import { SlideResponseObject } from '../shared/interfaces/response-objects/Slide
 import { SlideActionService } from './providers/slide.action.service';
 import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
 import { ObjectActionService } from './providers/object.action.service';
+import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
+import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
 })
+@UseFilters(WsExceptionFilter)
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+)
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer()
-  server: Socket;
-
   constructor(
     private readonly connectionService: ConnectionService,
     private readonly joinBoardService: JoinBoardService,
@@ -45,8 +56,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly slideActionService: SlideActionService,
     private readonly objectActionService: ObjectActionService,
   ) {}
-
-  // CONNECTION
 
   async handleConnection(client: Socket): Promise<void> {
     return this.connectionService.handleConnection(client);
@@ -57,7 +66,10 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-board')
-  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+  async handleJoinBoard(
+    client: GwSocket,
+    data: JoinBoardData,
+  ): Promise<BoardResponseObject> {
     return this.joinBoardService.handleJoinBoard(client, data);
   }
 

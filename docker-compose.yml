@@ -4,6 +4,7 @@ services:
     build:
       context: ./client
       args:
+        - APP_ENV=${APP_ENV}
         - SERVER_HOST=server
         - SERVER_PORT
         - GOOGLE_CLIENT_ID

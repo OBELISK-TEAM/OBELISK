@@ -7,25 +7,39 @@ import {
 import { JoinBoardData } from '../gateway.dto';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
+import { ResponseService } from '../../modules/response/response.service';
+import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class JoinBoardService {
-  constructor(private readonly boardsService: BoardsService) {}
+  constructor(
+    private readonly boardsService: BoardsService,
+    private readonly res: ResponseService,
+  ) {}
   private readonly logger = new Logger(JoinBoardService.name);
 
-  async handleJoinBoard(client: GwSocket, data: JoinBoardData): Promise<void> {
+  async handleJoinBoard(
+    client: GwSocket,
+    data: JoinBoardData,
+  ): Promise<BoardResponseObject> {
     const boardId = data.board._id;
     const userId = client.data.user._id as string;
 
-    const permission = await this.boardsService.getClientBoardPermission(
+    const boardInfo = await this.boardsService.getBoardWithSlidesCount(
       userId,
       boardId,
     );
 
-    if (!this.isPermissionValid(client, permission)) return;
+    const permission = boardInfo.permission;
+
+    if (!this.isPermissionValid(client, permission)) {
+      throw new WsException('You do not have permission to join this board');
+    }
 
     this.assignDataToClient(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
+    return this.res.toResponseBoardWithSlidesCount(boardInfo);
   }
 
   private isPermissionValid(
