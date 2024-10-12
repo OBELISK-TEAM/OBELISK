@@ -34,8 +34,8 @@ const useCanvasEventHandlers = (
       const addObjectData: AddObjectData = {
         object: objectData,
       };
-      const callback = (res: string) => {
-        assignId(e.path, res);
+      const callback = (addedObjectData: any) => {
+        assignId(e.path, addedObjectData._id);
         // const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
         // saveCommand(command);
       };
@@ -73,6 +73,8 @@ const useCanvasEventHandlers = (
         handleActiveSelectionModification();
         return;
       }
+
+      // console.log(e.target);
 
       const oldValues = e.transform?.original;
       const target = e.target;
