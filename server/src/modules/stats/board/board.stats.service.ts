@@ -10,8 +10,8 @@ export class BoardStatsService {
     private readonly boardStatsModel: Model<BoardStats>,
   ) {}
 
-  async initStats(boardId: string): Promise<void> {
-    await this.boardStatsModel.create({ boardId });
+  async initStats(boardId: string, ownerId: string): Promise<void> {
+    await this.boardStatsModel.create({ boardId, ownerId });
   }
 
   async removeStats(boardId: string): Promise<void> {

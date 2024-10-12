@@ -3,6 +3,7 @@ import { Document, Types } from 'mongoose';
 import { StatsUserTimestamp } from 'src/shared/interfaces/StatsUserTimestamp';
 import { Schema as MongooseSchema } from 'mongoose';
 import { SuperBoard } from '../board/super.board.schema';
+import { User } from '../user.schema';
 
 @Schema()
 export class BoardStats extends Document {
@@ -14,11 +15,11 @@ export class BoardStats extends Document {
   boardId: Types.ObjectId;
 
   @Prop({
-    type: Date,
-    required: false,
-    default: null,
+    type: Types.ObjectId,
+    ref: User.name,
+    required: true,
   })
-  lastAccessedAt: Date | null;
+  ownerId: Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
