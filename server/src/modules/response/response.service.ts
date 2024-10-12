@@ -30,7 +30,7 @@ export class ResponseService {
   }
 
   toResponseSlide(slide: SuperSlideDocument): SlideResponseObject {
-    const { _id, objects, version } = slide as SuperSlideDocument;
+    const { _id, objects, version } = slide;
     return {
       _id: _id as string,
       version,
@@ -61,6 +61,7 @@ export class ResponseService {
   toResponseBoardWithPopulatedPermissions(
     board: BoardWithPopulatedPermissions,
     permission: BoardPermission,
+    size: number,
   ): PopulatedBoardResponseObject {
     const { _id, name, owner, permissions, createdAt, updatedAt } =
       board.toObject<BoardWithPopulatedPermissions>();
@@ -72,6 +73,7 @@ export class ResponseService {
         ...permissions,
       },
       owner,
+      size,
       createdAt,
       updatedAt,
     };
