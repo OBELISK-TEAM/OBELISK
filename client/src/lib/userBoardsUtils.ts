@@ -6,8 +6,8 @@ import { PermissionsResponse } from "@/interfaces/responses/permissions-response
 const detailedBoards: BoardTableColumns[] = [
   BoardTableColumns.NAME,
   BoardTableColumns.OWNER,
-  BoardTableColumns.MODIFIED_AT,
-  BoardTableColumns.CREATED_AT,
+  BoardTableColumns.MODIFIED,
+  BoardTableColumns.CREATED,
   BoardTableColumns.MY_PERMISSION,
   BoardTableColumns.SHARED_WITH,
   BoardTableColumns.SIZE,
@@ -15,8 +15,8 @@ const detailedBoards: BoardTableColumns[] = [
 
 const ownedBoards: BoardTableColumns[] = [
   BoardTableColumns.NAME,
-  BoardTableColumns.MODIFIED_AT,
-  BoardTableColumns.CREATED_AT,
+  BoardTableColumns.MODIFIED,
+  BoardTableColumns.CREATED,
   BoardTableColumns.SHARED_WITH,
   BoardTableColumns.SIZE,
 ];

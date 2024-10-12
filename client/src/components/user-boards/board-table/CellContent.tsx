@@ -18,10 +18,10 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
     case BoardTableColumns.OWNER:
       return board?.owner?.email ?? "You";
 
-    case BoardTableColumns.MODIFIED_AT:
+    case BoardTableColumns.MODIFIED:
       return prettyDate(board.updatedAt);
 
-    case BoardTableColumns.CREATED_AT:
+    case BoardTableColumns.CREATED:
       return prettyDate(board.createdAt);
 
     case BoardTableColumns.MY_PERMISSION:
