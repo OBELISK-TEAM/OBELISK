@@ -13,7 +13,7 @@ export interface CanvasContext {
   setActiveItem: (activeItem: string | null) => void;
   slideNumber: number;
   boardId: string;
-  // slideData: any;
+  slideId: string | undefined;
 }
 
 export interface CanvasRef {

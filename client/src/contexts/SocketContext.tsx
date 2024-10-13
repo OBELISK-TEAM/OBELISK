@@ -7,9 +7,13 @@ import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { JoinBoardResponse } from "@/interfaces/socket/SocketCallbacksData";
 
 interface SocketContextProps {
-  totalSlidesNumber: number;
+  totalSlides: number;
   socket: Socket | null;
-  setTotalSlidesNumber: React.Dispatch<React.SetStateAction<number>>;
+  setTotalSlides: React.Dispatch<React.SetStateAction<number>>;
+  boardId: string | undefined;
+  boardName: string | undefined;
+  boardOwner: string | undefined;
+  currentPermission: string | undefined;
 }
 
 const SocketContext = createContext<SocketContextProps | undefined>(undefined);
@@ -21,17 +25,20 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
   const token = `Bearer ${Cookies.get("accessToken")}`;
-  const socketRef = useRef<Socket>(io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
-    autoConnect: true,
-    transports: ["websocket"],
-    auth: {
-      token,
-    },
-  }));
+  const socketRef = useRef<Socket>(
+    io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
+      autoConnect: true,
+      transports: ["websocket"],
+      auth: {
+        token,
+      },
+    })
+  );
   const [isSocketReady, setIsSocketReady] = useState(false);
-  const [totalSlidesNumber, setTotalSlidesNumber] = useState<number>(100);
-  // const [boardName, setBoardName] = useState<string>(undefined)
-  // const [userPermission, setUserPermission] = useSocket<string>(undefined);
+  const [totalSlides, setTotalSlides] = useState<number>(100);
+  const [boardName, setBoardName] = useState<string | undefined>(undefined);
+  const [currentPermission, setCurrentPermission] = useState<string | undefined>(undefined);
+  const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     function onError(val: any) {
@@ -50,14 +57,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       toast.info(res.message);
     }
 
-    socketRef.current.on("error", onError);
-    socketRef.current.on("joined-board", onUserJoinedBoard);
-    socketRef.current.on("left-board", onUserLeftBoard);
-    socketRef.current.on("joined-slide", onUserJoinedSlide);
-    socketRef.current.on("left-slide", onUserLeftSlide);
+    const socket = socketRef.current;
+
+    socket.on("error", onError);
+    socket.on("joined-board", onUserJoinedBoard);
+    socket.on("left-board", onUserLeftBoard);
+    socket.on("joined-slide", onUserJoinedSlide);
+    socket.on("left-slide", onUserLeftSlide);
 
     function handleJoinBoard(res: JoinBoardResponse) {
-      setTotalSlidesNumber(res.slidesCount);
+      setTotalSlides(res.slidesCount);
+      setBoardName(res.name);
+      setCurrentPermission(res.permission);
+      setBoardOwner(res.owner);
+
       toast.success("Joined board " + boardId);
     }
 
@@ -66,20 +79,20 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     // I. HAVE. ENOUGH.
     setTimeout(() => {
       if (socketRef.current) {
-        socketEmitJoinBoard(socketRef.current, joinBoardData, handleJoinBoard);
+        socketEmitJoinBoard(socket, joinBoardData, handleJoinBoard);
       }
       setIsSocketReady(true);
     }, 2000);
 
     return () => {
-      if (!socketRef.current) {
+      if (!socket) {
         return;
       }
-      socketRef.current.off("error", onError);
-      socketRef.current.off("joined-board", onUserJoinedBoard);
-      socketRef.current.off("left-board", onUserLeftBoard);
-      socketRef.current.off("joined-slide", onUserJoinedSlide);
-      socketRef.current.off("left-slide", onUserLeftSlide);
+      socket.off("error", onError);
+      socket.off("joined-board", onUserJoinedBoard);
+      socket.off("left-board", onUserLeftBoard);
+      socket.off("joined-slide", onUserJoinedSlide);
+      socket.off("left-slide", onUserLeftSlide);
 
       // socketEmitLeaveBoard(socketRef.current, {});
       // socketRef.current.disconnect();
@@ -93,9 +106,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   return (
     <SocketContext.Provider
       value={{
-        totalSlidesNumber,
+        totalSlides,
         socket: socketRef.current,
-        setTotalSlidesNumber: setTotalSlidesNumber
+        setTotalSlides,
+        boardName,
+        boardOwner,
+        boardId,
+        currentPermission,
       }}
     >
       {children}

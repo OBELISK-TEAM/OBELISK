@@ -12,6 +12,6 @@ export interface JoinSlideResponse {
   objects: object[];
 }
 
-export interface SlideAddedResponse extends JoinSlideResponse{ }
+export interface SlideAddedResponse extends JoinSlideResponse {}
 
-export interface SlideDeletedResponse extends JoinSlideResponse{ }
+export interface SlideDeletedResponse extends JoinSlideResponse {}

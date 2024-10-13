@@ -7,6 +7,7 @@ import { useSocket } from "./SocketContext";
 import { toast } from "sonner";
 import { AddSlideData, DeleteSlideData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitAddSlide, socketEmitDeleteSlide } from "@/lib/board/socketEmitUtils";
+import { SlideDeletedResponse } from "@/interfaces/socket/SocketCallbacksData";
 
 interface SlideControlsContext {
   currentSlide: number;
@@ -22,8 +23,8 @@ interface SlideControlsContext {
 const SlideControlsContext = createContext<SlideControlsContext | undefined>(undefined);
 
 export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { socket, totalSlidesNumber: totalSlides } = useSocket();
-  const { slideNumber: currentSlide, boardId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
+  const { socket, totalSlides, setTotalSlides } = useSocket();
+  const { slideNumber: currentSlide, boardId, slideId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
   const router = useRouter();
   const SLIDE_LIMIT = 10;
 
@@ -33,6 +34,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     const addSlideData: AddSlideData = {};
     socketEmitAddSlide(socket, addSlideData);
+    setTotalSlides(totalSlides + 1);
   }
 
   const deleteSlide = () => {
@@ -47,6 +49,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     const deleteSlideData: DeleteSlideData = { slide: { slideNumber: currentSlide } };
     socketEmitDeleteSlide(socket, deleteSlideData);
     toast.success(`Slide deleted successfully`, { duration: 1200 });
+    setTotalSlides(totalSlides - 1);
 
     router.push(`/boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
   };
@@ -72,20 +75,34 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    function onDeleteSlide() {
-      // toast.warning("The slide you have been working on has been deleted");
+    function onSlideAdded() {
+      toast.info("A slide has been added");
+      setTotalSlides(totalSlides + 1);
+    }
 
-      if (currentSlide === totalSlides) {
-        router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+    function onSlideDeleted(res: SlideDeletedResponse) {
+      setTotalSlides(totalSlides - 1);
+      if (res._id === slideId) {
+        toast.warning("The slide you have been working on has been deleted");
+        // TODO: doesn't work as intended
+        if (currentSlide === totalSlides) {
+          toast.info(`route to ${currentSlide - 1}`);
+          router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+        } else {
+          toast.info(`route to refresh`);
+          router.refresh();
+        }
       }
     }
 
-    socket?.on("slide-deleted", onDeleteSlide);
+    socket?.on("slide-added", onSlideAdded);
+    socket?.on("slide-deleted", onSlideDeleted);
 
     return () => {
-      socket?.off("slide-deleted", onDeleteSlide);
+      socket?.off("slide-added", onSlideAdded);
+      socket?.off("slide-deleted", onSlideDeleted);
     };
-  }, [boardId, router, totalSlides, currentSlide, socket]);
+  }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides]);
 
   return (
     <SlideControlsContext.Provider

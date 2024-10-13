@@ -19,12 +19,19 @@ const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
 interface CanvasProviderProps {
   children: React.ReactNode;
+  slideId: string | undefined;
   slideData: any;
   slideNumber: number;
   boardId: string;
 }
 
-export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children, slideData, slideNumber, boardId }) => {
+export const CanvasProvider: React.FC<CanvasProviderProps> = ({
+  children,
+  slideId,
+  slideData,
+  slideNumber,
+  boardId,
+}) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
@@ -157,6 +164,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children, slideD
         setActiveItem,
         slideNumber,
         boardId,
+        slideId,
       }}
     >
       {children}

@@ -24,8 +24,9 @@ interface UserBoardLayout {
 
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
+  const { socket, totalSlides } = useSocket();
   const [slideData, setSlideData] = useState<object>({});
-  const { socket, totalSlidesNumber } = useSocket();
+  const [slideId, setSlideId] = useState<string | undefined>(undefined);
 
   const slideIndexNumber = parseInt(slideIndex);
 
@@ -40,7 +41,8 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
 
     function handleJoinSlide(res: JoinSlideResponse) {
       setSlideData(res);
-    }    
+      setSlideId(res._id);
+    }
 
     // I. HAVE. ENOUGH.
     setTimeout(() => {
@@ -51,13 +53,13 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
   if (isNaN(slideIndexNumber)) {
     return notFound();
   }
-  if (slideIndexNumber < 1 || slideIndexNumber > totalSlidesNumber) {
+  if (slideIndexNumber < 1 || slideIndexNumber > totalSlides) {
     return notFound();
   }
 
   return (
     <ZoomUIProvider>
-      <CanvasProvider slideData={slideData} slideNumber={slideIndexNumber} boardId={boardId}>
+      <CanvasProvider slideData={slideData} slideId={slideId} slideNumber={slideIndexNumber} boardId={boardId}>
         <UndoRedoProvider>
           <MenuDataProvider>
             <FileProvider>
