@@ -48,24 +48,24 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     socketEmitDeleteSlide(socket, deleteSlideData);
     toast.success(`Slide deleted successfully`, { duration: 1200 });
 
-    router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
+    router.push(`/boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
   };
 
   const handlePrevious = () => {
     if (currentSlide > 1) {
-      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
+      router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
     }
   };
 
   const handleNext = () => {
     if (currentSlide < totalSlides) {
-      router.push(`/user-boards/${boardId}/slides/${currentSlide + 1}`);
+      router.push(`/boards/${boardId}/slides/${currentSlide + 1}`);
     }
   };
 
   const handleChangeSlide = (slideIndex: number) => {
     if (slideIndex + 1 !== currentSlide) {
-      router.push(`/user-boards/${boardId}/slides/${slideIndex + 1}`);
+      router.push(`/boards/${boardId}/slides/${slideIndex + 1}`);
     } else {
       toast.info("You already are on slide no " + currentSlide);
     }
@@ -76,7 +76,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       // toast.warning("The slide you have been working on has been deleted");
 
       if (currentSlide === totalSlides) {
-        router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
+        router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
       }
     }
 
