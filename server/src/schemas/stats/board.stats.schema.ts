@@ -5,7 +5,11 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { SuperBoard } from '../board/super.board.schema';
 import { User } from '../user.schema';
 
-@Schema()
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class BoardStats extends Document {
   @Prop({
     type: Types.ObjectId,

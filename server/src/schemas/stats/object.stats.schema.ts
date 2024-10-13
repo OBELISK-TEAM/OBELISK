@@ -4,7 +4,11 @@ import { SuperObject } from '../object/super.object.schema';
 import { User } from '../user.schema';
 import { Schema as MongooseSchema } from 'mongoose';
 
-@Schema()
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class ObjectStats extends Document {
   @Prop({
     type: Types.ObjectId,
