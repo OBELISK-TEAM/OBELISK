@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import SocketLoading from "@/components/loading/SocketLoading";
-import { socketEmitJoinBoard, socketEmitLeaveBoard } from "@/lib/board/socketEmitUtils";
+import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { JoinBoardResponse } from "@/interfaces/socket/SocketCallbacksData";
 
 interface SocketContextProps {
@@ -63,6 +63,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
 
     const joinBoardData = { board: { _id: boardId } };
 
+    // I. HAVE. ENOUGH.
     setTimeout(() => {
       if (socketRef.current) {
         socketEmitJoinBoard(socketRef.current, joinBoardData, handleJoinBoard);
@@ -80,7 +81,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socketRef.current.off("joined-slide", onUserJoinedSlide);
       socketRef.current.off("left-slide", onUserLeftSlide);
 
-      socketEmitLeaveBoard(socketRef.current, {});
+      // socketEmitLeaveBoard(socketRef.current, {});
       // socketRef.current.disconnect();
     };
   }, [token, boardId]);

@@ -39,15 +39,13 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
     const joinSlideData = { slide: { slideNumber: slideIndexNumber } };
 
     function handleJoinSlide(res: JoinSlideResponse) {
-      // console.log("Received new slide data");
       setSlideData(res);
-    }
+    }    
 
-    socketEmitJoinSlide(socket, joinSlideData, handleJoinSlide);
-
-    return () => {
-      
-    };
+    // I. HAVE. ENOUGH.
+    setTimeout(() => {
+      socketEmitJoinSlide(socket, joinSlideData, handleJoinSlide);
+    }, 1000);
   }, [socket, slideIndexNumber]);
 
   if (isNaN(slideIndexNumber)) {
@@ -56,7 +54,6 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
   if (slideIndexNumber < 1 || slideIndexNumber > totalSlidesNumber) {
     return notFound();
   }
-
 
   return (
     <ZoomUIProvider>
