@@ -3,8 +3,11 @@ import { CanvasImage } from "@/interfaces/file-context";
 // import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 // import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { toast } from "sonner";
-// import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
-// import { assignId } from "../utils";
+import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { assignId } from "../utils";
+import { Socket } from "socket.io-client";
+import { socketEmitAddObject } from "./socketEmitUtils";
+import logger from "../logger";
 
 export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) => {
   if (canvas) {
@@ -30,7 +33,7 @@ export const loadImagesFromJSON = (canvas: fabric.Canvas | null, json: string) =
 export const addImage = async (
   canvas: fabric.Canvas | null,
   imageUrl: string,
-  // socketEmitAddObject: (addObjectData: AddObjectData, callback: (res: string) => void) => void,
+  socket: Socket,
   options?: { scaleX?: number; scaleY?: number; left?: number; top?: number }
   // saveCommand?: (command: UndoRedoCommand) => void
 ): Promise<void> => {
@@ -61,25 +64,22 @@ export const addImage = async (
       // }
 
       try {
-        // const responseData = await createCanvasObject(slideId, objectData);
-        // Object.assign(img, { _id: responseData._id });
-        // const addObjectData: AddObjectData = {
-        //   object: img.toJSON(),
-        //   slide: { _id: slideId },
-        // };
-        // const callback = (res: string) => {
-        //   assignId(img, res);
-        //   const command = new AddCommand(canvas, img.toJSON(["_id"]));
-        //   saveCommand(command);
-        // };
-        // socketEmitAddObject(addObjectData, callback);
+        const addObjectData: AddObjectData = {
+          object: img.toJSON(),
+        };
+        const callback = (res: any) => {
+          assignId(img, res._id);
+          // const command = new AddCommand(canvas, img.toJSON(["_id"]));
+          // saveCommand(command);
+        };
+        socketEmitAddObject(socket, addObjectData, callback);
       } catch (error: any) {
-        console.error("Error creating image object:", error);
+        logger.error("Error creating image object:", error);
         toast.error(error.message || "Failed to create image");
       }
     });
   } catch (error: any) {
-    console.error("Error loading image:", error);
+    logger.error("Error loading image:", error);
     toast.error(error.message || "Failed to load image");
   }
 };

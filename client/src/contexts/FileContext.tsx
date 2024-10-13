@@ -6,7 +6,7 @@ import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/lib/board/f
 // import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { FileContext as IFileContext } from "@/interfaces/file-context";
 // import { toast } from "sonner";
-// import { useSocket } from "./SocketContext";
+import { useSocket } from "./SocketContext";
 
 const FileContext = createContext<IFileContext | undefined>(undefined);
 
@@ -18,7 +18,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
-  // const { socketEmitAddObject } = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (activeItem === MenuActions.ADD_IMAGE_DISK) {
@@ -46,24 +46,26 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && canvas) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result;
-        if (result) {
-          fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
-            await addImage(canvas, resizedImage, undefined);
-          });
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file || !canvas || !socket) {
+      return;
     }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (result) {
+        fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
+          await addImage(canvas, resizedImage, socket, undefined);
+        });
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAddImageByUrl = async (url: string) => {
-    if (canvas) {
-      await addImage(canvas, url, undefined);
+    if (!canvas || !socket) {
+      return;
     }
+    await addImage(canvas, url, socket, undefined);
   };
 
   return (
