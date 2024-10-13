@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export type StatsUserTimestamp = Array<{
+export type UserActionTimeline = Array<{
   timestamp: Date;
   userId: Types.ObjectId;
 }>;
