@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import { useSocket } from "./SocketContext";
 import { socketEmitLeaveSlide } from "@/lib/board/socketEmitUtils";
+import { SlideAddedResponse, SlideDeletedResponse } from "@/interfaces/socket/SocketCallbacksData";
 
 interface SlidesContextProps {
   // totalSlidesNumber: number;
@@ -14,23 +15,24 @@ interface SlidesProviderProps {
 }
 
 export const SlidesProvider: React.FC<SlidesProviderProps> = ({ children }) => {
-  const { socket } = useSocket();
-  // const [totalSlidesNumber] = useState<number>(9); // TODO: this is temporary; when backend starts to send total number of board slides, decide what to do with this code
+  const { socket, setTotalSlidesNumber, totalSlidesNumber } = useSocket();
 
   useEffect(() => {
     if (!socket) {
       return;
     }
 
-    function onSlideAdded(res: object) {
-      console.log(JSON.stringify(res));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function onSlideAdded(res: SlideAddedResponse) {
       toast.info("New slide has been added");
+      setTotalSlidesNumber(totalSlidesNumber + 1);
     }
     socket.on("slide-added", onSlideAdded);
 
-    function onSlideDeleted(res: object) {
-      console.log(JSON.stringify(res));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function onSlideDeleted(res: SlideDeletedResponse) {
       toast.info("A slide has been deleted");
+      setTotalSlidesNumber(totalSlidesNumber - 1);
     }
     socket.on("slide-deleted", onSlideDeleted);
 
@@ -39,7 +41,7 @@ export const SlidesProvider: React.FC<SlidesProviderProps> = ({ children }) => {
       socket.off("slide-deleted", onSlideDeleted);
       socketEmitLeaveSlide(socket, {});
     };
-  }, [socket]);
+  }, [socket, totalSlidesNumber, setTotalSlidesNumber]);
 
   return (
     <SlidesContext.Provider

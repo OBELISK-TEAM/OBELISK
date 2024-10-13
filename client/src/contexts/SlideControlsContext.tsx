@@ -73,7 +73,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     function onDeleteSlide() {
-      toast.warning("The slide you have been working on has been deleted");
+      // toast.warning("The slide you have been working on has been deleted");
 
       if (currentSlide === totalSlides) {
         router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);

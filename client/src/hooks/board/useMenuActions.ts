@@ -46,11 +46,6 @@ export const useMenuActions = () => {
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
     const handleSimpleObjectAdding = (canvas: fabric.Canvas, objectToAdd: fabric.Object) => {
-      // if (!slideId) {
-      //   toast.error("No slide found");
-      //   return;
-      // }
-
       if (!socket) {
         toast.error("No socket found");
         return;
@@ -74,11 +69,6 @@ export const useMenuActions = () => {
     };
 
     const handleObjectDeleting = (canvas: fabric.Canvas, objectToDelete: fabric.Object) => {
-      // if (!slideId) {
-      //   toast.error("No slide found");
-      //   return;
-      // }
-
       if (!socket) {
         toast.error("No socket found");
         return;
