@@ -2,12 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { StatsUserTimestamp } from 'src/shared/interfaces/StatsUserTimestamp';
 import { Schema as MongooseSchema } from 'mongoose';
+import { SuperBoard } from '../board/super.board.schema';
 
 @Schema()
 export class BoardStats extends Document {
   @Prop({
     type: Types.ObjectId,
-    ref: 'Board',
+    ref: SuperBoard.name,
     required: true,
   })
   boardId: Types.ObjectId;
@@ -52,8 +53,8 @@ export class BoardStats extends Document {
     required: false,
     default: [],
   })
-  timeSpend: [
-    { userId: Types.ObjectId; startDate: Date | null; endDate: Date | null },
+  timeSpent: [
+    { userId: Types.ObjectId; startDate: Date; endDate: Date | null },
   ];
 }
 
