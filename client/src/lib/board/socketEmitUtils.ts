@@ -42,6 +42,14 @@ export const socketEmitDeleteSlide = (
   emitWithCallback(socket, "delete-slide", deleteSlideData, callback);
 };
 
+export const socketEmitNotifyLastSlideDeleted = (
+  socket: Socket,
+  deleteSlideData: DeleteSlideData,
+  callback?: (res: any) => void
+) => {
+  emitWithCallback(socket, "slide-deleted", deleteSlideData, callback);
+};
+
 export const socketEmitJoinSlide = (socket: Socket, joinSlideData: JoinSlideData, callback?: (res: any) => void) => {
   emitWithCallback(socket, "join-slide", joinSlideData, callback);
 };

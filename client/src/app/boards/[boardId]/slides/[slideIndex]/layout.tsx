@@ -24,7 +24,7 @@ interface UserBoardLayout {
 
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
-  const { socket, totalSlides, isBoardJoined } = useSocket();
+  const { socket, totalSlides, isBoardJoined, firstChanged, setFirstChanged } = useSocket();
   const [slideData, setSlideData] = useState<object>({});
   const [slideId, setSlideId] = useState<string | undefined>(undefined);
 
@@ -44,10 +44,13 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
       setSlideId(res._id);
     }
 
-    if (isBoardJoined) {
+    if (isBoardJoined || firstChanged) {
+      if (firstChanged) {
+        setFirstChanged(false);
+      }
       socketEmitJoinSlide(socket, joinSlideData, handleJoinSlide);
     }
-  }, [socket, slideIndexNumber, isBoardJoined]);
+  }, [socket, slideIndexNumber, isBoardJoined, firstChanged]);
 
   if (isNaN(slideIndexNumber)) {
     return notFound();

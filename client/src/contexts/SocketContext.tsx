@@ -16,6 +16,8 @@ interface SocketContextProps {
   boardOwner: string | undefined;
   currentPermission: string | undefined;
   isBoardJoined: boolean;
+  firstChanged: boolean;
+  setFirstChanged: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SocketContext = createContext<SocketContextProps | undefined>(undefined);
@@ -45,7 +47,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [currentPermission, setCurrentPermission] = useState<string | undefined>(undefined);
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
-
+  const [firstChanged, setFirstChanged] = useState(false);
   useEffect(() => {
     function onError(val: any) {
       toast.error(val.message);
@@ -118,6 +120,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         boardId,
         currentPermission,
         isBoardJoined,
+        firstChanged,
+        setFirstChanged,
       }}
     >
       {children}
