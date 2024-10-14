@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
@@ -14,6 +15,7 @@ interface SocketContextProps {
   boardName: string | undefined;
   boardOwner: string | undefined;
   currentPermission: string | undefined;
+  isBoardJoined: boolean;
 }
 
 const SocketContext = createContext<SocketContextProps | undefined>(undefined);
@@ -25,20 +27,24 @@ interface SocketProviderProps {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
   const token = `Bearer ${Cookies.get("accessToken")}`;
-  const socketRef = useRef<Socket>(
-    io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
+  const socketRef = useRef<Socket | null>(null);
+
+  if (!socketRef.current) {
+    socketRef.current = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
       autoConnect: true,
       transports: ["websocket"],
       auth: {
         token,
       },
-    })
-  );
+    });
+  }
+
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
   const [boardName, setBoardName] = useState<string | undefined>(undefined);
   const [currentPermission, setCurrentPermission] = useState<string | undefined>(undefined);
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
+  const [isBoardJoined, setIsBoardJoined] = useState(false);
 
   useEffect(() => {
     function onError(val: any) {
@@ -56,29 +62,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     function onUserLeftSlide(res: any) {
       toast.info(res.message);
     }
-
     const socket = socketRef.current;
-
-    socket.on("error", onError);
-    socket.on("joined-board", onUserJoinedBoard);
-    socket.on("left-board", onUserLeftBoard);
-    socket.on("joined-slide", onUserJoinedSlide);
-    socket.on("left-slide", onUserLeftSlide);
-
-    function handleJoinBoard(res: JoinBoardResponse) {
-      setTotalSlides(res.slidesCount);
-      setBoardName(res.name);
-      setCurrentPermission(res.permission);
-      setBoardOwner(res.owner);
-
-      toast.success("Joined board " + boardId);
-    }
+    socket?.on("error", onError);
+    socket?.on("joined-board", onUserJoinedBoard);
+    socket?.on("left-board", onUserLeftBoard);
+    socket?.on("joined-slide", onUserJoinedSlide);
+    socket?.on("left-slide", onUserLeftSlide);
 
     const joinBoardData = { board: { _id: boardId } };
 
     // I. HAVE. ENOUGH.
     setTimeout(() => {
-      if (socketRef.current) {
+      if (socket) {
         socketEmitJoinBoard(socket, joinBoardData, handleJoinBoard);
       }
       setIsSocketReady(true);
@@ -94,13 +89,22 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socket.off("joined-slide", onUserJoinedSlide);
       socket.off("left-slide", onUserLeftSlide);
 
-      // socketEmitLeaveBoard(socketRef.current, {});
-      // socketRef.current.disconnect();
+      //socketEmitLeaveBoard(socket, {});
+      //socketRef.current.disconnect();
     };
   }, [token, boardId]);
 
   if (!isSocketReady) {
     return <SocketLoading />;
+  }
+
+  function handleJoinBoard(res: JoinBoardResponse) {
+    setTotalSlides(res.slidesCount);
+    setBoardName(res.name);
+    setCurrentPermission(res.permission);
+    setBoardOwner(res.owner);
+    setIsBoardJoined(true);
+    toast.success("Joined board " + boardId);
   }
 
   return (
@@ -113,6 +117,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         boardOwner,
         boardId,
         currentPermission,
+        isBoardJoined,
       }}
     >
       {children}

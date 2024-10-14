@@ -1,5 +1,3 @@
-"use client";
-
 import { SocketProvider } from "@/contexts/SocketContext";
 
 interface UserBoardLayout {

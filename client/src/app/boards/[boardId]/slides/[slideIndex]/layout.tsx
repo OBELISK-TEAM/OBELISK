@@ -24,7 +24,7 @@ interface UserBoardLayout {
 
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
-  const { socket, totalSlides } = useSocket();
+  const { socket, totalSlides, isBoardJoined } = useSocket();
   const [slideData, setSlideData] = useState<object>({});
   const [slideId, setSlideId] = useState<string | undefined>(undefined);
 
@@ -44,11 +44,10 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
       setSlideId(res._id);
     }
 
-    // I. HAVE. ENOUGH.
-    setTimeout(() => {
+    if (isBoardJoined) {
       socketEmitJoinSlide(socket, joinSlideData, handleJoinSlide);
-    }, 1000);
-  }, [socket, slideIndexNumber]);
+    }
+  }, [socket, slideIndexNumber, isBoardJoined]);
 
   if (isNaN(slideIndexNumber)) {
     return notFound();
