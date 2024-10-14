@@ -30,7 +30,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [lastDeleted, setLastDeleted] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("useEffect", currentSlide);
     if (lastDeleted) {
       router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
     }
@@ -102,20 +101,20 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     function onSlideDeleted(res: SlideDeletedResponse) {
-      console.log("onSlideDeleted", res);
       if (res._id === slideId) {
         toast.warning("The slide you have been working on has been deleted");
-        if (currentSlide === totalSlides) {
-          setLastDeleted(true);
-          toast.info(`route to ${currentSlide - 1}`);
-          router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
-        } else if (currentSlide === 1) {
+        if (currentSlide === 1) {
           setFirstChanged(true);
           setTotalSlides(totalSlides - 1);
           router.refresh();
         }
       } // todo: we need index number of the deleted slide: those with higher index numbers should be decremented
-      else {
+
+      if (currentSlide !== 1 && currentSlide === totalSlides) {
+        setLastDeleted(true);
+        toast.info(`route to ${currentSlide - 1}`);
+        router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+      } else {
         const nextSlide = Math.max(currentSlide - 1, 1);
         toast.info(`route to ${nextSlide}`);
         router.push(`/boards/${boardId}/slides/${nextSlide}`);
