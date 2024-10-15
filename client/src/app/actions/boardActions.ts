@@ -4,6 +4,7 @@ import { getCookie } from "@/lib/authApiUtils";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { ApiError } from "@/errors/ApiError";
+import logger from "@/lib/logger";
 
 export async function createBoard(name: string): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
@@ -25,7 +26,7 @@ export async function createBoard(name: string): Promise<BoardDataResponse> {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error while creating board:", error);
+    logger.error("Error while creating board:", error);
     throw error;
   }
 }

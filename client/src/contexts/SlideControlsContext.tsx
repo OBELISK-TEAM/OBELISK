@@ -23,23 +23,23 @@ interface SlideControlsContext {
 const SlideControlsContext = createContext<SlideControlsContext | undefined>(undefined);
 
 export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { socket, totalSlides, setTotalSlides, setFirstChanged } = useSocket();
-  const { slideNumber: currentSlide, boardId, slideId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
+  const { socket, totalSlides, setTotalSlides, setFirstSlideChanged } = useSocket();
+  const { slideIndex: currentSlide, boardId, slideId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
   const router = useRouter();
   const SLIDE_LIMIT = 10;
-  const [lastDeleted, setLastDeleted] = useState<boolean>(false);
+  const [lastSlideDeleted, setLastSlideDeleted] = useState<boolean>(false);
 
   useEffect(() => {
-    if (lastDeleted) {
+    if (lastSlideDeleted) {
       router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
     }
     return () => {
-      if (lastDeleted) {
-        setLastDeleted(false);
+      if (lastSlideDeleted) {
+        setLastSlideDeleted(false);
         setTotalSlides((prev) => prev - 1);
       }
     };
-  }, [lastDeleted, setLastDeleted]);
+  }, [boardId, currentSlide, lastSlideDeleted, router, setLastSlideDeleted, setTotalSlides]);
 
   function createSlide() {
     if (!socket) {
@@ -60,10 +60,10 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (currentSlide === totalSlides) {
-      setLastDeleted(true);
+      setLastSlideDeleted(true);
     } else {
       if (currentSlide === 1) {
-        setFirstChanged(true);
+        setFirstSlideChanged(true);
       } else {
         router.push(`/boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
       }
@@ -104,14 +104,14 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (res._id === slideId) {
         toast.warning("The slide you have been working on has been deleted");
         if (currentSlide === 1) {
-          setFirstChanged(true);
+          setFirstSlideChanged(true);
           setTotalSlides(totalSlides - 1);
           router.refresh();
         }
       } // todo: we need index number of the deleted slide: those with higher index numbers should be decremented
 
       if (currentSlide !== 1 && currentSlide === totalSlides) {
-        setLastDeleted(true);
+        setLastSlideDeleted(true);
         toast.info(`route to ${currentSlide - 1}`);
         router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
       } else {
@@ -130,7 +130,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       socket?.off("slide-added", onSlideAdded);
       socket?.off("slide-deleted", onSlideDeleted);
     };
-  }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides]);
+  }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides, setFirstSlideChanged]);
 
   return (
     <SlideControlsContext.Provider

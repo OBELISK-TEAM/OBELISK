@@ -24,11 +24,11 @@ interface UserBoardLayout {
 
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
-  const { socket, totalSlides, isBoardJoined, firstChanged, setFirstChanged } = useSocket();
+  const { socket, totalSlides, isBoardJoined, firstSlideChanged, setFirstSlideChanged } = useSocket();
   const [slideData, setSlideData] = useState<object>({});
   const [slideId, setSlideId] = useState<string | undefined>(undefined);
 
-  const slideIndexNumber = parseInt(slideIndex);
+  const slideIndexAsNumber = parseInt(slideIndex);
 
   useEffect(() => {
     if (!socket) {
@@ -37,31 +37,31 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
       return;
     }
 
-    const joinSlideData = { slide: { slideNumber: slideIndexNumber } };
+    const joinSlideData = { slide: { slideNumber: slideIndexAsNumber } };
 
     function handleJoinSlide(res: JoinSlideResponse) {
       setSlideData(res);
       setSlideId(res._id);
     }
 
-    if (isBoardJoined || firstChanged) {
-      if (firstChanged) {
-        setFirstChanged(false);
+    if (isBoardJoined || firstSlideChanged) {
+      if (firstSlideChanged) {
+        setFirstSlideChanged(false);
       }
       socketEmitJoinSlide(socket, joinSlideData, handleJoinSlide);
     }
-  }, [socket, slideIndexNumber, isBoardJoined, firstChanged]);
+  }, [socket, slideIndexAsNumber, isBoardJoined, firstSlideChanged, setFirstSlideChanged]);
 
-  if (isNaN(slideIndexNumber)) {
+  if (isNaN(slideIndexAsNumber)) {
     return notFound();
   }
-  if (slideIndexNumber < 1 || slideIndexNumber > totalSlides) {
+  if (slideIndexAsNumber < 1 || slideIndexAsNumber > totalSlides) {
     return notFound();
   }
 
   return (
     <ZoomUIProvider>
-      <CanvasProvider slideData={slideData} slideId={slideId} slideNumber={slideIndexNumber} boardId={boardId}>
+      <CanvasProvider slideData={slideData} slideId={slideId} slideIndex={slideIndexAsNumber} boardId={boardId}>
         <UndoRedoProvider>
           <MenuDataProvider>
             <FileProvider>

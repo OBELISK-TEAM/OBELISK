@@ -11,7 +11,7 @@ export interface CanvasContext {
   setSize: (size: number) => void;
   handleStyleChange: () => void;
   setActiveItem: (activeItem: string | null) => void;
-  slideNumber: number;
+  slideIndex: number;
   boardId: string;
   slideId: string | undefined;
 }

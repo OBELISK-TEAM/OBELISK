@@ -21,7 +21,7 @@ interface CanvasProviderProps {
   children: React.ReactNode;
   slideId: string | undefined;
   slideData: any;
-  slideNumber: number;
+  slideIndex: number;
   boardId: string;
 }
 
@@ -29,7 +29,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   children,
   slideId,
   slideData,
-  slideNumber,
+  slideIndex,
   boardId,
 }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
@@ -162,7 +162,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         setSize,
         handleStyleChange,
         setActiveItem,
-        slideNumber,
+        slideIndex,
         boardId,
         slideId,
       }}

@@ -6,6 +6,7 @@ import { useAuthForm } from "./useAuthForm";
 import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
+import logger from "@/lib/logger";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
@@ -40,7 +41,7 @@ export const useHandleAuth = (): HandleAuth => {
             if (err instanceof Error) {
               const errorMessages = JSON.parse(err.message) as string[];
               complexToast(ToastTypes.ERROR, errorMessages);
-              console.warn(errorMessages);
+              logger.error(errorMessages);
             } else {
               complexToast(ToastTypes.ERROR, "Unexpected error");
             }
