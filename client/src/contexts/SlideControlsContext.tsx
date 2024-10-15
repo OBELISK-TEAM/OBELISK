@@ -101,25 +101,29 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     function onSlideDeleted(res: SlideDeletedResponse) {
-      if (res._id === slideId) {
+      // if res.slideNumber === current slide:
+      //  - if current slide ===  1, setFirstSlideChanged(true),setTotalSlides(totalSlides - 1)
+      //  - if 1 < current slide < totalSlides, go to the previous slide,setTotalSlides(totalSlides - 1)
+      //  - if currentSlide === totalSlides, setLastSlideDeleted(true), go to the previous slide,setTotalSlides(totalSlides - 1)
+
+      // if deleted slide is not the current slide:
+      //  - if currentSlide > res.slideNumber, go to the previous slide,setTotalSlides(totalSlides - 1)
+      //  - if currentSlide < res.slideNumber, nothing, setTotalSlides(totalSlides - 1)
+      //  - if currentSlide === totalSlides, setLastSlideDeleted(true), go to the previous slide, setTotalSlides(totalSlides - 1)
+      if (currentSlide < res.slideNumber) {
+        setTotalSlides(totalSlides - 1);
+      } else if (currentSlide > res.slideNumber && currentSlide < totalSlides) {
+        navigateToPreviousSlide();
+      } else if (currentSlide >= res.slideNumber && currentSlide === totalSlides) {
+        handleLastSlideDeletion();
+      } else {
+        // currentSlide equals res.slideNumber but is not the last slide
         toast.warning("The slide you have been working on has been deleted");
         if (currentSlide === 1) {
-          setFirstSlideChanged(true);
-          setTotalSlides(totalSlides - 1);
-          router.refresh();
+          handleFirstSlideDeletion();
+        } else {
+          navigateToPreviousSlide();
         }
-      } // todo: we need index number of the deleted slide: those with higher index numbers should be decremented
-
-      if (currentSlide !== 1 && currentSlide === totalSlides) {
-        setLastSlideDeleted(true);
-        toast.info(`route to ${currentSlide - 1}`);
-        router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
-      } else {
-        const nextSlide = Math.max(currentSlide - 1, 1);
-        toast.info(`route to ${nextSlide}`);
-        router.push(`/boards/${boardId}/slides/${nextSlide}`);
-        setTotalSlides(totalSlides - 1);
-        router.refresh();
       }
     }
 
@@ -132,6 +136,23 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides, setFirstSlideChanged]);
 
+  const navigateToPreviousSlide = () => {
+    const prevSlide = Math.max(currentSlide - 1, 1);
+    toast.info(`route to ${prevSlide}`);
+    router.push(`/boards/${boardId}/slides/${prevSlide}`);
+    setTotalSlides(totalSlides - 1);
+  };
+
+  const handleLastSlideDeletion = () => {
+    setLastSlideDeleted(true);
+    toast.info(`route to ${currentSlide - 1}`);
+    router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+  };
+
+  const handleFirstSlideDeletion = () => {
+    setFirstSlideChanged(true);
+    setTotalSlides(totalSlides - 1);
+  };
   return (
     <SlideControlsContext.Provider
       value={{

@@ -10,6 +10,7 @@ export interface JoinSlideResponse {
   _id: string;
   version: string;
   objects: object[];
+  slideNumber: number;
 }
 
 export interface SlideAddedResponse extends JoinSlideResponse {}

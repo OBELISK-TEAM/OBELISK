@@ -40,6 +40,7 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
     const joinSlideData = { slide: { slideNumber: slideIndexAsNumber } };
 
     function handleJoinSlide(res: JoinSlideResponse) {
+      logger.log("Joined slide", res);
       setSlideData(res);
       setSlideId(res._id);
     }
