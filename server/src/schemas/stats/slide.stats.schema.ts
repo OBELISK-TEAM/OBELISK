@@ -2,17 +2,17 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { StatsUserTimestamp } from 'src/shared/interfaces/StatsUserTimestamp';
 import { Schema as MongooseSchema } from 'mongoose';
-import { SuperBoard } from '../board/super.board.schema';
+import { SuperSlide } from '../slide/super.slide.schema';
 import { User } from '../user.schema';
 
 @Schema()
-export class BoardStats extends Document {
+export class SlideStats extends Document {
   @Prop({
     type: Types.ObjectId,
-    ref: SuperBoard.name,
+    ref: SuperSlide.name,
     required: true,
   })
-  boardId: Types.ObjectId;
+  slideId: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,
@@ -33,14 +33,22 @@ export class BoardStats extends Document {
     required: false,
     default: [],
   })
-  shareTimeline: StatsUserTimestamp;
+  editTimeline: [
+    {
+      timestamp: Date;
+      userId: Types.ObjectId;
+      x: number;
+      y: number;
+      actionType: string;
+    },
+  ];
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
     required: false,
     default: [],
   })
-  editTimeline: StatsUserTimestamp;
+  objectsAddedTimeline: [{ timestamp: Date; objectsCount: number }];
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -59,4 +67,4 @@ export class BoardStats extends Document {
   ];
 }
 
-export const BoardStatsSchema = SchemaFactory.createForClass(BoardStats);
+export const SlideStatsSchema = SchemaFactory.createForClass(SlideStats);

@@ -3,28 +3,30 @@ import { Badge } from "@/components/ui/badge";
 import { concatenatePermissions, getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
+import { prettyDate } from "@/lib/dateUtils";
+import { bytesToKilobytes } from "@/lib/bytesConverter";
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
-  const sharedUsers = concatenatePermissions(board.permissions);
+  let sharedUsers: string[] = [];
+  if (board.permissions) {
+    sharedUsers = concatenatePermissions(board.permissions);
+  }
+
   switch (column) {
     case BoardTableColumns.NAME:
       return board.name;
 
     case BoardTableColumns.OWNER:
-      return board.owner ? board.owner : "You";
+      return board?.owner?.email ?? "You";
 
-    case BoardTableColumns.MODIFIED_AT:
-      return board.modifiedAt;
+    case BoardTableColumns.MODIFIED:
+      return prettyDate(board.updatedAt);
 
-    case BoardTableColumns.CREATED_AT:
-      return board.createdAt;
+    case BoardTableColumns.CREATED:
+      return prettyDate(board.createdAt);
 
     case BoardTableColumns.MY_PERMISSION:
-      if (board.currentUserPermission) {
-        return (
-          <Badge variant={getPermissionVariant(board.currentUserPermission)}>
-            {getPermissionLabel(board.currentUserPermission)}
-          </Badge>
-        );
+      if (board.permission) {
+        return <Badge variant={getPermissionVariant(board.permission)}>{getPermissionLabel(board.permission)}</Badge>;
       } else {
         return "---";
       }
@@ -49,8 +51,8 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
         </div>
       );
 
-    case BoardTableColumns.SIZE_IN_KB:
-      return `${board.size} kB`;
+    case BoardTableColumns.SIZE:
+      return `${bytesToKilobytes(board.size ?? 0)} kB`;
 
     default:
       return "";
