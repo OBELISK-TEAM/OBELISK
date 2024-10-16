@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { StatsUserTimestamp } from 'src/shared/interfaces/StatsUserTimestamp';
 import { Schema as MongooseSchema } from 'mongoose';
 import { SuperSlide } from '../slide/super.slide.schema';
 import { User } from '../user.schema';
+import { UserActionTimeline } from 'src/shared/interfaces/UserActionTimeline';
 
 @Schema({
   timestamps: true,
@@ -30,7 +30,7 @@ export class SlideStats extends Document {
     required: false,
     default: [],
   })
-  viewTimeline: StatsUserTimestamp;
+  viewTimeline: UserActionTimeline;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
