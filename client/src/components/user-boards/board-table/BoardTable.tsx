@@ -50,7 +50,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   }, [data]);
 
   const handleRowClick = (boardId: string) => {
-    router.push(`/boards/${boardId}/slides/1`);
+    router.push(`/user-boards/${boardId}/slides/1`);
   };
 
   const showOverlay = isLoading && previousData;

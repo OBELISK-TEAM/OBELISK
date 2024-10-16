@@ -23,7 +23,7 @@ export const CreateBoardProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { _id } = await createBoard(values.boardName);
-      router.push(`/boards/${_id}/slides/1`);
+      router.push(`/user-boards/${_id}/slides/1`);
       toast.success("Board created successfully");
     } catch (error: any) {
       logger.error("Error in handleCreateNewBoard:", error);

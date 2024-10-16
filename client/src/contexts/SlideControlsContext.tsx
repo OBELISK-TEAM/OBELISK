@@ -31,7 +31,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (lastSlideDeleted) {
-      router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
     }
     return () => {
       if (lastSlideDeleted) {
@@ -69,7 +69,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (currentSlide === 1) {
         setFirstSlideChanged(true);
       } else {
-        router.push(`/boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
+        router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
       }
       setTotalSlides((prev) => prev - 1);
     }
@@ -80,19 +80,19 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handlePrevious = () => {
     if (currentSlide > 1) {
-      router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
     }
   };
 
   const handleNext = () => {
     if (currentSlide < totalSlides) {
-      router.push(`/boards/${boardId}/slides/${currentSlide + 1}`);
+      router.push(`/user-boards/${boardId}/slides/${currentSlide + 1}`);
     }
   };
 
   const handleChangeSlide = (slideIndex: number) => {
     if (slideIndex + 1 !== currentSlide) {
-      router.push(`/boards/${boardId}/slides/${slideIndex + 1}`);
+      router.push(`/user-boards/${boardId}/slides/${slideIndex + 1}`);
     } else {
       toast.info("You already are on slide no " + currentSlide);
     }
@@ -102,14 +102,14 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     const navigateToPreviousSlide = () => {
       const prevSlide = Math.max(currentSlide - 1, 1);
       toast.info(`route to ${prevSlide}`);
-      router.push(`/boards/${boardId}/slides/${prevSlide}`);
+      router.push(`/user-boards/${boardId}/slides/${prevSlide}`);
       setTotalSlides(totalSlides - 1);
     };
 
     const handleLastSlideDeletion = () => {
       setLastSlideDeleted(true);
       toast.info(`route to ${currentSlide - 1}`);
-      router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
     };
 
     const handleFirstSlideDeletion = () => {
