@@ -5,7 +5,11 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { SuperSlide } from '../slide/super.slide.schema';
 import { User } from '../user.schema';
 
-@Schema()
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  validateBeforeSave: true,
+})
 export class SlideStats extends Document {
   @Prop({
     type: Types.ObjectId,
