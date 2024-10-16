@@ -65,13 +65,7 @@ const useCanvasEventHandlers = (
       const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
         const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
         const objectId: string = recentlyActiveObjectJSON._id;
-        return new ModifyCommand(
-          canvas,
-          recentlyActiveObjectJSON,
-          activeObjectJSON,
-          objectId,
-          handleStyleChange
-        );
+        return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, objectId, handleStyleChange);
       });
 
       saveCommand(new ComplexCommand(commands));
