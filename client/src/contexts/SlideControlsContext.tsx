@@ -45,7 +45,11 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!socket) {
       return;
     }
-    const addSlideData: AddSlideData = {};
+    const addSlideData: AddSlideData = {
+      slide: {
+        slideNumber: -1, // -1 means append to the end
+      },
+    };
     socketEmitAddSlide(socket, addSlideData);
     setTotalSlides(totalSlides + 1);
   }
