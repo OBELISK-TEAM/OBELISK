@@ -99,6 +99,24 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
+    const navigateToPreviousSlide = () => {
+      const prevSlide = Math.max(currentSlide - 1, 1);
+      toast.info(`route to ${prevSlide}`);
+      router.push(`/boards/${boardId}/slides/${prevSlide}`);
+      setTotalSlides(totalSlides - 1);
+    };
+
+    const handleLastSlideDeletion = () => {
+      setLastSlideDeleted(true);
+      toast.info(`route to ${currentSlide - 1}`);
+      router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
+    };
+
+    const handleFirstSlideDeletion = () => {
+      setFirstSlideChanged(true);
+      setTotalSlides(totalSlides - 1);
+    };
+
     function onSlideAdded() {
       toast.info("A slide has been added");
       setTotalSlides(totalSlides + 1);
@@ -140,23 +158,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides, setFirstSlideChanged]);
 
-  const navigateToPreviousSlide = () => {
-    const prevSlide = Math.max(currentSlide - 1, 1);
-    toast.info(`route to ${prevSlide}`);
-    router.push(`/boards/${boardId}/slides/${prevSlide}`);
-    setTotalSlides(totalSlides - 1);
-  };
-
-  const handleLastSlideDeletion = () => {
-    setLastSlideDeleted(true);
-    toast.info(`route to ${currentSlide - 1}`);
-    router.push(`/boards/${boardId}/slides/${currentSlide - 1}`);
-  };
-
-  const handleFirstSlideDeletion = () => {
-    setFirstSlideChanged(true);
-    setTotalSlides(totalSlides - 1);
-  };
   return (
     <SlideControlsContext.Provider
       value={{

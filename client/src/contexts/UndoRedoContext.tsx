@@ -4,6 +4,7 @@ import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventListeners";
+import { useSocket } from "./SocketContext";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -12,6 +13,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     state: { canvas },
     handleStyleChange,
   } = useCanvas();
+  const { socket } = useSocket();
 
   const canvasRef = useRef<fabric.Canvas | null>(canvas);
   const undoStack = useRef<Array<UndoRedoCommand>>([]);
@@ -31,7 +33,7 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const undo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || undoStack.current.length === 0) {
+    if (!canvas || !socket || undoStack.current.length === 0) {
       return;
     }
 
@@ -40,14 +42,14 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    lastAction.undo();
+    lastAction.undo(socket);
     redoStack.current.push(lastAction);
     canvas.renderAll();
-  }, []);
+  }, [socket]);
 
   const redo = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || redoStack.current.length === 0) {
+    if (!canvas || !socket || redoStack.current.length === 0) {
       return;
     }
 
@@ -56,10 +58,10 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
-    lastAction.redo();
+    lastAction.redo(socket);
     undoStack.current.push(lastAction);
     canvas.renderAll();
-  }, []);
+  }, [socket]);
 
   useCanvasEventHandlers(canvas, saveCommand, handleStyleChange);
 

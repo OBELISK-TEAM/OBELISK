@@ -25,6 +25,9 @@ import { toast } from "sonner";
 import { assignId } from "@/lib/utils";
 import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitAddObject, socketEmitDeleteObject } from "@/lib/board/socketEmitUtils";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
+import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -41,7 +44,7 @@ export const useMenuActions = () => {
     state: { canvas, color, size },
     setCanvasMode,
   } = useCanvas();
-  // const { saveCommand } = useUndoRedo();
+  const { saveCommand } = useUndoRedo();
   const { socket } = useSocket();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
@@ -62,8 +65,8 @@ export const useMenuActions = () => {
 
       const callback = (res: any) => {
         assignId(objectToAdd, res._id);
-        // const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
-        // saveCommand(command);
+        const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
+        saveCommand(command);
       };
       socketEmitAddObject(socket, addObjectData, callback);
     };
@@ -82,8 +85,8 @@ export const useMenuActions = () => {
       };
 
       socketEmitDeleteObject(socket, deleteObjectData);
-      // const command = new RemoveCommand(canvas, objectToAdd.toJSON(["_id"]));
-      // saveCommand(command);
+      const command = new RemoveCommand(canvas, objectToDelete.toJSON(["_id"]));
+      saveCommand(command);
     };
 
     const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
@@ -265,7 +268,7 @@ export const useMenuActions = () => {
       },
     };
     return actionHandlers;
-  }, [socket]);
+  }, [socket, saveCommand]);
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {

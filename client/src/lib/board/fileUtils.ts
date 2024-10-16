@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { CanvasImage } from "@/interfaces/file-context";
-// import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
-// import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
+import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { toast } from "sonner";
 import { AddObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { assignId } from "../utils";
@@ -34,8 +34,8 @@ export const addImage = async (
   canvas: fabric.Canvas | null,
   imageUrl: string,
   socket: Socket,
+  saveCommand: (command: UndoRedoCommand) => void,
   options?: { scaleX?: number; scaleY?: number; left?: number; top?: number }
-  // saveCommand?: (command: UndoRedoCommand) => void
 ): Promise<void> => {
   if (!canvas) {
     return;
@@ -59,18 +59,14 @@ export const addImage = async (
       canvas.add(img);
       canvas.setActiveObject(img);
 
-      // if (!saveCommand) {
-      //   return;
-      // }
-
       try {
         const addObjectData: AddObjectData = {
           object: img.toJSON(),
         };
         const callback = (res: any) => {
           assignId(img, res._id);
-          // const command = new AddCommand(canvas, img.toJSON(["_id"]));
-          // saveCommand(command);
+          const command = new AddCommand(canvas, img.toJSON(["_id"]));
+          saveCommand(command);
         };
         socketEmitAddObject(socket, addObjectData, callback);
       } catch (error: any) {

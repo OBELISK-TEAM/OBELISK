@@ -8,6 +8,8 @@ import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { useSocket } from "@/contexts/SocketContext";
 import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 const FontStyleControls: React.FC = () => {
   const {
@@ -17,7 +19,7 @@ const FontStyleControls: React.FC = () => {
 
   const { socket } = useSocket();
 
-  // const { saveCommand } = useUndoRedo();
+  const { saveCommand } = useUndoRedo();
 
   const styleToggle = (
     styleKey: "fontWeight" | "fontStyle" | "underline",
@@ -42,7 +44,7 @@ const FontStyleControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [styleKey]: newValue });
     handleStyleChange();
 
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [styleKey]: oldValue });
 
@@ -51,8 +53,9 @@ const FontStyleControls: React.FC = () => {
     };
     socketEmitUpdateObject(socket, updateObjectData);
 
-    // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
-    // saveCommand(command);
+    const objectId: string = modifiedObjectJSON._id;
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
+    saveCommand(command);
   };
 
   const onBoldClick = () => styleToggle("fontWeight", "bold", "normal");

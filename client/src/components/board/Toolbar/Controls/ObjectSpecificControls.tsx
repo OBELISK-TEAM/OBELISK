@@ -8,6 +8,8 @@ import { fabric } from "fabric";
 import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import { useSocket } from "@/contexts/SocketContext";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -18,7 +20,7 @@ const ObjectSpecificControls: React.FC = () => {
 
   const { socket } = useSocket();
 
-  // const { saveCommand } = useUndoRedo();
+  const { saveCommand } = useUndoRedo();
 
   if (!selectedObjectStyles) {
     return null;
@@ -44,7 +46,7 @@ const ObjectSpecificControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [key]: newValue });
     handleStyleChange();
 
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [key]: oldValue });
 
@@ -53,8 +55,9 @@ const ObjectSpecificControls: React.FC = () => {
     };
     socketEmitUpdateObject(socket, updateObjectData);
 
-    // const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
-    // saveCommand(command);
+    const objectId: string = modifiedObjectJSON._id;
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
+    saveCommand(command);
   };
 
   const controlsMap: Record<string, ReactElement[]> = {

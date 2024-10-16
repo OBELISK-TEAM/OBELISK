@@ -1,6 +1,5 @@
 import { useEffect, useReducer } from "react";
 import { fabric } from "fabric";
-// import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { getJsonWithAbsoluteProperties } from "@/lib/board/undoRedoUtils";
 
 import { canvasEventListenersReducer, initialState } from "@/reducers/canvasEventListenersReducer";
@@ -8,6 +7,9 @@ import { assignId } from "@/lib/utils";
 import { useSocket } from "@/contexts/SocketContext";
 import { AddObjectData, UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitAddObject, socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
+import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
+import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -36,8 +38,8 @@ const useCanvasEventHandlers = (
       };
       const callback = (addedObjectData: any) => {
         assignId(e.path, addedObjectData._id);
-        // const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
-        // saveCommand(command);
+        const command = new AddCommand(canvas, e.path.toJSON(["_id"]));
+        saveCommand(command);
       };
       socketEmitAddObject(socket, addObjectData, callback);
     };
@@ -60,12 +62,19 @@ const useCanvasEventHandlers = (
         socketEmitUpdateObject(socket, updateObjectData);
       }
 
-      // const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
-      //   const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
-      //   return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, handleStyleChange);
-      // });
+      const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
+        const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
+        const objectId: string = recentlyActiveObjectJSON._id;
+        return new ModifyCommand(
+          canvas,
+          recentlyActiveObjectJSON,
+          activeObjectJSON,
+          objectId,
+          handleStyleChange
+        );
+      });
 
-      // saveCommand(new ComplexCommand(commands));
+      saveCommand(new ComplexCommand(commands));
     };
 
     const handleObjectModified = (e: fabric.IEvent) => {
@@ -86,15 +95,15 @@ const useCanvasEventHandlers = (
         return;
       }
 
-      const targetJSON = target.toJSON(["_id"]);
-      // const clonedJSON = { ...targetJSON, ...oldValues };
+      const targetJSON = target.toJSON(["_id"]) as any;
+      const clonedJSON = { ...targetJSON, ...oldValues };
 
       const updateObjectData: UpdateObjectData = {
         object: targetJSON,
       };
       socketEmitUpdateObject(socket, updateObjectData);
-      // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-      // saveCommand(command);
+      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, targetJSON._id, handleStyleChange);
+      saveCommand(command);
 
       handleStyleChange();
     };
@@ -115,7 +124,7 @@ const useCanvasEventHandlers = (
       }
 
       e.targets.forEach((target: fabric.Object) => {
-        const targetJSON = target.toJSON(["_id"]);
+        const targetJSON = target.toJSON(["_id"]) as any;
         const clonedJSON = JSON.parse(JSON.stringify(targetJSON));
 
         clonedJSON.eraser.objects.pop();
@@ -132,8 +141,8 @@ const useCanvasEventHandlers = (
         };
         socketEmitUpdateObject(socket, updateObjectData);
 
-        // const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-        // saveCommand(modifyCommand);
+        const modifyCommand = new ModifyCommand(canvas, clonedJSON, targetJSON, targetJSON._id, handleStyleChange);
+        saveCommand(modifyCommand);
       });
     };
 
@@ -151,15 +160,15 @@ const useCanvasEventHandlers = (
       }
 
       const targetJSON = e.target.toJSON(["_id"]);
-      // const clonedJSON = { ...targetJSON, text: state.observedTextContent };
+      const clonedJSON = { ...targetJSON, text: state.observedTextContent };
 
       const updateObjectData: UpdateObjectData = {
         object: targetJSON,
       };
       socketEmitUpdateObject(socket, updateObjectData);
 
-      // const command = new ModifyCommand(canvas, clonedJSON, targetJSON, handleStyleChange);
-      // saveCommand(command);
+      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, targetJSON._id, handleStyleChange);
+      saveCommand(command);
 
       dispatch({ type: "SET_OBSERVED_TEXT_CONTENT", payload: e.target.text });
     };

@@ -26,13 +26,13 @@ import { MenuGroups } from "@/enums/MenuGroups";
 import { createContext, useContext } from "react";
 import { MenuDataContext as IMenuDataContext, MenuGroup } from "@/interfaces/menu-data-context";
 import { useMenuActions } from "@/hooks/board/useMenuActions";
-// import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { performAction } = useMenuActions();
-  // const { undo, redo } = useUndoRedo();
+  const { undo, redo } = useUndoRedo();
   const menuList: MenuGroup[] = [
     {
       groupName: "Drawing Tools",
@@ -129,13 +129,13 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           name: MenuActions.EXPORT_PDF,
         },
         {
-          action: () => {},
+          action: () => undo(),
           text: "Undo",
           icon: <Undo />,
           name: MenuActions.UNDO,
         },
         {
-          action: () => {},
+          action: () => redo(),
           text: "Redo",
           icon: <Redo />,
           name: MenuActions.REDO,

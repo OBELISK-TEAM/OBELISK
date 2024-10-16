@@ -3,9 +3,8 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { addImage, fitImageByShrinking, loadImagesFromJSON } from "@/lib/board/fileUtils";
-// import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { FileContext as IFileContext } from "@/interfaces/file-context";
-// import { toast } from "sonner";
 import { useSocket } from "./SocketContext";
 
 const FileContext = createContext<IFileContext | undefined>(undefined);
@@ -15,7 +14,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
     state: { activeItem, canvas },
     setActiveItem,
   } = useCanvas();
-  // const { saveCommand } = useUndoRedo();
+  const { saveCommand } = useUndoRedo();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileJSONInputRef = useRef<HTMLInputElement | null>(null);
   const { socket } = useSocket();
@@ -54,7 +53,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const result = e.target?.result;
       if (result) {
         fitImageByShrinking(result as string, 800, 600, async (resizedImage) => {
-          await addImage(canvas, resizedImage, socket, undefined);
+          await addImage(canvas, resizedImage, socket, saveCommand, undefined);
         });
       }
     };
@@ -65,7 +64,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!canvas || !socket) {
       return;
     }
-    await addImage(canvas, url, socket, undefined);
+    await addImage(canvas, url, socket, saveCommand, undefined);
   };
 
   return (
