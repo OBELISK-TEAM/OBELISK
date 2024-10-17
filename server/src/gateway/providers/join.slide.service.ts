@@ -3,10 +3,14 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { JoinSlideData } from '../gateway.dto';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
+import { CommonService } from './common.service';
 
 @Injectable()
 export class JoinSlideService {
-  constructor(private readonly slidesService: SlidesService) {}
+  constructor(
+    private readonly slidesService: SlidesService,
+    private readonly commonService: CommonService,
+  ) {}
   private readonly logger = new Logger(JoinSlideService.name);
 
   async handleJoinSlide(
@@ -35,23 +39,13 @@ export class JoinSlideService {
     const user = client.data.user;
     await client.join(slideId);
     client.to(slideId).emit('joined-slide', {
-      message: `${user.email} has joined the slide`,
+      email: user.email,
+      _id: user._id,
     });
     this.logger.log(`${user.email} has joined the slide ${slideId}`);
   }
 
   async leaveCurrentSlide(client: GwSocketWithTarget): Promise<void> {
-    const user = client.data.user;
-    const slideId = user.targetSlide.slideId;
-    if (!slideId) return;
-    await client.leave(slideId);
-    client.to(slideId).emit('left-slide', {
-      message: `${user.email} has left the slide`,
-    });
-    this.logger.log(`${user.email} has left the slide ${slideId}`);
-  }
-
-  async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
-    await this.leaveCurrentSlide(client);
+    return this.commonService.leaveTarget(client, 'slide');
   }
 }

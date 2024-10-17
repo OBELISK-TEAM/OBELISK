@@ -2,6 +2,7 @@ import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { WsAuthGuard } from '../../modules/auth/guards/ws.auth.guard';
 import { Socket } from 'socket.io';
 import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
+import { JoinBoardService } from './join.board.service';
 
 // unfortunately, filters cannot be applied to connection handlers
 // so we have to use try-catch blocks to handle errors
@@ -9,7 +10,10 @@ import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
 @Injectable()
 export class ConnectionService {
   private readonly logger = new Logger(ConnectionService.name);
-  constructor(private readonly wsAuthGuard: WsAuthGuard) {}
+  constructor(
+    private readonly wsAuthGuard: WsAuthGuard,
+    private readonly joinBoardService: JoinBoardService,
+  ) {}
 
   async handleConnection(client: Socket): Promise<void> {
     try {
@@ -21,7 +25,8 @@ export class ConnectionService {
     }
   }
 
-  handleDisconnect(client: Socket): void {
+  async handleDisconnect(client: Socket): Promise<void> {
+    await this.joinBoardService.handleLeaveBoardAndSlide(client);
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
@@ -39,7 +44,7 @@ export class ConnectionService {
   }
 
   private sendAuthMessage(client: Socket): void {
-    client.emit('auth', { message: 'Connection established' });
+    client.emit('auth-success', { message: 'Connection established' });
   }
 
   private logClientConnection(client: GwSocket): void {
