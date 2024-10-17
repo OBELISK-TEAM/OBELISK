@@ -61,7 +61,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectionService.handleConnection(client);
   }
 
-  handleDisconnect(client: Socket): void {
+  handleDisconnect(client: Socket): Promise<void> {
     return this.connectionService.handleDisconnect(client);
   }
 
@@ -75,7 +75,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('leave-board')
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
-    return this.joinBoardService.handleLeaveBoard(client);
+    return this.joinBoardService.handleLeaveBoardAndSlide(client);
   }
 
   @MinimumBoardPermission(BoardPermission.VIEWER)
@@ -85,13 +85,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
     return this.joinSlideService.handleJoinSlide(client, data);
-  }
-
-  @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.VIEWER)
-  @SubscribeMessage('leave-slide')
-  async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
-    return this.joinSlideService.handleLeaveSlide(client);
   }
 
   @UseGuards(BoardPermissionGuard)
