@@ -1,108 +1,167 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCanvas } from "@/contexts/CanvasContext";
-import { ApiError } from "@/errors/ApiError";
-import { complexToast } from "@/contexts/complexToast";
-import { ToastTypes } from "@/enums/ToastType";
+import { useCanvas } from "./CanvasContext";
+import { useSocket } from "./SocketContext";
+
 import { toast } from "sonner";
-import {
-  createSlide as createSlideAction,
-  deleteSlide as deleteSlideAction,
-  revalidateSlidePath,
-} from "@/app/actions/slideActions";
+import { AddSlideData, DeleteSlideData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitAddSlide, socketEmitDeleteSlide } from "@/lib/board/socketEmitUtils";
+import { SlideDeletedResponse } from "@/interfaces/socket/SocketCallbacksData";
 
 interface SlideControlsContext {
-  currentSlideIndex: number;
+  currentSlide: number;
   totalSlides: number;
   SLIDE_LIMIT: number;
-  createSlide: () => Promise<void>;
-  deleteSlide: () => Promise<void>;
-  handlePrevious: () => Promise<void>;
-  handleNext: () => Promise<void>;
-  handleChangeSlide: (slideIndex: number) => Promise<void>;
+  createSlide: () => void;
+  deleteSlide: () => void;
+  handlePrevious: () => void;
+  handleNext: () => void;
+  handleChangeSlide: (slideIndex: number) => void;
 }
 
 const SlideControlsContext = createContext<SlideControlsContext | undefined>(undefined);
 
 export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { socket, totalSlides, setTotalSlides, setFirstSlideChanged } = useSocket();
+  const { slideIndex: currentSlide, boardId, slideId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
   const router = useRouter();
-  const { boardData } = useCanvas();
-  const { _id: boardId, slides, slide } = boardData;
-  const currentSlideIndex = slides.findIndex((s) => s === slide?._id);
-  const totalSlides = slides.length;
   const SLIDE_LIMIT = 10;
+  const [lastSlideDeleted, setLastSlideDeleted] = useState<boolean>(false);
 
-  const createSlide = async () => {
-    try {
-      await revalidateSlidePath(boardId, currentSlideIndex);
-      await createSlideAction(boardId);
-      router.push(`/user-boards/${boardId}/slides/${totalSlides}`);
-    } catch (error: any) {
-      console.error("Error creating new slide:", error);
-      if (error instanceof ApiError) {
-        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
-      } else {
-        toast.error(error.message || "Failed to create a new slide");
-      }
+  useEffect(() => {
+    if (lastSlideDeleted) {
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
     }
-  };
+    return () => {
+      if (lastSlideDeleted) {
+        setLastSlideDeleted(false);
+        setTotalSlides((prev) => prev - 1);
+      }
+    };
+  }, [boardId, currentSlide, lastSlideDeleted, router, setLastSlideDeleted, setTotalSlides]);
 
-  const deleteSlide = async () => {
-    if (!boardId || !slide) {
+  function createSlide() {
+    if (!socket) {
+      return;
+    }
+    const addSlideData: AddSlideData = {
+      slide: {
+        slideNumber: -1, // -1 means append to the end
+      },
+    };
+    socketEmitAddSlide(socket, addSlideData);
+    setTotalSlides(totalSlides + 1);
+  }
+
+  const deleteSlide = () => {
+    if (!currentSlide || !socket) {
       return;
     }
     if (totalSlides === 1) {
-      toast.error("You cannot delete slide as it is the only slide in the board");
+      toast.error("You cannot delete the only remaining slide");
       return;
     }
-    try {
-      await deleteSlideAction(slide._id);
-      toast.success(`Slide deleted successfully`, { duration: 1200 });
-      if (currentSlideIndex === totalSlides - 1) {
-        const index = Math.max(currentSlideIndex - 1, 0);
-        await revalidateSlidePath(boardId, index);
-        router.push(`/user-boards/${boardId}/slides/${index}`);
+
+    if (currentSlide === totalSlides) {
+      setLastSlideDeleted(true);
+    } else {
+      if (currentSlide === 1) {
+        setFirstSlideChanged(true);
       } else {
-        await revalidateSlidePath(boardId, currentSlideIndex);
-        router.replace(`/user-boards/${boardId}/slides/${currentSlideIndex}`);
+        router.push(`/user-boards/${boardId}/slides/${Math.max(currentSlide - 1, 1)}`);
       }
-    } catch (error: any) {
-      console.error("Error deleting slide:", error);
-      toast.error(error.message || "Failed to delete slide");
+      setTotalSlides((prev) => prev - 1);
+    }
+    const deleteSlideData: DeleteSlideData = { slide: { slideNumber: currentSlide } };
+    socketEmitDeleteSlide(socket, deleteSlideData);
+    toast.success(`Slide deleted successfully`, { duration: 1200 });
+  };
+
+  const handlePrevious = () => {
+    if (currentSlide > 1) {
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
     }
   };
 
-  const handlePrevious = async () => {
-    if (currentSlideIndex > 0) {
-      await revalidateSlidePath(boardId, currentSlideIndex);
-      router.push(`/user-boards/${boardId}/slides/${currentSlideIndex - 1}`);
+  const handleNext = () => {
+    if (currentSlide < totalSlides) {
+      router.push(`/user-boards/${boardId}/slides/${currentSlide + 1}`);
     }
   };
 
-  const handleNext = async () => {
-    if (currentSlideIndex < totalSlides - 1) {
-      router.push(`/user-boards/${boardId}/slides/${currentSlideIndex + 1}`);
+  const handleChangeSlide = (slideIndex: number) => {
+    if (slideIndex + 1 !== currentSlide) {
+      router.push(`/user-boards/${boardId}/slides/${slideIndex + 1}`);
+    } else {
+      toast.info("You already are on slide no " + currentSlide);
     }
   };
 
-  const handleChangeSlide = async (slideIndex: number) => {
-    if (slideIndex === currentSlideIndex) {
-      return;
+  useEffect(() => {
+    const navigateToPreviousSlide = () => {
+      const prevSlide = Math.max(currentSlide - 1, 1);
+      toast.info(`route to ${prevSlide}`);
+      router.push(`/user-boards/${boardId}/slides/${prevSlide}`);
+      setTotalSlides(totalSlides - 1);
+    };
+
+    const handleLastSlideDeletion = () => {
+      setLastSlideDeleted(true);
+      toast.info(`route to ${currentSlide - 1}`);
+      router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
+    };
+
+    const handleFirstSlideDeletion = () => {
+      setFirstSlideChanged(true);
+      setTotalSlides(totalSlides - 1);
+    };
+
+    function onSlideAdded() {
+      toast.info("A slide has been added");
+      setTotalSlides(totalSlides + 1);
     }
-    try {
-      await revalidateSlidePath(boardId, slideIndex);
-      router.push(`/user-boards/${boardId}/slides/${slideIndex}`);
-    } catch (error) {
-      console.error("Error revalidating path:", error);
-      toast.error("Failed to revalidate slide");
+
+    function onSlideDeleted(res: SlideDeletedResponse) {
+      // if res.slideNumber === current slide:
+      //  - if current slide ===  1, setFirstSlideChanged(true),setTotalSlides(totalSlides - 1)
+      //  - if 1 < current slide < totalSlides, go to the previous slide,setTotalSlides(totalSlides - 1)
+      //  - if currentSlide === totalSlides, setLastSlideDeleted(true), go to the previous slide,setTotalSlides(totalSlides - 1)
+
+      // if deleted slide is not the current slide:
+      //  - if currentSlide > res.slideNumber, go to the previous slide,setTotalSlides(totalSlides - 1)
+      //  - if currentSlide < res.slideNumber, nothing, setTotalSlides(totalSlides - 1)
+      //  - if currentSlide === totalSlides, setLastSlideDeleted(true), go to the previous slide, setTotalSlides(totalSlides - 1)
+      if (currentSlide < res.slideNumber) {
+        setTotalSlides(totalSlides - 1);
+      } else if (currentSlide > res.slideNumber && currentSlide < totalSlides) {
+        navigateToPreviousSlide();
+      } else if (currentSlide >= res.slideNumber && currentSlide === totalSlides) {
+        handleLastSlideDeletion();
+      } else {
+        // currentSlide equals res.slideNumber but is not the last slide
+        toast.warning("The slide you have been working on has been deleted");
+        if (currentSlide === 1) {
+          handleFirstSlideDeletion();
+        } else {
+          navigateToPreviousSlide();
+        }
+      }
     }
-  };
+
+    socket?.on("slide-added", onSlideAdded);
+    socket?.on("slide-deleted", onSlideDeleted);
+
+    return () => {
+      socket?.off("slide-added", onSlideAdded);
+      socket?.off("slide-deleted", onSlideDeleted);
+    };
+  }, [boardId, router, totalSlides, currentSlide, socket, slideId, setTotalSlides, setFirstSlideChanged]);
 
   return (
     <SlideControlsContext.Provider
       value={{
-        currentSlideIndex,
+        currentSlide,
         totalSlides,
         SLIDE_LIMIT,
         createSlide,

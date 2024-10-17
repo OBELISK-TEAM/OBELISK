@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
+import logger from "@/lib/logger";
 
 interface CreateBoardContextType {
   isLoading: boolean;
@@ -22,10 +23,10 @@ export const CreateBoardProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { _id } = await createBoard(values.boardName);
-      router.push(`/user-boards/${_id}/slides/0`);
+      router.push(`/user-boards/${_id}/slides/1`);
       toast.success("Board created successfully");
     } catch (error: any) {
-      console.error("Error in handleCreateNewBoard:", error);
+      logger.error("Error in handleCreateNewBoard:", error);
       if (error instanceof ApiError) {
         setIsLoading(false);
         complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });

@@ -4,6 +4,10 @@ import { toast } from "sonner";
 import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { fabric } from "fabric";
 import { addListenersBack, removeListenersTemporarily } from "@/lib/board/undoRedoUtils";
+import { Socket } from "socket.io-client";
+import { socketEmitAddObject, socketEmitDeleteObject } from "@/lib/board/socketEmitUtils";
+import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { assignId } from "@/lib/utils";
 
 /**
  * The purpose of this class is to encompass adding objects DIRECTLY to the canvas.
@@ -44,7 +48,7 @@ export class AddCommand implements UndoRedoCommand {
   /**
    * undo
    */
-  public undo() {
+  public undo(socket: Socket) {
     const objectToRemove = getItemById(this._canvas, this._objectId);
     if (!objectToRemove) {
       toast.warning("The object with id " + this._objectId + " was not found");
@@ -52,13 +56,16 @@ export class AddCommand implements UndoRedoCommand {
     }
 
     this._canvas.remove(objectToRemove);
-    this._canvas.renderAll();
+    this._canvas.requestRenderAll();
+
+    const deleteObjectData: DeleteObjectData = { object: { _id: this._objectId } };
+    socketEmitDeleteObject(socket, deleteObjectData);
   }
 
   /**
    * redo
    */
-  public redo() {
+  public redo(socket: Socket) {
     // We need to temporarily turn off these handlers, because otherwise we would infinitely create new commands on the stack.
     const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
 
@@ -72,6 +79,15 @@ export class AddCommand implements UndoRedoCommand {
       (objects: fabric.Object[]) => {
         objects.forEach((o) => {
           this._canvas.add(o);
+          // eslint-disable-next-line
+          const { _id, ...objectJSONWithoutId } = this._objectJSON;
+          const addObjectData: AddObjectData = { object: objectJSONWithoutId };
+          socketEmitAddObject(socket, addObjectData, (res: any) => {
+            // we've added back an object to the canvas, so the server generated a new id for it, so we have reassign it
+            const newId: string = res._id;
+            assignId(o, newId);
+            this._objectId = newId;
+          });
         });
       },
       "fabric"

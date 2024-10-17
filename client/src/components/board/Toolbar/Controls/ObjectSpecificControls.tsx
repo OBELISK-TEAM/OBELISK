@@ -4,9 +4,12 @@ import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
+import { fabric } from "fabric";
+import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
+import { useSocket } from "@/contexts/SocketContext";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
-import { fabric } from "fabric";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -15,6 +18,8 @@ const ObjectSpecificControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
+  const { socket } = useSocket();
+
   const { saveCommand } = useUndoRedo();
 
   if (!selectedObjectStyles) {
@@ -22,7 +27,7 @@ const ObjectSpecificControls: React.FC = () => {
   }
 
   const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (!canvas) {
+    if (!canvas || !socket) {
       return;
     }
     const modifiedObject = canvas.getActiveObject();
@@ -41,11 +46,17 @@ const ObjectSpecificControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [key]: newValue });
     handleStyleChange();
 
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [key]: oldValue });
 
-    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    const updateObjectData: UpdateObjectData = {
+      object: modifiedObjectJSON,
+    };
+    socketEmitUpdateObject(socket, updateObjectData);
+
+    const objectId: string = modifiedObjectJSON._id;
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
     saveCommand(command);
   };
 

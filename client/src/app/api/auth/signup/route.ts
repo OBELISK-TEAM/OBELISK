@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setTokenCookie } from "@/lib/authApiUtils";
+import logger from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,14 +22,14 @@ export async function POST(req: NextRequest) {
       setTokenCookie(accessToken);
       return res;
     } else {
-      console.error("Promise resolved but HTTP status failed");
+      logger.error("Promise resolved but HTTP status failed");
       const error = await response.json();
       return NextResponse.json(error, {
         status: response.status,
       } as ResponseInit);
     }
   } catch (error) {
-    console.error("Promise rejected", error);
+    logger.error("Promise rejected", error);
     return NextResponse.json({ message: "An unexpected error occurred" }, { status: 500 });
   }
 }

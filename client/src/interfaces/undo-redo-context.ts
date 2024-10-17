@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 export interface UndoRedoContext {
   saveCommand: (command: UndoRedoCommand) => void;
   undo: () => void;
@@ -5,6 +7,6 @@ export interface UndoRedoContext {
 }
 
 export interface UndoRedoCommand {
-  redo: () => void;
-  undo: () => void;
+  redo: (socket: Socket) => void;
+  undo: (socket: Socket) => void;
 }
