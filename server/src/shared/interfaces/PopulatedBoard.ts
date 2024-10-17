@@ -2,7 +2,7 @@ import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
 import { UserPermission } from './UserPermission';
 
 export interface BoardWithPopulatedPermissions
-  extends Omit<SuperBoardDocument, 'slides' | 'permissions' | 'owner'> {
+  extends Omit<SuperBoardDocument, 'permissions' | 'owner'> {
   permissions: {
     viewer: UserPermission[];
     editor: UserPermission[];

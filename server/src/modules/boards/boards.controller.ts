@@ -13,7 +13,10 @@ import { BoardQueryDto, CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { PaginatedBoardsResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import {
+  PaginatedBoardsResponseObject,
+  PopulatedBoardResponseObject,
+} from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 // TODO - verify permissions for endpointss
 
@@ -40,6 +43,17 @@ export class BoardsController {
   @Get(':boardId')
   getBoard(@Param('boardId') boardId: string): Promise<BoardResponseObject> {
     return this.boardsService.getBoardById(boardId);
+  }
+
+  // TODO - check permissions to fetch board
+  @Get('details/:boardId')
+  @UseGuards(JwtAuthGuard)
+  // getBoard(@Param('boardId') boardId: string): Promise<PopulatedBoardResponseObject> {
+  getBoardDetails(
+    @User('_id') userId: string,
+    @Param('boardId') boardId: string,
+  ): Promise<any> {
+    return this.boardsService.getBoardDetails(userId, boardId);
   }
 
   @Post()

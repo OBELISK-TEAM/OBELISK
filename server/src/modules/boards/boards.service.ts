@@ -53,11 +53,18 @@ export class BoardsService {
     return this.res.toResponseBoard(deletedBoard);
   }
 
+  async getBoardDetails(userId: string, boardId: string) {
+    const board = await this.boardModel.findById(boardId);
+    if (!board)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return this.prepareBoardResponse(board, userId, true, true);
+  }
+
   async getUserRelatedBoards(
     userId: string,
-    page: number = 1,
-    limit: number = 5,
-    order: SortOrder = 'desc',
+    page: number,
+    limit: number,
+    order: SortOrder,
     tab: BoardsFilter = BoardsFilter.ALL,
   ): Promise<PaginatedBoardsResponseObject> {
     const query = this.getFilterQuery(userId, tab);
@@ -75,14 +82,18 @@ export class BoardsService {
   private async prepareBoardResponse(
     board: SuperBoardDocument,
     userId: string,
+    showMaxSizeInBytes = false,
+    showSlidesCount = false,
   ): Promise<PopulatedBoardResponseObject> {
     const permission = this.determineUserPermission(board, userId);
     const populatedBoard = await this.populatePermissions(board);
-    const size = this.calculateBoardSize(board);
+    const sizeInBytes = this.calculateBoardSizeInBytes(board);
     return this.res.toResponseBoardWithPopulatedPermissions(
       populatedBoard,
       permission,
-      size,
+      sizeInBytes,
+      showMaxSizeInBytes,
+      showSlidesCount,
     );
   }
 
@@ -191,9 +202,9 @@ export class BoardsService {
 
   async findUserRelatedBoards(
     query: FilterQuery<SuperBoardDocument>,
-    page: number,
-    limit: number,
-    order: SortOrder,
+    page: number = 1,
+    limit: number = 5,
+    order: SortOrder = 'desc',
   ): Promise<SuperBoardDocument[]> {
     const skip = (page - 1) * limit;
     const sortOrder = order === 'asc' ? 1 : -1;
@@ -205,7 +216,7 @@ export class BoardsService {
       .exec();
   }
 
-  private calculateBoardSize(board: SuperBoardDocument): number {
+  private calculateBoardSizeInBytes(board: SuperBoardDocument): number {
     return BSON.calculateObjectSize(board);
   }
 

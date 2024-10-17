@@ -61,21 +61,27 @@ export class ResponseService {
   toResponseBoardWithPopulatedPermissions(
     board: BoardWithPopulatedPermissions,
     permission: BoardPermission,
-    size: number,
+    sizeInBytes: number,
+    showMaxSizeInBytes: boolean,
+    showSlideCount: boolean,
   ): PopulatedBoardResponseObject {
-    const { _id, name, owner, permissions, createdAt, updatedAt } =
+    const maxSizeInBytes = 4206969;
+    const { _id, name, owner, permissions, createdAt, updatedAt, slides } =
       board.toObject<BoardWithPopulatedPermissions>();
-    return {
+
+    const response: PopulatedBoardResponseObject = {
       _id: _id as string,
       name,
-      permission: BoardPermission[permission],
-      permissions: {
-        ...permissions,
-      },
       owner,
-      size,
+      permission: BoardPermission[permission],
+      permissions,
+      sizeInBytes,
       createdAt,
       updatedAt,
     };
+
+    if (showMaxSizeInBytes) response.maxSizeInBytes = maxSizeInBytes;
+    if (showSlideCount) response.slidesCount = slides.length;
+    return response;
   }
 }
