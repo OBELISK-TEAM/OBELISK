@@ -84,7 +84,8 @@ export class JoinBoardService {
   }
 
   async handleLeaveBoardAndSlide(client: GwSocketWithTarget): Promise<void> {
-    await this.commonService.leaveTarget(client, 'board', 'slide');
+    await this.commonService.leaveTarget(client, 'board');
+    await this.commonService.leaveTarget(client, 'slide');
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {
