@@ -13,6 +13,7 @@ export class SlideActionService {
     data: AddSlideData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
+
     const slideNumber = data.slide ? data.slide.slideNumber : 1;
     const slide = await this.slidesService.createSlide(boardId, slideNumber);
     this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);

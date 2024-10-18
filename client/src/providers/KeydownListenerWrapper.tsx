@@ -33,7 +33,7 @@ const KeydownListenerWrapper: React.FC<{ children: React.ReactNode }> = ({ child
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [performAction, undo, redo]);
+  }, [performAction, redo, undo]);
 
   return <>{children}</>;
 };

@@ -5,6 +5,9 @@ import { Toggle } from "@/components/ui/toggle";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { fabric } from "fabric";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
+import { useSocket } from "@/contexts/SocketContext";
+import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
@@ -14,6 +17,8 @@ const FontStyleControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
 
+  const { socket } = useSocket();
+
   const { saveCommand } = useUndoRedo();
 
   const styleToggle = (
@@ -21,7 +26,7 @@ const FontStyleControls: React.FC = () => {
     valueTrue: string | boolean,
     valueFalse: string | boolean
   ) => {
-    if (!canvas) {
+    if (!canvas || !socket) {
       return;
     }
 
@@ -39,11 +44,17 @@ const FontStyleControls: React.FC = () => {
     setObjectStyle(canvas, modifiedObject, { [styleKey]: newValue });
     handleStyleChange();
 
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]);
+    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
     const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
     Object.assign(clonedJSON, { [styleKey]: oldValue });
 
-    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, handleStyleChange);
+    const updateObjectData: UpdateObjectData = {
+      object: modifiedObjectJSON,
+    };
+    socketEmitUpdateObject(socket, updateObjectData);
+
+    const objectId: string = modifiedObjectJSON._id;
+    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
     saveCommand(command);
   };
 

@@ -1,4 +1,5 @@
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
+import { Socket } from "socket.io-client";
 
 /**
  * The class is used in the canvas undo/redo functionality.
@@ -19,18 +20,18 @@ export class ComplexCommand implements UndoRedoCommand {
   /**
    * undo
    */
-  public undo() {
+  public undo(socket: Socket) {
     for (const command of this._commands.toReversed()) {
-      command.undo();
+      command.undo(socket);
     }
   }
 
   /**
    * redo
    */
-  public redo() {
+  public redo(socket: Socket) {
     for (const command of this._commands) {
-      command.redo();
+      command.redo(socket);
     }
   }
 }

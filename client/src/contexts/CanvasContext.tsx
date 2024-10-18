@@ -12,17 +12,31 @@ import {
 } from "@/lib/board/canvasUtils";
 import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
-import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
+import useSocketListeners from "@/hooks/socket/useSocketListeners";
+import { useSocket } from "./SocketContext";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
-export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: BoardDataResponse }> = ({
+interface CanvasProviderProps {
+  children: React.ReactNode;
+  slideId: string | undefined;
+  slideData: any;
+  slideIndex: number;
+  boardId: string;
+}
+
+export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   children,
-  boardData,
+  slideId,
+  slideData,
+  slideIndex,
+  boardId,
 }) => {
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
+  const { socket } = useSocket();
+
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
@@ -101,10 +115,10 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
   }, [handleZoom]);
 
   useEffect(() => {
-    if (boardData.slide && canvasRef.current && state.canvas) {
-      state.canvas.loadFromJSON(boardData.slide, () => state.canvas?.renderAll());
+    if (slideData && canvasRef.current && state.canvas) {
+      state.canvas.loadFromJSON(slideData, () => state.canvas?.renderAll());
     }
-  }, [state.canvas, boardData.slide]);
+  }, [state.canvas, slideData]);
   useEffect(() => {
     if (state.canvas) {
       toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);
@@ -136,9 +150,22 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode; boardData: Bo
     });
   };
 
+  useSocketListeners(socket, state.canvas);
+
   return (
     <CanvasContext.Provider
-      value={{ state, canvasRef, setCanvasMode, setColor, setSize, handleStyleChange, setActiveItem, boardData }}
+      value={{
+        state,
+        canvasRef,
+        setCanvasMode,
+        setColor,
+        setSize,
+        handleStyleChange,
+        setActiveItem,
+        slideIndex,
+        boardId,
+        slideId,
+      }}
     >
       {children}
     </CanvasContext.Provider>
