@@ -10,6 +10,7 @@ import { SlideActionService } from './providers/slide.action.service';
 import { ObjectActionService } from './providers/object.action.service';
 import { ObjectsModule } from '../modules/objects/objects.module';
 import { ResponseModule } from '../modules/response/response.module';
+import { CommonService } from './providers/common.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ResponseModule } from '../modules/response/response.module';
     JoinSlideService,
     SlideActionService,
     ObjectActionService,
+    CommonService,
   ],
 })
 export class GatewayModule {}
