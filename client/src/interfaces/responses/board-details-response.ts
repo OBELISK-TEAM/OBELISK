@@ -11,5 +11,5 @@ export interface BoardDetailsResponse {
   createdAt: string;
   updatedAt: string;
   maxSizeInBytes: number;
-  slidesCount: number;
+  slideCount: number;
 }
