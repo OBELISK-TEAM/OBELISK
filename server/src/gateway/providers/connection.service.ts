@@ -1,7 +1,10 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { WsAuthGuard } from '../../modules/auth/guards/ws.auth.guard';
 import { Socket } from 'socket.io';
-import { GwSocket } from '../../shared/interfaces/auth/GwSocket';
+import {
+  GwSocket,
+  GwSocketWithTarget,
+} from '../../shared/interfaces/auth/GwSocket';
 import { JoinBoardService } from './join.board.service';
 
 // unfortunately, filters cannot be applied to connection handlers
@@ -25,8 +28,12 @@ export class ConnectionService {
     }
   }
 
-  async handleDisconnect(client: Socket): Promise<void> {
-    await this.joinBoardService.handleLeaveBoardAndSlide(client);
+  async handleDisconnect(
+    client: Socket | GwSocket | GwSocketWithTarget,
+  ): Promise<void> {
+    if (this.instanceOfGwSocketWithTarget(client)) {
+      await this.joinBoardService.handleLeaveBoardAndSlide(client);
+    }
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
@@ -54,5 +61,17 @@ export class ConnectionService {
   private emitErrorAndDisconnect(client: Socket, message: string): void {
     client.emit('error', { message });
     client.disconnect(true);
+  }
+
+  instanceOfGwSocketWithTarget(
+    client: Socket | GwSocket | GwSocketWithTarget,
+  ): client is GwSocketWithTarget {
+    return (
+      client &&
+      typeof client.data === 'object' &&
+      'user' in client.data &&
+      'targetBoard' in client.data.user &&
+      'targetSlide' in client.data.user
+    );
   }
 }

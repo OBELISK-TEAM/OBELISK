@@ -14,7 +14,6 @@ import {
   AddSlideData,
   DeleteObjectData,
   DeleteSlideData,
-  JoinBoardData,
   JoinSlideData,
   UpdateObjectData,
 } from './gateway.dto';
@@ -36,6 +35,7 @@ import { ObjectResponseObject } from '../shared/interfaces/response-objects/Obje
 import { ObjectActionService } from './providers/object.action.service';
 import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
 import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
+import { JoinBoardData } from './gateway.dto2';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -61,7 +61,9 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectionService.handleConnection(client);
   }
 
-  handleDisconnect(client: Socket): Promise<void> {
+  handleDisconnect(
+    client: Socket | GwSocket | GwSocketWithTarget,
+  ): Promise<void> {
     return this.connectionService.handleDisconnect(client);
   }
 
