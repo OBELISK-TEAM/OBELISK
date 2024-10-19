@@ -1,9 +1,9 @@
 import {
   IsDefined,
   IsNotEmpty,
-  ValidateNested,
   IsObject,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -13,12 +13,10 @@ export class OnlyId {
   _id: string;
 }
 
-export class BoardOnlyId extends OnlyId {}
-
 export class JoinBoardData {
   @IsDefined()
   @IsObject()
   @ValidateNested()
-  @Type(() => BoardOnlyId)
-  board: BoardOnlyId;
+  @Type(() => OnlyId)
+  board: OnlyId;
 }

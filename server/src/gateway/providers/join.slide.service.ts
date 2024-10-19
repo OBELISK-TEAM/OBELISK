@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { JoinSlideData } from '../gateway.dto';
+import { JoinSlideData } from '../dto/slide.data';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { CommonService } from './common.service';
@@ -17,7 +17,13 @@ export class JoinSlideService {
     client: GwSocketWithTarget,
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
-    const newSlideNumber = data.slide.slideNumber;
+    let newSlideNumber;
+    if (!data.slide) {
+      newSlideNumber = 1;
+    } else {
+      newSlideNumber = data.slide.slideNumber;
+    }
+    console.log('newSlideNumber', newSlideNumber);
     const boardId = client.data.user.targetBoard.boardId;
     const newSlide = await this.slidesService.getSlide(boardId, newSlideNumber);
 

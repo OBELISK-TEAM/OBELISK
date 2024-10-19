@@ -4,7 +4,7 @@ import {
   GwSocket,
   GwSocketWithTarget,
 } from '../../shared/interfaces/auth/GwSocket';
-import { JoinBoardData } from '../gateway.dto';
+import { JoinBoardData } from '../dto/board.data';
 import { Socket } from 'socket.io';
 import { BoardPermission } from '../../enums/board.permission';
 import { ResponseService } from '../../modules/response/response.service';

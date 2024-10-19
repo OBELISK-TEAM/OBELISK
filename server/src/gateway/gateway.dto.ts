@@ -4,10 +4,6 @@ import { ObjectPath } from '../shared/interfaces/fabric-js/ObjectPath';
 import { ObjectShadow } from '../shared/interfaces/fabric-js/ObjectShadow';
 import { Eraser } from 'src/mongo/schemas/object/base.object.schema';
 
-export interface JoinBoardData {
-  board: BoardOnlyId;
-}
-
 export interface JoinSlideData {
   slide: { slideNumber: number };
 }

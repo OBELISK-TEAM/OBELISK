@@ -11,10 +11,7 @@ import {
 } from '../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
-  AddSlideData,
   DeleteObjectData,
-  DeleteSlideData,
-  JoinSlideData,
   UpdateObjectData,
 } from './gateway.dto';
 import { ConnectionService } from './providers/connection.service';
@@ -35,7 +32,8 @@ import { ObjectResponseObject } from '../shared/interfaces/response-objects/Obje
 import { ObjectActionService } from './providers/object.action.service';
 import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
 import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
-import { JoinBoardData } from './gateway.dto2';
+import { JoinBoardData } from './dto/board.data';
+import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -86,6 +84,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     client: GwSocketWithTarget,
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
+    console.log(data);
     return this.joinSlideService.handleJoinSlide(client, data);
   }
 
