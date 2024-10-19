@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     title: `${boardId} | Obelisk`,
   };
 }
+
 const BoardLayout: FC<LayoutProps> = ({ children, params: { boardId } }) => {
   return (
     <div className="flex flex-1">
