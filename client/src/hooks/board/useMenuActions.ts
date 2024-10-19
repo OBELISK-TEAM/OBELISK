@@ -28,6 +28,7 @@ import { socketEmitAddObject, socketEmitDeleteObject } from "@/lib/board/socketE
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
+import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -166,7 +167,7 @@ export const useMenuActions = () => {
         // saveCommand(command);
       },
       [MenuActions.REMOVE_SELECTED]: ({ canvas }) => {
-        if (!canvas) {
+        if (!canvas || !socket) {
           return;
         }
         const removedObjects: fabric.Object[] | undefined = removeSelectedObjects(canvas);
@@ -175,8 +176,16 @@ export const useMenuActions = () => {
         }
 
         removedObjects.forEach((obj) => {
-          handleObjectDeleting(canvas, obj);
+          const deleteObjectData: DeleteObjectData = {
+            // @ts-expect-error Every fabric object should have _id
+            object: { _id: obj._id },
+          };
+          socketEmitDeleteObject(socket, deleteObjectData);
         });
+
+        const removeObjectsCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
+        const command = new ComplexCommand(removeObjectsCommands);
+        saveCommand(command);
       },
       [MenuActions.CLEAR_CANVAS]: ({ canvas }) => {
         if (!canvas || !socket) {
@@ -193,9 +202,9 @@ export const useMenuActions = () => {
           socketEmitDeleteObject(socket, deleteObjectData);
         });
 
-        // const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
-        // const command = new ComplexCommand(removeObjectsCommands);
-        // saveCommand(command);
+        const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
+        const command = new ComplexCommand(removeObjectsCommands);
+        saveCommand(command);
       },
       [MenuActions.LOAD_CANVAS]: ({ canvas, setCanvasMode }) => {
         if (!canvas || !setCanvasMode) {
