@@ -11,13 +11,9 @@ import {
 } from '../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
-  AddSlideData,
   DeleteObjectData,
-  DeleteSlideData,
-  JoinBoardData,
-  JoinSlideData,
   UpdateObjectData,
-} from './gateway.dto';
+} from './dto/object.data';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
@@ -36,6 +32,8 @@ import { ObjectResponseObject } from '../shared/interfaces/response-objects/Obje
 import { ObjectActionService } from './providers/object.action.service';
 import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
 import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
+import { JoinBoardData } from './dto/board.data';
+import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -61,7 +59,9 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectionService.handleConnection(client);
   }
 
-  handleDisconnect(client: Socket): void {
+  handleDisconnect(
+    client: Socket | GwSocket | GwSocketWithTarget,
+  ): Promise<void> {
     return this.connectionService.handleDisconnect(client);
   }
 
@@ -75,9 +75,10 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('leave-board')
   async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
-    return this.joinBoardService.handleLeaveBoard(client);
+    return this.joinBoardService.handleLeaveBoardAndSlide(client);
   }
 
+  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.VIEWER)
   @SubscribeMessage('join-slide')
   async handleJoinSlide(
@@ -85,13 +86,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
     return this.joinSlideService.handleJoinSlide(client, data);
-  }
-
-  @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.VIEWER)
-  @SubscribeMessage('leave-slide')
-  async handleLeaveSlide(client: GwSocketWithTarget): Promise<void> {
-    return this.joinSlideService.handleLeaveSlide(client);
   }
 
   @UseGuards(BoardPermissionGuard)

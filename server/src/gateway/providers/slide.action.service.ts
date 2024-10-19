@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { SlidesService } from '../../modules/slides/slides.service';
-import { AddSlideData, DeleteSlideData } from '../gateway.dto';
+import { AddSlideData, DeleteSlideData } from '../dto/slide.data';
 
 @Injectable()
 export class SlideActionService {
@@ -13,7 +13,7 @@ export class SlideActionService {
     data: AddSlideData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
-    const slideNumber = data.slide ? data.slide.slideNumber : 1;
+    const slideNumber = data.slide ? data.slide.slideNumber : -1;
     const slide = await this.slidesService.createSlide(boardId, slideNumber);
     this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);
     client.to(boardId).emit('slide-added', { ...slide, slideNumber });

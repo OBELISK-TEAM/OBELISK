@@ -64,7 +64,7 @@ export const handleLoadFromJSON = async (canvas: fabric.Canvas | null): Promise<
   }
 };
 
-export const addText = (
+export const instantiateText = (
   canvas: fabric.Canvas | null,
   posX: number,
   posY: number,
@@ -84,12 +84,6 @@ export const addText = (
     lockSkewingY: true,
     lockScalingFlip: true,
   });
-
-  canvas?.add(newText);
-  canvas?.setActiveObject(newText);
-  newText.enterEditing();
-  newText.selectAll();
-
   return newText;
 };
 
@@ -105,12 +99,15 @@ export const removeSelectedObjects = (canvas: fabric.Canvas | null): fabric.Obje
   return activeObjects;
 };
 
-export const groupSelectedObjects = (canvas: fabric.Canvas | null): fabric.Group | undefined => {
-  if (!canvas) {
-    return;
-  }
-
-  const activeObjects = canvas.getActiveObjects();
+/**
+ * Create a group consisting of given objects
+ * @param canvas fabric.Canvas
+ * @returns Created group of fabric.Group type
+ */
+export const instantiateGroupOfObjects = (
+  canvas: fabric.Canvas,
+  activeObjects: fabric.Object[]
+): fabric.Group | undefined => {
   if (!activeObjects.length) {
     return;
   }
@@ -121,16 +118,10 @@ export const groupSelectedObjects = (canvas: fabric.Canvas | null): fabric.Group
     originX: "center",
     originY: "center",
   });
-
-  canvas.remove(...activeObjects);
-  canvas.add(group);
-  canvas.setActiveObject(group);
-  canvas.requestRenderAll();
-
   return group;
 };
 
-export const addLine = (
+export const instantiateLine = (
   canvas: fabric.Canvas | null,
   options?: { color?: string; width?: number; height?: number }
 ): fabric.Line => {
@@ -142,12 +133,10 @@ export const addLine = (
     height: height,
     selectable: true,
   });
-  canvas?.add(line);
-  canvas?.setActiveObject(line);
   return line;
 };
 
-export const addRectangle = (
+export const instantiateRectangle = (
   canvas: fabric.Canvas | null,
   options?: { fillColor?: string; width?: number; height?: number }
 ): fabric.Rect => {
@@ -161,12 +150,10 @@ export const addRectangle = (
     angle: 0,
     transparentCorners: false,
   });
-  canvas?.add(rect);
-  canvas?.setActiveObject(rect);
   return rect;
 };
 
-export const addCircle = (
+export const instantiateCircle = (
   canvas: fabric.Canvas | null,
   options?: { fillColor?: string; radius?: number }
 ): fabric.Circle => {
@@ -177,8 +164,6 @@ export const addCircle = (
     left: 200,
     top: 200,
   });
-  canvas?.add(circle);
-  canvas?.setActiveObject(circle);
   return circle;
 };
 

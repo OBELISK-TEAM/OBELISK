@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ObjectStats } from 'src/schemas/stats/object.stats.schema';
+import { ObjectStats } from 'src/mongo/schemas/stats/object.stats.schema';
 
 @Injectable()
 export class ObjectStatsService {
