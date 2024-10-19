@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { UserRole } from '../enums/user.role';
-import { UserAuthProvider } from '../enums/user.auth.provider';
+import { UserRole } from '../../enums/user.role';
+import { UserAuthProvider } from '../../enums/user.auth.provider';
 import { hashSync } from 'bcrypt';
 import {
   Document as MongooseDocument,

@@ -1,8 +1,8 @@
 import { Prop } from '@nestjs/mongoose';
-import { ObjectShadow } from '../../shared/interfaces/fabric-js/ObjectShadow';
-import { ObjectTextStyles } from '../../shared/interfaces/fabric-js/ObjectTextStyles';
-import { ObjectFilter } from '../../shared/interfaces/fabric-js/ObjectFilter';
-import { ObjectPath } from '../../shared/interfaces/fabric-js/ObjectPath';
+import { ObjectShadow } from '../../../shared/interfaces/fabric-js/ObjectShadow';
+import { ObjectTextStyles } from '../../../shared/interfaces/fabric-js/ObjectTextStyles';
+import { ObjectFilter } from '../../../shared/interfaces/fabric-js/ObjectFilter';
+import { ObjectPath } from '../../../shared/interfaces/fabric-js/ObjectPath';
 import { Schema as MongooseSchema } from 'mongoose';
 
 export class BaseObject {

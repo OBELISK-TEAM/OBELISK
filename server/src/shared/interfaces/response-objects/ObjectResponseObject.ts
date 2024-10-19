@@ -2,7 +2,7 @@ import { ObjectPath } from '../fabric-js/ObjectPath';
 import { ObjectShadow } from '../fabric-js/ObjectShadow';
 import { ObjectTextStyles } from '../fabric-js/ObjectTextStyles';
 import { ObjectFilter } from '../fabric-js/ObjectFilter';
-import { Eraser } from '../../../schemas/object/base.object.schema';
+import { Eraser } from '../../../mongo/schemas/object/base.object.schema';
 
 export interface ObjectResponseObject {
   _id: string;

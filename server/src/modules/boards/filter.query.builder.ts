@@ -1,5 +1,5 @@
 import { FilterQuery } from 'mongoose';
-import { SuperBoardDocument } from '../../schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../mongo/schemas/board/super.board.schema';
 
 export class FilterQueryBuilder {
   private query: FilterQuery<SuperBoardDocument> = {};

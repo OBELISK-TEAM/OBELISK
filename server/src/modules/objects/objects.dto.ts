@@ -13,7 +13,7 @@ import { ObjectShadow } from '../../shared/interfaces/fabric-js/ObjectShadow';
 import { ObjectPath } from '../../shared/interfaces/fabric-js/ObjectPath';
 import { ObjectFilter } from '../../shared/interfaces/fabric-js/ObjectFilter';
 import { ObjectTextStyles } from '../../shared/interfaces/fabric-js/ObjectTextStyles';
-import { Eraser } from '../../schemas/object/base.object.schema';
+import { Eraser } from '../../mongo/schemas/object/base.object.schema';
 
 export class CreateObjectDto {
   @IsOptional()
