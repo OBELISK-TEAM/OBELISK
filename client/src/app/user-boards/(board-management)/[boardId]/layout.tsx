@@ -11,8 +11,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   const { boardId } = params;
   //const boardData = await getBoardData(boardId); todo: [JIRA OK-219] retrieve board name for title
   return {
-    title: `User board - ${boardId} | Obelisk`,
-    description: "User board main information",
+    title: `${boardId} | Obelisk`,
   };
 }
 const BoardLayout: FC<LayoutProps> = ({ children, params: { boardId } }) => {
