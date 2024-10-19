@@ -31,7 +31,7 @@ export class ConnectionService {
   async handleDisconnect(
     client: Socket | GwSocket | GwSocketWithTarget,
   ): Promise<void> {
-    if (this.instanceOfGwSocketWithTarget(client)) {
+    if (this.isClientOnBoardAndSlide(client)) {
       await this.joinBoardService.handleLeaveBoardAndSlide(client);
     }
     this.logger.log(`Client disconnected: ${client.id}`);
@@ -63,7 +63,7 @@ export class ConnectionService {
     client.disconnect(true);
   }
 
-  private instanceOfGwSocketWithTarget(
+  private isClientOnBoardAndSlide(
     client: Socket | GwSocket | GwSocketWithTarget,
   ): client is GwSocketWithTarget {
     return (
