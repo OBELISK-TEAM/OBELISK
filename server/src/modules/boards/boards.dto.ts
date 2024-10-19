@@ -8,7 +8,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { BoardsFilter } from '../../enums/boardsFilter';
+import { BoardsFilter } from '../../shared/enums/boardsFilter';
 import { SortOrder } from './boards.service';
 
 export class CreateBoardDto {

@@ -7,9 +7,9 @@ import {
   SuperBoardDocument,
 } from '../../mongo/schemas/board/super.board.schema';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../shared/enums/board.permission';
 import { ResponseService } from '../response/response.service';
-import { BoardsFilter } from 'src/enums/boardsFilter';
+import { BoardsFilter } from 'src/shared/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
 import {
   PaginatedBoardsResponseObject,

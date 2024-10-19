@@ -1,3 +1,4 @@
+
 import { BoardWithSlideCount } from './BoardWithSlideCount';
 import { BoardPermission } from '../../enums/board.permission';
 

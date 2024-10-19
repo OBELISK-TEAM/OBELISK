@@ -6,7 +6,7 @@ export const setTokenCookie = (token: string) => {
   const expiryDate = new Date(decoded.exp * 1000);
   cookies().set("accessToken", token, {
     expires: expiryDate,
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === "production",
     path: "/",
   });
