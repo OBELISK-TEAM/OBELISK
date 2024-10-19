@@ -88,14 +88,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       joinBoard();
     }
 
-    function joinBoard() {      
+    function joinBoard() {
       if (!socket || !boardId) {
         toast.error("No socket");
         logger.error("No socket defined");
         return;
       }
       socketEmitJoinBoard(socket, joinBoardData, handleJoinBoard);
-    };
+    }
 
     const handlers = [
       { eventName: "error", handler: onError },
@@ -111,8 +111,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     });
 
     const joinBoardData = { board: { _id: boardId } };
-
-    
 
     return () => {
       if (!socket) {
