@@ -7,7 +7,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { UserAuthProvider } from 'src/enums/user.auth.provider';
+import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
 
 export class CreateUserDto {
   @IsEmail(

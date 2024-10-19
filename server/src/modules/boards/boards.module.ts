@@ -7,7 +7,7 @@ import { ResponseModule } from '../response/response.module';
 import {
   SuperBoard,
   SuperBoardSchema,
-} from '../../schemas/board/super.board.schema';
+} from '../../mongo/schemas/board/super.board.schema';
 
 @Module({
   imports: [

@@ -6,25 +6,25 @@ import { PermissionsResponse } from "@/interfaces/responses/permissions-response
 const detailedBoards: BoardTableColumns[] = [
   BoardTableColumns.NAME,
   BoardTableColumns.OWNER,
-  BoardTableColumns.MODIFIED_AT,
-  BoardTableColumns.CREATED_AT,
+  BoardTableColumns.MODIFIED,
+  BoardTableColumns.CREATED,
   BoardTableColumns.MY_PERMISSION,
   BoardTableColumns.SHARED_WITH,
-  BoardTableColumns.SIZE_IN_KB,
+  BoardTableColumns.SIZE,
 ];
 
 const ownedBoards: BoardTableColumns[] = [
   BoardTableColumns.NAME,
-  BoardTableColumns.MODIFIED_AT,
-  BoardTableColumns.CREATED_AT,
+  BoardTableColumns.MODIFIED,
+  BoardTableColumns.CREATED,
   BoardTableColumns.SHARED_WITH,
-  BoardTableColumns.SIZE_IN_KB,
+  BoardTableColumns.SIZE,
 ];
 
 export const getColumnsForTab = (tab: BoardsActiveTab): BoardTableColumns[] => {
-  if (tab === BoardsActiveTab.SHARED_FOR_CURRENT_USER) {
+  if (tab === BoardsActiveTab.SHARED_FOR) {
     return detailedBoards;
-  } else if (tab === BoardsActiveTab.OWNED_BY_CURRENT_USER) {
+  } else if (tab === BoardsActiveTab.OWNED_BY) {
     return ownedBoards;
   }
   return [];
@@ -32,9 +32,9 @@ export const getColumnsForTab = (tab: BoardsActiveTab): BoardTableColumns[] => {
 
 export const getTitleForTab = (tab: BoardsActiveTab): string => {
   switch (tab) {
-    case BoardsActiveTab.OWNED_BY_CURRENT_USER:
+    case BoardsActiveTab.OWNED_BY:
       return "Your boards";
-    case BoardsActiveTab.SHARED_FOR_CURRENT_USER:
+    case BoardsActiveTab.SHARED_FOR:
       return "Boards shared with you";
     default:
       return "";
@@ -43,9 +43,9 @@ export const getTitleForTab = (tab: BoardsActiveTab): string => {
 
 export const getDescriptionForTab = (tab: BoardsActiveTab): string => {
   switch (tab) {
-    case BoardsActiveTab.OWNED_BY_CURRENT_USER:
+    case BoardsActiveTab.OWNED_BY:
       return "Boards created by you";
-    case BoardsActiveTab.SHARED_FOR_CURRENT_USER:
+    case BoardsActiveTab.SHARED_FOR:
       return "By other users";
     default:
       return "";
@@ -81,5 +81,9 @@ export const getPermissionLabel = (permission: BoardPermission): string => {
 };
 
 export const concatenatePermissions = (permissions: PermissionsResponse): string[] => {
-  return [...(permissions.viewer || []), ...(permissions.editor || []), ...(permissions.moderator || [])];
+  return [
+    ...(permissions.viewer.map((e) => e.email) || []),
+    ...(permissions.editor.map((e) => e.email) || []),
+    ...(permissions.moderator.map((e) => e.email) || []),
+  ];
 };

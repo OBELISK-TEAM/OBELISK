@@ -3,18 +3,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { UserDocument } from '../../../schemas/user.schema';
+import { UserDocument } from '../../../mongo/schemas/user.schema';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../users.dto';
-import { UserAuthProvider } from 'src/enums/user.auth.provider';
-import { UserRole } from 'src/enums/user.role';
+import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
+import { UserRole } from 'src/shared/enums/user.role';
 
 class UserModelMock {
   find = jest.fn();
   findOne = jest.fn();
   findById = jest.fn();
   findByIdAndUpdate = jest.fn();
-  findByIdAndDelete = jest.fn();
   create = jest.fn();
   save = jest.fn();
 }
@@ -261,13 +260,12 @@ describe('UsersService', () => {
       userRole: UserRole.USER,
       userAuthProvider: UserAuthProvider.INTERNAL,
       boards: ['boardId1', 'boardId2'],
-      slideObjects: ['slideObject1', 'slideObject2'],
       createdAt: new Date('2023-01-01T00:00:00Z'),
       updatedAt: new Date('2023-01-02T00:00:00Z'),
       toObject: jest.fn().mockReturnThis(),
     } as unknown as UserDocument;
 
-    it('should return the basic UserResponseObject without boards, slideObjects, or timestamps', () => {
+    it('should return the basic UserResponseObject without boards or timestamps', () => {
       const result = userService.toResponseUser(mockUserDocument);
 
       expect(result).toEqual({

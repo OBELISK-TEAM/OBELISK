@@ -17,7 +17,7 @@ import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
-import { UserRole } from '../../enums/user.role';
+import { UserRole } from '../../shared/enums/user.role';
 
 @Controller('auth')
 export class AuthController {

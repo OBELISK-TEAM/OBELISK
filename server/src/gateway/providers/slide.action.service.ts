@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { SlidesService } from '../../modules/slides/slides.service';
-import { AddSlideData, DeleteSlideData } from '../gateway.dto';
+import { AddSlideData, DeleteSlideData } from '../dto/slide.data';
 
 @Injectable()
 export class SlideActionService {
@@ -13,12 +13,10 @@ export class SlideActionService {
     data: AddSlideData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
-    const slide = await this.slidesService.createSlide(
-      boardId,
-      data.slide ? data.slide.slideNumber : -1,
-    );
+    const slideNumber = data.slide ? data.slide.slideNumber : -1;
+    const slide = await this.slidesService.createSlide(boardId, slideNumber);
     this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);
-    client.to(boardId).emit('slide-added', slide);
+    client.to(boardId).emit('slide-added', { ...slide, slideNumber });
   }
 
   async handleDeleteSlide(
@@ -26,11 +24,9 @@ export class SlideActionService {
     data: DeleteSlideData,
   ): Promise<void> {
     const boardId = client.data.user.targetBoard.boardId;
-    const slide = await this.slidesService.deleteSlide(
-      boardId,
-      data.slide ? data.slide.slideNumber : 1,
-    );
+    const slideNumber = data.slide ? data.slide.slideNumber : 1;
+    const slide = await this.slidesService.deleteSlide(boardId, slideNumber);
     this.logger.log(`Slide deleted: ${slide._id} by ${client.data.user.email}`);
-    client.to(boardId).emit('slide-deleted', slide);
+    client.to(boardId).emit('slide-deleted', { ...slide, slideNumber });
   }
 }

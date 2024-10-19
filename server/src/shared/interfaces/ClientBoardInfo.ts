@@ -1,5 +1,5 @@
 import { BoardWithSlidesCount } from './BoardWithSlidesCount';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../enums/board.permission';
 
 export interface ClientBoardInfo
   extends Omit<BoardWithSlidesCount, 'permissions'> {

@@ -1,8 +1,12 @@
-import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById, updateDimensions } from "@/lib/board/canvasUtils";
-import { AddCommand } from "./AddCommand";
 import { toast } from "sonner";
+import { Socket } from "socket.io-client";
+import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
+import { addListenersBack, removeListenersTemporarily } from "@/lib/board/undoRedoUtils";
+import { fabric } from "fabric";
+import { assignId } from "@/lib/utils";
 
 /**
  * The class is used in the canvas undo/redo functionality.
@@ -20,14 +24,14 @@ export class ModifyCommand implements UndoRedoCommand {
     return this._objectId;
   }
 
-  private _addObjectBefore: AddCommand;
-  public get addObjectBefore(): AddCommand {
-    return this._addObjectBefore;
+  private _objectBefore: any;
+  public get objectBefore(): any {
+    return this._objectBefore;
   }
 
-  private _addObjectAfter: AddCommand;
-  public get addObjectAfter(): AddCommand {
-    return this._addObjectAfter;
+  private _objectAfter: any;
+  public get objectAfter(): any {
+    return this._objectAfter;
   }
 
   private _handleStyleChange: () => void;
@@ -44,52 +48,104 @@ export class ModifyCommand implements UndoRedoCommand {
    * @throws `FabricObjectIdError` if `objectBefore` or `objectAfter` does not have an `id`
    * @throws Error if `objectBefore._id` and `objectAfter._id` do not match
    */
-  constructor(canvas: fabric.Canvas, objectBefore: any, objectAfter: any, handleStyleChange: () => void) {
+  constructor(canvas: fabric.Canvas, objectBefore: any, objectAfter: any, id: string, handleStyleChange: () => void) {
     this._canvas = canvas;
     this._handleStyleChange = handleStyleChange;
 
-    if (!objectBefore._id) {
-      throw new FabricObjectIdError(objectBefore);
-    }
-    if (!objectAfter._id) {
-      throw new FabricObjectIdError(objectAfter);
+    if (!id) {
+      throw new Error("Id has to be defined");
     }
     if (objectBefore._id !== objectAfter._id) {
       throw new Error("Ids of objectBefore and objectAfter are not the same");
     }
-
-    this._addObjectBefore = new AddCommand(canvas, objectBefore);
-    this._addObjectAfter = new AddCommand(canvas, objectAfter);
-
-    this._objectId = objectBefore._id;
+    // eslint-disable-next-line
+    const { _id: trash1, ...objectBeforeWithoutId } = objectBefore;
+    this._objectBefore = objectBeforeWithoutId;
+    // eslint-disable-next-line
+    const { _id: trash2, ...objectAfterWithoutId } = objectAfter;
+    this._objectAfter = objectAfterWithoutId;
+    this._objectId = id;
   }
 
   /**
    * undo
    */
-  public undo() {
-    this._addObjectAfter.undo();
-    this._addObjectBefore.redo();
+  public undo(socket: Socket) {
+    const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
+
+    const objectToModify = getItemById(this._canvas, this._objectId);
+    if (!objectToModify) {
+      toast.warning("The object with id " + this._objectId + " was not found");
+      return;
+    }
+
+    this._canvas.remove(objectToModify);
+    this._canvas.requestRenderAll();
+
+    fabric.util.enlivenObjects(
+      [this._objectBefore],
+      (objects: fabric.Object[]) => {
+        objects.forEach((o) => {
+          assignId(o, this._objectId);
+          this._canvas.add(o);
+          updateDimensions(o); // Update dimensions in case scaleX/scaleY changed
+          this._handleStyleChange();
+        });
+      },
+      "fabric"
+    );
+
+    const objectBeforeWithId = { _id: this._objectId, ...this._objectBefore };
+    const updateObjectData: UpdateObjectData = { object: objectBeforeWithId };
+    socketEmitUpdateObject(socket, updateObjectData);
 
     this._handleStyleChange();
+
+    addListenersBack(this._canvas, "path:created", activeListeners);
   }
 
   /**
    * redo
    */
-  public redo() {
-    this._addObjectBefore.undo();
-    this._addObjectAfter.redo();
+  public redo(socket: Socket) {
+    // this._addObjectBefore.undo(socket);
+    // this._addObjectAfter.redo(socket);
 
-    const currentObject = getItemById(this._canvas, this._objectId);
+    const activeListeners = removeListenersTemporarily(this._canvas, "path:created");
 
-    if (this._addObjectAfter.objectJSON.type !== "image" && !currentObject) {
-      // adding images to canvas takes time, so they aren't available immediately
+    const objectToModify = getItemById(this._canvas, this._objectId);
+    if (!objectToModify) {
       toast.warning("The object with id " + this._objectId + " was not found");
       return;
     }
 
-    updateDimensions(currentObject); // Update dimensions in case scaleX/scaleY changed
-    this._handleStyleChange();
+    this._canvas.remove(objectToModify);
+    this._canvas.requestRenderAll();
+
+    fabric.util.enlivenObjects(
+      [this._objectAfter],
+      (objects: fabric.Object[]) => {
+        objects.forEach((o) => {
+          assignId(o, this._objectId);
+          this._canvas.add(o);
+          updateDimensions(o); // Update dimensions in case scaleX/scaleY changed
+          this._handleStyleChange();
+        });
+      },
+      "fabric"
+    );
+
+    const objectAfterWithId = { _id: this._objectId, ...this._objectAfter };
+    const updateObjectData: UpdateObjectData = { object: objectAfterWithId };
+    socketEmitUpdateObject(socket, updateObjectData);
+
+    addListenersBack(this._canvas, "path:created", activeListeners);
+
+    // Please, don't remove it. I have a hunch it will be useful in the future
+    //   if (this._objectAfter.type !== "image" && !currentObject) {
+    //     // adding images to canvas takes time, so they aren't available immediately
+    //     toast.warning("The object with id " + this._objectId + " was not found");
+    //     return;
+    //   }
   }
 }

@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { BoardPermission } from '../../../enums/board.permission';
+import { BoardPermission } from '../../../shared/enums/board.permission';
 import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
 import { MINIMUM_BOARD_PERMISSION_KEY } from '../decorators/permissions.decorator';
 

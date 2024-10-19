@@ -4,17 +4,19 @@ import {
   GwSocket,
   GwSocketWithTarget,
 } from '../../shared/interfaces/auth/GwSocket';
-import { JoinBoardData } from '../gateway.dto';
+import { JoinBoardData } from '../dto/board.data';
 import { Socket } from 'socket.io';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../shared/enums/board.permission';
 import { ResponseService } from '../../modules/response/response.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { WsException } from '@nestjs/websockets';
+import { CommonService } from './common.service';
 
 @Injectable()
 export class JoinBoardService {
   constructor(
     private readonly boardsService: BoardsService,
+    private readonly commonService: CommonService,
     private readonly res: ResponseService,
   ) {}
   private readonly logger = new Logger(JoinBoardService.name);
@@ -26,7 +28,7 @@ export class JoinBoardService {
     const boardId = data.board._id;
     const userId = client.data.user._id as string;
 
-    const boardInfo = await this.boardsService.getClientBoardInfo(
+    const boardInfo = await this.boardsService.getBoardWithSlidesCount(
       userId,
       boardId,
     );
@@ -39,7 +41,7 @@ export class JoinBoardService {
 
     this.assignDataToClient(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
-    return this.res.toResponseClientBoardInfo(boardInfo);
+    return this.res.toResponseBoardWithSlidesCount(boardInfo);
   }
 
   private isPermissionValid(
@@ -75,29 +77,15 @@ export class JoinBoardService {
     const user = client.data.user;
     await client.join(boardId);
     client.to(boardId).emit('joined-board', {
-      message: `${user.email} has joined the board`,
+      email: user.email,
+      _id: user._id,
     });
     this.logger.log(`${user.email} has joined the board ${boardId}`);
   }
 
-  async handleLeaveBoard(client: GwSocketWithTarget): Promise<void> {
-    const user = client.data.user;
-    const boardId = user.targetBoard.boardId;
-    const slideId = user.targetSlide.slideId;
-
-    if (slideId) {
-      await client.leave(slideId);
-      client.to(slideId).emit('left-slide', {
-        message: `${user.email} has left the slide`,
-      });
-      this.logger.log(`${user.email} has left the slide`);
-    }
-
-    await client.leave(boardId);
-    client.to(boardId).emit('left-board', {
-      message: `${user.email} has left the board`,
-    });
-    this.logger.log(`${user.email} has left the board`);
+  async handleLeaveBoardAndSlide(client: GwSocketWithTarget): Promise<void> {
+    await this.commonService.leaveTarget(client, 'board');
+    await this.commonService.leaveTarget(client, 'slide');
   }
 
   private emitErrorAndDisconnect(client: Socket, message: string): void {

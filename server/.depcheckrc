@@ -1,2 +1,2 @@
-ignores: ["@nestjs/schematics", "ts-loader", "source-map-support", "tsconfig-paths"]
+ignores: ["@nestjs/schematics", "ts-loader", "source-map-support", "tsconfig-paths", "cookie"]
 skip-missing: true

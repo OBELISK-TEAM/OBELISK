@@ -13,7 +13,7 @@ import { BoardQueryDto, CreateBoardDto } from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { PaginatedBoardsResponse } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { PaginatedBoardsResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 
 // TODO - verify permissions for endpointss
 
@@ -26,7 +26,7 @@ export class BoardsController {
   getUserRelatedBoards(
     @User('_id') userId: string,
     @Query() { page, limit, order, tab }: BoardQueryDto,
-  ): Promise<PaginatedBoardsResponse> {
+  ): Promise<PaginatedBoardsResponseObject> {
     return this.boardsService.getUserRelatedBoards(
       userId,
       page,

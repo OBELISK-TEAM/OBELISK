@@ -2,8 +2,8 @@ import { Model } from 'mongoose';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
-import { User, UserDocument } from '../../schemas/user.schema';
-import { UserAuthProvider } from '../../enums/user.auth.provider';
+import { User, UserDocument } from '../../mongo/schemas/user.schema';
+import { UserAuthProvider } from '../../shared/enums/user.auth.provider';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 
 @Injectable()

@@ -3,15 +3,14 @@ import { useCallback, useMemo } from "react";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { CanvasActionHandler } from "@/types/CanvasActionHandler";
 import {
-  addCircle,
-  addLine,
-  addRectangle,
+  instantiateCircle,
+  instantiateLine,
+  instantiateRectangle,
   exportToPDF,
-  addText,
-  groupSelectedObjects,
+  instantiateText,
+  instantiateGroupOfObjects,
   handleLoadFromJSON,
   removeSelectedObjects,
   handleSave,
@@ -21,16 +20,15 @@ import {
   setSelectionMode,
 } from "@/lib/board/menuDataUtils";
 import { CanvasActionProperties } from "@/interfaces/canvas-action-properties";
+import { useSocket } from "@/contexts/SocketContext";
+import { toast } from "sonner";
+import { assignId } from "@/lib/utils";
+import { AddObjectData, DeleteObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitAddObject, socketEmitDeleteObject } from "@/lib/board/socketEmitUtils";
+import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
-import { generateId } from "@/lib/randomUtils";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
-import { assignId } from "@/lib/utils";
-import { createCanvasObject } from "@/app/actions/slideActions";
-import { toast } from "sonner";
-import { ToastTypes } from "@/enums/ToastType";
-import { complexToast } from "@/contexts/complexToast";
-import { ApiError } from "@/errors/ApiError";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -46,30 +44,50 @@ export const useMenuActions = () => {
   const {
     state: { canvas, color, size },
     setCanvasMode,
-    boardData: { slide },
   } = useCanvas();
   const { saveCommand } = useUndoRedo();
+  const { socket } = useSocket();
 
   const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = useMemo(() => {
-    const handleSimpleObjectAdding = async (canvas: fabric.Canvas, addedObject: fabric.Object) => {
-      if (!slide?._id) {
-        toast.error("No slide found");
+    const handleSimpleObjectAdding = (canvas: fabric.Canvas, objectToAdd: fabric.Object) => {
+      if (!socket) {
+        toast.error("No socket found");
         return;
       }
-      const objectData = addedObject.toJSON();
-      try {
-        const responseData = await createCanvasObject(slide._id, objectData);
-        assignId(addedObject, responseData._id);
-        const command = new AddCommand(canvas, addedObject.toJSON(["_id"]));
+
+      canvas.add(objectToAdd);
+      canvas.setActiveObject(objectToAdd);
+      canvas.requestRenderAll();
+
+      const objectData = objectToAdd.toJSON();
+      const addObjectData: AddObjectData = {
+        object: objectData,
+      };
+
+      const callback = (res: any) => {
+        assignId(objectToAdd, res._id);
+        const command = new AddCommand(canvas, objectToAdd.toJSON(["_id"]));
         saveCommand(command);
-      } catch (error: any) {
-        console.error("Error while creating object:", error);
-        if (error instanceof ApiError) {
-          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
-        } else {
-          toast.error(error.message || "Failed to create an object");
-        }
+      };
+      socketEmitAddObject(socket, addObjectData, callback);
+    };
+
+    const handleObjectDeleting = (canvas: fabric.Canvas, objectToDelete: fabric.Object) => {
+      if (!socket) {
+        toast.error("No socket found");
+        return;
       }
+
+      canvas.remove(objectToDelete);
+
+      const deleteObjectData: DeleteObjectData = {
+        // @ts-expect-error Object has to have _id
+        object: { _id: objectToDelete._id },
+      };
+
+      socketEmitDeleteObject(socket, deleteObjectData);
+      const command = new RemoveCommand(canvas, objectToDelete.toJSON(["_id"]));
+      saveCommand(command);
     };
 
     const actionHandlers: Record<MenuActions | CanvasMode, CanvasActionHandler> = {
@@ -95,8 +113,8 @@ export const useMenuActions = () => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
-        const addedLine = addLine(canvas, properties);
-        await handleSimpleObjectAdding(canvas, addedLine);
+        const addedLine = instantiateLine(canvas, properties);
+        handleSimpleObjectAdding(canvas, addedLine);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -104,8 +122,8 @@ export const useMenuActions = () => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
-        const addedRect = addRectangle(canvas, properties);
-        await handleSimpleObjectAdding(canvas, addedRect);
+        const addedRect = instantiateRectangle(canvas, properties);
+        handleSimpleObjectAdding(canvas, addedRect);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -113,8 +131,8 @@ export const useMenuActions = () => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
-        const addedCircle = addCircle(canvas, properties);
-        await handleSimpleObjectAdding(canvas, addedCircle);
+        const addedCircle = instantiateCircle(canvas, properties);
+        handleSimpleObjectAdding(canvas, addedCircle);
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -122,8 +140,11 @@ export const useMenuActions = () => {
         if (!canvas || !properties || !setCanvasMode) {
           return;
         }
-        const addedText = addText(canvas, 50, 50, properties);
-        await handleSimpleObjectAdding(canvas, addedText);
+        const addedText = instantiateText(canvas, 50, 50, properties);
+
+        handleSimpleObjectAdding(canvas, addedText);
+        addedText.enterEditing();
+        addedText.selectAll();
 
         setCanvasMode(CanvasMode.SELECTION);
       },
@@ -132,21 +153,21 @@ export const useMenuActions = () => {
           return;
         }
         const activeObjects = canvas.getActiveObjects();
-        const group = groupSelectedObjects(canvas);
+        const group = instantiateGroupOfObjects(canvas, activeObjects);
         if (!group) {
           return;
         }
 
-        const id = generateId("group");
-        assignId(group, id);
+        handleSimpleObjectAdding(canvas, group);
+        activeObjects.forEach((obj) => handleObjectDeleting(canvas, obj));
 
-        const addGroupCommand = new AddCommand(canvas, group.toJSON(["_id"]));
-        const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
-        const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
-        saveCommand(command);
+        // const addGroupCommand = new AddCommand(canvas, group.toJSON(["_id"]));
+        // const removeActiveObjectsCommands = activeObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
+        // const command = new ComplexCommand([addGroupCommand, ...removeActiveObjectsCommands]);
+        // saveCommand(command);
       },
       [MenuActions.REMOVE_SELECTED]: ({ canvas }) => {
-        if (!canvas) {
+        if (!canvas || !socket) {
           return;
         }
         const removedObjects: fabric.Object[] | undefined = removeSelectedObjects(canvas);
@@ -154,17 +175,32 @@ export const useMenuActions = () => {
           return;
         }
 
-        // prepare undo/redo command and save it on the undo/redo stack
-        const removeCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
-        const command = new ComplexCommand(removeCommands);
+        removedObjects.forEach((obj) => {
+          const deleteObjectData: DeleteObjectData = {
+            // @ts-expect-error Every fabric object should have _id
+            object: { _id: obj._id },
+          };
+          socketEmitDeleteObject(socket, deleteObjectData);
+        });
+
+        const removeObjectsCommands = removedObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
+        const command = new ComplexCommand(removeObjectsCommands);
         saveCommand(command);
       },
       [MenuActions.CLEAR_CANVAS]: ({ canvas }) => {
-        if (!canvas) {
+        if (!canvas || !socket) {
           return;
         }
         const allObjects: fabric.Object[] = canvas.getObjects();
         canvas.remove(...allObjects);
+
+        allObjects.forEach((obj) => {
+          const deleteObjectData: DeleteObjectData = {
+            // @ts-expect-error Every fabric object should have _id
+            object: { _id: obj._id },
+          };
+          socketEmitDeleteObject(socket, deleteObjectData);
+        });
 
         const removeObjectsCommands = allObjects.map((obj) => new RemoveCommand(canvas, obj.toJSON(["_id"])));
         const command = new ComplexCommand(removeObjectsCommands);
@@ -241,7 +277,7 @@ export const useMenuActions = () => {
       },
     };
     return actionHandlers;
-  }, [saveCommand, slide]);
+  }, [socket, saveCommand]);
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {
