@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 import { SuperSlide } from '../slide/super.slide.schema';
 import { User } from '../user.schema';
-import { UserActionTimeline } from 'src/shared/interfaces/UserActionTimeline';
+import { SuperBoard } from '../board/super.board.schema';
 
 @Schema({
   timestamps: true,
@@ -20,6 +20,13 @@ export class SlideStats extends Document {
 
   @Prop({
     type: Types.ObjectId,
+    ref: SuperBoard.name,
+    required: true,
+  })
+  boardId: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
     ref: User.name,
     required: true,
   })
@@ -30,7 +37,9 @@ export class SlideStats extends Document {
     required: false,
     default: [],
   })
-  viewTimeline: UserActionTimeline;
+  joinLeaveTimeline: [
+    { userId: Types.ObjectId; joinDate: Date; leaveDate: Date | null },
+  ];
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -43,31 +52,8 @@ export class SlideStats extends Document {
       userId: Types.ObjectId;
       x: number;
       y: number;
-      actionType: string;
+      actionType: string; // TODO: change to enum
     },
-  ];
-
-  @Prop({
-    type: MongooseSchema.Types.Mixed,
-    required: false,
-    default: [],
-  })
-  objectsAddedTimeline: [{ timestamp: Date; objectsCount: number }];
-
-  @Prop({
-    type: MongooseSchema.Types.Mixed,
-    required: false,
-    default: [],
-  })
-  activeUsersTimeline: [{ timestamp: Date; usersCount: number }];
-
-  @Prop({
-    type: MongooseSchema.Types.Mixed,
-    required: false,
-    default: [],
-  })
-  timeSpent: [
-    { userId: Types.ObjectId; startDate: Date; endDate: Date | null },
   ];
 }
 
