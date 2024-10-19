@@ -3,6 +3,7 @@ import { BoardDetailsResponse } from "@/interfaces/responses/board-details-respo
 export const fetchBoardDetails = async (url: string): Promise<BoardDetailsResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const boardId = url.split("/").pop() || "";
+
   const data: BoardDetailsResponse = {
     _id: boardId,
     name: "example name",
