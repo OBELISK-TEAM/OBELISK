@@ -11,7 +11,7 @@ export async function getBoardDetailsData(boardId: string): Promise<BoardDetails
   }
   try {
     const response = await fetch(
-      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/details/${boardId}`,
+      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}/details`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

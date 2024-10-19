@@ -10,11 +10,19 @@ interface LayoutProps {
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { boardId } = params;
-  const boardData = await getBoardDetailsData(boardId);
-  return {
-    title: `${boardData.name} | Obelisk`,
-  };
+  try {
+    const boardData = await getBoardDetailsData(boardId);
+    return {
+      title: `${boardData.name} | Obelisk`,
+    };
+  } catch (error) {
+    console.error("Error while fetching board details in generate metadata:", error);
+    return {
+      title: `Board details | Obelisk`,
+    };
+  }
 }
+
 const BoardLayout: FC<LayoutProps> = ({ children, params: { boardId } }) => {
   return (
     <div className="flex flex-1">
