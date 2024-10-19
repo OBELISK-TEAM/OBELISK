@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  AddObjectData,
-  DeleteObjectData,
-  UpdateObjectData,
-} from '../gateway.dto';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { ObjectsService } from '../../modules/objects/objects.service';
 import { WsException } from '@nestjs/websockets';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
+import {
+  AddObjectData,
+  DeleteObjectData,
+  UpdateObjectData,
+} from '../dto/object.data';
 
 @Injectable()
 export class ObjectActionService {

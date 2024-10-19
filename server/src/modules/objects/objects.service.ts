@@ -5,7 +5,7 @@ import {
   SuperObjectDocument,
 } from '../../mongo/schemas/object/super.object.schema';
 import { ObjectResponseObject } from 'src/shared/interfaces/response-objects/ObjectResponseObject';
-import { CreateObjectDto } from './objects.dto';
+import { ObjectProps } from './objects.dto';
 import { SuperSlideDocument } from '../../mongo/schemas/slide/super.slide.schema';
 import { ResponseService } from '../response/response.service';
 import { SlidesService } from '../slides/slides.service';
@@ -29,7 +29,7 @@ export class ObjectsService {
   async createObject(
     boardId: string,
     slideId: string,
-    objectProps: CreateObjectDto,
+    objectProps: ObjectProps,
   ): Promise<ObjectResponseObject> {
     const { board, slide } = await this.slidesService.findSlideById(
       boardId,
@@ -45,7 +45,7 @@ export class ObjectsService {
     boardId: string,
     slideId: string,
     objectId: string,
-    objectProps: CreateObjectDto,
+    objectProps: ObjectProps,
   ): Promise<ObjectResponseObject> {
     const { board, object } = await this.findObjectById(
       boardId,

@@ -4,18 +4,6 @@ import { ObjectPath } from '../shared/interfaces/fabric-js/ObjectPath';
 import { ObjectShadow } from '../shared/interfaces/fabric-js/ObjectShadow';
 import { Eraser } from 'src/mongo/schemas/object/base.object.schema';
 
-export interface JoinSlideData {
-  slide: { slideNumber: number };
-}
-
-export interface AddSlideData {
-  slide?: {
-    slideNumber: number;
-  };
-}
-
-export interface DeleteSlideData extends AddSlideData {}
-
 export interface AddObjectData {
   object: ObjectDataProps;
 }
@@ -28,7 +16,6 @@ export interface DeleteObjectData {
   object: ObjectOnlyId;
 }
 
-export interface BoardOnlyId extends OnlyId {}
 export interface ObjectOnlyId extends OnlyId {}
 
 export interface OnlyId {

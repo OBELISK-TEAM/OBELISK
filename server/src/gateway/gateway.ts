@@ -13,7 +13,7 @@ import {
   AddObjectData,
   DeleteObjectData,
   UpdateObjectData,
-} from './gateway.dto';
+} from './dto/object.data';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
