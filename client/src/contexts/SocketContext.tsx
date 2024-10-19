@@ -5,7 +5,8 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import SocketLoading from "@/components/loading/SocketLoading";
 import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
-import { JoinBoardResponse } from "@/interfaces/socket/SocketCallbacksData";
+import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/socket/SocketCallbacksData";
+import logger from "@/lib/logger";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -61,24 +62,40 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       setCurrentPermission(res.permission);
       setBoardOwner(res.owner);
       setIsBoardJoined(true);
+
+      setIsSocketReady(true);
       toast.success("Joined board " + boardId);
     }
 
     function onError(val: any) {
       toast.error(val.message);
     }
-    function onUserJoinedBoard(res: any) {
-      toast.info(res.message);
+    function onUserJoinedBoard(res: BasicUserInfo) {
+      toast.info(`User ${res.email} has joined this board`);
     }
-    function onUserLeftBoard(res: any) {
-      toast.info(res.message);
+    function onUserLeftBoard(res: BasicUserInfo) {
+      toast.info(`User ${res.email} has left this board`);
     }
-    function onUserJoinedSlide(res: any) {
-      toast.info(res.message);
+    function onUserJoinedSlide(res: BasicUserInfo) {
+      toast.info(`User ${res.email} has joined this slide`);
     }
-    function onUserLeftSlide(res: any) {
-      toast.info(res.message);
+    function onUserLeftSlide(res: BasicUserInfo) {
+      toast.info(`User ${res.email} has left this slide`);
     }
+
+    function onAuthSuccess(res: SimpleMessage) {
+      toast.info(res.message);
+      joinBoard();
+    }
+
+    function joinBoard() {      
+      if (!socket || !boardId) {
+        toast.error("No socket");
+        logger.error("No socket defined");
+        return;
+      }
+      socketEmitJoinBoard(socket, joinBoardData, handleJoinBoard);
+    };
 
     const handlers = [
       { eventName: "error", handler: onError },
@@ -86,6 +103,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       { eventName: "left-board", handler: onUserLeftBoard },
       { eventName: "joined-slide", handler: onUserJoinedSlide },
       { eventName: "left-slide", handler: onUserLeftSlide },
+      { eventName: "auth-success", handler: onAuthSuccess },
     ];
 
     handlers.forEach(({ eventName, handler }) => {
@@ -94,13 +112,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
 
     const joinBoardData = { board: { _id: boardId } };
 
-    // I. HAVE. ENOUGH.
-    setTimeout(() => {
-      if (socket) {
-        socketEmitJoinBoard(socket, joinBoardData, handleJoinBoard);
-      }
-      setIsSocketReady(true);
-    }, 2000);
+    
 
     return () => {
       if (!socket) {
