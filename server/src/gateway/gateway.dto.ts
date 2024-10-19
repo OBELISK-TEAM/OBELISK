@@ -2,7 +2,7 @@ import { ObjectTextStyles } from '../shared/interfaces/fabric-js/ObjectTextStyle
 import { ObjectFilter } from '../shared/interfaces/fabric-js/ObjectFilter';
 import { ObjectPath } from '../shared/interfaces/fabric-js/ObjectPath';
 import { ObjectShadow } from '../shared/interfaces/fabric-js/ObjectShadow';
-import { Eraser } from 'src/schemas/object/base.object.schema';
+import { Eraser } from 'src/mongo/schemas/object/base.object.schema';
 
 export interface JoinBoardData {
   board: BoardOnlyId;

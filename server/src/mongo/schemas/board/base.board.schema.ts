@@ -4,7 +4,7 @@ import {
   SuperSlideDocument,
   SuperSlideSchema,
 } from '../slide/super.slide.schema';
-import { BoardPermissions } from '../../shared/interfaces/BoardPermissions';
+import { BoardPermissions } from '../../../shared/interfaces/BoardPermissions';
 
 export class BaseBoard {
   @Prop({
