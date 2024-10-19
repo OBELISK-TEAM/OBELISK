@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ObjectsService } from './objects.service';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
-import { CreateObjectDto } from './objects.dto';
+import { ObjectProps } from './objects.dto';
 
 @Controller('boards/:boardId/slides/:slideId/objects')
 export class ObjectsController {
@@ -28,7 +28,7 @@ export class ObjectsController {
   async createObject(
     @Param('boardId') boardId: string,
     @Param('slideId') slideId: string,
-    @Body() createObjectDto: CreateObjectDto,
+    @Body() createObjectDto: ObjectProps,
   ): Promise<ObjectResponseObject> {
     return await this.objectsService.createObject(
       boardId,
@@ -42,7 +42,7 @@ export class ObjectsController {
     @Param('boardId') boardId: string,
     @Param('slideId') slideId: string,
     @Param('objectId') objectId: string,
-    @Body() updateObjectDto: CreateObjectDto,
+    @Body() updateObjectDto: ObjectProps,
   ): Promise<ObjectResponseObject> {
     return await this.objectsService.updateObject(
       boardId,

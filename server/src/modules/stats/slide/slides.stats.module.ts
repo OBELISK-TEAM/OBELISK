@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   SlideStats,
   SlideStatsSchema,
-} from 'src/schemas/stats/slide.stats.schema';
+} from 'src/mongo/schemas/stats/slide.stats.schema';
 
 @Module({
   imports: [
