@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import { SafeUserDoc } from './SafeUserDoc';
-import { BoardPermission } from '../../../enums/board.permission';
+import { BoardPermission } from '../../enums/board.permission';
 
 type TargetBoard = {
   boardId: string;
