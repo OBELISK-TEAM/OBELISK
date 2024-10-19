@@ -10,8 +10,18 @@ export class ObjectStatsService {
     private readonly objectStatsModel: Model<ObjectStats>,
   ) {}
 
-  async initStats(objectId: string, creatorId: string): Promise<void> {
-    await this.objectStatsModel.create({ objectId, creatorId });
+  async initStats(
+    objectId: string,
+    boardId: string,
+    slideId: string,
+    creatorId: string,
+  ): Promise<void> {
+    await this.objectStatsModel.create({
+      objectId,
+      boardId,
+      slideId,
+      creatorId,
+    });
   }
 
   async removeStats(objectId: string): Promise<void> {

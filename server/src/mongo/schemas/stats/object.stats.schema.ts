@@ -3,6 +3,8 @@ import { Document, Types } from 'mongoose';
 import { SuperObject } from '../object/super.object.schema';
 import { User } from '../user.schema';
 import { Schema as MongooseSchema } from 'mongoose';
+import { SuperBoard } from '../board/super.board.schema';
+import { SuperSlide } from '../slide/super.slide.schema';
 
 @Schema({
   timestamps: true,
@@ -19,6 +21,20 @@ export class ObjectStats extends Document {
 
   @Prop({
     type: Types.ObjectId,
+    ref: SuperBoard.name,
+    required: true,
+  })
+  boardId: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: SuperSlide.name,
+    required: true,
+  })
+  slideId: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
     ref: User.name,
     required: true,
   })
@@ -29,7 +45,7 @@ export class ObjectStats extends Document {
     required: false,
     default: null,
   })
-  lastInteraction: { userId: string; timestamp: Date; actionType: string };
+  lastInteraction: { userId: Types.ObjectId; timestamp: Date; actionType: string }; // TODO: change to enum
 }
 
 export const ObjectStatsSchema = SchemaFactory.createForClass(ObjectStats);
