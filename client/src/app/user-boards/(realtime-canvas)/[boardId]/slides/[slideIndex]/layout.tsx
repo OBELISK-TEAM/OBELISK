@@ -25,8 +25,7 @@ interface UserBoardLayout {
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { slideIndex, boardId } = params;
   const { socket, totalSlides, isBoardJoined, firstSlideChanged, setFirstSlideChanged } = useSocket();
-  const [slideData, setSlideData] = useState<object>({});
-  const [slideId, setSlideId] = useState<string | undefined>(undefined);
+  const [slideData, setSlideData] = useState<JoinSlideResponse | null>(null);
 
   const slideIndexAsNumber = parseInt(slideIndex);
 
@@ -42,7 +41,6 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
     function handleJoinSlide(res: JoinSlideResponse) {
       logger.log("Joined slide", res);
       setSlideData(res);
-      setSlideId(res._id);
     }
 
     if (isBoardJoined || firstSlideChanged) {
@@ -62,7 +60,7 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
 
   return (
     <ZoomUIProvider>
-      <CanvasProvider slideData={slideData} slideId={slideId} slideIndex={slideIndexAsNumber} boardId={boardId}>
+      <CanvasProvider slideData={slideData} slideId={slideData?._id} slideIndex={slideIndexAsNumber} boardId={boardId}>
         <UndoRedoProvider>
           <MenuDataProvider>
             <FileProvider>
