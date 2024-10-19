@@ -12,7 +12,7 @@ const Header: FC = () => {
   const { logout, loading } = useHandleAuth();
 
   return (
-    <div className="h-min-[64px] x-4 flex h-[64px] items-center justify-between border-b bg-background pl-0">
+    <div className="h-min-[64px] x-4 sticky top-0 z-10 flex h-[64px] items-center justify-between border-b bg-background pl-0">
       <div className="flex">
         <Link href={"/user-boards"}>
           <div className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted">
