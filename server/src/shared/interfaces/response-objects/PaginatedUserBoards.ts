@@ -19,7 +19,9 @@ export interface PopulatedBoardResponseObject {
     moderator: UserPermission[];
   };
   owner: UserPermission;
-  size: number;
+  slideCount: number;
+  sizeInBytes: number;
+  maxBoardSizeInBytes?: number;
   createdAt: SchemaTimestampsConfig['createdAt'];
   updatedAt: SchemaTimestampsConfig['updatedAt'];
 }

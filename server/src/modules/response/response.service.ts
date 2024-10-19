@@ -47,13 +47,13 @@ export class ResponseService {
     };
   }
 
-  toResponseBoardWithSlidesCount(board: ClientBoardInfo): BoardResponseObject {
-    const { _id, name, owner, slidesCount, permission } = board;
+  toResponseBoardWithSlideCount(board: ClientBoardInfo): BoardResponseObject {
+    const { _id, name, owner, slideCount, permission } = board;
     return {
       _id: _id as string,
       name,
       owner,
-      slidesCount,
+      slideCount,
       permission: BoardPermission[permission],
     };
   }
@@ -61,9 +61,9 @@ export class ResponseService {
   toResponseBoardWithPopulatedPermissions(
     board: BoardWithPopulatedPermissions,
     permission: BoardPermission,
-    size: number,
+    sizeInBytes: number,
   ): PopulatedBoardResponseObject {
-    const { _id, name, owner, permissions, createdAt, updatedAt } =
+    const { _id, name, owner, slides, permissions, createdAt, updatedAt } =
       board.toObject<BoardWithPopulatedPermissions>();
     return {
       _id: _id as string,
@@ -73,7 +73,8 @@ export class ResponseService {
         ...permissions,
       },
       owner,
-      size,
+      slideCount: slides.length,
+      sizeInBytes,
       createdAt,
       updatedAt,
     };

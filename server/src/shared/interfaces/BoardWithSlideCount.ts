@@ -1,6 +1,6 @@
 import { SuperBoardDocument } from '../../mongo/schemas/board/super.board.schema';
 
-export interface BoardWithSlidesCount
+export interface BoardWithSlideCount
   extends Omit<SuperBoardDocument, 'slides'> {
-  slidesCount: number;
+  slideCount: number;
 }

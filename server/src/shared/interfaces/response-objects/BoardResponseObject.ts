@@ -14,6 +14,6 @@ export interface BoardResponseObject {
   slide?: SlideResponseObject | string;
   createdAt?: SchemaTimestampsConfig['createdAt'];
   updatedAt?: SchemaTimestampsConfig['updatedAt'];
-  slidesCount?: number;
+  slideCount?: number;
   permission?: string;
 }
