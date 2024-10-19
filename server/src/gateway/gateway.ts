@@ -24,7 +24,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { MinimumBoardPermission } from '../modules/auth/decorators/permissions.decorator';
-import { BoardPermission } from '../enums/board.permission';
+import { BoardPermission } from '../shared/enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
 import { SlideResponseObject } from '../shared/interfaces/response-objects/SlideResponseObject';
 import { SlideActionService } from './providers/slide.action.service';

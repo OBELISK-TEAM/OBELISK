@@ -6,8 +6,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { UserDocument } from '../../../mongo/schemas/user.schema';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../users.dto';
-import { UserAuthProvider } from 'src/enums/user.auth.provider';
-import { UserRole } from 'src/enums/user.role';
+import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
+import { UserRole } from 'src/shared/enums/user.role';
 
 class UserModelMock {
   find = jest.fn();

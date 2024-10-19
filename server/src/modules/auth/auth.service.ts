@@ -10,7 +10,7 @@ import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
 import { GoogleUser } from '../../shared/interfaces/auth/GoogleUser';
 import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
-import { UserAuthProvider } from 'src/enums/user.auth.provider';
+import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 import { Payload } from '../../shared/interfaces/auth/Payload';
 
