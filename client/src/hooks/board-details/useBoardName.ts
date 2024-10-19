@@ -1,11 +1,11 @@
 "use client";
 import { useReducer } from "react";
-import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
 import { toast } from "sonner";
 import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
+import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 
 type State = {
   name: string;
@@ -40,7 +40,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-export const useBoardName = (board: BoardResponse | undefined, action: (obj: any) => void) => {
+export const useBoardName = (board: BoardDetailsResponse | undefined, action: (obj: any) => void) => {
   const [state, dispatch] = useReducer(reducer, {
     name: "",
     isEditing: false,

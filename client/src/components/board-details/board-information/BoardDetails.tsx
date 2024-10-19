@@ -12,7 +12,7 @@ import { fetchBoardDetails } from "@/mock-data/BoardDetailsFetcher";
 import BoardDetailsInfoSkeleton from "@/components/loading/BoardDetailsInfoSkeleton";
 import BoardInfoItem from "./BoardInfoItem";
 import { useRouter } from "next/navigation";
-
+import { Badge } from "@/components/ui/badge";
 const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
   const { data: board, error, isLoading, mutate } = useSWR(`/mocked/boards/${boardId}`, fetchBoardDetails);
   const router = useRouter();
@@ -39,10 +39,10 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
   }
 
   const creationDate = board.createdAt ? new Date(board.createdAt).toLocaleString() : "";
-  const lastUpdated = board.modifiedAt ? new Date(board.modifiedAt).toLocaleString() : "";
+  const lastUpdated = board.updatedAt ? new Date(board.updatedAt).toLocaleString() : "";
 
-  const totalSizeUsed = board.size;
-  const usedPercentage = board.maxSize ? (totalSizeUsed / board.maxSize) * 100 : 0;
+  const totalSizeUsed = board.sizeInBytes;
+  const usedPercentage = board.maxSizeInBytes ? (totalSizeUsed / board.maxSizeInBytes) * 100 : 0;
 
   const collaboratingUsers = [
     ...(board.permissions.viewer || []),
@@ -72,7 +72,7 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
 
           <BoardInfoInputItem
             label="Owner"
-            value={board.owner}
+            value={board.owner.email}
             id={"owner"}
             inputProps={{
               id: "owner",
@@ -102,17 +102,17 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
           <BoardInfoItem label="Used space">
             <div className="flex w-full items-center justify-between gap-4 text-xs">
               <Progress value={usedPercentage} className="w-full" />
-              <Button variant="secondary" className="w-40 text-xs">
-                <span className="text-muted-foreground">{`${totalSizeUsed} / ${board.maxSize} MB`}</span>
-              </Button>
+              <Badge variant="secondary" className="border-1 h-10 w-40 rounded-md px-4 py-2 text-xs">
+                <span className="text-muted-foreground">{`${(totalSizeUsed / 1024).toFixed(2)} / ${(board.maxSizeInBytes / 1024).toFixed(2)} KB`}</span>
+              </Badge>
             </div>
           </BoardInfoItem>
 
           {/* Number of Slides */}
           <BoardInfoItem label="No slides">
-            <Button variant="outline" className="w-fit text-xs">
-              <span className="text-muted-foreground">{`${board.slides.length} / 10`}</span>
-            </Button>
+            <Badge variant="outline" className="h-10 w-fit rounded-md px-4 py-2 text-xs">
+              <span className="text-muted-foreground">{`${board.slidesCount} / 10`}</span>
+            </Badge>
           </BoardInfoItem>
         </article>
 

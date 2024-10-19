@@ -21,7 +21,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Board Name Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-24" />
             </div>
             <Skeleton className="mt-2 h-10 w-full" />
@@ -30,7 +29,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Owner Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-20" />
             </div>
             <Skeleton className="mt-2 h-10 w-full" />
@@ -39,7 +37,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Creation Date Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-28" />
             </div>
             <Skeleton className="mt-2 h-10 w-full" />
@@ -48,7 +45,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Last Updated Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-24" />
             </div>
             <Skeleton className="mt-2 h-10 w-full" />
@@ -57,7 +53,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Used Space Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-20" />
             </div>
             <Skeleton className="mt-2 h-4 w-full" />
@@ -66,7 +61,6 @@ const SkeletonBoardDetails: React.FC = () => {
           {/* Number of Slides Skeleton */}
           <div className="mb-4 flex flex-col gap-1">
             <div className="flex items-center">
-              <Skeleton className="mr-1 h-4 w-4" />
               <Skeleton className="h-4 w-24" />
             </div>
             <Skeleton className="mt-2 h-8 w-20" />

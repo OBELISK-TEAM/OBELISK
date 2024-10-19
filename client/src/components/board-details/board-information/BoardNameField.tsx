@@ -4,10 +4,10 @@ import { Pencil, Save, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BoardInfoInputItem from "@/components/board-details/board-information/BoardInfoInputItem";
 import { useBoardName } from "@/hooks/board-details/useBoardName";
-import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
+import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 
 interface BoardNameFieldProps {
-  board: BoardResponse | undefined;
+  board: BoardDetailsResponse | undefined;
   id: string;
   mutate: () => void;
 }
@@ -25,7 +25,6 @@ const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id, mutate }) =>
       handleCancel();
     }
   };
-
   useEffect(() => {
     if (board) {
       setName(board.name);
