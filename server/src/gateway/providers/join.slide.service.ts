@@ -23,7 +23,6 @@ export class JoinSlideService {
     } else {
       newSlideNumber = data.slide.slideNumber;
     }
-    console.log('newSlideNumber', newSlideNumber);
     const boardId = client.data.user.targetBoard.boardId;
     const newSlide = await this.slidesService.getSlide(boardId, newSlideNumber);
 

@@ -78,13 +78,13 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinBoardService.handleLeaveBoardAndSlide(client);
   }
 
+  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.VIEWER)
   @SubscribeMessage('join-slide')
   async handleJoinSlide(
     client: GwSocketWithTarget,
     data: JoinSlideData,
   ): Promise<SlideResponseObject> {
-    console.log(data);
     return this.joinSlideService.handleJoinSlide(client, data);
   }
 

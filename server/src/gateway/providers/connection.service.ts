@@ -63,7 +63,7 @@ export class ConnectionService {
     client.disconnect(true);
   }
 
-  instanceOfGwSocketWithTarget(
+  private instanceOfGwSocketWithTarget(
     client: Socket | GwSocket | GwSocketWithTarget,
   ): client is GwSocketWithTarget {
     return (
