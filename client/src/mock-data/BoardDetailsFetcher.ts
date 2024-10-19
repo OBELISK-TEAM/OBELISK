@@ -3,6 +3,7 @@ import { BoardDetailsResponse } from "@/interfaces/responses/board-details-respo
 export const fetchBoardDetails = async (url: string): Promise<BoardDetailsResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const boardId = url.split("/").pop() || "";
+
   const data: BoardDetailsResponse = {
     _id: boardId,
     name: "example name",
@@ -10,7 +11,7 @@ export const fetchBoardDetails = async (url: string): Promise<BoardDetailsRespon
       _id: "66f84e34a7a2011139c498e5",
       email: "psyduck281@gmail.com",
     },
-    permission: "MODERATOR",
+    permission: "OWNER",
     permissions: {
       viewer: [
         { _id: "66f921b5367f31f538621c88", email: "adamosekk2002@gmail.com" },
