@@ -31,7 +31,7 @@ function getMongoConfig(
   const uri =
     dbHost === DEFAULT_DB_HOST
       ? `mongodb://${DEFAULT_DB_HOST}/${dbName}`
-      : `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
+      : `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/`;
 
-  return { uri };
+  return { uri, dbName };
 }
