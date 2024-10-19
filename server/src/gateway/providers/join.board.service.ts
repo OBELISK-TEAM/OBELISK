@@ -28,7 +28,7 @@ export class JoinBoardService {
     const boardId = data.board._id;
     const userId = client.data.user._id as string;
 
-    const boardInfo = await this.boardsService.getBoardWithSlidesCount(
+    const boardInfo = await this.boardsService.getBoardWithSlideCount(
       userId,
       boardId,
     );
@@ -41,7 +41,7 @@ export class JoinBoardService {
 
     this.assignDataToClient(client, permission, boardId);
     await this.joinClientToBoard(client, boardId);
-    return this.res.toResponseBoardWithSlidesCount(boardInfo);
+    return this.res.toResponseBoardWithSlideCount(boardInfo);
   }
 
   private isPermissionValid(

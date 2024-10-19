@@ -15,16 +15,20 @@ import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
 } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
-import { BoardWithSlidesCount } from '../../shared/interfaces/BoardWithSlidesCount';
+import { BoardWithSlideCount } from '../../shared/interfaces/BoardWithSlideCount';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
+import { ConfigService } from '@nestjs/config';
+
+const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
+    private readonly configService: ConfigService,
     private readonly res: ResponseService,
   ) {}
 
@@ -78,11 +82,11 @@ export class BoardsService {
   ): Promise<PopulatedBoardResponseObject> {
     const permission = this.determineUserPermission(board, userId);
     const populatedBoard = await this.populatePermissions(board);
-    const size = this.calculateBoardSize(board);
+    const sizeInBytes = this.calculateBoardSizeInBytes(board);
     return this.res.toResponseBoardWithPopulatedPermissions(
       populatedBoard,
       permission,
-      size,
+      sizeInBytes,
     );
   }
 
@@ -122,7 +126,19 @@ export class BoardsService {
     return deletedBoard;
   }
 
-  async getBoardWithSlidesCount(
+  async getBoardDetails(
+    userId: string,
+    boardId: string,
+  ): Promise<PopulatedBoardResponseObject> {
+    const board = await this.findBoardById(boardId);
+    const maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
+    return {
+      ...(await this.prepareBoardResponse(board, userId)),
+      maxBoardSizeInBytes,
+    };
+  }
+
+  async getBoardWithSlideCount(
     userId: string,
     boardId: string,
   ): Promise<ClientBoardInfo> {
@@ -135,10 +151,10 @@ export class BoardsService {
   private async findBoardInfo(
     userId: string,
     boardId: string,
-  ): Promise<BoardWithSlidesCount> {
+  ): Promise<BoardWithSlideCount> {
     const queryBuilder = new FilterQueryBuilder();
     const query = queryBuilder.accessibleTo(userId).build();
-    const result = await this.boardModel.aggregate<BoardWithSlidesCount>([
+    const result = await this.boardModel.aggregate<BoardWithSlideCount>([
       {
         $match: {
           _id: new Types.ObjectId(boardId),
@@ -147,7 +163,7 @@ export class BoardsService {
       },
       {
         $addFields: {
-          slidesCount: { $size: '$slides' },
+          slideCount: { $size: '$slides' },
         },
       },
       {
@@ -165,7 +181,7 @@ export class BoardsService {
   }
 
   private determineUserPermission(
-    board: BoardWithSlidesCount | SuperBoardDocument,
+    board: BoardWithSlideCount | SuperBoardDocument,
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
@@ -205,7 +221,7 @@ export class BoardsService {
       .exec();
   }
 
-  private calculateBoardSize(board: SuperBoardDocument): number {
+  private calculateBoardSizeInBytes(board: SuperBoardDocument): number {
     return BSON.calculateObjectSize(board);
   }
 
@@ -213,6 +229,13 @@ export class BoardsService {
     query: FilterQuery<SuperBoardDocument>,
   ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
+  }
+
+  private getMaxBoardSizeInBytes(): number {
+    return this.configService.get<number>(
+      'MAX_BOARD_SIZE_IN_BYTES',
+      DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
+    );
   }
 }
 
