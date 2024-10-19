@@ -30,7 +30,7 @@ const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id, mutate }) =>
     if (board) {
       setName(board.name);
     }
-  }, [board, setName]);
+  }, [board]);
 
   return (
     <BoardInfoInputItem
