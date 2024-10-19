@@ -30,7 +30,9 @@ export class BoardStats extends Document {
     required: false,
     default: [],
   })
-  viewTimeline: UserActionTimeline;
+  joinLeaveTimeline: [
+    { userId: Types.ObjectId; joinDate: Date; leaveDate: Date | null },
+  ];
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -45,22 +47,6 @@ export class BoardStats extends Document {
     default: [],
   })
   editTimeline: UserActionTimeline;
-
-  @Prop({
-    type: MongooseSchema.Types.Mixed,
-    required: false,
-    default: [],
-  })
-  activeUsersTimeline: [{ timestamp: Date; usersCount: number }];
-
-  @Prop({
-    type: MongooseSchema.Types.Mixed,
-    required: false,
-    default: [],
-  })
-  timeSpent: [
-    { userId: Types.ObjectId; startDate: Date; endDate: Date | null },
-  ];
 }
 
 export const BoardStatsSchema = SchemaFactory.createForClass(BoardStats);
