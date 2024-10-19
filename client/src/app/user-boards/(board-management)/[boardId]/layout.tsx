@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import BoardSidebar from "@/components/board-details/BoardSidebar";
 import { Metadata } from "next";
+import { getBoardDetailsData } from "@/services/fetchBoardDetails";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,9 +10,9 @@ interface LayoutProps {
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { boardId } = params;
-  //const boardData = await getBoardData(boardId); todo: [JIRA OK-219] retrieve board name for title
+  const boardData = await getBoardDetailsData(boardId);
   return {
-    title: `${boardId} | Obelisk`,
+    title: `${boardData.name} | Obelisk`,
   };
 }
 const BoardLayout: FC<LayoutProps> = ({ children, params: { boardId } }) => {

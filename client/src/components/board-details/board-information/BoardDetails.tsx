@@ -7,27 +7,16 @@ import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardInfoInputItem from "./BoardInfoInputItem";
 import CollaboratingUsers from "./CollaboratingUsers";
 import BoardNameField from "./BoardNameField";
-import useSWR from "swr";
-import { fetchBoardDetails } from "@/mock-data/BoardDetailsFetcher";
-import BoardDetailsInfoSkeleton from "@/components/loading/BoardDetailsInfoSkeleton";
 import BoardInfoItem from "./BoardInfoItem";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
-  const { data: board, error, isLoading, mutate } = useSWR(`/mocked/boards/${boardId}`, fetchBoardDetails);
-  const router = useRouter();
-  if (isLoading) {
-    return <BoardDetailsInfoSkeleton />;
-  }
+import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 
-  if (error) {
-    return (
-      <section className="rounded-lg border border-error-border bg-card p-6 shadow">
-        <BoardHeader title="Board Details" description="Board Information" />
-        <p className="text-error-foreground">{error.message}</p>
-      </section>
-    );
-  }
+interface BoardDetailsProps {
+  board: BoardDetailsResponse | undefined;
+}
+const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
+  const router = useRouter();
 
   if (!board) {
     return (
@@ -59,7 +48,7 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
         />
         <Button
           onClick={() => {
-            router.push(`/user-boards/${boardId}/slides/1`);
+            router.push(`/user-boards/${board._id}/slides/1`);
           }}
         >
           Go to the board
@@ -68,7 +57,13 @@ const BoardDetails: React.FC<{ boardId: string }> = ({ boardId }) => {
 
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
-          <BoardNameField board={board} id={"board-name"} mutate={mutate} />
+          <BoardNameField
+            board={board}
+            id={"board-name"}
+            mutate={() => {
+              /*todo: implement changing board name*/
+            }}
+          />
 
           <BoardInfoInputItem
             label="Owner"
