@@ -1,3 +1,12 @@
+export interface SimpleMessage {
+  message: string;
+}
+
+export interface BasicUserInfo{
+  email: string,
+  _id: string,
+}
+
 export interface JoinBoardResponse {
   _id: string;
   name: string;
