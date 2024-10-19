@@ -70,8 +70,8 @@ export class ConnectionService {
       client &&
       typeof client.data === 'object' &&
       'user' in client.data &&
-      'targetBoard' in client.data.user &&
-      'targetSlide' in client.data.user
+      'targetBoard' in client.data.user && //eslint-disable-line
+      'targetSlide' in client.data.user //eslint-disable-line
     );
   }
 }
