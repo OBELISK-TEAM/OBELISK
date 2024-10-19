@@ -6,7 +6,7 @@ import { SuperObjectDocument } from '../../mongo/schemas/object/super.object.sch
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../shared/enums/board.permission';
 import { PopulatedBoardResponseObject } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 

@@ -1,4 +1,4 @@
-import { BoardPermission } from '../../../enums/board.permission';
+import { BoardPermission } from '../../../shared/enums/board.permission';
 import { SetMetadata } from '@nestjs/common';
 
 export const MINIMUM_BOARD_PERMISSION_KEY = 'minimumBoardPermission';

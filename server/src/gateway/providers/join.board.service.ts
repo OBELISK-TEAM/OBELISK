@@ -6,7 +6,7 @@ import {
 } from '../../shared/interfaces/auth/GwSocket';
 import { JoinBoardData } from '../dto/board.data';
 import { Socket } from 'socket.io';
-import { BoardPermission } from '../../enums/board.permission';
+import { BoardPermission } from '../../shared/enums/board.permission';
 import { ResponseService } from '../../modules/response/response.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { WsException } from '@nestjs/websockets';
