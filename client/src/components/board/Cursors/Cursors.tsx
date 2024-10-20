@@ -3,15 +3,8 @@ import styles from "./cursors.module.css";
 import { Socket } from "socket.io-client";
 import { motion } from "framer-motion";
 import logger from "@/lib/logger";
+import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
 import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
-
-export interface CursorPosition {
-  userId: string;
-  x: number;
-  y: number;
-  color: string;
-  username: string;
-}
 
 interface CursorsProps {
   socket: Socket | null;
@@ -27,27 +20,25 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
     }
 
     const handleIncomingCursorMove = (data: CursorPosition) => {
-      const { userId, x, y, color, username } = data;
+      const userId = data.user._id;
 
       if (userId === currentUserId) {
         return;
       }
 
       setCursorPositions((prevCursors) => {
-        const otherCursors = prevCursors.filter((cursor) => cursor.userId !== userId);
-        return [...otherCursors, { userId, x, y, color, username }];
+        const otherCursors = prevCursors.filter((cursor) => cursor.user._id !== userId);
+        return [...otherCursors, data];
       });
     };
 
     const handleCursorRemove = (data: BasicUserInfo) => {
       const { _id: userId } = data;
       logger.log("Removing cursor", userId);
-      setCursorPositions((prevCursors) => {
-        return prevCursors.filter((cursor) => cursor.userId !== userId);
-      });
+      setCursorPositions((prevCursors) => prevCursors.filter((cursor) => cursor.user._id !== userId));
     };
 
-    socket.on("cursor-move", handleIncomingCursorMove);
+    socket.on("cursor-moved", handleIncomingCursorMove);
     socket.on("left-slide", handleCursorRemove);
 
     socket.on("disconnect", () => {
@@ -55,7 +46,7 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
     });
 
     return () => {
-      socket.off("cursor-move", handleIncomingCursorMove);
+      socket.off("cursor-moved", handleIncomingCursorMove);
       socket.off("left-slide", handleCursorRemove);
     };
   }, [socket, currentUserId]);
@@ -64,16 +55,16 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
     <>
       {cursorPositions.map((cursor) => (
         <motion.div
-          key={cursor.userId}
+          key={cursor.user._id}
           className={styles.cursorWrapper}
-          animate={{ x: cursor.x, y: cursor.y }}
+          animate={{ x: cursor.cursorData.x, y: cursor.cursorData.y }}
           transition={{ type: "spring", stiffness: 70, damping: 20 }}
         >
-          <div className={styles.cursorLabel}>{cursor.username}</div>
+          <div className={styles.cursorLabel}>{cursor.user.email}</div>
           <div
             className={styles.cursor}
             style={{
-              backgroundColor: cursor.color,
+              backgroundColor: cursor.cursorData.color,
             }}
           />
         </motion.div>

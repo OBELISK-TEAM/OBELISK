@@ -35,7 +35,7 @@ import { BoardResponseObject } from '../shared/interfaces/response-objects/Board
 import { JoinBoardData } from './dto/board.data';
 import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
 import { CursorActionService } from './providers/cursor.action.service';
-import { CursorData } from '../shared/interfaces/Cursor';
+import { CursorData } from '../../dist/shared/interfaces/Cursor';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -150,7 +150,5 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): void {
     this.cursorActionService.handleCursorMove(client, data);
   }
-
-
 
 }

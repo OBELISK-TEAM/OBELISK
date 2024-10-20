@@ -46,7 +46,6 @@ export class CommonService {
       _id: user._id,
     });
 
-
     this.logger.log(`${user.email} has left the ${targetType} ${targetId}`);
   }
 }

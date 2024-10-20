@@ -1,5 +1,3 @@
-// src/gateway/providers/cursor.action.service.ts
-
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { CursorMoveData } from '../dto/cursor.data';
@@ -23,12 +21,16 @@ export class CursorActionService {
       return;
     }
 
-    client.to(slideId).emit('cursor-move', {
-      userId:user._id,
-      x,
-      y,
-      color,
-      username: user.email,
+    client.to(slideId).emit('cursor-moved', {
+      user: {
+        _id: user._id,
+        email: user.email,
+      },
+      cursorData: {
+        x,
+        y,
+        color,
+      },
     });
 
     // this.logger.debug(
