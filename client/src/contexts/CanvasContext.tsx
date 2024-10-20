@@ -139,7 +139,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     return () => {
       state.canvas?.off("mouse:move", throttledHandleMouseMove);
     };
-  }, [state.canvas]);
+  }, [state.canvas, slideData]);
 
   useEffect(() => {
     if (state.canvas) {
