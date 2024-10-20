@@ -150,5 +150,4 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): void {
     this.cursorActionService.handleCursorMove(client, data);
   }
-
 }
