@@ -1,8 +1,5 @@
-// src/gateway/dto/cursor.data.ts
-
 import {
   IsDefined,
-  IsNotEmpty,
   IsNumber,
   IsString,
 } from 'class-validator';
@@ -20,14 +17,5 @@ export class CursorMoveData {
   @IsString()
   color: string;
 
-  @IsDefined()
-  @IsString()
-  username: string;
 }
 
-export class CursorRemoveData {
-  @IsDefined()
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
-}

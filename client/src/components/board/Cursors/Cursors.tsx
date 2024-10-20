@@ -3,7 +3,6 @@ import styles from "./cursors.module.css";
 import { Socket } from "socket.io-client";
 import { motion } from "framer-motion";
 import logger from "@/lib/logger";
-import { useSocket } from "@/contexts/SocketContext";
 
 export interface CursorPosition {
   userId: string;
@@ -20,7 +19,6 @@ interface CursorsProps {
 
 const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
   const [cursorPositions, setCursorPositions] = useState<CursorPosition[]>([]);
-  logger.log("Cursors RE-RENDERING");
 
   useEffect(() => {
     if (!socket) {

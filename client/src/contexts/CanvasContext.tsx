@@ -36,7 +36,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
-  const { socket, basicUserInfo } = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
@@ -129,7 +129,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         const x = pointer.x;
         const y = pointer.y;
 
-        socket?.volatile.emit("cursor-move", { x, y, color: "#aaf", username: basicUserInfo?.email } as any);
+        socket?.volatile.emit("cursor-move", { x, y, color: "#aaf" } as any);
       }
     }, 160);
 
