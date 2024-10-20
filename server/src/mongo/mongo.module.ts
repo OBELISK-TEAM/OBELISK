@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule, MongooseModuleFactoryOptions } from '@nestjs/mongoose';
-
-const DEFAULT_DB_HOST = 'localhost';
+import { DEFAULT_DB_HOST } from '../config/dev.config';
 
 @Module({
   imports: [
