@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SlideStats } from 'src/mongo/schemas/stats/slide.stats.schema';
+import { SlideAction } from 'src/shared/enums/actions/slide.action';
 
 @Injectable()
 export class SlideStatsService {
@@ -57,7 +58,7 @@ export class SlideStatsService {
     userId: string,
     x: number,
     y: number,
-    actionType: string,
+    action: SlideAction,
   ): Promise<void> {
     await this.slideStatsModel.updateOne(
       { slideId },
@@ -68,7 +69,7 @@ export class SlideStatsService {
             userId,
             x,
             y,
-            actionType,
+            action,
           },
         },
       },

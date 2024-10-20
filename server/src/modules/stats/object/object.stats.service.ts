@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObjectStats } from 'src/mongo/schemas/stats/object.stats.schema';
+import { ObjectAction } from 'src/shared/enums/actions/object.action';
 
 @Injectable()
 export class ObjectStatsService {
@@ -31,7 +32,7 @@ export class ObjectStatsService {
   async changeLastInteraction(
     objectId: string,
     userId: string,
-    actionType: string,
+    action: ObjectAction,
   ): Promise<void> {
     await this.objectStatsModel.updateOne(
       { objectId },
@@ -40,7 +41,7 @@ export class ObjectStatsService {
           lastInteraction: {
             userId,
             timestamp: new Date(),
-            actionType,
+            action,
           },
         },
       },

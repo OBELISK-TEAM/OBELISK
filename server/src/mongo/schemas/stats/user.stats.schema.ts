@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 import { User } from '../user.schema';
+import { GlobalActionType } from 'src/shared/enums/actions/global.action';
 
 @Schema()
 export class UserStats extends Document {
@@ -55,6 +56,17 @@ export class UserStats extends Document {
     default: [],
   })
   loginLogoutTimeline: [{ loginDate: Date; logoutDate: Date | null }];
+
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+    required: false,
+    default: null,
+  })
+  lastAction: {
+    timestamp: Date;
+    action: GlobalActionType;
+    targetId: Types.ObjectId;
+  };
 }
 
 export const UserStatsSchema = SchemaFactory.createForClass(UserStats);
