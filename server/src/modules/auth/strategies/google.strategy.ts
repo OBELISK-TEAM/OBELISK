@@ -3,10 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { GoogleUser } from '../../../shared/interfaces/auth/GoogleUser';
 import { ConfigService } from '@nestjs/config';
-
-const DEFAULT_GOOGLE_CLIENT_ID = 'client';
-const DEFAULT_GOOGLE_CLIENT_SECRET = 'secret';
-const DEFAULT_GOOGLE_CALLBACK_URL = 'https://localhost:3000/sth';
+import {
+  DEFAULT_GOOGLE_CALLBACK_URL,
+  DEFAULT_GOOGLE_CLIENT_ID,
+  DEFAULT_GOOGLE_CLIENT_SECRET,
+} from '../../../config/defaults';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {

@@ -20,8 +20,7 @@ import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-
-const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
+import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/defaults';
 
 @Injectable()
 export class BoardsService {
@@ -108,10 +107,8 @@ export class BoardsService {
     switch (tab) {
       case BoardsFilter.OWNED_BY:
         return builder.ownedBy(userId).build();
-
       case BoardsFilter.SHARED_FOR:
         return builder.sharedWith(userId).build();
-
       default:
         return builder.accessibleTo(userId).build();
     }
@@ -155,22 +152,9 @@ export class BoardsService {
     const queryBuilder = new FilterQueryBuilder();
     const query = queryBuilder.accessibleTo(userId).build();
     const result = await this.boardModel.aggregate<BoardWithSlideCount>([
-      {
-        $match: {
-          _id: new Types.ObjectId(boardId),
-          ...query,
-        },
-      },
-      {
-        $addFields: {
-          slideCount: { $size: '$slides' },
-        },
-      },
-      {
-        $project: {
-          slides: 0,
-        },
-      },
+      { $match: { _id: new Types.ObjectId(boardId), ...query } },
+      { $addFields: { slideCount: { $size: '$slides' } } },
+      { $project: { slides: 0 } },
     ]);
     if (!result || result.length === 0)
       throw new HttpException(
@@ -185,16 +169,13 @@ export class BoardsService {
     userId: string,
   ): BoardPermission {
     const userIdStr = userId.toString();
-    const ownerStr = board.owner.toString();
-
-    const moderatorsStr = board.permissions.moderator.map(id => id.toString());
-    const editorsStr = board.permissions.editor.map(id => id.toString());
-    const viewersStr = board.permissions.viewer.map(id => id.toString());
-
-    if (ownerStr === userIdStr) return BoardPermission.OWNER;
-    if (moderatorsStr.includes(userIdStr)) return BoardPermission.MODERATOR;
-    if (editorsStr.includes(userIdStr)) return BoardPermission.EDITOR;
-    if (viewersStr.includes(userIdStr)) return BoardPermission.VIEWER;
+    if (board.owner.toString() === userIdStr) return BoardPermission.OWNER;
+    if (board.permissions.moderator.some(id => id.toString() === userIdStr))
+      return BoardPermission.MODERATOR;
+    if (board.permissions.editor.some(id => id.toString() === userIdStr))
+      return BoardPermission.EDITOR;
+    if (board.permissions.viewer.some(id => id.toString() === userIdStr))
+      return BoardPermission.VIEWER;
     return BoardPermission.NONE;
   }
 
