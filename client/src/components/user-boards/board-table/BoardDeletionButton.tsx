@@ -13,11 +13,11 @@ import { TrashIcon } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { KeyedMutator } from "swr";
-import logger from "@/lib/logger";
 import { toast } from "sonner";
 import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
+import logger from "@/lib/logger";
 
 interface BoardDeletionButtonProps {
   deleteBoard: () => void;
@@ -44,6 +44,7 @@ export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ delete
         await revalidateFunc();
         toast.success("Board deleted successfully");
       } catch (error: any) {
+        logger.error("Error in handleDeleteBoard:", error);
         if (error instanceof ApiError) {
           complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
         } else {
