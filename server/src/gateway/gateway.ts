@@ -34,6 +34,8 @@ import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
 import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
 import { JoinBoardData } from './dto/board.data';
 import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
+import { CursorActionService } from './providers/cursor.action.service';
+import { CursorData } from '../shared/interfaces/Cursor';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -53,6 +55,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly joinSlideService: JoinSlideService,
     private readonly slideActionService: SlideActionService,
     private readonly objectActionService: ObjectActionService,
+    private readonly cursorActionService: CursorActionService,
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
@@ -137,4 +140,17 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): Promise<ObjectResponseObject> {
     return this.objectActionService.handleDeleteObject(client, data);
   }
+
+  @SubscribeMessage('cursor-move')
+  @UseGuards(BoardPermissionGuard)
+  @MinimumBoardPermission(BoardPermission.VIEWER)
+  handleCursorMove(
+    client: GwSocketWithTarget,
+    data: CursorData,
+  ): void {
+    this.cursorActionService.handleCursorMove(client, data);
+  }
+
+
+
 }

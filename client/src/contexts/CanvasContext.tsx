@@ -14,6 +14,7 @@ import { ZoomOptions } from "@/enums/ZoomOptions";
 import { useZoom } from "./ZoomUIContext";
 import useSocketListeners from "@/hooks/socket/useSocketListeners";
 import { useSocket } from "./SocketContext";
+import { throttle } from "lodash";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -35,7 +36,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const [state, dispatch] = useReducer(canvasReducer, initialState);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
-  const { socket } = useSocket();
+  const { socket, basicUserInfo } = useSocket();
 
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
@@ -110,15 +111,39 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     newCanvas?.on("mouse:up", handleMouseUpDown);
 
     return () => {
+      // Emit cursorRemove when component unmounts
+      // Cancel any pending throttled calls
+
       newCanvas?.dispose();
     };
   }, [handleZoom]);
 
   useEffect(() => {
+    const throttledHandleMouseMove = throttle((event: fabric.IEvent) => {
+      const canvas = state.canvas;
+      if (!canvas) {
+        return;
+      }
+      const pointer = canvas.getPointer(event.e as any, true);
+      if (pointer) {
+        const x = pointer.x;
+        const y = pointer.y;
+
+        socket?.volatile.emit("cursor-move", { x, y, color: "#aaf", username: basicUserInfo?.email } as any);
+      }
+    }, 160);
+
     if (slideData && canvasRef.current && state.canvas) {
       state.canvas.loadFromJSON(slideData, () => state.canvas?.renderAll());
     }
-  }, [state.canvas, slideData]);
+
+    state.canvas?.on("mouse:move", throttledHandleMouseMove);
+
+    return () => {
+      state.canvas?.off("mouse:move", throttledHandleMouseMove);
+    };
+  }, [state.canvas]);
+
   useEffect(() => {
     if (state.canvas) {
       toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);

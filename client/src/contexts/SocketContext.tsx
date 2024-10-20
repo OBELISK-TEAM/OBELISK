@@ -19,6 +19,7 @@ interface SocketContextProps {
   isBoardJoined: boolean;
   firstSlideChanged: boolean;
   setFirstSlideChanged: React.Dispatch<React.SetStateAction<boolean>>;
+  basicUserInfo: BasicUserInfo | undefined;
 }
 
 const SocketContext = createContext<SocketContextProps | undefined>(undefined);
@@ -49,7 +50,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
-
+  const [basicUserInfo, setBasicUserInfo] = useState<BasicUserInfo | undefined>(undefined);
   useEffect(() => {
     const socket = socketRef.current;
     if (!socket) {
@@ -78,9 +79,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     }
     function onUserJoinedSlide(res: BasicUserInfo) {
       toast.info(`User ${res.email} has joined this slide`);
+      setBasicUserInfo(res);
     }
     function onUserLeftSlide(res: BasicUserInfo) {
       toast.info(`User ${res.email} has left this slide`);
+      logger.log("User left slide", res);
+      socket?.emit("cursor-remove", { userId: res._id });
     }
 
     function onAuthSuccess(res: SimpleMessage) {
@@ -142,6 +146,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         isBoardJoined,
         firstSlideChanged,
         setFirstSlideChanged,
+        basicUserInfo,
       }}
     >
       {children}

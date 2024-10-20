@@ -11,6 +11,7 @@ import { ObjectActionService } from './providers/object.action.service';
 import { ObjectsModule } from '../modules/objects/objects.module';
 import { ResponseModule } from '../modules/response/response.module';
 import { CommonService } from './providers/common.service';
+import { CursorActionService } from './providers/cursor.action.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CommonService } from './providers/common.service';
     JoinSlideService,
     SlideActionService,
     ObjectActionService,
+    CursorActionService,
     CommonService,
   ],
 })
