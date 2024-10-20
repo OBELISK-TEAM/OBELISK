@@ -15,7 +15,7 @@ import { BoardsModule } from '../boards/boards.module';
 import {
   DEFAULT_JWT_EXPIRES_IN,
   DEFAULT_JWT_SECRET,
-} from '../../config/defaults';
+} from '../../config/dev.config';
 
 @Module({
   imports: [

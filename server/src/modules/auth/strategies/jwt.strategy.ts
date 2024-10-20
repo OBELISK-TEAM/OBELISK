@@ -5,7 +5,7 @@ import { AuthService } from '../auth.service';
 import { Payload } from '../../../shared/interfaces/auth/Payload';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_JWT_SECRET } from '../../../config/defaults';
+import { DEFAULT_JWT_SECRET } from '../../../config/dev.config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

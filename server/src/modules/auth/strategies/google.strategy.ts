@@ -7,7 +7,7 @@ import {
   DEFAULT_GOOGLE_CALLBACK_URL,
   DEFAULT_GOOGLE_CLIENT_ID,
   DEFAULT_GOOGLE_CLIENT_SECRET,
-} from '../../../config/defaults';
+} from '../../../config/dev.config';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {

@@ -7,7 +7,7 @@ import {
   DEFAULT_GW_PORT,
   DEFAULT_SERVER_HOST,
   DEFAULT_SERVER_PORT,
-} from './config/defaults';
+} from './config/dev.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

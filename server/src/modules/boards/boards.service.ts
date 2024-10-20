@@ -20,7 +20,7 @@ import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/defaults';
+import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
 
 @Injectable()
 export class BoardsService {
