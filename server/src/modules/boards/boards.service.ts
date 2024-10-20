@@ -180,7 +180,7 @@ export class BoardsService {
     return result[0];
   }
 
-  private determineUserPermission(
+  determineUserPermission(
     board: BoardWithSlideCount | SuperBoardDocument,
     userId: string,
   ): BoardPermission {
