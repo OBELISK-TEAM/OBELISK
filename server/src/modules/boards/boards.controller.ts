@@ -17,6 +17,9 @@ import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
 } from '../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardAccessGuard } from '../auth/guards/board.access.guard';
+import { MinimumBoardPermission } from '../auth/decorators/permissions.decorator';
+import { BoardPermission } from '../../shared/enums/board.permission';
 
 // TODO - verify permissions for endpointss
 
@@ -46,7 +49,8 @@ export class BoardsController {
   }
 
   @Get(':boardId/details')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   getBoardDetails(
     @User('_id') userId: string,
     @Param('boardId') boardId: string,
