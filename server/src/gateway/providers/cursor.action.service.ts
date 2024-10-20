@@ -15,10 +15,7 @@ export class CursorActionService {
     const slideId = client.data.user.targetSlide.slideId;
 
     if (!slideId) {
-      this.logger.warn(
-        `Client ${user.email} attempted to move cursor without a selected slide.`,
-      );
-      return;
+      return; // todo: remove those checkers from action services in a way that linter won't complain
     }
 
     client.to(slideId).emit('cursor-moved', {
