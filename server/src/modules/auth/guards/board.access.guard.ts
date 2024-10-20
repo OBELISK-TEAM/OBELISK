@@ -11,7 +11,7 @@ import { BoardsService } from '../../boards/boards.service';
 // @UseGuards(BoardAccessGuard)
 // @MinimumBoardPermission(BoardPermission.VIEWER)
 
-// HTTP REST (needs to be used with JwtAuthGuard):
+// HTTP REST (needs to be used with JwtAuthGuard and has ':boardId' in path):
 // @UseGuards(JwtAuthGuard, BoardAccessGuard)
 // @MinimumBoardPermission(BoardPermission.VIEWER)
 

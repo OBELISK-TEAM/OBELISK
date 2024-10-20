@@ -21,10 +21,17 @@ import { BoardWithPopulatedPermissions } from '../../shared/interfaces/Populated
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
 import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { randomUUID } from 'crypto';
+
+const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
 
 @Injectable()
 export class BoardsService {
   constructor(
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
@@ -107,8 +114,10 @@ export class BoardsService {
     switch (tab) {
       case BoardsFilter.OWNED_BY:
         return builder.ownedBy(userId).build();
+
       case BoardsFilter.SHARED_FOR:
         return builder.sharedWith(userId).build();
+
       default:
         return builder.accessibleTo(userId).build();
     }
@@ -206,7 +215,7 @@ export class BoardsService {
     return BSON.calculateObjectSize(board);
   }
 
-  async queryCountDocuments(
+  private async queryCountDocuments(
     query: FilterQuery<SuperBoardDocument>,
   ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
@@ -218,6 +227,30 @@ export class BoardsService {
       DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
     );
   }
+
+  async createPermissionLink(permission: BoardPermissionDto): Promise<any> {
+    const uuid = randomUUID();
+    await this.cacheManager.set(uuid, permission, 1000000); // TODO - change to reasonable time
+    return uuid;
+  }
+
+  async grantPermission(
+    userId: string,
+    boardId: string,
+    uuid: string,
+  ): Promise<void> {
+    const permission = await this.cacheManager.get<BoardPermission>(uuid);
+    if (!permission)
+      throw new HttpException(
+        'Invalid permission link',
+        HttpStatus.BAD_REQUEST,
+      );
+    console.log(permission);
+    console.log(uuid, BoardPermission[permission]);
+    // return this.addPermission(userId, boardId, permission);
+  }
+
+  // async addPermission(
 }
 
 export type SortOrder = 'asc' | 'desc';

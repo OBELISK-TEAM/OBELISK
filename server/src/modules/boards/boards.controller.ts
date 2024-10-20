@@ -9,7 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { BoardQueryDto, CreateBoardDto } from './boards.dto';
+import {
+  BoardPermissionDto,
+  BoardQueryDto,
+  CreateBoardDto,
+} from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
@@ -20,8 +24,6 @@ import {
 import { BoardAccessGuard } from '../auth/guards/board.access.guard';
 import { MinimumBoardPermission } from '../auth/decorators/permissions.decorator';
 import { BoardPermission } from '../../shared/enums/board.permission';
-
-// TODO - verify permissions for endpointss
 
 @Controller('boards')
 export class BoardsController {
@@ -42,7 +44,6 @@ export class BoardsController {
     );
   }
 
-  // TODO - check permissions to fetch board
   @Get(':boardId')
   getBoard(@Param('boardId') boardId: string): Promise<BoardResponseObject> {
     return this.boardsService.getBoardById(boardId);
@@ -67,14 +68,36 @@ export class BoardsController {
     return this.boardsService.createBoard(userId, createBoardDto);
   }
 
-  // TODO - check permissions to delete board
   @Delete(':boardId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.OWNER)
   async deleteBoard(
     @User('_id') userId: string,
     @Param('boardId') boardId: string,
   ): Promise<BoardResponseObject> {
     return this.boardsService.deleteBoard(userId, boardId);
+  }
+
+  // permissions
+
+  @Post(':boardId/permissions')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  async createPermissionLink(
+    @Body() permission: BoardPermissionDto,
+  ): Promise<any> {
+    return this.boardsService.createPermissionLink(permission);
+  }
+
+  @Get(':boardId/permissions/:uuid')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  async grantPermission(
+    @User('_id') userId: string,
+    @Param('boardId') boardId: string,
+    @Param('uuid') uuid: string,
+  ): Promise<any> {
+    return this.boardsService.grantPermission(userId, boardId, uuid);
   }
 
   // @Put(':boardId/permissions')
