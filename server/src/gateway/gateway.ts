@@ -141,7 +141,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.objectActionService.handleDeleteObject(client, data);
   }
 
-  @SubscribeMessage('cursor-move')
+  @SubscribeMessage('cursor-moved')
   @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.VIEWER)
   handleCursorMove(

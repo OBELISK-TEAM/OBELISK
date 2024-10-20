@@ -126,7 +126,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         const x = pointer.x;
         const y = pointer.y;
 
-        socket?.volatile.emit("cursor-move", { x, y, color: "#aaf" } as any);
+        socket?.volatile.emit("cursor-moved", { x, y, color: "#aaf" } as any);
       }
     }, 160);
 
