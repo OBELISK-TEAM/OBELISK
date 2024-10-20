@@ -121,7 +121,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
       if (!canvas) {
         return;
       }
-      const pointer = canvas.getPointer(event.e as any, true);
+      const pointer = canvas.getPointer(event.e as any, false);
       if (pointer) {
         const x = pointer.x;
         const y = pointer.y;
