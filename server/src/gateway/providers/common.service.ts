@@ -45,9 +45,7 @@ export class CommonService {
       email: user.email,
       _id: user._id,
     });
-    client.to(targetId).emit('cursor-remove', {
-      userId: user._id,
-    });
+
 
     this.logger.log(`${user.email} has left the ${targetType} ${targetId}`);
   }

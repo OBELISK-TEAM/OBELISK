@@ -111,9 +111,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     newCanvas?.on("mouse:up", handleMouseUpDown);
 
     return () => {
-      // Emit cursorRemove when component unmounts
-      // Cancel any pending throttled calls
-
       newCanvas?.dispose();
     };
   }, [handleZoom]);

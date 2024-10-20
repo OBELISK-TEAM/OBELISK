@@ -3,6 +3,7 @@ import styles from "./cursors.module.css";
 import { Socket } from "socket.io-client";
 import { motion } from "framer-motion";
 import logger from "@/lib/logger";
+import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
 
 export interface CursorPosition {
   userId: string;
@@ -38,8 +39,8 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
       });
     };
 
-    const handleCursorRemove = (data: { userId: string }) => {
-      const { userId } = data;
+    const handleCursorRemove = (data: BasicUserInfo) => {
+      const { _id: userId } = data;
       logger.log("Removing cursor", userId);
       setCursorPositions((prevCursors) => {
         return prevCursors.filter((cursor) => cursor.userId !== userId);
@@ -47,7 +48,7 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
     };
 
     socket.on("cursor-move", handleIncomingCursorMove);
-    socket.on("cursor-remove", handleCursorRemove);
+    socket.on("left-slide", handleCursorRemove);
 
     socket.on("disconnect", () => {
       setCursorPositions([]);
@@ -55,7 +56,7 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
 
     return () => {
       socket.off("cursor-move", handleIncomingCursorMove);
-      socket.off("cursor-remove", handleCursorRemove);
+      socket.off("left-slide", handleCursorRemove);
     };
   }, [socket, currentUserId]);
 
