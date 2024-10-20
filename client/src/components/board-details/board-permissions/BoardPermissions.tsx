@@ -1,6 +1,6 @@
 "use client";
 import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/board-permissions/BoardPermissionsInfoDialog";
@@ -42,7 +42,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
     return users;
   }, []);
 
-  const [users, setUsers] = useState<BoardPermissionsUser[]>(mapPermissions(board));
+  const [users] = useState<BoardPermissionsUser[]>(mapPermissions(board));
 
   /**
    * Handle permission change for a user.
@@ -54,26 +54,9 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
     /*todo: implement this method*/
   };
 
-  if (users.length === 0) {
-    setUsers([
-      {
-        name: "Bnon Bnna",
-        permission: BoardPermission.MODERATOR,
-      },
-      {
-        name: "Cnon Cnna",
-        permission: BoardPermission.VIEWER,
-      },
-      {
-        name: "Dnon Dnna",
-        permission: BoardPermission.EDITOR,
-      },
-      {
-        name: "Enon Enna",
-        permission: BoardPermission.EDITOR,
-      },
-    ]);
-  }
+  const sortedUsers = useMemo(() => {
+    return [...users].sort((a, b) => a.name.localeCompare(b.name));
+  }, [users]);
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow">
@@ -99,7 +82,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
       <Table>
         <BoardTableLeadRow columns={["User", "Permission"]} />
         <TableBody>
-          {users.map((user, index) => (
+          {sortedUsers.map((user, index) => (
             <TableRow key={user.name} className="border-b border-border hover:bg-muted/50">
               <TableCell>
                 <div className="flex items-center space-x-2">
