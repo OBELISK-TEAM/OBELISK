@@ -30,3 +30,27 @@ export async function createBoard(name: string): Promise<BoardDataResponse> {
     throw error;
   }
 }
+
+export const deleteBoard = async (boardId: string) => {
+  const accessToken = getCookie("accessToken");
+
+  if (!accessToken) {
+    throw new Error("Access token is required");
+  }
+  try {
+    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const reasons = await extractMessagesFromApiError(response);
+      throw new ApiError(reasons);
+    }
+  } catch (error) {
+    logger.error("Error while deleting board:", error);
+    throw error;
+  }
+};

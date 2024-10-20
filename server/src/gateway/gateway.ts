@@ -17,7 +17,7 @@ import {
 import { CursorMoveData } from './dto/cursor.data';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
-import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
+import { BoardAccessGuard } from '../modules/auth/guards/board.access.guard';
 import {
   UseFilters,
   UseGuards,
@@ -40,6 +40,7 @@ import { CursorActionService } from './providers/cursor.action.service';
 @WebSocketGateway(4003, {
   namespace: 'gateway',
 })
+@UseGuards(BoardAccessGuard)
 @UseFilters(WsExceptionFilter)
 @UsePipes(
   new ValidationPipe({
@@ -81,9 +82,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinBoardService.handleLeaveBoardAndSlide(client);
   }
 
-  @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.VIEWER)
   @SubscribeMessage('join-slide')
+  @MinimumBoardPermission(BoardPermission.VIEWER)
   async handleJoinSlide(
     client: GwSocketWithTarget,
     data: JoinSlideData,
@@ -91,9 +91,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.joinSlideService.handleJoinSlide(client, data);
   }
 
-  @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.EDITOR)
   @SubscribeMessage('add-slide')
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleAddSlide(
     client: GwSocketWithTarget,
     data: AddSlideData,
@@ -101,9 +100,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.slideActionService.handleAddSlide(client, data);
   }
 
-  @UseGuards(BoardPermissionGuard)
-  @MinimumBoardPermission(BoardPermission.EDITOR)
   @SubscribeMessage('delete-slide')
+  @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleDeleteSlide(
     client: GwSocketWithTarget,
     data: DeleteSlideData,
@@ -112,7 +110,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('add-object')
-  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleAddObject(
     client: GwSocketWithTarget,
@@ -122,7 +119,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('update-object')
-  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleUpdateObject(
     client: GwSocketWithTarget,
@@ -132,7 +128,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('delete-object')
-  @UseGuards(BoardPermissionGuard)
   @MinimumBoardPermission(BoardPermission.EDITOR)
   async handleDeleteObject(
     client: GwSocketWithTarget,
