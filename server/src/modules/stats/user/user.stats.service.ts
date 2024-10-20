@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserStats } from 'src/mongo/schemas/stats/user.stats.schema';
+import { GlobalActionType } from 'src/shared/enums/actions/global.action';
 
 @Injectable()
 export class UserStatsService {
@@ -90,6 +91,25 @@ export class UserStatsService {
       {
         $set: {
           'loginLogoutTimeline.$.logoutDate': new Date(),
+        },
+      },
+    );
+  }
+
+  async changeLastAction(
+    userId: string,
+    action: GlobalActionType,
+    targetId: string,
+  ): Promise<void> {
+    await this.userStatsModel.updateOne(
+      { userId },
+      {
+        $set: {
+          lastAction: {
+            timestamp: new Date(),
+            action,
+            targetId,
+          },
         },
       },
     );

@@ -4,6 +4,7 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { SuperSlide } from '../slide/super.slide.schema';
 import { User } from '../user.schema';
 import { SuperBoard } from '../board/super.board.schema';
+import { SlideAction } from 'src/shared/enums/actions/slide.action';
 
 @Schema({
   timestamps: true,
@@ -52,7 +53,7 @@ export class SlideStats extends Document {
       userId: Types.ObjectId;
       x: number;
       y: number;
-      actionType: string; // TODO: change to enum
+      action: SlideAction;
     },
   ];
 }
