@@ -27,7 +27,7 @@ export const fetchBoardDetails = async (url: string): Promise<BoardDetailsRespon
     sizeInBytes: 13158,
     createdAt: "2024-10-02T17:03:12.309Z",
     updatedAt: "2024-10-09T15:01:26.095Z",
-    maxSizeInBytes: 4206969,
+    maxBoardSizeInBytes: 4206969,
     slideCount: 10,
   };
 

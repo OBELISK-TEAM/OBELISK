@@ -30,7 +30,7 @@ const CollaboratingUsers: React.FC<CollaboratingUsersProps> = ({ users }) => {
                 <TableCell className="flex items-center">
                   <Avatar className="mr-2 h-8 w-8">
                     <AvatarImage src={`/avatars/${user}.png`} alt={user.email} />
-                    <AvatarFallback>{user.email.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{user.email.slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <p className="text-sm font-semibold">{user.email}</p>
                 </TableCell>

@@ -31,7 +31,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
   const lastUpdated = board.updatedAt ? new Date(board.updatedAt).toLocaleString() : "";
 
   const totalSizeUsed = board.sizeInBytes;
-  const usedPercentage = board.maxSizeInBytes ? (totalSizeUsed / board.maxSizeInBytes) * 100 : 0;
+  const usedPercentage = board.maxBoardSizeInBytes ? (totalSizeUsed / board.maxBoardSizeInBytes) * 100 : 0;
 
   const collaboratingUsers = [
     ...(board.permissions.viewer || []),
@@ -98,7 +98,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
             <div className="flex w-full items-center justify-between gap-4 text-xs">
               <Progress value={usedPercentage} className="w-full" />
               <Badge variant="secondary" className="border-1 h-10 w-40 rounded-md px-4 py-2 text-xs">
-                <span className="text-muted-foreground">{`${(totalSizeUsed / 1024).toFixed(2)} / ${(board.maxSizeInBytes / 1024).toFixed(2)} KB`}</span>
+                <span className="text-muted-foreground">{`${(totalSizeUsed / 1024).toFixed(2)} / ${(board.maxBoardSizeInBytes / 1024).toFixed(2)} KB`}</span>
               </Badge>
             </div>
           </BoardInfoItem>
