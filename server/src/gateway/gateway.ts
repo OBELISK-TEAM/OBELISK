@@ -14,6 +14,7 @@ import {
   DeleteObjectData,
   UpdateObjectData,
 } from './dto/object.data';
+import { CursorMoveData } from './dto/cursor.data';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { BoardPermissionGuard } from '../modules/auth/guards/board.permission.guard';
@@ -35,7 +36,6 @@ import { BoardResponseObject } from '../shared/interfaces/response-objects/Board
 import { JoinBoardData } from './dto/board.data';
 import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
 import { CursorActionService } from './providers/cursor.action.service';
-import { CursorData } from '../../dist/shared/interfaces/Cursor';
 
 @WebSocketGateway(4003, {
   namespace: 'gateway',
@@ -146,7 +146,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @MinimumBoardPermission(BoardPermission.VIEWER)
   handleCursorMove(
     client: GwSocketWithTarget,
-    data: CursorData,
+    data: CursorMoveData,
   ): void {
     this.cursorActionService.handleCursorMove(client, data);
   }
