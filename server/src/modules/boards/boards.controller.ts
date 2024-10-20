@@ -45,7 +45,7 @@ export class BoardsController {
     return this.boardsService.getBoardById(boardId);
   }
 
-  @Get('details/:boardId')
+  @Get(':boardId/details')
   @UseGuards(JwtAuthGuard)
   getBoardDetails(
     @User('_id') userId: string,

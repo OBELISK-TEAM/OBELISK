@@ -10,6 +10,6 @@ export interface BoardDetailsResponse {
   sizeInBytes: number;
   createdAt: string;
   updatedAt: string;
-  maxSizeInBytes: number;
+  maxBoardSizeInBytes: number;
   slideCount: number;
 }
