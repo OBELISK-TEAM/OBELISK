@@ -15,24 +15,24 @@ import { BoardDetailsResponse } from "@/interfaces/responses/board-details-respo
 import logger from "@/lib/logger";
 export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => {
   const mapPermissions = useCallback((board: BoardDetailsResponse): BoardPermissionsUser[] => {
-    const { viewer, editor, moderator } = board.permissions;
+    const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
     const users: BoardPermissionsUser[] = [];
 
-    viewer.forEach((user) => {
+    viewers.forEach((user) => {
       users.push({
         name: user.email, // Using email as name for display
         permission: BoardPermission.VIEWER,
       });
     });
 
-    editor.forEach((user) => {
+    editors.forEach((user) => {
       users.push({
         name: user.email,
         permission: BoardPermission.EDITOR,
       });
     });
 
-    moderator.forEach((user) => {
+    moderators.forEach((user) => {
       users.push({
         name: user.email,
         permission: BoardPermission.MODERATOR,
