@@ -5,6 +5,7 @@ import { User } from '../user.schema';
 import { Schema as MongooseSchema } from 'mongoose';
 import { SuperBoard } from '../board/super.board.schema';
 import { SuperSlide } from '../slide/super.slide.schema';
+import { ObjectAction } from 'src/shared/enums/actions/object.action';
 
 @Schema({
   timestamps: true,
@@ -45,7 +46,11 @@ export class ObjectStats extends Document {
     required: false,
     default: null,
   })
-  lastInteraction: { userId: Types.ObjectId; timestamp: Date; actionType: string }; // TODO: change to enum
+  lastInteraction: {
+    userId: Types.ObjectId;
+    timestamp: Date;
+    action: ObjectAction;
+  };
 }
 
 export const ObjectStatsSchema = SchemaFactory.createForClass(ObjectStats);
