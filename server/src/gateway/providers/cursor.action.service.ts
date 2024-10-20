@@ -13,7 +13,7 @@ export class CursorActionService {
     data: CursorMoveData,
   ): void {
     const user  = client.data.user;
-    const { x, y, color, username } = data;
+    const { x, y, color } = data;
     const slideId = client.data.user.targetSlide.slideId;
 
     if (!slideId) {
@@ -28,7 +28,7 @@ export class CursorActionService {
       x,
       y,
       color,
-      username,
+      username: user.email,
     });
 
     this.logger.debug(
