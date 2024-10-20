@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import logger from "@/lib/logger";
 import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
 import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
+import { fabric } from "fabric";
+import { useCanvas } from "@/contexts/CanvasContext";
 
 interface CursorsProps {
   socket: Socket | null;
@@ -13,6 +15,8 @@ interface CursorsProps {
 
 const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
   const [cursorPositions, setCursorPositions] = useState<CursorPosition[]>([]);
+  const { state } = useCanvas();
+  const canvas = state.canvas;
 
   useEffect(() => {
     if (!socket) {
@@ -53,22 +57,35 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
 
   return (
     <>
-      {cursorPositions.map((cursor) => (
-        <motion.div
-          key={cursor.user._id}
-          className={styles.cursorWrapper}
-          animate={{ x: cursor.cursorData.x, y: cursor.cursorData.y }}
-          transition={{ type: "spring", stiffness: 70, damping: 20 }}
-        >
-          <div className={styles.cursorLabel}>{cursor.user.email}</div>
-          <div
-            className={styles.cursor}
-            style={{
-              backgroundColor: cursor.cursorData.color,
-            }}
-          />
-        </motion.div>
-      ))}
+      {cursorPositions.map((cursor) => {
+        if (!canvas) {
+          return null;
+        }
+
+        const transform = canvas.viewportTransform;
+        const point = new fabric.Point(cursor.cursorData.x, cursor.cursorData.y);
+        const transformedPoint = fabric.util.transformPoint(point, transform as number[]);
+
+        const clampedX = Math.min(Math.max(transformedPoint.x, 0), canvas.getWidth());
+        const clampedY = Math.min(Math.max(transformedPoint.y, 0), canvas.getHeight());
+
+        return (
+          <motion.div
+            key={cursor.user._id}
+            className={styles.cursorWrapper}
+            animate={{ x: clampedX, y: clampedY }}
+            transition={{ type: "spring", stiffness: 70, damping: 20 }}
+          >
+            <div className={styles.cursorLabel}>{cursor.user.email}</div>
+            <div
+              className={styles.cursor}
+              style={{
+                backgroundColor: cursor.cursorData.color,
+              }}
+            />
+          </motion.div>
+        );
+      })}
     </>
   );
 };
