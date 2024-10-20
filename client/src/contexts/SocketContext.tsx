@@ -57,7 +57,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     }
 
     function handleJoinBoard(res: JoinBoardResponse) {
-      setTotalSlides(res.slidesCount);
+      setTotalSlides(res.slideCount);
       setBoardName(res.name);
       setCurrentPermission(res.permission);
       setBoardOwner(res.owner);
