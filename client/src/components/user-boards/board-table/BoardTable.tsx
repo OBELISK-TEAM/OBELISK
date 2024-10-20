@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardDeletionButton";
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
 import { fetchBoards } from "@/services/fetchBoards";
+import { deleteBoard } from "@/app/actions/boardActions";
 
 interface BoardTableProps {
   activeTab: BoardsActiveTab;
@@ -28,8 +29,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   const perPage = 5;
   const router = useRouter();
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
-
-  const { data, error, isLoading } = useSWR<PaginatedBoardsResponse>(
+  const { data, error, isLoading, mutate } = useSWR<PaginatedBoardsResponse>(
     `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
     fetchBoards(accessToken as string),
     {
@@ -115,11 +115,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
                       e.stopPropagation();
                     }}
                   >
-                    <BoardDeletionButton
-                      deleteBoard={() => {
-                        /*todo: implement board deletion*/
-                      }}
-                    />
+                    <BoardDeletionButton revalidateFunc={mutate} deleteBoard={() => deleteBoard(board._id)} />
                     <BoardDetailsButton boardId={board._id} />
                   </TableCell>
                 </TableRow>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,15 +11,23 @@ import {
 } from "@/components/ui/dialog";
 import { TrashIcon } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
+import { KeyedMutator } from "swr";
+import { toast } from "sonner";
+import { ApiError } from "@/errors/ApiError";
+import { complexToast } from "@/contexts/complexToast";
+import { ToastTypes } from "@/enums/ToastType";
+import logger from "@/lib/logger";
 
 interface BoardDeletionButtonProps {
   deleteBoard: () => void;
+  revalidateFunc: KeyedMutator<PaginatedBoardsResponse>;
 }
 
-export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ deleteBoard }) => {
+export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ deleteBoard, revalidateFunc }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const triggerButtonRef = React.useRef<HTMLButtonElement>(null);
-
+  const [isPending, startTransition] = useTransition();
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
     if (!open && triggerButtonRef.current) {
@@ -30,7 +38,20 @@ export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ delete
     setIsDialogOpen(true);
   };
   const handleDeleteBoard = () => {
-    deleteBoard();
+    startTransition(async () => {
+      try {
+        await deleteBoard();
+        await revalidateFunc();
+        toast.success("Board deleted successfully");
+      } catch (error: any) {
+        logger.error("Error in handleDeleteBoard:", error);
+        if (error instanceof ApiError) {
+          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        } else {
+          toast.error(error.message || "Failed to delete board");
+        }
+      }
+    });
   };
   return (
     <HoverCard openDelay={100} closeDelay={200}>
@@ -40,6 +61,7 @@ export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ delete
           className="hover:text-muted-foreground"
           aria-label="Delete board"
           onClick={handleButtonClick}
+          disabled={isPending}
         >
           <TrashIcon />
         </Button>
