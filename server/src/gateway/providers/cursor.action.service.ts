@@ -31,9 +31,9 @@ export class CursorActionService {
       username: user.email,
     });
 
-    this.logger.debug(
-      `Cursor moved by user ${user.email} in slide ${slideId}: (${x}, ${y})`,
-    );
+    // this.logger.debug(
+    //   `Cursor moved by user ${user.email} in slide ${slideId}: (${x}, ${y})`,
+    // );
   }
 
 
