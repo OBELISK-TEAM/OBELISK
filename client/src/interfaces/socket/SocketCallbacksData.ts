@@ -11,7 +11,7 @@ export interface JoinBoardResponse {
   _id: string;
   name: string;
   owner: string;
-  slidesCount: number;
+  slideCount: number;
   permission: "OWNER" | "MODERATOR" | "EDITOR" | "VIEWER";
 }
 

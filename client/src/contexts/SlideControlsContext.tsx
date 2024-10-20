@@ -28,7 +28,6 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
   const SLIDE_LIMIT = 10;
   const [lastSlideDeleted, setLastSlideDeleted] = useState<boolean>(false);
-
   useEffect(() => {
     if (lastSlideDeleted) {
       router.push(`/user-boards/${boardId}/slides/${currentSlide - 1}`);
