@@ -220,7 +220,7 @@ export class BoardsService {
     userId: string,
     permissionToken: string,
   ): Promise<void> {
-    const [boardId, uuid] = await this.extractBoardIdAndUuid(permissionToken);
+    const [boardId, uuid] = this.extractBoardIdAndUuid(permissionToken);
     const board = await this.findBoardById(boardId);
     const currPermission = this.determineUserPermission(board, userId);
     const newPermission = await this.cacheManager.get<BoardPermission>(uuid);
