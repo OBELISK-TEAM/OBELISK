@@ -4,7 +4,7 @@ services:
     build:
       context: ./client
       args:
-        - APP_ENV=${APP_ENV}
+        - APP_ENV
         - SERVER_HOST=server
         - SERVER_PORT
         - GOOGLE_CLIENT_ID
@@ -31,7 +31,7 @@ services:
       - DB_NAME
       - DB_USER
       - DB_PASSWORD
-      - DB_HOST=mongo # must be set to mongo
+      - DB_HOST=mongo
       - DB_PORT
       - JWT_SECRET
       - JWT_EXPIRES_IN
@@ -42,7 +42,7 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017" # must be set to 27017
+      - "27017:27017"
     container_name: obelisk_mongodb_container
     environment:
       - MONGO_INITDB_DATABASE=${DB_NAME}
