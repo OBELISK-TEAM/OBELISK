@@ -118,7 +118,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   useEffect(() => {
     const throttledHandleMouseMove = throttle((event: fabric.IEvent) => {
       const canvas = state.canvas;
-      if (!canvas) {
+      if (!canvas || !event.e) {
         return;
       }
       const pointer = canvas.getPointer(event.e as any, false);
@@ -138,6 +138,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
 
     return () => {
       state.canvas?.off("mouse:move", throttledHandleMouseMove);
+      throttledHandleMouseMove.cancel();
     };
   }, [state.canvas, slideData]);
 
