@@ -18,5 +18,6 @@ import {
   ],
   controllers: [ObjectStatsController],
   providers: [ObjectStatsService],
+  exports: [ObjectStatsService, MongooseModule],
 })
 export class ObjectStatsModule {}

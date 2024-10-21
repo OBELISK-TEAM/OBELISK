@@ -11,5 +11,11 @@ import { ObjectStatsModule } from './object/object.stats.module';
     SlideStatsModule,
     UserStatsModule,
   ],
+  exports: [
+    BoardStatsModule,
+    ObjectStatsModule,
+    SlideStatsModule,
+    UserStatsModule,
+  ],
 })
 export class StatsModule {}

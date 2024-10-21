@@ -23,6 +23,11 @@ export class ObjectStatsService {
       slideId,
       creatorId,
     });
+    await this.changeLastInteraction(
+      objectId,
+      creatorId,
+      ObjectAction.ADD_OBJECT,
+    );
   }
 
   async removeStats(objectId: string): Promise<void> {
