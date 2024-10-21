@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { CreateBoardDto } from './boards.dto';
+import { BoardPermissionDto, CreateBoardDto } from './boards.dto';
 import {
   SuperBoard,
   SuperBoardDocument,
@@ -24,8 +24,6 @@ import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
-
-const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
 
 @Injectable()
 export class BoardsService {

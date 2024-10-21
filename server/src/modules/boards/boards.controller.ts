@@ -85,9 +85,9 @@ export class BoardsController {
   @MinimumBoardPermission(BoardPermission.MODERATOR)
   async createPermissionLink(
     @Param('boardId') boardId: string,
-    @Body() permission: BoardPermissionDto,
+    @Body() boardPermissionDto: BoardPermissionDto,
   ): Promise<string> {
-    return this.boardsService.createPermissionLink(boardId, permission);
+    return this.boardsService.createPermissionLink(boardId, boardPermissionDto);
   }
 
   @Post('permissions/:niewiemjaktonazwac')
