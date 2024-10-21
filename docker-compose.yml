@@ -7,6 +7,7 @@ services:
         - APP_ENV
         - SERVER_HOST=server
         - SERVER_PORT
+        - SOCKET_GW_PORT
         - GOOGLE_CLIENT_ID
         - GOOGLE_CLIENT_SECRET
         - GOOGLE_CALLBACK_URL
@@ -16,7 +17,6 @@ services:
     environment:
       - CLIENT_HOST
       - CLIENT_PORT
-
 
   server:
     build: ./server
@@ -28,6 +28,7 @@ services:
     environment:
       - SERVER_HOST
       - SERVER_PORT
+      - SOCKET_GW_PORT
       - DB_NAME
       - DB_USER
       - DB_PASSWORD
