@@ -4,11 +4,13 @@ import { ObjectsService } from './objects.service';
 import { ResponseModule } from '../response/response.module';
 
 import { SlidesModule } from '../slides/slides.module';
+import { ObjectStatsModule } from '../stats/object/object.stats.module';
+import { ObjectStatsService } from '../stats/object/object.stats.service';
 
 @Module({
-  imports: [ResponseModule, SlidesModule],
+  imports: [ResponseModule, SlidesModule, ObjectStatsModule],
   controllers: [ObjectsController],
-  providers: [ObjectsService],
+  providers: [ObjectsService, ObjectStatsService],
   exports: [ObjectsService],
 })
 export class ObjectsModule {}

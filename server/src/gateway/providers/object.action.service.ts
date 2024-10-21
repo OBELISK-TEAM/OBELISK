@@ -30,6 +30,7 @@ export class ObjectActionService {
     const createdObject = await this.objectsService.createObject(
       boardId,
       slideId,
+      user._id as string,
       objectProps,
     );
 
@@ -56,6 +57,7 @@ export class ObjectActionService {
       boardId,
       slideId,
       _id,
+      user._id as string,
       props,
     );
 
