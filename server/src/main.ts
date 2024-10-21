@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-const DEFAULT_SERVER_HOST = 'localhost';
-const DEFAULT_SERVER_PORT = 8080;
-const DEFAULT_GW_PORT = 8081;
-
-const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
+import {
+  DEFAULT_CORS_ORIGIN,
+  DEFAULT_GW_PORT,
+  DEFAULT_SERVER_HOST,
+  DEFAULT_SERVER_PORT,
+} from './config/dev.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
