@@ -90,14 +90,13 @@ export class BoardsController {
     return this.boardsService.createPermissionLink(boardId, boardPermissionDto);
   }
 
-  @Post('permissions/:niewiemjaktonazwac')
+  @Post('permissions/:token')
   @UseGuards(JwtAuthGuard)
   async grantPermission(
     @User('_id') userId: string,
-    @Param('niewiemjaktonazwac') x: string,
+    @Param('token') permissionToken: string,
   ): Promise<void> {
-    console.log('grantPermission', userId, x);
-    return this.boardsService.grantPermission(userId, x);
+    return this.boardsService.grantPermission(userId, permissionToken);
   }
 
   // @Put(':boardId/permissions')
