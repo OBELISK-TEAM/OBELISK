@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { CreateBoardDto } from './boards.dto';
+import { BoardPermissionDto, CreateBoardDto } from './boards.dto';
 import {
   SuperBoard,
   SuperBoardDocument,
@@ -21,10 +21,15 @@ import { BoardWithPopulatedPermissions } from '../../shared/interfaces/Populated
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
 import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class BoardsService {
   constructor(
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
@@ -34,6 +39,13 @@ export class BoardsService {
   async getBoardById(boardId: string): Promise<BoardResponseObject> {
     const board = await this.findBoardById(boardId);
     return this.res.toResponseBoard(board);
+  }
+
+  async findBoardById(boardId: string): Promise<SuperBoardDocument> {
+    const existingBoard = await this.boardModel.findById(boardId).exec();
+    if (!existingBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return existingBoard;
   }
 
   async createBoard(
@@ -56,6 +68,15 @@ export class BoardsService {
     return this.res.toResponseBoard(deletedBoard);
   }
 
+  async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
+    const deletedBoard = await this.boardModel
+      .findByIdAndDelete(boardId)
+      .exec();
+    if (!deletedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return deletedBoard;
+  }
+
   async getUserRelatedBoards(
     userId: string,
     page: number = 1,
@@ -73,6 +94,21 @@ export class BoardsService {
       boards.map(board => this.prepareBoardResponse(board, userId)),
     );
     return { boards: responseBoards, page, limit, order, total };
+  }
+
+  private getFilterQuery(
+    userId: string,
+    tab: BoardsFilter,
+  ): FilterQuery<SuperBoardDocument> {
+    const builder = new FilterQueryBuilder();
+    switch (tab) {
+      case BoardsFilter.OWNED_BY:
+        return builder.ownedBy(userId).build();
+      case BoardsFilter.SHARED_FOR:
+        return builder.sharedWith(userId).build();
+      default:
+        return builder.accessibleTo(userId).build();
+    }
   }
 
   private async prepareBoardResponse(
@@ -96,31 +132,6 @@ export class BoardsService {
       path: 'permissions.viewer permissions.editor permissions.moderator owner',
       select: 'name email',
     });
-  }
-
-  private getFilterQuery(
-    userId: string,
-    tab: BoardsFilter,
-  ): FilterQuery<SuperBoardDocument> {
-    const builder = new FilterQueryBuilder();
-
-    switch (tab) {
-      case BoardsFilter.OWNED_BY:
-        return builder.ownedBy(userId).build();
-      case BoardsFilter.SHARED_FOR:
-        return builder.sharedWith(userId).build();
-      default:
-        return builder.accessibleTo(userId).build();
-    }
-  }
-
-  async deleteBoardById(boardId: string): Promise<SuperBoardDocument> {
-    const deletedBoard = await this.boardModel
-      .findByIdAndDelete(boardId)
-      .exec();
-    if (!deletedBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return deletedBoard;
   }
 
   async getBoardDetails(
@@ -179,13 +190,6 @@ export class BoardsService {
     return BoardPermission.NONE;
   }
 
-  async findBoardById(boardId: string): Promise<SuperBoardDocument> {
-    const existingBoard = await this.boardModel.findById(boardId).exec();
-    if (!existingBoard)
-      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
-    return existingBoard;
-  }
-
   async findUserRelatedBoards(
     query: FilterQuery<SuperBoardDocument>,
     page: number,
@@ -202,11 +206,98 @@ export class BoardsService {
       .exec();
   }
 
+  async createPermissionLink(
+    boardId: string,
+    boardPermissionDto: BoardPermissionDto,
+  ): Promise<string> {
+    const { permission } = boardPermissionDto;
+    const uuid = randomUUID();
+    await this.cacheManager.set(uuid, permission, 1000 * 10 * 6 * 5); // 5 minutes
+    return boardId + uuid;
+  }
+
+  async grantPermission(
+    userId: string,
+    permissionToken: string,
+  ): Promise<void> {
+    const [boardId, uuid] = this.extractBoardIdAndUuid(permissionToken);
+    const board = await this.findBoardById(boardId);
+    const currPermission = this.determineUserPermission(board, userId);
+    const newPermission = await this.cacheManager.get<BoardPermission>(uuid);
+
+    if (!newPermission)
+      throw new HttpException('Invalid new permission', HttpStatus.BAD_REQUEST);
+    if (currPermission >= newPermission)
+      throw new HttpException(
+        'You already have this permission',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await Promise.all([
+      this.removePermission(board, userId, currPermission),
+      this.assignPermission(board, userId, newPermission),
+    ]);
+  }
+
+  private extractBoardIdAndUuid(permissionToken: string): [string, string] {
+    const boardId = permissionToken.slice(0, 24);
+    const uuid = permissionToken.slice(24);
+    return [boardId, uuid];
+  }
+
+  private async removePermission(
+    board: SuperBoardDocument,
+    userId: string,
+    permission: BoardPermission,
+  ): Promise<void> {
+    switch (permission) {
+      case BoardPermission.VIEWER:
+        board.permissions.viewer = board.permissions.viewer.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      case BoardPermission.EDITOR:
+        board.permissions.editor = board.permissions.editor.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      case BoardPermission.MODERATOR:
+        board.permissions.moderator = board.permissions.moderator.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      default:
+        throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+    await board.save();
+  }
+
+  private async assignPermission(
+    board: SuperBoardDocument,
+    userId: string,
+    permission: BoardPermission,
+  ): Promise<void> {
+    switch (permission) {
+      case BoardPermission.VIEWER:
+        board.permissions.viewer.push(userId);
+        break;
+      case BoardPermission.EDITOR:
+        board.permissions.editor.push(userId);
+        break;
+      case BoardPermission.MODERATOR:
+        board.permissions.moderator.push(userId);
+        break;
+      default:
+        throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+    await board.save();
+  }
+
   private calculateBoardSizeInBytes(board: SuperBoardDocument): number {
     return BSON.calculateObjectSize(board);
   }
 
-  async queryCountDocuments(
+  private async queryCountDocuments(
     query: FilterQuery<SuperBoardDocument>,
   ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();

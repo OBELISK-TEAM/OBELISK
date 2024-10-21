@@ -17,9 +17,10 @@ import { Payload } from '../../shared/interfaces/auth/Payload';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async validateUserByEmailAndPassword(

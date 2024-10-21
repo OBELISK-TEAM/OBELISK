@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsNumber,
@@ -10,6 +11,7 @@ import {
 } from 'class-validator';
 import { BoardsFilter } from '../../shared/enums/boardsFilter';
 import { SortOrder } from './boards.service';
+import { BoardPermission } from '../../shared/enums/board.permission';
 
 export class CreateBoardDto {
   @IsString({
@@ -53,7 +55,12 @@ export class BoardQueryDto {
   @IsIn(['asc', 'desc'])
   order: SortOrder;
 
-  @IsIn([BoardsFilter.OWNED_BY, BoardsFilter.SHARED_FOR, BoardsFilter.ALL])
+  @IsEnum(BoardsFilter)
   @IsOptional()
   tab: BoardsFilter;
+}
+
+export class BoardPermissionDto {
+  @IsEnum(BoardPermission) // only viewer/editor/moderator!!!
+  permission: BoardPermission;
 }
