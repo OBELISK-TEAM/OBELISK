@@ -226,10 +226,7 @@ export class BoardsService {
     const newPermission = await this.cacheManager.get<BoardPermission>(uuid);
 
     if (!newPermission)
-      throw new HttpException(
-        'Invalid futurePermission link',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid new permission', HttpStatus.BAD_REQUEST);
     if (currPermission >= newPermission)
       throw new HttpException(
         'You already have this permission',
