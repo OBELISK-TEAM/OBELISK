@@ -84,20 +84,20 @@ export class BoardsController {
   @UseGuards(JwtAuthGuard, BoardAccessGuard)
   @MinimumBoardPermission(BoardPermission.MODERATOR)
   async createPermissionLink(
+    @Param('boardId') boardId: string,
     @Body() permission: BoardPermissionDto,
-  ): Promise<any> {
-    return this.boardsService.createPermissionLink(permission);
+  ): Promise<string> {
+    return this.boardsService.createPermissionLink(boardId, permission);
   }
 
-  @Get(':boardId/permissions/:uuid')
-  @UseGuards(JwtAuthGuard, BoardAccessGuard)
-  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  @Post('permissions/:niewiemjaktonazwac')
+  @UseGuards(JwtAuthGuard)
   async grantPermission(
     @User('_id') userId: string,
-    @Param('boardId') boardId: string,
-    @Param('uuid') uuid: string,
-  ): Promise<any> {
-    return this.boardsService.grantPermission(userId, boardId, uuid);
+    @Param('niewiemjaktonazwac') x: string,
+  ): Promise<void> {
+    console.log('grantPermission', userId, x);
+    return this.boardsService.grantPermission(userId, x);
   }
 
   // @Put(':boardId/permissions')

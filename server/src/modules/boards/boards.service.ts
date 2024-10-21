@@ -228,29 +228,92 @@ export class BoardsService {
     );
   }
 
-  async createPermissionLink(permission: BoardPermissionDto): Promise<any> {
+  async createPermissionLink(
+    boardId: string,
+    boardPermissionDto: BoardPermissionDto,
+  ): Promise<string> {
+    const { permission } = boardPermissionDto;
     const uuid = randomUUID();
-    await this.cacheManager.set(uuid, permission, 1000000); // TODO - change to reasonable time
-    return uuid;
+    await this.cacheManager.set(uuid, permission, 1000 * 10 * 6 * 5); // 5 minutes
+    return boardId + uuid; // it will be client domain included
   }
 
-  async grantPermission(
-    userId: string,
-    boardId: string,
-    uuid: string,
-  ): Promise<void> {
-    const permission = await this.cacheManager.get<BoardPermission>(uuid);
-    if (!permission)
+  async grantPermission(userId: string, x: string): Promise<void> {
+    const [boardId, uuid] = await this.extractBoardIdAndUuid(x);
+    const board = await this.findBoardById(boardId);
+    const currPermission = this.determineUserPermission(board, userId);
+    const futurePermission = await this.cacheManager.get<BoardPermission>(uuid);
+
+    if (!futurePermission)
       throw new HttpException(
-        'Invalid permission link',
+        'Invalid futurePermission link',
         HttpStatus.BAD_REQUEST,
       );
-    console.log(permission);
-    console.log(uuid, BoardPermission[permission]);
-    // return this.addPermission(userId, boardId, permission);
+    if (currPermission >= futurePermission)
+      throw new HttpException(
+        'You already have this permission',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await Promise.all([
+      this.removePermission(board, userId, currPermission),
+      this.assignPermission(board, userId, futurePermission),
+    ]);
   }
 
-  // async addPermission(
+  private async extractBoardIdAndUuid(x: string): Promise<[string, string]> {
+    const boardId = x.slice(0, 24);
+    const uuid = x.slice(24);
+    return [boardId, uuid];
+  }
+
+  private async removePermission(
+    board: SuperBoardDocument,
+    userId: string,
+    permission: BoardPermission,
+  ): Promise<void> {
+    switch (permission) {
+      case BoardPermission.VIEWER:
+        board.permissions.viewer = board.permissions.viewer.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      case BoardPermission.EDITOR:
+        board.permissions.editor = board.permissions.editor.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      case BoardPermission.MODERATOR:
+        board.permissions.moderator = board.permissions.moderator.filter(
+          id => id.toString() !== userId,
+        );
+        break;
+      default:
+        throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+    await board.save();
+  }
+
+  private async assignPermission(
+    board: SuperBoardDocument,
+    userId: string,
+    permission: BoardPermission,
+  ): Promise<void> {
+    switch (permission) {
+      case BoardPermission.VIEWER:
+        board.permissions.viewer.push(userId);
+        break;
+      case BoardPermission.EDITOR:
+        board.permissions.editor.push(userId);
+        break;
+      case BoardPermission.MODERATOR:
+        board.permissions.moderator.push(userId);
+        break;
+      default:
+        throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+    await board.save();
+  }
 }
 
 export type SortOrder = 'asc' | 'desc';
