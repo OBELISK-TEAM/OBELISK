@@ -22,7 +22,7 @@ import {
 export class RoleAuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const requiredRole = this.getRequiredRole(context);
     const minimumRole = this.getMinimumRole(context);
 
