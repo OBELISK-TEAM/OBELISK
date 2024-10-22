@@ -20,7 +20,10 @@ import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
+import {
+  DEFAULT_CORS_ORIGIN,
+  DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
+} from '../../config/dev.config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
@@ -206,21 +209,26 @@ export class BoardsService {
       .exec();
   }
 
-  async createPermissionLink(
+  async createPermissionStr(
     boardId: string,
     boardPermissionDto: BoardPermissionDto,
-  ): Promise<string> {
+  ): Promise<CreatePermissionStrResponse> {
     const { permission } = boardPermissionDto;
     const uuid = randomUUID();
-    await this.cacheManager.set(uuid, permission, 1000 * 10 * 6 * 5); // 5 minutes
-    return boardId + uuid;
+    const ttlInMs = 1000 * 10 * 6 * 5;
+    await this.cacheManager.set(uuid, permission, ttlInMs);
+    return {
+      permissionStr: boardId + uuid,
+      permission: BoardPermission[permission],
+      ttlInMs,
+    };
   }
 
   async grantPermission(
     userId: string,
-    permissionToken: string,
-  ): Promise<void> {
-    const [boardId, uuid] = this.extractBoardIdAndUuid(permissionToken);
+    permissionStr: string,
+  ): Promise<GrantPermissionResponse> {
+    const [boardId, uuid] = this.extractBoardIdAndUuid(permissionStr);
     const board = await this.findBoardById(boardId);
     const currPermission = this.determineUserPermission(board, userId);
     const newPermission = await this.cacheManager.get<BoardPermission>(uuid);
@@ -233,10 +241,12 @@ export class BoardsService {
         HttpStatus.BAD_REQUEST,
       );
 
-    await Promise.all([
-      this.removePermission(board, userId, currPermission),
-      this.assignPermission(board, userId, newPermission),
-    ]);
+    await this.removePermission(board, userId, currPermission);
+    await this.assignPermission(board, userId, newPermission);
+    return {
+      boardId,
+      permission: BoardPermission[newPermission],
+    };
   }
 
   private extractBoardIdAndUuid(permissionToken: string): [string, string] {
@@ -250,7 +260,10 @@ export class BoardsService {
     userId: string,
     permission: BoardPermission,
   ): Promise<void> {
+    userId = userId.toString();
     switch (permission) {
+      case BoardPermission.NONE:
+        return;
       case BoardPermission.VIEWER:
         board.permissions.viewer = board.permissions.viewer.filter(
           id => id.toString() !== userId,
@@ -262,6 +275,9 @@ export class BoardsService {
         );
         break;
       case BoardPermission.MODERATOR:
+        console.log(board.permissions.moderator);
+        console.log(userId);
+
         board.permissions.moderator = board.permissions.moderator.filter(
           id => id.toString() !== userId,
         );
@@ -312,3 +328,14 @@ export class BoardsService {
 }
 
 export type SortOrder = 'asc' | 'desc';
+
+export interface CreatePermissionStrResponse {
+  permissionStr: string;
+  ttlInMs: number;
+  permission: string;
+}
+
+export interface GrantPermissionResponse {
+  boardId: string;
+  permission: string;
+}
