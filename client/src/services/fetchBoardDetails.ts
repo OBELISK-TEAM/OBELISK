@@ -1,3 +1,5 @@
+import "server-only";
+
 import { getCookie } from "@/lib/authApiUtils";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";

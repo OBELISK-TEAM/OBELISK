@@ -1,16 +1,10 @@
-"use client";
 import { FC } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import HeaderLinks from "./HeaderLinks";
-import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
-import { Button } from "@/components/ui/button";
-import ThemeToggle from "./ThemeToggle";
+import HeaderLinks from "../HeaderLinks";
 import { AppLogo } from "./AppLogo";
 import Link from "next/link";
+import UserInfo from "@/components/user-boards/main-header/UserInfo";
 
 const Header: FC = () => {
-  const { logout, loading } = useHandleAuth();
-
   return (
     <div className="h-min-[64px] x-4 sticky top-0 z-10 flex h-[64px] items-center justify-between border-b bg-background pl-0">
       <div className="flex">
@@ -24,17 +18,7 @@ const Header: FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4 pr-6">
-        <span className="font-semibold">Anon Anno</span>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-        <ThemeToggle />
-        <Button onClick={logout} variant="outline" disabled={loading}>
-          Logout
-        </Button>
-      </div>
+      <UserInfo />
     </div>
   );
 };
