@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 
 const PermissionVerifyProcessing: React.FC = () => {

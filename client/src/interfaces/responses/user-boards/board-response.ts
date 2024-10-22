@@ -8,7 +8,7 @@ export interface BoardResponse {
   name: string;
   updatedAt: string;
   createdAt: string;
-  size?: number;
+  sizeInBytes?: number;
   permissions?: PermissionsResponse;
   slides: string[];
   slide?: SlideResponse | string;

@@ -1,7 +1,5 @@
 import React from "react";
-import PermissionVerifyFailure from "@/components/board-details/board-permission-verify/PermissionVerifyFailure";
 import { Card } from "@/components/ui/card";
-import PermissionVerifyProcess from "@/components/board-details/board-permission-verify/PermissionVerifyProcess";
 import PermissionVerifySuccess from "@/components/board-details/board-permission-verify/PermissionVerifySuccess";
 
 const PermissionVerifyPage = () => {
@@ -14,7 +12,7 @@ const PermissionVerifyPage = () => {
     >
       {/*<PermissionVerifyFailure />*/}
       {/*<PermissionVerifyProcess />*/}
-      <PermissionVerifySuccess boardName="Board name" boardId={"koswefjierfuaerfe4jiojijikjio"} permission="editor" />
+      <PermissionVerifySuccess boardName="Board name" boardId={"6716f1fff8ab7c0c56aaabe5"} permission="editor" />
     </Card>
   );
 };

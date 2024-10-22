@@ -65,10 +65,10 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
         </div>
       </div>
       <div className="flex h-[64px] items-center space-x-4 border-l pl-4 pr-2">
-        <span className="font-semibold">Anon Anno</span>
+        <span className="font-semibold">adambista2002@gmail.com</span>
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src="#" />
+          <AvatarFallback>AD</AvatarFallback>
         </Avatar>
         <ThemeToggle />
       </div>
