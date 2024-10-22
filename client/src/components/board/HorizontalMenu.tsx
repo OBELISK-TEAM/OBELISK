@@ -9,12 +9,14 @@ import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
 import Link from "next/link";
+import { useSocket } from "@/contexts/SocketContext";
+import UserInfo from "@/components/user-boards/main-header/UserInfo";
 interface HorizontalMenuProps {
-  boardName: string;
   groupId: string;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
+  const { boardName } = useSocket();
   const {
     state: { activeItem, selectedObjectStyles },
   } = useCanvas();
@@ -65,12 +67,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
         </div>
       </div>
       <div className="flex h-[64px] items-center space-x-4 border-l pl-4 pr-2">
-        <span className="font-semibold">adambista2002@gmail.com</span>
-        <Avatar>
-          <AvatarImage src="#" />
-          <AvatarFallback>AD</AvatarFallback>
-        </Avatar>
-        <ThemeToggle />
+        <UserInfo />
       </div>
     </div>
   );

@@ -17,8 +17,9 @@ const Header: FC = () => {
           <HeaderLinks />
         </div>
       </div>
-
-      <UserInfo />
+      <div className="flex items-center space-x-4 pr-6">
+        <UserInfo />
+      </div>
     </div>
   );
 };
