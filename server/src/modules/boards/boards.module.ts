@@ -8,9 +8,11 @@ import {
   SuperBoard,
   SuperBoardSchema,
 } from '../../mongo/schemas/board/super.board.schema';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register(),
     MongooseModule.forFeature([
       {
         name: SuperBoard.name,
