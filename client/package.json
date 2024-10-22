@@ -35,17 +35,20 @@
     "dotenv": "^16.4.5",
     "embla-carousel-react": "^8.1.7",
     "fabric": "^5.3.0",
+    "framer-motion": "^11.9.0",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.378.0",
     "next": "14.2.10",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
+    "server-only": "^0.0.1",
     "socket.io-client": "^4.8.0",
     "sonner": "^1.5.0",
     "swr": "^2.2.5",
@@ -53,15 +56,14 @@
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
     "uglify-js": "3.19.2",
-    "zod": "^3.23.8",
-    "framer-motion": "^11.9.0",
-    "lodash": "^4.17.21"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/fabric": "^5.3.7",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/jwt-decode": "^3.1.0",
+    "@types/lodash": "^4.17.9",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/socket.io-client": "^3.0.0",
@@ -76,7 +78,6 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
-    "typescript": "5.4.5",
-    "@types/lodash": "^4.17.9"
+    "typescript": "5.4.5"
   }
 }

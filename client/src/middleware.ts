@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtDecode } from "jwt-decode";
+import { decodeToken } from "@/lib/authApiUtils";
+
 function isAuthenticated(request: NextRequest): boolean {
   const token = request.cookies.get("accessToken")?.value;
 
@@ -8,12 +9,11 @@ function isAuthenticated(request: NextRequest): boolean {
     return false;
   }
 
-  try {
-    const decoded: any = jwtDecode(token);
-    return decoded.exp && decoded.exp * 1000 > Date.now();
-  } catch (error) {
+  const decoded = decodeToken(token);
+  if (!decoded) {
     return false;
   }
+  return Boolean(decoded.exp && decoded.exp * 1000 > Date.now());
 }
 
 export function middleware(request: NextRequest) {
