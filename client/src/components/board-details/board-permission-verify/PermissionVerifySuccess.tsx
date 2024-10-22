@@ -53,18 +53,11 @@ const PermissionVerifySuccess: React.FC<SuccessScreenProps> = ({ boardName, boar
         {countdown === 0 ? "Redirecting to the board..." : `Redirecting to the board in ${countdown}...`}
       </CardContent>
       <CardFooter className="flex items-center justify-between gap-2">
-        <Button
-          variant="secondary"
-          className="flex w-56 items-center justify-between"
-          onClick={() => (window.location.href = "/user-boards")}
-        >
+        <Button variant="secondary" className="flex w-56 items-center" onClick={() => router.push("/user-boards")}>
           <ChevronLeft />
           Go back to the dashboard
         </Button>
-        <Button
-          className="flex w-56 items-center justify-between"
-          onClick={() => router.push(`/boards/${boardId}/slides/1`)}
-        >
+        <Button className="flex w-56 items-center" onClick={() => router.push(`/user-boards/${boardId}/slides/1`)}>
           <ChevronRight />
           Go to the board
         </Button>
