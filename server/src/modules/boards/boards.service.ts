@@ -20,10 +20,7 @@ import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
 import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-import {
-  DEFAULT_CORS_ORIGIN,
-  DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
-} from '../../config/dev.config';
+import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
