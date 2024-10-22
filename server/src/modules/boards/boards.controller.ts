@@ -9,7 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { BoardQueryDto, CreateBoardDto } from './boards.dto';
+import {
+  BoardPermissionDto,
+  BoardQueryDto,
+  CreateBoardDto,
+} from './boards.dto';
 import { User } from '../auth/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
@@ -20,8 +24,8 @@ import {
 import { BoardAccessGuard } from '../auth/guards/board.access.guard';
 import { MinimumBoardPermission } from '../auth/decorators/permissions.decorator';
 import { BoardPermission } from '../../shared/enums/board.permission';
-
-// TODO - verify permissions for endpointss
+import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
 
 @Controller('boards')
 export class BoardsController {
@@ -42,7 +46,6 @@ export class BoardsController {
     );
   }
 
-  // TODO - check permissions to fetch board
   @Get(':boardId')
   getBoard(@Param('boardId') boardId: string): Promise<BoardResponseObject> {
     return this.boardsService.getBoardById(boardId);
@@ -67,9 +70,9 @@ export class BoardsController {
     return this.boardsService.createBoard(userId, createBoardDto);
   }
 
-  // TODO - check permissions to delete board
   @Delete(':boardId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.OWNER)
   async deleteBoard(
     @User('_id') userId: string,
     @Param('boardId') boardId: string,
@@ -77,13 +80,24 @@ export class BoardsController {
     return this.boardsService.deleteBoard(userId, boardId);
   }
 
-  // @Put(':boardId/permissions')
-  // @UseGuards(JwtAuthGuard)
-  // async updatePermissions(
-  //   @User('_id') userId: string,
-  //   @Param('boardId') boardId: string,
-  //   @Body() permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   return this.boardsService.updatePermissions(userId, boardId, permissions);
-  // }
+  // permissions
+
+  @Post(':boardId/permissions')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  async createPermissionStr(
+    @Param('boardId') boardId: string,
+    @Body() boardPermissionDto: BoardPermissionDto,
+  ): Promise<CreatePermissionStrResponse> {
+    return this.boardsService.createPermissionStr(boardId, boardPermissionDto);
+  }
+
+  @Post('permissions/:permissionString')
+  @UseGuards(JwtAuthGuard)
+  async grantPermission(
+    @User('_id') userId: string,
+    @Param('permissionString') permissionStr: string,
+  ): Promise<GrantPermissionResponse> {
+    return this.boardsService.grantPermission(userId, permissionStr);
+  }
 }
