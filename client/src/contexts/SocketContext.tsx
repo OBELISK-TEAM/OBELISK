@@ -121,7 +121,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       });
 
       //socketEmitLeaveBoard(socket, {});
-      //socketRef.current.disconnect();
+      //socketRef?.current?.disconnect();
     };
   }, [token, boardId]);
 

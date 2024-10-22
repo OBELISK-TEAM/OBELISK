@@ -1,8 +1,8 @@
 import { FC } from "react";
-import HeaderLinks from "../HeaderLinks";
+import HeaderLinks from "../user-boards/HeaderLinks";
 import { AppLogo } from "./AppLogo";
 import Link from "next/link";
-import UserInfo from "@/components/user-boards/main-header/UserInfo";
+import UserInfo from "@/components/main-header/UserInfo";
 
 const Header: FC = () => {
   return (
