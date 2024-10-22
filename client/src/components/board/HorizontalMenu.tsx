@@ -8,7 +8,6 @@ import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
 import { useSocket } from "@/contexts/SocketContext";
 import UserInfo from "@/components/main-header/UserInfo";
-import Link from "next/link";
 interface HorizontalMenuProps {
   groupId: string;
 }
