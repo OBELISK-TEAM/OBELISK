@@ -2,14 +2,13 @@
 import { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import ThemeToggle from "../user-boards/ThemeToggle";
-import { AppLogo } from "../user-boards/AppLogo";
+import ThemeToggle from "../user-boards/main-header/ThemeToggle";
+import { AppLogo } from "../user-boards/main-header/AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
 import Link from "next/link";
-
 interface HorizontalMenuProps {
   boardName: string;
   groupId: string;
