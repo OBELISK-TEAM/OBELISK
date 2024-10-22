@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "./main-header/ThemeToggle";
 
 const AuthHeaderButtons: React.FC = () => {
   return (
