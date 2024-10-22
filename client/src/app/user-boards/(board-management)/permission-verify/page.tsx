@@ -4,12 +4,7 @@ import { Card } from "@/components/ui/card";
 import PermissionVerifyProcess from "@/components/board-details/board-permission-verify/PermissionVerifyProcess";
 import PermissionVerifySuccess from "@/components/board-details/board-permission-verify/PermissionVerifySuccess";
 
-interface PermissionVerifyPageProps {
-  params: {
-    boardId: string;
-  };
-}
-const PermissionVerifyPage = ({ params }: PermissionVerifyPageProps) => {
+const PermissionVerifyPage = () => {
   return (
     <Card
       className="w-min-full align-center flex w-full flex-col items-center justify-center gap-8"
@@ -17,9 +12,9 @@ const PermissionVerifyPage = ({ params }: PermissionVerifyPageProps) => {
         height: "calc(100vh - 64px)",
       }}
     >
-      <PermissionVerifyFailure />
+      {/*<PermissionVerifyFailure />*/}
       {/*<PermissionVerifyProcess />*/}
-      {/*<PermissionVerifySuccess boardName="Board name" boardId={params.boardId} permission="editor" />*/}
+      <PermissionVerifySuccess boardName="Board name" boardId={"koswefjierfuaerfe4jiojijikjio"} permission="editor" />
     </Card>
   );
 };
