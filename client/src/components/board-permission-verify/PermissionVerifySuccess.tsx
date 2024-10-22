@@ -1,19 +1,18 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { capitalizeFirstLetter } from "@/lib/stringConverter";
+import { VerifyPermissionResponse } from "@/interfaces/responses/board-permission/verify-permission-response";
 
-interface SuccessScreenProps {
-  boardName: string;
-  boardId: string;
-  permission: string;
+interface PermissionVerifySuccessProps {
+  response: VerifyPermissionResponse;
 }
 
-const PermissionVerifySuccess: React.FC<SuccessScreenProps> = ({ boardName, boardId, permission }) => {
+const PermissionVerifySuccess = ({ response }: PermissionVerifySuccessProps) => {
   const router = useRouter();
   const [countdown, setCountdown] = useState<number>(10);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -33,20 +32,25 @@ const PermissionVerifySuccess: React.FC<SuccessScreenProps> = ({ boardName, boar
 
   useEffect(() => {
     if (countdown === 0) {
-      router.push(`/user-boards/${boardId}/slides/1`);
+      router.push(`/user-boards/${response.boardId}/slides/1`);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     }
-  }, [countdown, boardId]);
+  }, [countdown, response.boardId]);
 
   return (
-    <>
+    <Card
+      className="w-min-full align-center flex w-full flex-col items-center justify-center gap-8"
+      style={{
+        height: "calc(100vh - 64px)",
+      }}
+    >
       <CardHeader className={"contents"}>
         <CardTitle>Success</CardTitle>
         <CardDescription>
-          You have been granted the <span className={"text-primary"}>{capitalizeFirstLetter(permission)}</span>{" "}
-          permission for the board <span className={"text-primary"}>{boardName}</span>.
+          You have been granted the <span className={"text-primary"}>{capitalizeFirstLetter(response.permission)}</span>{" "}
+          permission for the board <span className={"text-primary"}>{response.name}</span>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -57,12 +61,15 @@ const PermissionVerifySuccess: React.FC<SuccessScreenProps> = ({ boardName, boar
           <ChevronLeft />
           Go back to the dashboard
         </Button>
-        <Button className="flex w-56 items-center" onClick={() => router.push(`/user-boards/${boardId}/slides/1`)}>
+        <Button
+          className="flex w-56 items-center"
+          onClick={() => router.push(`/user-boards/${response.boardId}/slides/1`)}
+        >
           <ChevronRight />
           Go to the board
         </Button>
       </CardFooter>
-    </>
+    </Card>
   );
 };
 

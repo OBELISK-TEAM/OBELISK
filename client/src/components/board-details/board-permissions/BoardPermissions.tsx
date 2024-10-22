@@ -70,7 +70,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
             <span className="font-bold text-foreground">{board.owner.email}</span>
           </div>
 
-          <ShareBoardDialog>
+          <ShareBoardDialog boardId={board._id}>
             <Button>
               <Share2 className="mr-2 h-5 w-5" />
               Share with others

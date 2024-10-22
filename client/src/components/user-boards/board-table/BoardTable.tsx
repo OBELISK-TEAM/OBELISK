@@ -116,7 +116,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
                       e.stopPropagation();
                     }}
                   >
-                    <ShareBoardDialog>
+                    <ShareBoardDialog boardId={board._id}>
                       <Button variant="outline" className="hover:text-muted-foreground" aria-label="Share with others">
                         <Share2 className="mr-2 h-5 w-5" />
                       </Button>
