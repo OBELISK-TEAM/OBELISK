@@ -6,13 +6,14 @@ import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/board-permissions/BoardPermissionsInfoDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import BoardPermissionsSelect from "@/components/board-details/board-permissions/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
 import DeleteCollaboratorButton from "@/components/board-details/board-permissions/DeleteCollaboratorButton";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import logger from "@/lib/logger";
+import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
 export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => {
   const mapPermissions = useCallback((board: BoardDetailsResponse): BoardPermissionsUser[] => {
     const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
@@ -44,11 +45,6 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
 
   const [users] = useState<BoardPermissionsUser[]>(mapPermissions(board));
 
-  /**
-   * Handle permission change for a user.
-   * @param index - Index of the user in the users array.
-   * @param newPermission - The new permission level selected.
-   */
   const handlePermissionChange = (index: number, newPermission: BoardPermission) => {
     logger.log(`User ${users[index].name} permission changed to ${newPermission}`);
     /*todo: implement this method*/
@@ -73,10 +69,13 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
             </Avatar>
             <span className="font-bold text-foreground">{board.owner.email}</span>
           </div>
-          <Button>
-            <PlusIcon className="mr-2 h-5 w-5" />
-            Add new user
-          </Button>
+
+          <ShareBoardDialog>
+            <Button>
+              <Share2 className="mr-2 h-5 w-5" />
+              Share with others
+            </Button>
+          </ShareBoardDialog>
         </div>
       </div>
       <Table>

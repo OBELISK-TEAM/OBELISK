@@ -6,12 +6,13 @@ import { getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils"
 interface PermissionSelectProps {
   currentPermission: BoardPermission;
   onChange: (newPermission: BoardPermission) => void;
+  className?: string;
 }
-const BoardPermissionsSelect: React.FC<PermissionSelectProps> = ({ currentPermission, onChange }) => {
+const BoardPermissionsSelect: React.FC<PermissionSelectProps> = ({ currentPermission, className, onChange }) => {
   const permissions: BoardPermission[] = [BoardPermission.VIEWER, BoardPermission.EDITOR, BoardPermission.MODERATOR];
   return (
     <Select onValueChange={(value) => onChange(value as BoardPermission)}>
-      <SelectTrigger className="flex w-48 cursor-pointer justify-around">
+      <SelectTrigger className={"flex cursor-pointer justify-around" + className}>
         <SelectValue
           placeholder={
             <Badge variant={getPermissionVariant(currentPermission)}>{getPermissionLabel(currentPermission)}</Badge>
