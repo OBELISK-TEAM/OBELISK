@@ -27,6 +27,8 @@ import {
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
+import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
 
 @Injectable()
 export class BoardsService {
@@ -245,6 +247,7 @@ export class BoardsService {
     await this.assignPermission(board, userId, newPermission);
     return {
       boardId,
+      name: board.name,
       permission: BoardPermission[newPermission],
     };
   }
@@ -328,14 +331,3 @@ export class BoardsService {
 }
 
 export type SortOrder = 'asc' | 'desc';
-
-export interface CreatePermissionStrResponse {
-  permissionStr: string;
-  ttlInMs: number;
-  permission: string;
-}
-
-export interface GrantPermissionResponse {
-  boardId: string;
-  permission: string;
-}

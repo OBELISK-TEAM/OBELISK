@@ -8,11 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  BoardsService,
-  CreatePermissionStrResponse,
-  GrantPermissionResponse,
-} from './boards.service';
+import { BoardsService } from './boards.service';
 import {
   BoardPermissionDto,
   BoardQueryDto,
@@ -28,6 +24,8 @@ import {
 import { BoardAccessGuard } from '../auth/guards/board.access.guard';
 import { MinimumBoardPermission } from '../auth/decorators/permissions.decorator';
 import { BoardPermission } from '../../shared/enums/board.permission';
+import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
 
 @Controller('boards')
 export class BoardsController {
@@ -102,14 +100,4 @@ export class BoardsController {
   ): Promise<GrantPermissionResponse> {
     return this.boardsService.grantPermission(userId, permissionStr);
   }
-
-  // @Put(':boardId/permissions')
-  // @UseGuards(JwtAuthGuard)
-  // async updatePermissions(
-  //   @User('_id') userId: string,
-  //   @Param('boardId') boardId: string,
-  //   @Body() permissions: BoardPermissions,
-  // ): Promise<any> {
-  //   return this.boardsService.updatePermissions(userId, boardId, permissions);
-  // }
 }
