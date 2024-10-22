@@ -15,6 +15,7 @@ const PermissionVerifyPage = async ({ searchParams }: PageProps) => {
   } catch (error: any) {
     return <PermissionVerifyFailure />;
   }
+
   return <PermissionVerifySuccess response={response} />;
 };
 
