@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { capitalizeFirstLetter } from "@/lib/stringConverter";
-import { VerifyPermissionResponse } from "@/interfaces/responses/board-permission/verify-permission-response";
+import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
 
 interface PermissionVerifySuccessProps {
-  response: VerifyPermissionResponse;
+  response: GrantPermissionResponse;
 }
 
 const PermissionVerifySuccess = ({ response }: PermissionVerifySuccessProps) => {

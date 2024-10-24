@@ -1,5 +1,5 @@
 export interface GrantPermissionResponse {
-  permissionStr: string;
+  boardId: string;
   permission: string;
-  ttlInMs: number;
+  name: string;
 }

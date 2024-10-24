@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { ClipboardIcon, CopyIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { generatePermissionCode } from "@/app/actions/permissionsActions";
-import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
+import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { formatDuration } from "@/lib/dateUtils";
 
 interface ShareBoardDialogProps {
@@ -28,7 +28,7 @@ interface ShareBoardDialogProps {
 const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }) => {
   const [isPending, startTransition] = useTransition();
   const [permission, setPermission] = useState<BoardPermission>(BoardPermission.EDITOR);
-  const [response, setResponse] = useState<GrantPermissionResponse | null>(null);
+  const [response, setResponse] = useState<GeneratePermissionCodeResponse | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
 
   const generateLink = async () => {
