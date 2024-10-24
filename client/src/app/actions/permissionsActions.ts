@@ -15,6 +15,7 @@ export async function generatePermissionCode(
 ): Promise<GeneratePermissionCodeResponse> {
   const permission = boardPermissionToNum(grantPermission);
   const token = getCookie("accessToken");
+  logger.log("Generating permission code for board:", boardId);
   try {
     const response = await fetch(
       `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}/permissions`,
@@ -43,6 +44,7 @@ export async function generatePermissionCode(
 
 export async function grantPermission(code: string): Promise<GrantPermissionResponse> {
   const token = getCookie("accessToken");
+  logger.log("Granting permission with code:", code);
   try {
     const response = await fetch(
       `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/permissions/${code}`,

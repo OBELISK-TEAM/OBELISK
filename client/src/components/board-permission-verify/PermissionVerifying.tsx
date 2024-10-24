@@ -2,7 +2,7 @@ import React from "react";
 import { CardContent, CardHeader, CardTitle, CardDescription, Card } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 
-const PermissionVerifyProcessing: React.FC = () => {
+const PermissionVerifying: React.FC = () => {
   return (
     <Card
       className="w-min-full align-center flex w-full flex-col items-center justify-center gap-8"
@@ -23,4 +23,4 @@ const PermissionVerifyProcessing: React.FC = () => {
   );
 };
 
-export default PermissionVerifyProcessing;
+export default PermissionVerifying;

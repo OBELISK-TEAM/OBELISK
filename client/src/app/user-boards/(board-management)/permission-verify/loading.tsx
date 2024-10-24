@@ -1,4 +1,4 @@
-import PermissionVerifyProcess from "@/components/board-permission-verify/PermissionVerifyProcess";
+import PermissionVerifyProcess from "@/components/board-permission-verify/PermissionVerifying";
 
 const PermissionVerifyLoading = () => {
   return <PermissionVerifyProcess />;

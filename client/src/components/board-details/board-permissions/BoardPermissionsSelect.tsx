@@ -12,7 +12,7 @@ const BoardPermissionsSelect: React.FC<PermissionSelectProps> = ({ currentPermis
   const permissions: BoardPermission[] = [BoardPermission.VIEWER, BoardPermission.EDITOR, BoardPermission.MODERATOR];
   return (
     <Select onValueChange={(value) => onChange(value as BoardPermission)}>
-      <SelectTrigger className={"flex cursor-pointer justify-around" + className}>
+      <SelectTrigger className={"flex cursor-pointer justify-around " + className}>
         <SelectValue
           placeholder={
             <Badge variant={getPermissionVariant(currentPermission)}>{getPermissionLabel(currentPermission)}</Badge>
