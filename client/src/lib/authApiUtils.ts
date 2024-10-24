@@ -30,7 +30,10 @@ export const getCookie = (cookieName: string): string | undefined => {
   return cookieStore.get(cookieName)?.value;
 };
 
-export const decodeToken = (token: string): DecodedToken | null => {
+export const decodeToken = (token?: string): DecodedToken | null => {
+  if (!token) {
+    return null;
+  }
   try {
     return jwtDecode(token);
   } catch (error) {
