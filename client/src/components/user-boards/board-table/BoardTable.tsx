@@ -1,4 +1,4 @@
-import { FilterIcon, ViewIcon } from "lucide-react";
+import { FilterIcon, Share2, ViewIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -18,6 +18,7 @@ import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardD
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
 import { fetchBoards } from "@/services/fetchBoards";
 import { deleteBoard } from "@/app/actions/boardActions";
+import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
 
 interface BoardTableProps {
   activeTab: BoardsActiveTab;
@@ -115,6 +116,11 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
                       e.stopPropagation();
                     }}
                   >
+                    <ShareBoardDialog boardId={board._id}>
+                      <Button variant="outline" className="hover:text-muted-foreground" aria-label="Share with others">
+                        <Share2 className="mr-2 h-5 w-5" />
+                      </Button>
+                    </ShareBoardDialog>
                     <BoardDeletionButton revalidateFunc={mutate} deleteBoard={() => deleteBoard(board._id)} />
                     <BoardDetailsButton boardId={board._id} />
                   </TableCell>

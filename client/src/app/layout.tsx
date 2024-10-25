@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./Providers";
+import { decodeToken, getCookie } from "@/lib/authApiUtils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -59,6 +60,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const token = getCookie("accessToken");
+  const decodedToken = decodeToken(token);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -67,7 +70,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Obelisk" />
       </head>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers decodedToken={decodedToken}>{children}</Providers>
       </body>
     </html>
   );

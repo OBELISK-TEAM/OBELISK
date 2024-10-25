@@ -1,4 +1,4 @@
-import Header from "@/components/user-boards/main-header/Header";
+import Header from "@/components/main-header/Header";
 import { CreateBoardProvider } from "@/contexts/CreateBoardContext";
 import { Metadata } from "next";
 

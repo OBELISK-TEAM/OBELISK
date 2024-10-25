@@ -4,11 +4,8 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import logger from "@/lib/logger";
 import { usePathname } from "next/navigation";
+import { ErrorPageProps } from "@/interfaces/error-page/error-page";
 
-interface ErrorPageProps {
-  error: Error & { digest?: string };
-  reset: () => void;
-}
 const Error: React.FC<ErrorPageProps> = ({ error, reset }) => {
   useEffect(() => {
     logger.log("Error while fetching boards:", error);

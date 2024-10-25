@@ -52,7 +52,7 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
       );
 
     case BoardTableColumns.SIZE:
-      return `${bytesToKilobytes(board.size ?? 0)} kB`;
+      return `${bytesToKilobytes(board.sizeInBytes ?? 0)} kB`;
 
     default:
       return "";

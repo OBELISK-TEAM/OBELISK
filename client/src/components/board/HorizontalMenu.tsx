@@ -1,20 +1,19 @@
 "use client";
 import { FC } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import ThemeToggle from "../user-boards/main-header/ThemeToggle";
-import { AppLogo } from "../user-boards/main-header/AppLogo";
+import { AppLogo } from "@/components/main-header/AppLogo";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
-import Link from "next/link";
+import { useSocket } from "@/contexts/SocketContext";
+import UserInfo from "@/components/main-header/UserInfo";
 interface HorizontalMenuProps {
-  boardName: string;
   groupId: string;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
+  const { boardName } = useSocket();
   const {
     state: { activeItem, selectedObjectStyles },
   } = useCanvas();
@@ -24,11 +23,15 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
   return (
     <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
       <div className="flex">
-        <Link href={"/user-boards"}>
-          <div className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted">
-            <AppLogo width={20} height={20} />
-          </div>
-        </Link>
+        <button
+          onClick={() => {
+            window.location.href = "/user-boards"; //i needed to add this, because user was not leaving  the board for some reason
+          }}
+          className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted"
+        >
+          <AppLogo width={20} height={20} />
+        </button>
+
         <div className="flex flex-shrink-0 items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>
         </div>
@@ -65,12 +68,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ boardName, groupId }) =>
         </div>
       </div>
       <div className="flex h-[64px] items-center space-x-4 border-l pl-4 pr-2">
-        <span className="font-semibold">Anon Anno</span>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-        <ThemeToggle />
+        <UserInfo />
       </div>
     </div>
   );

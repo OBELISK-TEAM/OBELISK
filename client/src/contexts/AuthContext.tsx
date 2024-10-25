@@ -4,10 +4,14 @@ import { complexToast } from "./complexToast";
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
+import { DecodedToken } from "@/interfaces/decoded-token/decoded-token";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: DecodedToken | null }> = ({
+  children,
+  decodedToken,
+}) => {
   const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
@@ -80,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signup,
         logout,
         loginGoogleUser,
+        decodedToken,
       }}
     >
       {children}
