@@ -18,6 +18,7 @@ import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
 import { UserRole } from '../../shared/enums/user.role';
+import { RoleAuthGuard } from './guards/role.auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -45,24 +46,21 @@ export class AuthController {
     return this.authService.googleLogin(req);
   }
 
-  // add @UseGuards(JwtAuthGuard) to secure the route with JWT
   @Get('jwt-secured')
   @UseGuards(JwtAuthGuard)
   jwtSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
 
-  // add @MinimumRole(UserRole.SOMETHING) to secure the route with a minimum role
   @Get('min-role-secured-user')
-  @UseGuards(JwtAuthGuard)
-  @MinimumRole(UserRole.USER)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @MinimumRole(UserRole.ADMIN)
   minimumRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
   }
 
-  // add @RequiredRole(UserRole.SOMETHING) to secure the route with a required role
   @Get('req-role-secured-admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
   @RequiredRole(UserRole.ADMIN)
   requiredRoleSecured(@User('_id') userId: string): string {
     return `You are authorized with id: ${userId}`;
