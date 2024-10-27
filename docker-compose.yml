@@ -11,6 +11,7 @@ services:
         - GOOGLE_CLIENT_ID
         - GOOGLE_CLIENT_SECRET
         - GOOGLE_CALLBACK_URL
+        - NEXT_GW_SERVER_HOST
     ports:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
     container_name: obelisk_client_container
