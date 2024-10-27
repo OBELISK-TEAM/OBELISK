@@ -2,9 +2,9 @@ import "server-only";
 
 import { getCookie } from "@/lib/authApiUtils";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
-import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiError } from "@/errors/ApiError";
+
 import logger from "@/lib/logger";
+import { apiRequest } from "@/services/apiService";
 
 export async function getBoardDetailsData(boardId: string): Promise<BoardDetailsResponse> {
   const accessToken = getCookie("accessToken");
@@ -12,20 +12,12 @@ export async function getBoardDetailsData(boardId: string): Promise<BoardDetails
     throw new Error("User not authenticated.");
   }
   try {
-    const response = await fetch(
-      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}/details`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const reasons = await extractMessagesFromApiError(response);
-      throw new ApiError(reasons);
-    }
+    const response = await apiRequest(`/boards/${boardId}/details`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return await response.json();
   } catch (error) {
