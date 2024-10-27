@@ -23,6 +23,7 @@ jobs:
           echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> $GITHUB_ENV
           echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> $GITHUB_ENV
           echo "SERVER_PORT=${{ vars.SERVER_PORT }}" >> $GITHUB_ENV
+          echo "SOCKET_GW_PORT=${{ vars.SOCKET_GW_PORT }}" >> $GITHUB_ENV
           echo "JWT_SECRET=${{ vars.JWT_SECRET }}" >> $GITHUB_ENV
           echo "JWT_EXPIRES_IN=${{ vars.JWT_EXPIRES_IN }}" >> $GITHUB_ENV
           echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
