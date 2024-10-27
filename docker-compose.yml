@@ -22,6 +22,7 @@ services:
     build: ./server
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
+      - "${SOCKET_GW_PORT}:${SOCKET_GW_PORT}"
     container_name: obelisk_server_container
     depends_on:
       - mongo
