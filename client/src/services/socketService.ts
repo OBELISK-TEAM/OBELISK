@@ -4,9 +4,6 @@ import Cookies from "js-cookie";
 const API_HOST = process.env.SERVER_HOST;
 const SOCKET_GW_PORT = process.env.SOCKET_GW_PORT;
 
-if (!API_HOST || !SOCKET_GW_PORT) {
-  throw new Error("SERVER_HOST and SOCKET_GW_PORT must be defined");
-}
 const baseUrl = `http://${API_HOST}:${SOCKET_GW_PORT}`;
 
 let socket: Socket | null = null;
