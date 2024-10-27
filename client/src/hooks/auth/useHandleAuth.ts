@@ -7,6 +7,8 @@ import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
 import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
+import { toast } from "sonner";
+import { ApiError } from "@/errors/ApiError";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
@@ -36,17 +38,12 @@ export const useHandleAuth = (): HandleAuth => {
             default:
               throw new Error("Invalid authentication action");
           }
-        } catch (err: any) {
-          try {
-            if (err instanceof Error) {
-              const errorMessages = JSON.parse(err.message) as string[];
-              complexToast(ToastTypes.ERROR, errorMessages);
-              logger.error(errorMessages);
-            } else {
-              complexToast(ToastTypes.ERROR, "Unexpected error");
-            }
-          } catch (err2: any) {
-            complexToast(ToastTypes.ERROR, "Unexpected error");
+        } catch (error: any) {
+          logger.error("Error during authentication:", error);
+          if (error instanceof ApiError) {
+            complexToast(ToastTypes.ERROR, error.messages);
+          } else {
+            toast.error(error.message || "An error occurred");
           }
         } finally {
           setLoading(false);

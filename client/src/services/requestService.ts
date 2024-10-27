@@ -6,16 +6,12 @@ const API_PORT = process.env.SERVER_PORT;
 
 const baseUrl = `http://${API_HOST}:${API_PORT}`;
 
-export async function apiRequest(
-  endpoint: string,
-  options: RequestInit = {},
-  checkResponseStatus = true
-): Promise<Response> {
+export async function apiRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const url = `${baseUrl}${endpoint}`;
 
   const response = await fetch(url, options);
 
-  if (checkResponseStatus && !response.ok) {
+  if (!response.ok) {
     const reasons = await extractMessagesFromApiError(response);
     throw new ApiError(reasons);
   }
