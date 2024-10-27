@@ -21,7 +21,7 @@ import logger from "@/lib/logger";
 
 interface BoardDeletionButtonProps {
   deleteBoard: () => void;
-  revalidateFunc: KeyedMutator<PaginatedBoardsResponse>;
+  revalidateFunc: () => void;
 }
 
 export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ deleteBoard, revalidateFunc }) => {

@@ -1,71 +1,44 @@
 import { FilterIcon, Share2, ViewIcon } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import useSWR from "swr";
+import React, { useCallback } from "react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BoardsPagination } from "../BoardsPagination";
 import { getColumnsForTab, getDescriptionForTab, getTitleForTab } from "@/lib/userBoardsUtils";
 import { Button } from "@/components/ui/button";
 import { CellContent } from "@/components/user-boards/board-table/CellContent";
-import { BoardTableSkeleton } from "@/components/loading/BoardTableSkeleton";
-import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
-import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
+import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/BoardsActiveTab";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
 import { useRouter } from "next/navigation";
 import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardDeletionButton";
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
-import { fetchBoards } from "@/services/board/fetchBoards";
 import { deleteBoard } from "@/app/actions/boardActions";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
 
 interface BoardTableProps {
+  data: PaginatedBoardsResponse;
   activeTab: BoardsActiveTab;
-  accessToken?: string;
+  currentPage: number;
 }
 
-const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 5;
+const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
   const router = useRouter();
-  const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
-  const { data, error, isLoading, mutate } = useSWR<PaginatedBoardsResponse>(
-    `/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
-    fetchBoards(accessToken as string),
-    {
-      revalidateOnFocus: true,
-      keepPreviousData: true,
-      revalidateIfStale: true,
-    }
-  );
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (data) {
-      setPreviousData(data);
-    }
-  }, [data]);
 
   const handleRowClick = (boardId: string) => {
     router.push(`/user-boards/${boardId}/slides/1`);
   };
 
-  const showOverlay = isLoading && previousData;
-
-  if (error) {
-    return (
-      <div className="rounded-lg border bg-card p-4">
-        <p className={"text-red-600"}>{"Oops! " + error.message || "error while fetching boards"}</p>
-      </div>
-    );
-  }
-  if (!previousData && isLoading) {
-    return <BoardTableSkeleton />;
-  }
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      const tabString = BoardsActiveTabMap[activeTab];
+      const query = `tab=${tabString}&page=${newPage}`;
+      const href = `/user-boards?${query}`;
+      router.replace(href);
+    },
+    [activeTab, router]
+  );
 
   if (!data || data.boards.length === 0) {
     return (
@@ -74,7 +47,6 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
       </div>
     );
   }
-  const displayData = data || previousData;
 
   const columns = getColumnsForTab(activeTab);
 
@@ -97,9 +69,9 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
         <Table className="w-full">
           <BoardTableLeadRow columns={columns} />
           <TableBody className={"min-h-[800px]"}>
-            {displayData &&
-              displayData.boards.length > 0 &&
-              displayData.boards.map((board: BoardResponse) => (
+            {data &&
+              data.boards.length > 0 &&
+              data.boards.map((board: BoardResponse) => (
                 <TableRow
                   key={board._id}
                   className="cursor-pointer border-b hover:bg-muted/50"
@@ -121,32 +93,29 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
                         <Share2 className="mr-2 h-5 w-5" />
                       </Button>
                     </ShareBoardDialog>
-                    <BoardDeletionButton revalidateFunc={mutate} deleteBoard={() => deleteBoard(board._id)} />
+                    <BoardDeletionButton
+                      revalidateFunc={() => router.refresh()}
+                      deleteBoard={() => deleteBoard(board._id)}
+                    />
                     <BoardDetailsButton boardId={board._id} />
                   </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
-        {showOverlay && (
-          <div className="pointer-events-auto absolute inset-0 z-50 flex items-center justify-center bg-background opacity-60">
-            <LoadingSpinner className="h-8 w-8 text-gray-500" />
-          </div>
-        )}
       </div>
       <div className="mt-4 flex items-center justify-between">
         <span className="w-[18em] grow text-muted-foreground" style={{ fontSize: "15px" }}>
-          Showing {(displayData.page - 1) * displayData.limit + 1}-
-          {Math.min(displayData.page * displayData.limit, displayData.total)} of {displayData.total} boards
+          Showing {(data.page - 1) * data.limit + 1}-{Math.min(data.page * data.limit, data.total)} of {data.total}{" "}
+          boards
         </span>
         <BoardsPagination
-          currentPage={displayData.page}
-          totalPages={Math.ceil(displayData.total / displayData.limit)}
-          onPageChange={setCurrentPage}
+          currentPage={data.page}
+          totalPages={Math.ceil(data.total / data.limit)}
+          onPageChange={handlePageChange}
         />
       </div>
     </div>
   );
 };
-
 export default BoardTable;
