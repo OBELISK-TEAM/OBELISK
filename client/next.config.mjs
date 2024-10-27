@@ -8,6 +8,7 @@ const nextConfig = {
     env: {
 
         SERVER_HOST: process.env.SERVER_HOST,
+        NEXT_GW_SERVER_HOST: process.env.NEXT_GW_SERVER_HOST,
         SERVER_PORT: process.env.SERVER_PORT,
         CLIENT_HOST: process.env.CLIENT_HOST,
         CLIENT_PORT: process.env.CLIENT_PORT,
