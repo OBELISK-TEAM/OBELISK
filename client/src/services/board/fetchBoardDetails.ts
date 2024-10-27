@@ -4,7 +4,7 @@ import { getCookie } from "@/lib/authApiUtils";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 
 import logger from "@/lib/logger";
-import { apiRequest } from "@/services/apiService";
+import { apiRequest } from "@/services/requestService";
 
 export async function getBoardDetailsData(boardId: string): Promise<BoardDetailsResponse> {
   const accessToken = getCookie("accessToken");

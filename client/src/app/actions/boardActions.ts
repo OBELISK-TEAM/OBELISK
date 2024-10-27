@@ -3,7 +3,7 @@
 import { getCookie } from "@/lib/authApiUtils";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import logger from "@/lib/logger";
-import { apiRequest } from "@/services/apiService";
+import { apiRequest } from "@/services/requestService";
 
 export async function createBoard(name: string): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");

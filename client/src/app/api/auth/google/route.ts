@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setTokenCookie } from "@/lib/authApiUtils";
 import logger from "@/lib/logger";
+import { apiRequest } from "@/services/requestService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,13 +17,17 @@ export async function POST(req: NextRequest) {
     //   Authorization: `Bearer ${state}`,
     // });
 
-    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/auth/google/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${state}`,
+    const response = await apiRequest(
+      `/auth/google/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state}`,
+        },
       },
-    });
+      false
+    );
 
     if (response.ok) {
       const { accessToken } = await response.json();

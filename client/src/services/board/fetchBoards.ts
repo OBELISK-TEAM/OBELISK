@@ -1,6 +1,6 @@
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import logger from "@/lib/logger";
-import { apiRequest } from "@/services/apiService";
+import { apiRequest } from "@/services/requestService";
 
 export const fetchBoards =
   (accessToken: string) =>

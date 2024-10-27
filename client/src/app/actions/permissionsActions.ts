@@ -1,14 +1,12 @@
 "use server";
 
 import { getCookie } from "@/lib/authApiUtils";
-import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiError } from "@/errors/ApiError";
 import logger from "@/lib/logger";
 import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { boardPermissionToNum } from "@/lib/boardPermissionConverter";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
-import { apiRequest } from "@/services/apiService";
+import { apiRequest } from "@/services/requestService";
 
 export async function generatePermissionCode(
   boardId: string,

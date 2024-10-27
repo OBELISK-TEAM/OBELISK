@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setTokenCookie } from "@/lib/authApiUtils";
 import logger from "@/lib/logger";
+import { apiRequest } from "@/services/requestService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,13 +17,17 @@ export async function POST(req: NextRequest) {
     // });
     //console.log("body", JSON.stringify({ email, password }));
 
-    const response = await fetch(`http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await apiRequest(
+      "/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       },
-      body: JSON.stringify({ email, password }),
-    });
+      false
+    );
 
     if (response.ok) {
       const { accessToken } = await response.json();
@@ -38,6 +43,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     logger.error("Promise rejected", error);
-    return NextResponse.json({ message: "An unexpected error occurred" }, { status: 500 });
+    return NextResponse.json({ message: error || "An unexpected error occurred" }, { status: 500 });
   }
 }

@@ -1,12 +1,13 @@
 "use client";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import SocketLoading from "@/components/loading/SocketLoading";
 import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/socket/SocketCallbacksData";
 import logger from "@/lib/logger";
+import { getSocket } from "@/services/socketService";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -33,13 +34,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const socketRef = useRef<Socket | null>(null);
 
   if (!socketRef.current) {
-    socketRef.current = io(`http://${process.env.SERVER_HOST}:${process.env.SOCKET_GW_PORT}/gateway`, {
-      autoConnect: true,
-      transports: ["websocket"],
-      auth: {
-        token,
-      },
-    });
+    socketRef.current = getSocket();
   }
 
   const [isSocketReady, setIsSocketReady] = useState(false);
