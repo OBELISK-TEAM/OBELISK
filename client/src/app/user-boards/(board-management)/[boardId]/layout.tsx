@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import BoardSidebar from "@/components/board-details/BoardSidebar";
 import { Metadata } from "next";
-import { getBoardDetailsData } from "@/services/fetchBoardDetails";
+import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
 
 interface LayoutProps {
   children: React.ReactNode;

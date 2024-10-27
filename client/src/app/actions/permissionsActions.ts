@@ -1,13 +1,12 @@
 "use server";
 
 import { getCookie } from "@/lib/authApiUtils";
-import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiError } from "@/errors/ApiError";
 import logger from "@/lib/logger";
 import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { boardPermissionToNum } from "@/lib/boardPermissionConverter";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
+import { apiRequest } from "@/services/requestService";
 
 export async function generatePermissionCode(
   boardId: string,
@@ -17,24 +16,15 @@ export async function generatePermissionCode(
   const token = getCookie("accessToken");
   logger.log("Generating permission code for board:", boardId);
   try {
-    const response = await fetch(
-      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/${boardId}/permissions`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          permission,
-        }),
-      }
-    );
+    const response = await apiRequest(`/boards/${boardId}/permissions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ permission }),
+    });
 
-    if (!response.ok) {
-      const reasons = await extractMessagesFromApiError(response);
-      throw new ApiError(reasons);
-    }
     return await response.json();
   } catch (error) {
     logger.error("Error while generating permission code:", error);
@@ -46,21 +36,14 @@ export async function grantPermission(code: string): Promise<GrantPermissionResp
   const token = getCookie("accessToken");
   logger.log("Granting permission with code:", code);
   try {
-    const response = await fetch(
-      `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards/permissions/${code}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiRequest(`/boards/permissions/${code}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    if (!response.ok) {
-      const reasons = await extractMessagesFromApiError(response);
-      throw new ApiError(reasons);
-    }
     return await response.json();
   } catch (error) {
     logger.error("Error while granting permission:", error);

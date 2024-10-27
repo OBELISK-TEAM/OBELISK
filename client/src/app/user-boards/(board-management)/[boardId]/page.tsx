@@ -1,6 +1,6 @@
 import React from "react";
 import BoardDetailsInfo from "@/components/board-details/board-information/BoardDetails";
-import { getBoardDetailsData } from "@/services/fetchBoardDetails";
+import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 
 interface BoardDetailsPageProps {

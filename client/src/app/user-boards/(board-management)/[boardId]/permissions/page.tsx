@@ -1,7 +1,7 @@
 import React from "react";
 import { BoardPermissions } from "@/components/board-details/board-permissions/BoardPermissions";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
-import { getBoardDetailsData } from "@/services/fetchBoardDetails";
+import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
 interface PermissionsPageProps {
   params: {
     boardId: string;

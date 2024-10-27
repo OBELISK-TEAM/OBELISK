@@ -16,7 +16,7 @@ import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTab
 import { useRouter } from "next/navigation";
 import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardDeletionButton";
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
-import { fetchBoards } from "@/services/fetchBoards";
+import { fetchBoards } from "@/services/board/fetchBoards";
 import { deleteBoard } from "@/app/actions/boardActions";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
 
@@ -31,7 +31,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ activeTab, accessToken }) => {
   const router = useRouter();
   const [previousData, setPreviousData] = useState<PaginatedBoardsResponse | undefined>(undefined);
   const { data, error, isLoading, mutate } = useSWR<PaginatedBoardsResponse>(
-    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
+    `/boards?tab=${activeTab}&page=${currentPage}&limit=${perPage}`,
     fetchBoards(accessToken as string),
     {
       revalidateOnFocus: true,
