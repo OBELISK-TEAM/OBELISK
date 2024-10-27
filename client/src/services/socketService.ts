@@ -5,9 +5,7 @@ const API_HOST = process.env.SERVER_HOST;
 const SOCKET_GW_PORT = process.env.SOCKET_GW_PORT;
 
 if (!API_HOST || !SOCKET_GW_PORT) {
-  throw new Error(
-    "NEXT_PUBLIC_SERVER_HOST, NEXT_PUBLIC_SERVER_PORT i NEXT_PUBLIC_SOCKET_GW_PORT muszą być zdefiniowane"
-  );
+  throw new Error("SERVER_HOST and SOCKET_GW_PORT must be defined");
 }
 const baseUrl = `http://${API_HOST}:${SOCKET_GW_PORT}`;
 
