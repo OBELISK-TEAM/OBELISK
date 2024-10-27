@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { TrashIcon } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
-import { KeyedMutator } from "swr";
 import { toast } from "sonner";
 import { ApiError } from "@/errors/ApiError";
 import { complexToast } from "@/contexts/complexToast";
