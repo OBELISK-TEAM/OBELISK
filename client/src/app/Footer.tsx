@@ -9,10 +9,10 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="flex flex-col border-t border-border p-3 text-xs text-muted-foreground">
-      <div className="container mx-auto flex flex-wrap justify-around">
+    <footer className="flex border-t border-border p-3 text-xs text-muted-foreground">
+      <div className="container flex flex-col flex-wrap justify-around gap-7 p-0 md:flex-row md:p-3">
         {/* Brand and Project Info */}
-        <div className="min-w-[200px]">
+        <div className="">
           <h3 className="text-s mb-2 font-semibold">OBELISK Project</h3>
           <p>© 2024. All Rights Reserved</p>
           <p>OBELISK Pre-Alpha:</p>
@@ -26,7 +26,7 @@ const Footer = () => {
         </div>
 
         {/* Team & Social Links */}
-        <div className="min-w-[200px]">
+        <div className="">
           <h3 className="text-s mb-2 font-semibold">Design and Development by OBELISK Team</h3>
           {teamMembers.map((member) => (
             <p key={member.href}>
