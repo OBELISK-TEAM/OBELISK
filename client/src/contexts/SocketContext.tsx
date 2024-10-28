@@ -85,12 +85,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     }
 
     function onConnectError() {
+      toast.dismiss();
       toast.error("Connection error");
-      logger.log("Connection error");
+      logger.error("Connection error");
       setConnectionError(true);
     }
 
     function onReconnectAttempt() {
+      toast.dismiss();
       toast.info("Reconnecting...");
       logger.log("Reconnecting...");
     }
