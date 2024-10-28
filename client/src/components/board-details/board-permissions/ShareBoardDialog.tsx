@@ -14,11 +14,13 @@ import BoardPermissionsSelect from "@/components/board-details/board-permissions
 import { BoardPermission } from "@/enums/BoardPermission";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { toast } from "sonner";
-import { ClipboardIcon, CopyIcon } from "lucide-react";
+//import { ClipboardIcon, CopyIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { generatePermissionCode } from "@/app/actions/permissionsActions";
 import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { formatDuration } from "@/lib/dateUtils";
+//import logger from "@/lib/logger";
+import { Badge } from "@/components/ui/badge";
 
 interface ShareBoardDialogProps {
   boardId: string;
@@ -47,16 +49,17 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
     });
   };
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(response?.permissionStr || "");
-      toast.info("Link copied to clipboard");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 4000);
-    } catch {
-      toast.error("Failed to copy the link");
-    }
-  };
+  // const handleCopyLink = async () => {
+  //   try {
+  //     //await navigator.clipboard.writeText(response?.permissionStr || ""); not working on deployed version
+  //     logger.warn(response?.permissionStr);
+  //     toast.info("Link copied to clipboard");
+  //     setCopied(true);
+  //     setTimeout(() => setCopied(false), 4000);
+  //   } catch {
+  //     toast.error("Failed to copy the link");
+  //   }
+  // };
 
   const resetForm = () => {
     setResponse(null);
@@ -101,12 +104,16 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
 
             <HoverCard openDelay={100} closeDelay={200}>
               <HoverCardTrigger>
-                <Button variant="secondary" className="flex w-full gap-2" onClick={handleCopyLink}>
-                  {response.permissionStr.slice(0, 40) + "..."}
-                  {copied ? <ClipboardIcon /> : <CopyIcon />}
-                </Button>
+                <Badge
+                  variant="secondary"
+                  className="flex h-fit w-full gap-2 whitespace-normal break-words rounded-md p-2"
+                  // onClick={handleCopyLink}
+                >
+                  {response.permissionStr}
+                  {/*{copied ? <ClipboardIcon /> : <CopyIcon />}*/}
+                </Badge>
               </HoverCardTrigger>
-              <HoverCardContent>{copied ? "Copy again" : "Click to copy"}</HoverCardContent>
+              <HoverCardContent>{copied ? "Copy again" : "Copy this text"}</HoverCardContent>
             </HoverCard>
 
             <Button onClick={resetForm} variant="ghost" className="mt-4 self-end">
