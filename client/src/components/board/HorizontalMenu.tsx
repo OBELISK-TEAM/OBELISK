@@ -68,7 +68,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
         </div>
       </div>
       <div className="flex h-[64px] items-center space-x-4 border-l pl-4 pr-2">
-        <UserInfo />
+        <UserInfo withoutLogout={true} />
       </div>
     </div>
   );

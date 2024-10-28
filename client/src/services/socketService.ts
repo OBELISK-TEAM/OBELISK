@@ -9,9 +9,7 @@ const SOCKET_GW_PORT = process.env.SOCKET_GW_PORT;
 
 const baseUrl = `http://${API_HOST}:${SOCKET_GW_PORT}`;
 
-let socket: Socket | null = null;
-
-export function getSocket(): Socket {
+export function getSocket(socket: Socket | null): Socket {
   if (!socket) {
     const token = `Bearer ${Cookies.get("accessToken")}`;
     socket = io(`${baseUrl}/gateway`, {

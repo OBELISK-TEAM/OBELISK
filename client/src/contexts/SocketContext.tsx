@@ -8,6 +8,7 @@ import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/socket/SocketCallbacksData";
 import logger from "@/lib/logger";
 import { getSocket } from "@/services/socketService";
+import { BoardError } from "@/components/error/BoardError";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -32,11 +33,6 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
   const token = `Bearer ${Cookies.get("accessToken")}`;
   const socketRef = useRef<Socket | null>(null);
-
-  if (!socketRef.current) {
-    socketRef.current = getSocket();
-  }
-
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
   const [boardName, setBoardName] = useState<string | undefined>(undefined);
@@ -44,7 +40,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
+  const [connectionError, setConnectionError] = useState(false);
   useEffect(() => {
+    if (!socketRef.current) {
+      socketRef.current = getSocket(socketRef.current);
+    }
+
     const socket = socketRef.current;
     if (!socket) {
       return;
@@ -56,7 +57,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       setCurrentPermission(res.permission);
       setBoardOwner(res.owner);
       setIsBoardJoined(true);
-
+      setConnectionError(false);
       setIsSocketReady(true);
       toast.success("Joined board " + boardId);
     }
@@ -83,6 +84,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       joinBoard();
     }
 
+    function onConnectError() {
+      toast.dismiss();
+      toast.error("Connection error");
+      logger.error("Connection error");
+      setConnectionError(true);
+    }
+
+    function onReconnectAttempt() {
+      toast.dismiss();
+      toast.info("Reconnecting...");
+      logger.log("Reconnecting...");
+    }
+
     function joinBoard() {
       if (!socket || !boardId) {
         toast.error("No socket");
@@ -99,6 +113,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       { eventName: "joined-slide", handler: onUserJoinedSlide },
       { eventName: "left-slide", handler: onUserLeftSlide },
       { eventName: "auth-success", handler: onAuthSuccess },
+      { eventName: "connect_error", handler: onConnectError },
+      { eventName: "reconnect_attempt", handler: onReconnectAttempt },
     ];
 
     handlers.forEach(({ eventName, handler }) => {
@@ -115,10 +131,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         socket.off(eventName, handler);
       });
 
-      //socketEmitLeaveBoard(socket, {});
-      //socketRef?.current?.disconnect();
+      socketRef?.current?.disconnect();
+      socketRef.current = null;
     };
   }, [token, boardId]);
+
+  if (connectionError) {
+    return <BoardError />;
+  }
 
   if (!isSocketReady) {
     return <SocketLoading />;
