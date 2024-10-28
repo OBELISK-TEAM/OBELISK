@@ -1,8 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { v4 as uuid4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 const getGoogleLoginUrl = () => {
-  const state = uuid4();
+  const state = uuidv4();
   const googleAuthEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 
   // console.log(
