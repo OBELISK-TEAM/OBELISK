@@ -30,7 +30,10 @@ export default async function UserBoardsPage({
     return <UserBoards data={data} activeTab={activeTab} currentPage={currentPage} />;
   } catch (error: any) {
     return (
-      <div className="ms-center flex h-fit w-screen justify-center rounded-lg border bg-card p-4">
+      <div
+        className="ms-center flex w-screen justify-center rounded-lg border bg-card p-4"
+        style={{ height: "calc(100vh - 64px)" }}
+      >
         <p className={"text-red-600"}>{"Oops! " + error.message || "error while fetching boards"}</p>
       </div>
     );
