@@ -36,7 +36,7 @@ export default function UserBoards({ data, activeTab, currentPage }: UserBoardsP
     setPage(1);
   };
   return (
-    <main className="flex-1 bg-background p-6">
+    <main className="flex-1 bg-background p-6" style={{ height: "calc(100vh - 64px)" }}>
       <div className="mb-2 flex items-center justify-between">
         <TabButtons tabs={tabs} activeTab={activeTabState} onTabChange={handleTabChange} />
         <CreateBoardButton />
