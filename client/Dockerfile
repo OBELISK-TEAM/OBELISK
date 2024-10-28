@@ -15,10 +15,11 @@ ARG SERVER_HOST
 ARG SERVER_PORT
 ARG CLIENT_HOST
 ARG CLIENT_PORT
-ARG SERVER_GW_PORT
+ARG SOCKET_GW_PORT
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG GOOGLE_CALLBACK_URL
+ARG NEXT_GW_SERVER_HOST
 
 RUN apk add --no-cache python3 make g++ pango-dev
 
@@ -37,6 +38,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/.next /app/.next
+COPY --from=build /app/public ./public
 
 RUN npm prune --omit dev
 
