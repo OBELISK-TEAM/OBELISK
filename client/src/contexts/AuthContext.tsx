@@ -10,6 +10,7 @@ import {
   logout as logoutAction,
   googleLogin as googleLoginAction,
 } from "@/app/actions/authActions";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
@@ -17,32 +18,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
   children,
   decodedToken,
 }) => {
+  const router = useRouter();
   const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     await loginAction(credentials.email, credentials.password);
+
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged in succesfully");
-    window.location.href = successRedirect || "/user-boards";
+    router.push(successRedirect || "/user-boards");
   };
 
   const signup = async (credentials: { email: string; password: string }, successRedirect?: string) => {
     await registerAction(credentials.email, credentials.password);
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Registered successfully");
-    window.location.href = successRedirect || "/user-boards";
+    router.push(successRedirect || "/user-boards");
   };
 
   const logout = async (successRedirect?: string) => {
     await logoutAction();
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged out successfully");
-    window.location.href = successRedirect || "/auth/login";
+    router.push(successRedirect || "/auth/login");
   };
 
   const loginGoogleUser = async (userTempId: string, successRedirect?: string) => {
     await googleLoginAction(userTempId);
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged in with Google successfully");
-    window.location.href = successRedirect || "/user-boards";
+    router.push(successRedirect || "/user-boards");
   };
 
   return (

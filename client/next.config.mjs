@@ -16,20 +16,7 @@ const nextConfig = {
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
         SOCKET_GW_PORT: process.env.SOCKET_GW_PORT,
         APP_ENV: process.env.APP_ENV,
-    },
-    async headers() {
-        return [
-            {
-                source: '/auth/(.*)',
-                headers: [
-                    {
-                        key: 'Cross-Origin-Opener-Policy',
-                        value: 'same-origin-allow-popups',
-                    }
-                ],
-            },
-        ];
-    },
+    }
 };
 
 export default nextConfig;

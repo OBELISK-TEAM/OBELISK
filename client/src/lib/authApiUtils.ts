@@ -10,7 +10,7 @@ export const setTokenCookie = (token: string) => {
   cookies().set("accessToken", token, {
     expires: expiryDate,
     httpOnly: false,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.APP_ENV === "production",
     path: "/",
   });
 };
@@ -20,7 +20,7 @@ export async function clearCookie() {
   cookieStore.set("accessToken", "", {
     expires: new Date(0),
     httpOnly: false,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.APP_ENV === "production",
     path: "/",
   });
 }
