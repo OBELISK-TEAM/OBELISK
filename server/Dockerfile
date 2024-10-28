@@ -27,5 +27,6 @@ COPY --from=build /app/dist /app/dist
 RUN npm prune --omit dev
 
 EXPOSE ${SERVER_PORT}
+EXPOSE ${SOCKET_GW_PORT}
 
 CMD ["npm", "start"]
