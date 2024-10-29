@@ -18,28 +18,28 @@ export class ObjectStats extends Document {
     ref: SuperObject.name,
     required: true,
   })
-  objectId: Types.ObjectId;
+  objectId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: SuperBoard.name,
     required: true,
   })
-  boardId: Types.ObjectId;
+  boardId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: SuperSlide.name,
     required: true,
   })
-  slideId: Types.ObjectId;
+  slideId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: User.name,
     required: true,
   })
-  creatorId: Types.ObjectId;
+  creatorId: string;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -47,7 +47,7 @@ export class ObjectStats extends Document {
     default: null,
   })
   lastInteraction: {
-    userId: Types.ObjectId;
+    userId: string;
     timestamp: Date;
     action: ObjectAction;
   };
