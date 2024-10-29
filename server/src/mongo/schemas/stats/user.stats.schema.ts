@@ -11,7 +11,7 @@ export class UserStats extends Document {
     ref: User.name,
     required: true,
   })
-  userId: Types.ObjectId;
+  userId: string;
 
   @Prop({
     type: Date,
@@ -40,7 +40,7 @@ export class UserStats extends Document {
     required: false,
     default: {},
   })
-  boardsVisits: Map<Types.ObjectId, number>;
+  boardsVisits: Map<string, number>;
 
   @Prop({
     type: Map,
@@ -48,7 +48,7 @@ export class UserStats extends Document {
     required: false,
     default: {},
   })
-  boardsInteractions: Map<Types.ObjectId, number>;
+  boardsInteractions: Map<string, number>;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -65,7 +65,7 @@ export class UserStats extends Document {
   lastAction: {
     timestamp: Date;
     action: GlobalActionType;
-    targetId: Types.ObjectId;
+    targetId: string;
   };
 }
 
