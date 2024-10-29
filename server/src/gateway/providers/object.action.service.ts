@@ -8,11 +8,17 @@ import {
   DeleteObjectData,
   UpdateObjectData,
 } from '../dto/object.data';
+import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
+import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schema';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ObjectActionService {
   private readonly logger = new Logger(ObjectActionService.name);
-  constructor(private readonly objectsService: ObjectsService) {}
+  constructor(
+    private readonly objectsService: ObjectsService,
+    private readonly objectStatsService: ObjectStatsService,
+  ) {}
 
   async handleAddObject(
     client: GwSocketWithTarget,
@@ -31,6 +37,13 @@ export class ObjectActionService {
       boardId,
       slideId,
       objectProps,
+    );
+
+    await this.objectStatsService.initStats(
+      createdObject._id.toString(),
+      boardId,
+      slideId,
+      (user._id as Types.ObjectId).toString(),
     );
 
     this.logger.log(`Object added: ${createdObject._id} by ${user.email}`);
@@ -52,11 +65,24 @@ export class ObjectActionService {
       throw new WsException('No slide selected');
     }
 
+    const oldObject = await this.objectsService.getObject(
+      boardId,
+      slideId,
+      _id,
+    );
+
     const updatedObject = await this.objectsService.updateObject(
       boardId,
       slideId,
       _id,
       props,
+    );
+
+    await this.objectStatsService.changeLastInteraction(
+      _id,
+      (user._id as Types.ObjectId).toString(),
+      oldObject as unknown as SuperObjectDocument,
+      updatedObject as unknown as SuperObjectDocument,
     );
 
     this.logger.log(`Object updated: ${updatedObject._id} by ${user.email}`);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schema';
 import { ObjectStats } from 'src/mongo/schemas/stats/object.stats.schema';
 import { ObjectAction } from 'src/shared/enums/actions/object.action';
 
@@ -23,6 +24,7 @@ export class ObjectStatsService {
       slideId,
       creatorId,
     });
+    await this.changeLastInteraction(objectId, creatorId, null, null);
   }
 
   async removeStats(objectId: string): Promise<void> {
@@ -32,19 +34,30 @@ export class ObjectStatsService {
   async changeLastInteraction(
     objectId: string,
     userId: string,
-    action: ObjectAction,
+    oldObject: SuperObjectDocument | null,
+    newObject: SuperObjectDocument | null,
   ): Promise<void> {
-    await this.objectStatsModel.updateOne(
+    await this.objectStatsModel.findOneAndUpdate(
       { objectId },
       {
         $set: {
           lastInteraction: {
             userId,
             timestamp: new Date(),
-            action,
+            action: this.determineObjectAction(oldObject, newObject),
           },
         },
       },
     );
+  }
+
+  private determineObjectAction(
+    oldObject: SuperObjectDocument | null,
+    newObject: SuperObjectDocument | null,
+  ): ObjectAction {
+    if (oldObject === newObject) {
+      return ObjectAction.ADD_OBJECT;
+    }
+    return ObjectAction.EDIT_OBJECT;
   }
 }
