@@ -15,6 +15,8 @@ import { useZoom } from "./ZoomUIContext";
 import useSocketListeners from "@/hooks/socket/useSocketListeners";
 import { useSocket } from "./SocketContext";
 import { throttle } from "lodash";
+import { getColorFromEmail } from "@/lib/emailColorGenerator";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -37,7 +39,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { handleZoom } = useZoom();
   const { socket } = useSocket();
-
+  const { decodedToken } = useAuth();
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
@@ -126,7 +128,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         const x = pointer.x;
         const y = pointer.y;
 
-        socket?.volatile.emit("cursor-move", { x, y, color: "#aaf" } as any);
+        socket?.volatile.emit("cursor-move", { x, y, color: getColorFromEmail(decodedToken?.email ?? "") } as any);
       }
     }, 160);
 
