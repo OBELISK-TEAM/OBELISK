@@ -17,21 +17,21 @@ export class SlideStats extends Document {
     ref: SuperSlide.name,
     required: true,
   })
-  slideId: Types.ObjectId;
+  slideId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: SuperBoard.name,
     required: true,
   })
-  boardId: Types.ObjectId;
+  boardId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: User.name,
     required: true,
   })
-  ownerId: Types.ObjectId;
+  ownerId: string;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -39,7 +39,7 @@ export class SlideStats extends Document {
     default: [],
   })
   joinLeaveTimeline: [
-    { userId: Types.ObjectId; joinDate: Date; leaveDate: Date | null },
+    { userId: string; joinDate: Date; leaveDate: Date | null },
   ];
 
   @Prop({
@@ -50,7 +50,7 @@ export class SlideStats extends Document {
   editTimeline: [
     {
       timestamp: Date;
-      userId: Types.ObjectId;
+      userId: string;
       x: number;
       y: number;
       action: SlideAction;

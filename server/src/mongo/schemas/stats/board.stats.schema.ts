@@ -16,14 +16,14 @@ export class BoardStats extends Document {
     ref: SuperBoard.name,
     required: true,
   })
-  boardId: Types.ObjectId;
+  boardId: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: User.name,
     required: true,
   })
-  ownerId: Types.ObjectId;
+  ownerId: string;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
@@ -31,7 +31,7 @@ export class BoardStats extends Document {
     default: [],
   })
   joinLeaveTimeline: [
-    { userId: Types.ObjectId; joinDate: Date; leaveDate: Date | null },
+    { userId: string; joinDate: Date; leaveDate: Date | null },
   ];
 
   @Prop({
