@@ -4,7 +4,6 @@ import styles from "./cursors.module.css";
 import { getColorFromEmail, getContrastingTextColor, darkenHexColor } from "@/lib/colorUtils";
 import { fabric } from "fabric";
 import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
-import logger from "@/lib/logger";
 
 interface CursorProps {
   cursor: CursorPosition;
