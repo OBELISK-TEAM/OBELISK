@@ -20,7 +20,6 @@ const Board: React.FC = () => {
         >
           <BoardToolBar />
           <SlideCanvas />
-
           <SlideFileInputs />
         </div>
       </div>
