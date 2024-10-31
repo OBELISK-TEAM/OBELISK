@@ -3,7 +3,7 @@ import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
 import SlideCanvas from "@/components/board/Canvas";
 import SlideFileInputs from "@/components/board/SlideFileInputs";
-import BoardToolBar from "@/components/board/toolbar/Toolbar";
+///import BoardToolBar from "@/components/board/toolbar/Toolbar";
 
 const Board: React.FC = () => {
   return (
@@ -18,7 +18,7 @@ const Board: React.FC = () => {
             width: `calc(100% - ${2 * 56}px)`,
           }}
         >
-          <BoardToolBar />
+          {/*<BoardToolBar />*/}
           <SlideCanvas />
           <SlideFileInputs />
         </div>
