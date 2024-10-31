@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import styles from "./cursors.module.css";
-import { getColorFromEmail, getContrastingTextColor, darkenHexColor } from "@/lib/colorUtils";
+import { getColorFromEmail, darkerColor } from "@/lib/colorUtils";
 import { fabric } from "fabric";
 import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
 
@@ -13,10 +13,7 @@ interface CursorProps {
 const Cursor: React.FC<CursorProps> = ({ cursor, canvas }) => {
   const color = useMemo(() => getColorFromEmail(cursor.user.email), [cursor.user.email]);
 
-  const textColor = useMemo(() => getContrastingTextColor(color), [color]);
-
-  const cursorColor = useMemo(() => darkenHexColor(color, 20), [color]);
-  const cursorTextColor = useMemo(() => getContrastingTextColor(cursorColor), [cursorColor]);
+  const cursorColor = useMemo(() => darkerColor(color, 20), [color]);
 
   const { clampedX, clampedY } = useMemo(() => {
     if (!canvas) {
@@ -39,14 +36,14 @@ const Cursor: React.FC<CursorProps> = ({ cursor, canvas }) => {
       animate={{ x: clampedX, y: clampedY }}
       transition={{ type: "spring", stiffness: 70, damping: 20 }}
     >
-      <div className={styles.cursorLabel} style={{ backgroundColor: color, color: textColor }}>
+      <div className={styles.cursorLabel} style={{ backgroundColor: color }}>
         {cursor.user.email}
       </div>
       <div
         className={styles.cursor}
         style={{
           background: cursorColor,
-          borderColor: cursorTextColor,
+          borderColor: cursorColor,
         }}
       />
     </motion.div>

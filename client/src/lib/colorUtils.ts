@@ -15,7 +15,7 @@ export function getColorFromEmail(email: string): string {
   const hue = Math.abs(hash) % 360;
 
   const saturation = 50;
-  const lightness = 50;
+  const lightness = 30;
 
   // Convert HSL to hex color
   return hslToHex(hue, saturation, lightness);
@@ -74,18 +74,6 @@ function hslToHex(h: number, s: number, l: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-export const getContrastingTextColor = (backgroundColor: string): string => {
-  const hex = backgroundColor.replace("#", "");
-
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-  return luminance > 0.5 ? "black" : "white";
-};
-
 export const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
   const cleanHex = hex.replace("#", "");
   if (cleanHex.length !== 6) {
@@ -105,7 +93,7 @@ export const rgbToHex = (r: number, g: number, b: number): string => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
-export const darkenHexColor = (hex: string, percent: number): string => {
+export const darkerColor = (hex: string, percent: number): string => {
   const rgb = hexToRgb(hex);
   if (!rgb) {
     return hex;
