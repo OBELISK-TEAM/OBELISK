@@ -7,14 +7,27 @@ import {
 import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { ResponseService } from '../response/response.service';
 import { BoardsService } from '../boards/boards.service';
+import { ConfigService } from '@nestjs/config';
+import { DEFAULT_SLIDE_LIMIT_PER_BOARD } from '../../config/dev.config';
 
 @Injectable()
 export class SlidesService {
-  private readonly slideLimitPerBoard = 10;
+  private readonly slideLimitPerBoard: number;
+
   constructor(
     private readonly boardsService: BoardsService,
+    private readonly configService: ConfigService,
     private readonly res: ResponseService,
-  ) {}
+  ) {
+    this.slideLimitPerBoard = this.getSlideLimitPerBoard();
+  }
+
+  private getSlideLimitPerBoard(): number {
+    return this.configService.get<number>(
+      'SLIDE_LIMIT_PER_BOARD',
+      DEFAULT_SLIDE_LIMIT_PER_BOARD,
+    );
+  }
 
   async getSlide(
     boardId: string,
