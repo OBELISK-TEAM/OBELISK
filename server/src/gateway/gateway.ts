@@ -138,10 +138,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('cursor-move')
   @MinimumBoardPermission(BoardPermission.VIEWER)
-  handleCursorMove(
-    client: GwSocketWithTarget,
-    data: CursorMoveData,
-  ): void {
+  handleCursorMove(client: GwSocketWithTarget, data: CursorMoveData): void {
     this.cursorActionService.handleCursorMove(client, data);
   }
 }
