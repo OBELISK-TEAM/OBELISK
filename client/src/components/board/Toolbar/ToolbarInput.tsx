@@ -1,6 +1,6 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import StyledLabel from "@/components/board/Toolbar/ToolbarLabel";
+import StyledLabel from "@/components/board/toolbar/ToolbarLabel";
 
 interface ToolbarInputProps {
   styleKey: string;
