@@ -41,7 +41,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const { socket } = useSocket();
   const { decodedToken } = useAuth();
   const email = decodedToken?.email ?? "";
-  const color = useMemo(() => getColorFromEmail(email), [email]);
+  const userColor = useMemo(() => getColorFromEmail(email), [email]);
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
@@ -130,7 +130,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         const x = pointer.x;
         const y = pointer.y;
 
-        socket?.volatile.emit("cursor-move", { x, y, color: color } as any);
+        socket?.volatile.emit("cursor-move", { x, y, color: userColor } as any);
       }
     }, 200);
 
