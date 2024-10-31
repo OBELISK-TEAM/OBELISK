@@ -132,7 +132,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
 
         socket?.volatile.emit("cursor-move", { x, y, color: color } as any);
       }
-    }, 160);
+    }, 200);
 
     if (slideData && canvasRef.current && state.canvas) {
       state.canvas.loadFromJSON(slideData, () => state.canvas?.renderAll());
