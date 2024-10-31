@@ -31,7 +31,12 @@ const SignupCard: React.FC = () => {
           </p>
           <Separator className="flex-1" />
         </div>
-        <Button variant="outline" className="flex-1" onClick={googleAuth} disabled={loading}>
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={googleAuth}
+          disabled={loading || process.env.APP_ENV === "production"}
+        >
           <GoogleIcon width={16} height={16} />
           &ensp;Google
         </Button>
