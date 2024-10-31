@@ -73,3 +73,47 @@ function hslToHex(h: number, s: number, l: number): string {
 
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+export const getContrastingTextColor = (backgroundColor: string): string => {
+  const hex = backgroundColor.replace("#", "");
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.5 ? "black" : "white";
+};
+
+export const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
+  const cleanHex = hex.replace("#", "");
+  if (cleanHex.length !== 6) {
+    return null;
+  }
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  return { r, g, b };
+};
+
+export const rgbToHex = (r: number, g: number, b: number): string => {
+  const toHex = (c: number) => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+export const darkenHexColor = (hex: string, percent: number): string => {
+  const rgb = hexToRgb(hex);
+  if (!rgb) {
+    return hex;
+  }
+  const { r, g, b } = rgb;
+  const newR = Math.max(Math.min(Math.floor(r * (1 - percent / 100)), 255), 0);
+  const newG = Math.max(Math.min(Math.floor(g * (1 - percent / 100)), 255), 0);
+  const newB = Math.max(Math.min(Math.floor(b * (1 - percent / 100)), 255), 0);
+
+  return rgbToHex(newR, newG, newB);
+};

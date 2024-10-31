@@ -2,8 +2,8 @@
 import React from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useZoom } from "@/contexts/ZoomUIContext";
-import { SlideControls } from "@/components/board/SlideControls/SlideControls";
-import Cursors from "@/components/board/Cursors/Cursors";
+import { SlideControls } from "@/components/board/slide-controls/SlideControls";
+import Cursors from "@/components/board/cursors/Cursors";
 import { useSocket } from "@/contexts/SocketContext";
 
 const SlideCanvas: React.FC = () => {

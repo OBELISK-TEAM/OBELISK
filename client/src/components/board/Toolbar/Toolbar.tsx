@@ -2,8 +2,8 @@
 import React from "react";
 import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
-import UrlControl from "@/components/board/Toolbar/Controls/UrlControl";
-import ObjectSpecificControls from "@/components/board/Toolbar/Controls/ObjectSpecificControls";
+import UrlControl from "@/components/board/toolbar/controls/UrlControl";
+import ObjectSpecificControls from "@/components/board/toolbar/controls/ObjectSpecificControls";
 
 const BoardToolBar: React.FC = () => {
   const {

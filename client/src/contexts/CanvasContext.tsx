@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect, useRef } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useRef, useMemo } from "react";
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerAction } from "@/enums/CanvasReducerAction";
@@ -15,7 +15,7 @@ import { useZoom } from "./ZoomUIContext";
 import useSocketListeners from "@/hooks/socket/useSocketListeners";
 import { useSocket } from "./SocketContext";
 import { throttle } from "lodash";
-import { getColorFromEmail } from "@/lib/emailColorGenerator";
+import { getColorFromEmail } from "@/lib/colorUtils";
 import { useAuth } from "@/contexts/AuthContext";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
@@ -40,6 +40,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const { handleZoom } = useZoom();
   const { socket } = useSocket();
   const { decodedToken } = useAuth();
+  const email = decodedToken?.email ?? "";
+  const color = useMemo(() => getColorFromEmail(email), [email]);
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current });
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
@@ -128,7 +130,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         const x = pointer.x;
         const y = pointer.y;
 
-        socket?.volatile.emit("cursor-move", { x, y, color: getColorFromEmail(decodedToken?.email ?? "") } as any);
+        socket?.volatile.emit("cursor-move", { x, y, color: color } as any);
       }
     }, 160);
 
