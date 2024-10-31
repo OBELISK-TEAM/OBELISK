@@ -1,5 +1,5 @@
 import BoardSidebar from "@/components/board/Sidebar";
-import BoardToolBar from "@/components/board/toolbar/Toolbar";
+import BoardToolBar from "@/components/board/Toolbar/Toolbar";
 import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
 import SlideCanvas from "@/components/board/Canvas";

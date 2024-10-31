@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
-import StyledLabel from "@/components/board/toolbar/ToolbarLabel";
+import StyledLabel from "@/components/board/Toolbar/ToolbarLabel";
 import { useFile } from "@/contexts/FileContext";
 import { Button } from "@/components/ui/button";
 // used when we click on the "Add Image from URL" button in the toolbar

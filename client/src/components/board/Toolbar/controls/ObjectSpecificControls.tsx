@@ -1,8 +1,8 @@
 import React, { ChangeEvent, ReactElement } from "react";
-import ToolbarInput from "@/components/board/toolbar/ToolbarInput";
+import ToolbarInput from "@/components/board/Toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
-import FontStyleControls from "@/components/board/toolbar/controls/FontStyleControls";
+import FontStyleControls from "@/components/board/Toolbar/controls/FontStyleControls";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { fabric } from "fabric";
 import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
