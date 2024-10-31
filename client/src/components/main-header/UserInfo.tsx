@@ -8,7 +8,7 @@ const UserInfo = ({ withoutLogout }: { withoutLogout?: boolean }) => {
   const { decodedToken } = useAuth();
   return (
     <>
-      <span className="font-semibold">{decodedToken?.email}</span>
+      <span className="hidden font-semibold lg:block">{decodedToken?.email}</span>
       <Avatar>
         <AvatarImage src="#" />
         <AvatarFallback>{decodedToken?.email.slice(0, 2).toUpperCase()}</AvatarFallback>
