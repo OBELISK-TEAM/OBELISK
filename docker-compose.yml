@@ -51,3 +51,9 @@ services:
       - MONGO_INITDB_DATABASE=${DB_NAME}
       - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ${DB_VOLUME_LOCATION}
+
+volumes:
+  mongo_data:
+    driver: local
