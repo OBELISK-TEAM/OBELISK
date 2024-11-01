@@ -9,7 +9,6 @@ const BoardToolBar: React.FC = () => {
   const {
     state: { activeItem },
   } = useCanvas();
-
   return (
     <div className="flex h-[50px] w-full items-center justify-between bg-background text-muted-foreground">
       <div className="flex items-center space-x-4 p-2">

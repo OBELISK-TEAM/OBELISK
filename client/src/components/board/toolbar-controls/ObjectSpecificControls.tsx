@@ -1,15 +1,19 @@
-import React, { ChangeEvent, ReactElement } from "react";
+import React, { ChangeEvent, ReactElement, useCallback } from "react";
 import ToolbarInput from "@/components/board/toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
 import FontStyleControls from "@/components/board/toolbar-controls/FontStyleControls";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { fabric } from "fabric";
-import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import { useSocket } from "@/contexts/SocketContext";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { debounce } from "lodash";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
+import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import logger from "@/lib/logger";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -17,49 +21,68 @@ const ObjectSpecificControls: React.FC = () => {
     state: { selectedObjectStyles, canvas },
     handleStyleChange,
   } = useCanvas();
-
   const { socket } = useSocket();
-
   const { saveCommand } = useUndoRedo();
+
+  const handleChange = useCallback(
+    (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
+      if (!canvas || !socket) {
+        return;
+      }
+      const modifiedObject = canvas.getActiveObject();
+      if (!modifiedObject) {
+        return;
+      }
+
+      const oldValue = modifiedObject.get(key as keyof fabric.Object);
+      const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
+
+      // I know it's cheeky, but otherwise we often register the change twice
+      if (newValue === oldValue) {
+        return;
+      }
+
+      setObjectStyle(canvas, modifiedObject, { [key]: newValue });
+      handleStyleChange();
+      //logger.log("Toolbar changing object style", key);
+      debouncedToolbarHandleChange(key, modifiedObject, oldValue, socket, canvas, saveCommand);
+    },
+    [canvas, socket, saveCommand]
+  );
+
+  const debouncedToolbarHandleChange = debounce(
+    (
+      key: string,
+      modifiedObject: fabric.Object,
+      oldValue: any,
+      socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+      canvas: fabric.Canvas,
+      saveCommand: (command: ModifyCommand) => void
+    ) => {
+      if (!socket || !canvas) {
+        return;
+      }
+      logger.log(`Debounced change in object style for key: ${key}`);
+
+      const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
+      const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
+      Object.assign(clonedJSON, { [key]: oldValue });
+
+      const updateObjectData: UpdateObjectData = {
+        object: modifiedObjectJSON,
+      };
+      socketEmitUpdateObject(socket, updateObjectData);
+
+      const objectId: string = modifiedObjectJSON._id;
+      const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
+      saveCommand(command);
+    },
+    300
+  );
 
   if (!selectedObjectStyles) {
     return null;
   }
-
-  const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (!canvas || !socket) {
-      return;
-    }
-    const modifiedObject = canvas.getActiveObject();
-    if (!modifiedObject) {
-      return;
-    }
-
-    const oldValue = modifiedObject.get(key as keyof fabric.Object);
-    const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
-
-    // I know it's cheeky, but otherwise we often register the change twice
-    if (newValue === oldValue) {
-      return;
-    }
-
-    setObjectStyle(canvas, modifiedObject, { [key]: newValue });
-    handleStyleChange();
-
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
-    const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
-    Object.assign(clonedJSON, { [key]: oldValue });
-
-    const updateObjectData: UpdateObjectData = {
-      object: modifiedObjectJSON,
-    };
-    socketEmitUpdateObject(socket, updateObjectData);
-
-    const objectId: string = modifiedObjectJSON._id;
-    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
-    saveCommand(command);
-  };
-
   const controlsMap: Record<string, ReactElement[]> = {
     [CanvasObjectTypes.I_TEXT]: [
       <ToolbarInput

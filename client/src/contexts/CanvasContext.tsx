@@ -17,6 +17,7 @@ import { useSocket } from "./SocketContext";
 import { throttle } from "lodash";
 import { getColorFromEmail } from "@/lib/colorUtils";
 import { useAuth } from "@/contexts/AuthContext";
+import { fabric } from "fabric";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
