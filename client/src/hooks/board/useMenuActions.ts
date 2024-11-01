@@ -29,6 +29,7 @@ import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { RemoveCommand } from "@/classes/undo-redo-commands/RemoveCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
+import { debounce } from "lodash";
 
 const getProperties = (color: string, size: number): CanvasActionProperties => ({
   color,
@@ -296,5 +297,7 @@ export const useMenuActions = () => {
     [canvas, color, size, actionHandlers, setCanvasMode]
   );
 
-  return { performAction };
+  const performDebouncedAction = useMemo(() => debounce(performAction, 200), [performAction]);
+
+  return { performAction, performDebouncedAction };
 };
