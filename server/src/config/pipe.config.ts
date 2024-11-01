@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 
-export function getGlobalPipeConfig(): ValidationPipe {
+export function getPipeConfig(): ValidationPipe {
   return new ValidationPipe({
     // removes properties that are not defined in the DTO
     whitelist: true,

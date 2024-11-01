@@ -7,8 +7,8 @@ import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { getRabbitConfig } from './config/rabbit.config';
 import { getCorsConfig } from './config/cors.config';
+import { getPipeConfig } from './config/pipe.config';
 import { logServerInfo } from './config/logger.config';
-import { getGlobalPipeConfig } from './config/global.pipes.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +19,7 @@ async function bootstrap() {
     DEFAULT_SERVER_PORT,
   );
 
-  const pipe: ValidationPipe = getGlobalPipeConfig();
+  const pipe: ValidationPipe = getPipeConfig();
   app.useGlobalPipes(pipe);
 
   const corsConfig: CorsOptions = getCorsConfig(configService);
