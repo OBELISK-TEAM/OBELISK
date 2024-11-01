@@ -7,6 +7,7 @@ import { fabric } from "fabric";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { useSocket } from "@/contexts/SocketContext";
+import { useToolbar } from "@/contexts/ToolbarContext";
 
 const FontStyleControls: React.FC = () => {
   const {
@@ -15,13 +16,13 @@ const FontStyleControls: React.FC = () => {
   } = useCanvas();
   const { socket } = useSocket();
   const { saveCommand } = useUndoRedo();
-
+  const { debouncedToolbarHandleChange } = useToolbar();
   const styleToggle = (
     styleKey: "fontWeight" | "fontStyle" | "underline",
     valueTrue: string | boolean,
     valueFalse: string | boolean
   ) => {
-    if (!canvas) {
+    if (!canvas || !socket) {
       return;
     }
 

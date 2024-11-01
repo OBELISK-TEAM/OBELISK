@@ -14,6 +14,7 @@ import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import logger from "@/lib/logger";
+import { useToolbar } from "@/contexts/ToolbarContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -22,6 +23,8 @@ const ObjectSpecificControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
   const { socket } = useSocket();
+  const { debouncedToolbarHandleChange } = useToolbar();
+
   const { saveCommand } = useUndoRedo();
 
   const handleChange = useCallback(
@@ -48,36 +51,6 @@ const ObjectSpecificControls: React.FC = () => {
       debouncedToolbarHandleChange(key, modifiedObject, oldValue, socket, canvas, saveCommand);
     },
     [canvas, socket, saveCommand]
-  );
-
-  const debouncedToolbarHandleChange = debounce(
-    (
-      key: string,
-      modifiedObject: fabric.Object,
-      oldValue: any,
-      socket: Socket<DefaultEventsMap, DefaultEventsMap>,
-      canvas: fabric.Canvas,
-      saveCommand: (command: ModifyCommand) => void
-    ) => {
-      if (!socket || !canvas) {
-        return;
-      }
-      logger.log(`Debounced change in object style for key: ${key}`);
-
-      const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
-      const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
-      Object.assign(clonedJSON, { [key]: oldValue });
-
-      const updateObjectData: UpdateObjectData = {
-        object: modifiedObjectJSON,
-      };
-      socketEmitUpdateObject(socket, updateObjectData);
-
-      const objectId: string = modifiedObjectJSON._id;
-      const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
-      saveCommand(command);
-    },
-    300
   );
 
   if (!selectedObjectStyles) {
