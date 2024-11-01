@@ -2,10 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { AddSlideData, DeleteSlideData } from '../dto/slide.data';
+import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
 
 @Injectable()
 export class SlideActionService {
-  constructor(private readonly slidesService: SlidesService) {}
+  constructor(
+    private readonly slidesService: SlidesService,
+    private readonly objectStatsService: ObjectStatsService,
+  ) {}
   private readonly logger = new Logger(SlideActionService.name);
 
   async handleAddSlide(
@@ -26,6 +30,7 @@ export class SlideActionService {
     const boardId = client.data.user.targetBoard.boardId;
     const slideNumber = data.slide ? data.slide.slideNumber : 1;
     const slide = await this.slidesService.deleteSlide(boardId, slideNumber);
+    void this.objectStatsService.removeStats(null, slide._id.toString(), null);
     this.logger.log(`Slide deleted: ${slide._id} by ${client.data.user.email}`);
     client.to(boardId).emit('slide-deleted', { ...slide, slideNumber });
   }
