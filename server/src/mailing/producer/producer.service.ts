@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { BaseProducerMsg } from '../../shared/interfaces/mailing/Message';
 
 @Injectable()
 export class ProducerService {
@@ -19,7 +20,7 @@ export class ProducerService {
     this.publishToQueue('welcome-email', { recipient });
   }
 
-  private publishToQueue(pattern: string, data: BaseMessageData): void {
+  private publishToQueue(pattern: string, data: BaseProducerMsg): void {
     this.client.emit(pattern, data);
   }
 
@@ -28,8 +29,4 @@ export class ProducerService {
   //   const port = this.configService.get('SERVER_PORT', DEFAULT_SERVER_PORT);
   //   return `${host}:${port}`;
   // }
-}
-
-export interface BaseMessageData {
-  recipient: string;
 }

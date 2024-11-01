@@ -8,7 +8,7 @@ export class ProducerController {
   // just a test endpoint to send a message to the queue
 
   @Get()
-  async sendMessage() {
+  sendMessage() {
     this.queueService.sendWelcomeEmail('psyduck281@gmail.com');
     return { status: 'Message sent' };
   }

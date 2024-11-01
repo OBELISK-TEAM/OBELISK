@@ -4,8 +4,8 @@ import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { BaseMessage } from '../../shared/interfaces/mailing/BaseMessage';
 import { getMailingConfig } from '../../config/mailing.config';
+import { BaseConsumerMsg } from '../../shared/interfaces/mailing/Message';
 
 @Injectable()
 export class ConsumerService {
@@ -29,7 +29,7 @@ export class ConsumerService {
     return handlebars.compile(templateSource);
   }
 
-  async sendWelcomeEmail(message: BaseMessage) {
+  async sendWelcomeEmail(message: BaseConsumerMsg): Promise<void> {
     const { recipient } = message.data;
     const html = this.welcomeTemplate({ recipient });
     await this.transporter.sendMail({
