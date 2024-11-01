@@ -5,6 +5,8 @@ import { ProducerService } from './producer.service';
 export class ProducerController {
   constructor(private readonly queueService: ProducerService) {}
 
+  // just a test endpoint to send a message to the queue
+
   @Get()
   async sendMessage() {
     this.queueService.sendWelcomeEmail('psyduck281@gmail.com');

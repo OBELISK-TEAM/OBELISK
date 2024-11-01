@@ -7,11 +7,11 @@ import {
   DEFAULT_GW_PORT,
   DEFAULT_RABBIT_HOST,
   DEFAULT_RABBIT_PORT,
-  DEFAULT_RABBIT_QUEUE,
   DEFAULT_SERVER_HOST,
   DEFAULT_SERVER_PORT,
 } from './config/dev.config';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { getRabbitConfig } from './config/rabbit.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,10 +32,6 @@ async function bootstrap() {
   const rabbitPort = configService.get<number>(
     'RABBIT_PORT',
     DEFAULT_RABBIT_PORT,
-  );
-  const rabbitQueue = configService.get<string>(
-    'RABBIT_QUEUE',
-    DEFAULT_RABBIT_QUEUE,
   );
   const gatewayPort = configService.get<number>(
     'SOCKET_GW_PORT',
@@ -65,16 +61,8 @@ async function bootstrap() {
     }),
   );
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [`amqp://${rabbitHost}:${rabbitPort}`],
-      queue: rabbitQueue,
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
+  const rabbitConfig: RmqOptions = getRabbitConfig(configService);
+  app.connectMicroservice<MicroserviceOptions>(rabbitConfig);
   await app.startAllMicroservices();
 
   await app.listen(serverPort);
