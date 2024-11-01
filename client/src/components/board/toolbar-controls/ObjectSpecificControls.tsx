@@ -7,13 +7,6 @@ import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { fabric } from "fabric";
 import { useSocket } from "@/contexts/SocketContext";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
-import { debounce } from "lodash";
-import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
-import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
-import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
-import logger from "@/lib/logger";
 import { useToolbar } from "@/contexts/ToolbarContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
@@ -50,7 +43,7 @@ const ObjectSpecificControls: React.FC = () => {
       //logger.log("Toolbar changing object style", key);
       debouncedToolbarHandleChange(key, modifiedObject, oldValue, socket, canvas, saveCommand);
     },
-    [canvas, socket, saveCommand]
+    [canvas, socket, saveCommand] // no more, no less
   );
 
   if (!selectedObjectStyles) {

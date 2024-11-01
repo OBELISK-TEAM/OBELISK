@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect, useRef, useMemo } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useRef, useMemo, useCallback } from "react";
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerAction } from "@/enums/CanvasReducerAction";
@@ -155,28 +155,28 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     }
   }, [state.canvasMode, state.color, state.size, state.canvas]);
 
-  const setCanvasMode = (mode: CanvasMode) => {
+  const setCanvasMode = useCallback((mode: CanvasMode) => {
     dispatch({ type: CanvasReducerAction.SET_CANVAS_MODE, canvasMode: mode });
-  };
+  }, []);
 
-  const setColor = (color: string) => {
+  const setColor = useCallback((color: string) => {
     dispatch({ type: CanvasReducerAction.SET_COLOR, color });
-  };
+  }, []);
 
-  const setSize = (size: number) => {
+  const setSize = useCallback((size: number) => {
     dispatch({ type: CanvasReducerAction.SET_SIZE, size });
-  };
+  }, []);
 
-  const setActiveItem = (activeItem: string | null) => {
+  const setActiveItem = useCallback((activeItem: string | null) => {
     dispatch({ type: CanvasReducerAction.SET_ACTIVE_ITEM, activeItem });
-  };
+  }, []);
 
-  const handleStyleChange = () => {
+  const handleStyleChange = useCallback(() => {
     dispatch({
       type: CanvasReducerAction.SET_SELECTED_OBJECT_STYLES,
       styles: getSelectedObjectStyles(state.canvas),
     });
-  };
+  }, [state.canvas]);
 
   useSocketListeners(socket, state.canvas);
 

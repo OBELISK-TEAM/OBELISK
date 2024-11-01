@@ -1,5 +1,5 @@
 // ToolbarContext.tsx
-import React, { createContext, useContext, ReactNode, useCallback, useMemo } from "react";
+import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { debounce } from "lodash";
 import { fabric } from "fabric";
 import { Socket } from "socket.io-client";
@@ -9,8 +9,6 @@ import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import logger from "@/lib/logger";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { useSocket } from "@/contexts/SocketContext";
-import { useUndoRedo } from "@/contexts/UndoRedoContext";
 
 interface ToolbarContextProps {
   debouncedToolbarHandleChange: DebouncedToolbarHandleChange;
@@ -32,13 +30,10 @@ interface ToolbarProviderProps {
 }
 
 export const ToolbarProvider: React.FC<ToolbarProviderProps> = ({ children }) => {
-  const { state: canvasState, handleStyleChange } = useCanvas();
-  const { socket } = useSocket();
-  const { saveCommand } = useUndoRedo();
+  const { handleStyleChange } = useCanvas();
+
   /**
-   *useMemo is used to memoize any value, in this case a function returning a debounced function.
-   * This is more appropriate because debounce returns a new function
-   * and useMemo allows that returned function to be memoized.
+   * useMemo is used to memoize any value, in this case a function returning a debounced function.
    * **/
   const debouncedToolbarHandleChange: DebouncedToolbarHandleChange = useMemo(
     () =>
