@@ -1,4 +1,3 @@
-// ToolbarContext.tsx
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { debounce } from "lodash";
 import { fabric } from "fabric";
@@ -9,19 +8,11 @@ import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import logger from "@/lib/logger";
 import { useCanvas } from "@/contexts/CanvasContext";
+import { HandleToolbarChangeDebounced } from "@/types/HandleToolbarChangeDebounced";
 
 interface ToolbarContextProps {
-  debouncedToolbarHandleChange: DebouncedToolbarHandleChange;
+  handleToolbarChangeDebounced: HandleToolbarChangeDebounced;
 }
-
-type DebouncedToolbarHandleChange = (
-  key: string,
-  modifiedObject: fabric.Object,
-  oldValue: any,
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>,
-  canvas: fabric.Canvas,
-  saveCommand: (command: ModifyCommand) => void
-) => void;
 
 const ToolbarContext = createContext<ToolbarContextProps | undefined>(undefined);
 
@@ -35,7 +26,7 @@ export const ToolbarProvider: React.FC<ToolbarProviderProps> = ({ children }) =>
   /**
    * useMemo is used to memoize any value, in this case a function returning a debounced function.
    * **/
-  const debouncedToolbarHandleChange: DebouncedToolbarHandleChange = useMemo(
+  const handleToolbarChangeDebounced: HandleToolbarChangeDebounced = useMemo(
     () =>
       debounce(
         (
@@ -69,7 +60,7 @@ export const ToolbarProvider: React.FC<ToolbarProviderProps> = ({ children }) =>
     [handleStyleChange]
   );
 
-  return <ToolbarContext.Provider value={{ debouncedToolbarHandleChange }}>{children}</ToolbarContext.Provider>;
+  return <ToolbarContext.Provider value={{ handleToolbarChangeDebounced }}>{children}</ToolbarContext.Provider>;
 };
 
 export const useToolbar = (): ToolbarContextProps => {

@@ -16,7 +16,7 @@ const FontStyleControls: React.FC = () => {
   } = useCanvas();
   const { socket } = useSocket();
   const { saveCommand } = useUndoRedo();
-  const { debouncedToolbarHandleChange } = useToolbar();
+  const { handleToolbarChangeDebounced } = useToolbar();
   const styleToggle = (
     styleKey: "fontWeight" | "fontStyle" | "underline",
     valueTrue: string | boolean,
@@ -39,7 +39,7 @@ const FontStyleControls: React.FC = () => {
 
     setObjectStyle(canvas, modifiedObject, { [styleKey]: newValue });
     handleStyleChange();
-    debouncedToolbarHandleChange(styleKey, modifiedObject, oldValue, socket, canvas, saveCommand);
+    handleToolbarChangeDebounced(styleKey, modifiedObject, oldValue, socket, canvas, saveCommand);
   };
 
   const onBoldClick = () => styleToggle("fontWeight", "bold", "normal");

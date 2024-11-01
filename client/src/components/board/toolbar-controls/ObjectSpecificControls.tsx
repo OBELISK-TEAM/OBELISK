@@ -16,7 +16,7 @@ const ObjectSpecificControls: React.FC = () => {
     handleStyleChange,
   } = useCanvas();
   const { socket } = useSocket();
-  const { debouncedToolbarHandleChange } = useToolbar();
+  const { handleToolbarChangeDebounced } = useToolbar();
 
   const { saveCommand } = useUndoRedo();
 
@@ -41,7 +41,7 @@ const ObjectSpecificControls: React.FC = () => {
       setObjectStyle(canvas, modifiedObject, { [key]: newValue });
       handleStyleChange();
       //logger.log("Toolbar changing object style", key);
-      debouncedToolbarHandleChange(key, modifiedObject, oldValue, socket, canvas, saveCommand);
+      handleToolbarChangeDebounced(key, modifiedObject, oldValue, socket, canvas, saveCommand);
     },
     [canvas, socket, saveCommand] // no more, no less
   );
