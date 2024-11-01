@@ -79,6 +79,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/handlebars": "^4.0.40",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.8.6",
     "@types/nodemailer": "^6.4.16",
     "@types/passport-google-oauth20": "^2.0.16",
