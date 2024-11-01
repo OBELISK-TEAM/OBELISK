@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
-  DEFAULT_CORS_ORIGIN,
   DEFAULT_GW_PORT,
   DEFAULT_RABBITMQ_HOST,
   DEFAULT_RABBITMQ_PORT,
@@ -12,6 +11,8 @@ import {
 } from './config/dev.config';
 import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
 import { getRabbitConfig } from './config/rabbit.config';
+import { getCorsConfig } from './config/cors.config';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,17 +38,6 @@ async function bootstrap() {
     'SOCKET_GW_PORT',
     DEFAULT_GW_PORT,
   );
-  const corsOrigin = configService.get<string>(
-    'CORS_ORIGIN',
-    DEFAULT_CORS_ORIGIN,
-  );
-
-  app.enableCors({
-    origin: [corsOrigin], // 'true' for all origins, or an array of allowed origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
 
   // global validation pipe
   app.useGlobalPipes(
@@ -60,6 +50,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  const corsConfig: CorsOptions = getCorsConfig(configService);
+  app.enableCors(corsConfig);
 
   const rabbitConfig: RmqOptions = getRabbitConfig(configService);
   app.connectMicroservice<MicroserviceOptions>(rabbitConfig);
