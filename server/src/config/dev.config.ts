@@ -7,9 +7,9 @@
 export const DEFAULT_SERVER_HOST = 'localhost';
 export const DEFAULT_SERVER_PORT = 8080;
 
-export const DEFAULT_RABBIT_HOST = 'localhost';
-export const DEFAULT_RABBIT_PORT = 5672;
-export const DEFAULT_RABBIT_QUEUE = 'default-mailing-queue';
+export const DEFAULT_RABBITMQ_HOST = 'localhost';
+export const DEFAULT_RABBITMQ_PORT = 5672;
+export const DEFAULT_RABBITMQ_QUEUE = 'default-mailing-queue';
 
 export const DEFAULT_GW_PORT = 8081;
 

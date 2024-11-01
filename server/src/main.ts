@@ -5,8 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import {
   DEFAULT_CORS_ORIGIN,
   DEFAULT_GW_PORT,
-  DEFAULT_RABBIT_HOST,
-  DEFAULT_RABBIT_PORT,
+  DEFAULT_RABBITMQ_HOST,
+  DEFAULT_RABBITMQ_PORT,
   DEFAULT_SERVER_HOST,
   DEFAULT_SERVER_PORT,
 } from './config/dev.config';
@@ -25,13 +25,13 @@ async function bootstrap() {
     'SERVER_PORT',
     DEFAULT_SERVER_PORT,
   );
-  const rabbitHost = configService.get<string>(
-    'RABBIT_HOST',
-    DEFAULT_RABBIT_HOST,
+  const rabbitmqHost = configService.get<string>(
+    'RABBITMQ_HOST',
+    DEFAULT_RABBITMQ_HOST,
   );
-  const rabbitPort = configService.get<number>(
-    'RABBIT_PORT',
-    DEFAULT_RABBIT_PORT,
+  const rabbitmqPort = configService.get<number>(
+    'RABBITMQ_PORT',
+    DEFAULT_RABBITMQ_PORT,
   );
   const gatewayPort = configService.get<number>(
     'SOCKET_GW_PORT',
@@ -75,7 +75,7 @@ async function bootstrap() {
     'Bootstrap',
   );
   Logger.log(
-    `RabbitMQ microservice running at amqp://${rabbitHost}:${rabbitPort}`,
+    `RabbitMQ microservice running at amqp://${rabbitmqHost}:${rabbitmqPort}`,
     'Bootstrap',
   );
 }
