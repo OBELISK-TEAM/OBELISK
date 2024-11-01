@@ -1,33 +1,57 @@
 import { Module } from '@nestjs/common';
 import { ProducerService } from './producer.service';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import {
+  ClientProxyFactory,
+  RmqOptions,
+  Transport,
+} from '@nestjs/microservices';
 import { ProducerController } from './producer.controller';
-import { CacheModule } from '@nestjs/cache-manager';
-
-// creating proxy client for RabbitMQ
-// with no need to  direct connection to RabbitMQ
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  DEFAULT_RABBIT_HOST,
+  DEFAULT_RABBIT_PORT,
+  DEFAULT_RABBIT_QUEUE,
+} from '../../config/dev.config';
 
 @Module({
-  imports: [CacheModule.register()],
+  imports: [ConfigModule],
   controllers: [ProducerController],
   providers: [
     ProducerService,
     {
       provide: 'MAILING_CLIENT',
-      useFactory: () => {
-        return ClientProxyFactory.create({
-          transport: Transport.RMQ,
-          options: {
-            urls: ['amqp://localhost:5672'],
-            queue: 'mailing-queue',
-            queueOptions: {
-              durable: false,
-            },
-          },
-        });
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const mailingConfig = getMailingConfig(configService);
+        return ClientProxyFactory.create(mailingConfig);
       },
     },
   ],
   exports: [ProducerService],
 })
 export class ProducerModule {}
+
+function getMailingConfig(configService: ConfigService): RmqOptions {
+  const rabbitHost = configService.get<string>(
+    'RABBIT_HOST',
+    DEFAULT_RABBIT_HOST,
+  );
+  const rabbitPort = configService.get<number>(
+    'RABBIT_PORT',
+    DEFAULT_RABBIT_PORT,
+  );
+  const rabbitQueue = configService.get<string>(
+    'RABBIT_QUEUE',
+    DEFAULT_RABBIT_QUEUE,
+  );
+  return {
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://${rabbitHost}:${rabbitPort}`],
+      queue: rabbitQueue,
+      queueOptions: {
+        durable: false,
+      },
+    },
+  };
+}

@@ -5,6 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import {
   DEFAULT_CORS_ORIGIN,
   DEFAULT_GW_PORT,
+  DEFAULT_RABBIT_HOST,
+  DEFAULT_RABBIT_PORT,
+  DEFAULT_RABBIT_QUEUE,
   DEFAULT_SERVER_HOST,
   DEFAULT_SERVER_PORT,
 } from './config/dev.config';
@@ -22,15 +25,22 @@ async function bootstrap() {
     'SERVER_PORT',
     DEFAULT_SERVER_PORT,
   );
+  const rabbitHost = configService.get<string>(
+    'RABBIT_HOST',
+    DEFAULT_RABBIT_HOST,
+  );
+  const rabbitPort = configService.get<number>(
+    'RABBIT_PORT',
+    DEFAULT_RABBIT_PORT,
+  );
+  const rabbitQueue = configService.get<string>(
+    'RABBIT_QUEUE',
+    DEFAULT_RABBIT_QUEUE,
+  );
   const gatewayPort = configService.get<number>(
     'SOCKET_GW_PORT',
     DEFAULT_GW_PORT,
   );
-  // const rabbitPort = configService.get<number>(
-  //   'RABBIT_PORT',
-  //   DEFAULT_RABBIT_PORT,
-  // );
-
   const corsOrigin = configService.get<string>(
     'CORS_ORIGIN',
     DEFAULT_CORS_ORIGIN,
@@ -58,8 +68,8 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://localhost:5672'],
-      queue: 'mailing-queue',
+      urls: [`amqp://${rabbitHost}:${rabbitPort}`],
+      queue: rabbitQueue,
       queueOptions: {
         durable: false,
       },
@@ -76,10 +86,10 @@ async function bootstrap() {
     `Socket gateway running at ws://${serverHost}:${gatewayPort}/gateway`,
     'Bootstrap',
   );
-  // Logger.log(
-  //   `RabbitMQ microservice running at amqp://${serverHost}:${rabbitPort}`,
-  //   'Bootstrap',
-  // );
+  Logger.log(
+    `RabbitMQ microservice running at amqp://${rabbitHost}:${rabbitPort}`,
+    'Bootstrap',
+  );
 }
 
 void bootstrap();

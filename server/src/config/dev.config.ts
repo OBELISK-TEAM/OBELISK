@@ -2,12 +2,16 @@
 // these values are used in development
 // they are not used in production
 
-// main.ts
+// main.ts + producer.module.ts
 
 export const DEFAULT_SERVER_HOST = 'localhost';
 export const DEFAULT_SERVER_PORT = 8080;
+
+export const DEFAULT_RABBIT_HOST = 'localhost';
+export const DEFAULT_RABBIT_PORT = 5672;
+export const DEFAULT_RABBIT_QUEUE = 'default-mailing-queue';
+
 export const DEFAULT_GW_PORT = 8081;
-// export const DEFAULT_RABBIT_PORT = 5672;
 
 export const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 
