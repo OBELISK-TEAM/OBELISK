@@ -65,6 +65,7 @@ export const ToolbarProvider: React.FC<ToolbarProviderProps> = ({ children }) =>
 
 export const useToolbar = (): ToolbarContextProps => {
   const context = useContext(ToolbarContext);
+
   if (!context) {
     throw new Error("useToolbar must be used within a ToolbarProvider");
   }
