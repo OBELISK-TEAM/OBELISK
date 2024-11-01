@@ -105,18 +105,3 @@ export const updateDimensions = (obj: any): void => {
   }
   obj.setCoords();
 };
-
-//todo: make use of this zoom function
-export const handleZoom = (opt: fabric.IEvent<WheelEvent>): void => {
-  const evt = opt.e;
-  const target = opt.target as unknown as fabric.Canvas | undefined;
-  if (target && target instanceof fabric.Canvas) {
-    const delta = evt.deltaY;
-    const pointer = target.getPointer(evt);
-    const zoom = target.getZoom();
-    const newZoom = zoom * (1 - delta / 200);
-    target.zoomToPoint(new fabric.Point(pointer.x, pointer.y), newZoom);
-    evt.preventDefault();
-    evt.stopPropagation();
-  }
-};
