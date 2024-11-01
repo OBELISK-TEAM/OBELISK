@@ -26,7 +26,6 @@ import { MailingModule } from './mailing/mailing.module';
     BoardsModule,
     StatsModule,
     MailingModule,
-    // TestM
   ],
   providers: [
     {

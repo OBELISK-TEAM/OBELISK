@@ -1,0 +1,76 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
+import * as handlebars from 'handlebars';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { BaseMessage } from '../../shared/interfaces/mailing/BaseMessage';
+import {
+  DEFAULT_MAILING_HOST,
+  DEFAULT_MAILING_PASS,
+  DEFAULT_MAILING_PORT,
+  DEFAULT_MAILING_SECURE,
+  DEFAULT_MAILING_USER,
+} from '../../config/dev.config';
+
+@Injectable()
+export class ConsumerService {
+  private readonly logger = new Logger(ConsumerService.name);
+  private readonly transporter: nodemailer.Transporter;
+  private readonly welcomeTemplate: handlebars.TemplateDelegate;
+
+  constructor(private readonly configService: ConfigService) {
+    const mailingOptions = this.getMailingOptions();
+    this.transporter = nodemailer.createTransport(mailingOptions);
+    this.welcomeTemplate = this.loadTemplate('welcome.hbs');
+  }
+
+  private loadTemplate(templateName: string): handlebars.TemplateDelegate {
+    const templatesFolderPath = path.join(
+      process.cwd(),
+      'src/mailing/consumer/templates',
+    );
+    const templatePath = path.join(templatesFolderPath, templateName);
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    return handlebars.compile(templateSource);
+  }
+
+  async sendWelcomeEmail(message: BaseMessage) {
+    const { recipient } = message.data;
+    const html = this.welcomeTemplate({ recipient });
+    await this.transporter.sendMail({
+      to: recipient,
+      subject: 'Welcome to Our Service!',
+      html: html,
+    });
+    this.logger.log(`Welcome email sent to ${recipient}`);
+  }
+
+  private getMailingOptions(): SMTPTransport.Options {
+    return {
+      host: this.configService.get<string>(
+        'MAILING_HOST',
+        DEFAULT_MAILING_HOST,
+      ),
+      port: this.configService.get<number>(
+        'MAILING_PORT',
+        DEFAULT_MAILING_PORT,
+      ),
+      secure: this.configService.get<boolean>(
+        'MAILING_SECURE',
+        DEFAULT_MAILING_SECURE,
+      ),
+      auth: {
+        user: this.configService.get<string>(
+          'MAILING_USER',
+          DEFAULT_MAILING_USER,
+        ),
+        pass: this.configService.get<string>(
+          'MAILING_PASS',
+          DEFAULT_MAILING_PASS,
+        ),
+      },
+    };
+  }
+}

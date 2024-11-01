@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { QueueModule } from './producer/queue.module';
-import { ProcessModule } from './consumer/process.module';
+import { ProducerModule } from './producer/producer.module';
+import { ConsumerModule } from './consumer/consumer.module';
 
 @Module({
-  imports: [QueueModule, ProcessModule],
+  imports: [ProducerModule, ConsumerModule],
 })
 export class MailingModule {}

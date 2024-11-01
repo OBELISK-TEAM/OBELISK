@@ -7,7 +7,7 @@
 export const DEFAULT_SERVER_HOST = 'localhost';
 export const DEFAULT_SERVER_PORT = 8080;
 export const DEFAULT_GW_PORT = 8081;
-export const DEFAULT_RABBIT_PORT = 5672;
+// export const DEFAULT_RABBIT_PORT = 5672;
 
 export const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 
@@ -29,3 +29,11 @@ export const DEFAULT_GOOGLE_CALLBACK_URL = 'https://localhost:3000/sth';
 // boards.service.ts
 
 export const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
+
+// consumer.service.ts (RabbitMQ)
+
+export const DEFAULT_MAILING_HOST = 'smtp.gmail.com';
+export const DEFAULT_MAILING_PORT = 465;
+export const DEFAULT_MAILING_SECURE = true;
+export const DEFAULT_MAILING_USER = 'your.email@gmail.com';
+export const DEFAULT_MAILING_PASS = 'application passwords -> generate';
