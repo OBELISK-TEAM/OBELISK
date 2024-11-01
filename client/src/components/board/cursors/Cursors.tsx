@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { throttle } from "lodash";
 import { Socket } from "socket.io-client";
 import logger from "@/lib/logger";
 import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
@@ -7,7 +6,6 @@ import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
 import { useCanvas } from "@/contexts/CanvasContext";
 import Cursor from "./Cursor";
 import { getColorFromEmail } from "@/lib/colorUtils";
-import { DELAYS } from "@/config/delayConfig";
 
 interface CursorsProps {
   socket: Socket | null;
