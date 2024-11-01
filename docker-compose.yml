@@ -30,26 +30,20 @@ services:
     environment:
       - SERVER_HOST
       - SERVER_PORT
-
       - RABBITMQ_HOST
       - RABBITMQ_PORT
       - RABBITMQ_QUEUE
-
       - SOCKET_GW_PORT
-
       - DB_NAME
       - DB_USER
       - DB_PASSWORD
       - DB_HOST=mongo
       - DB_PORT
-
       - JWT_SECRET
       - JWT_EXPIRES_IN
-
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
       - GOOGLE_CALLBACK_URL
-
       - MAILING_HOST
       - MAILING_PORT
       - MAILING_SECURE
@@ -73,5 +67,5 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
     container_name: obelisk_rabbitmq_container
     environment:
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_USER
+      - RABBITMQ_PASSWORD

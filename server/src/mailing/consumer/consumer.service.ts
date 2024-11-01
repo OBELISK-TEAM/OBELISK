@@ -5,7 +5,7 @@ import * as handlebars from 'handlebars';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { getMailingConfig } from '../../config/mailing.config';
-import { BaseConsumerMsg } from '../../shared/interfaces/mailing/Message';
+import { WelcomeEmailMessage } from '../../shared/interfaces/mailing/Message';
 
 @Injectable()
 export class ConsumerService {
@@ -29,8 +29,8 @@ export class ConsumerService {
     return handlebars.compile(templateSource);
   }
 
-  async sendWelcomeEmail(message: BaseConsumerMsg): Promise<void> {
-    const { recipient } = message.data;
+  async sendWelcomeEmail(message: WelcomeEmailMessage): Promise<void> {
+    const { recipient } = message;
     const html = this.welcomeTemplate({ recipient });
     await this.transporter.sendMail({
       to: recipient,

@@ -24,7 +24,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { MinimumBoardPermission } from '../modules/auth/decorators/permissions.decorator';
+import { MinimumBoardPermission } from '../shared/decorators/permissions.decorator';
 import { BoardPermission } from '../shared/enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
 import { SlideResponseObject } from '../shared/interfaces/response-objects/SlideResponseObject';
@@ -138,10 +138,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('cursor-move')
   @MinimumBoardPermission(BoardPermission.VIEWER)
-  handleCursorMove(
-    client: GwSocketWithTarget,
-    data: CursorMoveData,
-  ): void {
+  handleCursorMove(client: GwSocketWithTarget, data: CursorMoveData): void {
     this.cursorActionService.handleCursorMove(client, data);
   }
 }

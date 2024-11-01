@@ -7,7 +7,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { User } from './decorators/users.decorator';
+import { User } from '../../shared/decorators/users.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
@@ -16,7 +16,10 @@ import { CreateUserDto } from '../users/users.dto';
 import { GoogleAuthGuard } from './guards/google.auth.guard';
 import { Request, Response } from 'express';
 import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
-import { MinimumRole, RequiredRole } from './decorators/roles.decorator';
+import {
+  MinimumRole,
+  RequiredRole,
+} from '../../shared/decorators/roles.decorator';
 import { UserRole } from '../../shared/enums/user.role';
 import { RoleAuthGuard } from './guards/role.auth.guard';
 

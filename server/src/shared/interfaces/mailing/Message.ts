@@ -1,12 +1,10 @@
-interface BaseMsg {
+export interface BaseMessage {
   recipient: string;
 }
 
-export interface BaseConsumerMsg extends BaseMsg {
+export interface RabbitBufferContent {
   pattern: string;
-  data: BaseMsg;
+  data: unknown;
 }
 
-export interface BaseProducerMsg extends BaseMsg {}
-
-export interface WelcomeEmailMsg extends BaseConsumerMsg {}
+export interface WelcomeEmailMessage extends BaseMessage {}
