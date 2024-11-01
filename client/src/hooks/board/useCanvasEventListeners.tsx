@@ -10,6 +10,7 @@ import { socketEmitAddObject, socketEmitUpdateObject } from "@/lib/board/socketE
 import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
+import { debounce } from "lodash";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -71,7 +72,7 @@ const useCanvasEventHandlers = (
       saveCommand(new ComplexCommand(commands));
     };
 
-    const handleObjectModified = (e: fabric.IEvent) => {
+    const handleObjectModified = debounce((e: fabric.IEvent) => {
       if (e.target?.type === "activeSelection") {
         handleActiveSelectionModification();
         return;
@@ -100,7 +101,7 @@ const useCanvasEventHandlers = (
       saveCommand(command);
 
       handleStyleChange();
-    };
+    }, 300);
 
     const handleMultipleSelections = () => {
       const activeObjects = canvas.getActiveObjects();
