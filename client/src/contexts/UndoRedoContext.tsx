@@ -6,6 +6,7 @@ import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfac
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventListeners";
 import { useSocket } from "./SocketContext";
 import { debounce } from "lodash";
+import { DELAYS } from "@/config/delayConfig";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -70,9 +71,9 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useCanvasEventHandlers(canvas, saveCommand, handleStyleChange);
 
-  const debouncedUndo = useMemo(() => debounce(undo, 200), [undo]);
+  const debouncedUndo = useMemo(() => debounce(undo, DELAYS.MENU_ACTIONS), [undo]);
 
-  const debouncedRedo = useMemo(() => debounce(redo, 200), [redo]);
+  const debouncedRedo = useMemo(() => debounce(redo, DELAYS.MENU_ACTIONS), [redo]);
 
   return (
     <UndoRedoContext.Provider value={{ saveCommand, undo: debouncedUndo, redo: debouncedRedo }}>

@@ -9,6 +9,7 @@ import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import logger from "@/lib/logger";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { HandleToolbarChangeDebounced } from "@/types/HandleToolbarChangeDebounced";
+import { DELAYS } from "@/config/delayConfig";
 
 interface ToolbarContextProps {
   handleToolbarChangeDebounced: HandleToolbarChangeDebounced;
@@ -55,7 +56,7 @@ export const ToolbarProvider: React.FC<ToolbarProviderProps> = ({ children }) =>
           const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
           saveCommand(command);
         },
-        300
+        DELAYS.TOOLBAR_HANDLE_CHANGE
       ),
     [handleStyleChange]
   );

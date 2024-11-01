@@ -7,6 +7,7 @@ import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
 import { useCanvas } from "@/contexts/CanvasContext";
 import Cursor from "./Cursor";
 import { getColorFromEmail } from "@/lib/colorUtils";
+import { DELAYS } from "@/config/delayConfig";
 
 interface CursorsProps {
   socket: Socket | null;
@@ -24,7 +25,7 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
       return;
     }
 
-    const handleIncomingCursorMove = throttle((data: CursorPosition) => {
+    const handleIncomingCursorMove = (data: CursorPosition) => {
       const userId = data.user._id;
 
       if (userId === currentUserId) {
@@ -35,7 +36,7 @@ const Cursors: React.FC<CursorsProps> = ({ socket, currentUserId }) => {
         const otherCursors = prevCursors.filter((cursor) => cursor.user._id !== userId);
         return [...otherCursors, data];
       });
-    }, 200);
+    };
 
     const handleCursorJoin = (data: BasicUserInfo) => {
       const { _id: userId } = data;

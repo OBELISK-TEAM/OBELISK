@@ -11,6 +11,7 @@ import { AddCommand } from "@/classes/undo-redo-commands/AddCommand";
 import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
 import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { debounce } from "lodash";
+import { DELAYS } from "@/config/delayConfig";
 
 const useCanvasEventHandlers = (
   canvas: fabric.Canvas | null,
@@ -101,7 +102,7 @@ const useCanvasEventHandlers = (
       saveCommand(command);
 
       handleStyleChange();
-    }, 300);
+    }, DELAYS.OBJECT_MODIFIED);
 
     const handleMultipleSelections = () => {
       const activeObjects = canvas.getActiveObjects();

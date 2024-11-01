@@ -18,6 +18,7 @@ import { throttle } from "lodash";
 import { getColorFromEmail } from "@/lib/colorUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import { fabric } from "fabric";
+import { DELAYS } from "@/config/delayConfig";
 
 const CanvasContext = createContext<ICanvasContext | undefined>(undefined);
 
@@ -133,7 +134,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
 
         socket?.volatile.emit("cursor-move", { x, y, color: userColor } as any);
       }
-    }, 200);
+    }, DELAYS.CURSOR_MOVE);
 
     if (slideData && canvasRef.current && state.canvas) {
       state.canvas.loadFromJSON(slideData, () => state.canvas?.renderAll());
