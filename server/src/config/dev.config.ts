@@ -2,7 +2,7 @@
 // these values are used in development
 // they are not used in production
 
-// main.ts + producer.module.ts
+// main.ts + rabbit.config.ts
 
 export const DEFAULT_SERVER_HOST = 'localhost';
 export const DEFAULT_SERVER_PORT = 8080;
@@ -15,7 +15,7 @@ export const DEFAULT_GW_PORT = 8081;
 
 export const DEFAULT_CORS_ORIGIN = 'http://localhost:3000';
 
-// mongo.module.ts
+// mongo.config.ts
 
 export const DEFAULT_DB_HOST = 'localhost';
 
@@ -34,7 +34,7 @@ export const DEFAULT_GOOGLE_CALLBACK_URL = 'https://localhost:3000/sth';
 
 export const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
 
-// consumer.service.ts (RabbitMQ)
+// mailing.config.ts
 
 export const DEFAULT_MAILING_HOST = 'smtp.gmail.com';
 export const DEFAULT_MAILING_PORT = 465;
