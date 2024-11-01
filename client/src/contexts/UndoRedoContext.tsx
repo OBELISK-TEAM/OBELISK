@@ -1,10 +1,12 @@
 "use client";
-import React, { createContext, useContext, useRef, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useRef, useCallback, useEffect, useMemo } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventListeners";
 import { useSocket } from "./SocketContext";
+import { debounce } from "lodash";
+import { toast } from "sonner";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
@@ -45,6 +47,8 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     lastAction.undo(socket);
     redoStack.current.push(lastAction);
     canvas.renderAll();
+    //toast.dismiss();
+    //toast.message("Undo performed");  for testing purposes
   }, [socket]);
 
   const redo = useCallback(() => {
@@ -61,11 +65,21 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     lastAction.redo(socket);
     undoStack.current.push(lastAction);
     canvas.renderAll();
+    //toast.dismiss();
+    //toast.message("Redo performed"); for testing purposes
   }, [socket]);
 
   useCanvasEventHandlers(canvas, saveCommand, handleStyleChange);
 
-  return <UndoRedoContext.Provider value={{ saveCommand, undo, redo }}>{children}</UndoRedoContext.Provider>;
+  const debouncedUndo = useMemo(() => debounce(undo, 200), [undo]);
+
+  const debouncedRedo = useMemo(() => debounce(redo, 200), [redo]);
+
+  return (
+    <UndoRedoContext.Provider value={{ saveCommand, undo: debouncedUndo, redo: debouncedRedo }}>
+      {children}
+    </UndoRedoContext.Provider>
+  );
 };
 
 export const useUndoRedo = () => {
