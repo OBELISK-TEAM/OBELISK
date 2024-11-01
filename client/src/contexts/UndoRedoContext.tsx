@@ -6,7 +6,6 @@ import { UndoRedoContext as IUndoRedoContext, UndoRedoCommand } from "@/interfac
 import useCanvasEventHandlers from "@/hooks/board/useCanvasEventListeners";
 import { useSocket } from "./SocketContext";
 import { debounce } from "lodash";
-import { toast } from "sonner";
 
 const UndoRedoContext = createContext<IUndoRedoContext | undefined>(undefined);
 
