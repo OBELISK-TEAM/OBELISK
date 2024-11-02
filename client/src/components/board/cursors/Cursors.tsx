@@ -4,7 +4,7 @@ import logger from "@/lib/logger";
 import { CursorPosition } from "@/interfaces/responses/cursor/cursor-position-emit";
 import { BasicUserInfo } from "@/interfaces/socket/SocketCallbacksData";
 import { useCanvas } from "@/contexts/CanvasContext";
-import Cursor from "./Cursor";
+import { Cursor } from "./Cursor";
 import { getColorFromEmail } from "@/lib/colorUtils";
 
 interface CursorsProps {

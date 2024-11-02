@@ -10,25 +10,21 @@ interface CursorProps {
   canvas: fabric.Canvas | null;
 }
 
-const Cursor: React.FC<CursorProps> = ({ cursor, canvas }) => {
+export const Cursor: React.FC<CursorProps> = ({ cursor, canvas }) => {
   const color = useMemo(() => getColorFromEmail(cursor.user.email), [cursor.user.email]);
 
   const cursorColor = useMemo(() => darkerColor(color, 20), [color]);
 
-  const { clampedX, clampedY } = useMemo(() => {
-    if (!canvas) {
-      return { clampedX: 0, clampedY: 0 };
-    }
+  if (!canvas) {
+    return null;
+  }
 
-    const transform = canvas.viewportTransform;
-    const point = new fabric.Point(cursor.cursorData.x, cursor.cursorData.y);
-    const transformedPoint = fabric.util.transformPoint(point, transform as number[]);
+  const transform = canvas.viewportTransform;
+  const point = new fabric.Point(cursor.cursorData.x, cursor.cursorData.y);
+  const transformedPoint = fabric.util.transformPoint(point, transform as number[]);
 
-    const clampedX = Math.min(Math.max(transformedPoint.x, 0), canvas.getWidth());
-    const clampedY = Math.min(Math.max(transformedPoint.y, 0), canvas.getHeight());
-
-    return { clampedX, clampedY };
-  }, [canvas, cursor.cursorData.x, cursor.cursorData.y]);
+  const clampedX = Math.min(Math.max(transformedPoint.x, 0), canvas.getWidth());
+  const clampedY = Math.min(Math.max(transformedPoint.y, 0), canvas.getHeight());
 
   return (
     <motion.div
@@ -49,5 +45,3 @@ const Cursor: React.FC<CursorProps> = ({ cursor, canvas }) => {
     </motion.div>
   );
 };
-
-export default React.memo(Cursor);

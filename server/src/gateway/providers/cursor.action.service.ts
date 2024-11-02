@@ -6,11 +6,8 @@ import { CursorMoveData } from '../dto/cursor.data';
 export class CursorActionService {
   private readonly logger = new Logger(CursorActionService.name);
 
-  handleCursorMove(
-    client: GwSocketWithTarget,
-    data: CursorMoveData,
-  ): void {
-    const user  = client.data.user;
+  handleCursorMove(client: GwSocketWithTarget, data: CursorMoveData): void {
+    const user = client.data.user;
     const { x, y, color } = data;
     const slideId = client.data.user.targetSlide.slideId;
 
@@ -34,6 +31,4 @@ export class CursorActionService {
     //   `Cursor moved by user ${user.email} in slide ${slideId}: (${x}, ${y})`,
     // );
   }
-
-
 }
