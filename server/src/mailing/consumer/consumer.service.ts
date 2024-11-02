@@ -20,10 +20,7 @@ export class ConsumerService {
   }
 
   private loadTemplate(templateName: string): handlebars.TemplateDelegate {
-    const templatesFolderPath = path.join(
-      process.cwd(),
-      'src/mailing/consumer/templates',
-    );
+    const templatesFolderPath = path.join(__dirname, '..', 'templates');
     const templatePath = path.join(templatesFolderPath, templateName);
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     return handlebars.compile(templateSource);

@@ -32,6 +32,7 @@ export const DEFAULT_GOOGLE_CALLBACK_URL = 'https://localhost:3000/sth';
 
 // boards.service.ts
 
+export const DEFAULT_SLIDE_LIMIT_PER_BOARD = 10;
 export const DEFAULT_MAX_BOARD_SIZE_IN_BYTES = 1;
 
 // mailing.config.ts

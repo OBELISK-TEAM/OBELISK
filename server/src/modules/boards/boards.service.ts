@@ -30,15 +30,25 @@ import { ObjectStatsService } from '../stats/object/object.stats.service';
 
 @Injectable()
 export class BoardsService {
+  private readonly maxBoardSizeInBytes: number;
+
   constructor(
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
-    private readonly res: ResponseService,
     private readonly objectStatsService: ObjectStatsService,
-  ) {}
+    private readonly res: ResponseService) {
+    this.maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
+  }
+
+  private getMaxBoardSizeInBytes(): number {
+    return this.configService.get<number>(
+      'MAX_BOARD_SIZE_IN_BYTES',
+      DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
+    );
+  }
 
   async getBoardById(boardId: string): Promise<BoardResponseObject> {
     const board = await this.findBoardById(boardId);
@@ -148,7 +158,7 @@ export class BoardsService {
     boardId: string,
   ): Promise<PopulatedBoardResponseObject> {
     const board = await this.findBoardById(boardId);
-    const maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
+    const maxBoardSizeInBytes = this.maxBoardSizeInBytes;
     return {
       ...(await this.prepareBoardResponse(board, userId)),
       maxBoardSizeInBytes,
@@ -324,13 +334,6 @@ export class BoardsService {
     query: FilterQuery<SuperBoardDocument>,
   ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
-  }
-
-  private getMaxBoardSizeInBytes(): number {
-    return this.configService.get<number>(
-      'MAX_BOARD_SIZE_IN_BYTES',
-      DEFAULT_MAX_BOARD_SIZE_IN_BYTES,
-    );
   }
 }
 
