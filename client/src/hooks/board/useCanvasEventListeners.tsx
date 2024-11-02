@@ -46,6 +46,26 @@ const useCanvasEventHandlers = (
       socketEmitAddObject(socket, addObjectData, callback);
     };
 
+    const debouncedActiveSelectionModification = debounce((activeObjectsJSONs: any[]) => {
+      if (!socket) {
+        return;
+      }
+
+      activeObjectsJSONs.forEach((activeObjectJSON) => {
+        const updateObjectData: UpdateObjectData = {
+          object: activeObjectJSON,
+        };
+        socketEmitUpdateObject(socket, updateObjectData);
+      });
+
+      const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
+        const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
+        const objectId: string = recentlyActiveObjectJSON._id;
+        return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, objectId, handleStyleChange);
+      });
+
+      saveCommand(new ComplexCommand(commands));
+    }, DELAYS.OBJECT_MODIFIED);
     const handleActiveSelectionModification = () => {
       const activeObjects: fabric.Object[] = canvas.getActiveObjects();
       if (activeObjects.length <= 1) {
@@ -71,28 +91,6 @@ const useCanvasEventHandlers = (
 
       handleStyleChange();
     }, DELAYS.OBJECT_MODIFIED);
-
-    const debouncedActiveSelectionModification = debounce((activeObjectsJSONs: any[]) => {
-      if (!socket) {
-        return;
-      }
-
-      activeObjectsJSONs.forEach((activeObjectJSON) => {
-        const updateObjectData: UpdateObjectData = {
-          object: activeObjectJSON,
-        };
-        socketEmitUpdateObject(socket, updateObjectData);
-      });
-
-      const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
-        const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
-        const objectId: string = recentlyActiveObjectJSON._id;
-        return new ModifyCommand(canvas, recentlyActiveObjectJSON, activeObjectJSON, objectId, handleStyleChange);
-      });
-
-      saveCommand(new ComplexCommand(commands));
-    }, DELAYS.OBJECT_MODIFIED);
-
     const handleObjectModified = (e: fabric.IEvent) => {
       if (e.target?.type === "activeSelection") {
         handleActiveSelectionModification();
