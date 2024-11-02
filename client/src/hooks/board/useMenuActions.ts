@@ -253,6 +253,7 @@ export const useMenuActions = () => {
         }
         exportToPDF(canvas);
       },
+      [MenuActions.SHARE_BOARD]: () => {},
       [MenuActions.UNDO]: () => {
         // No-op: handled directly in MenuDataContext
         throw new Error(
