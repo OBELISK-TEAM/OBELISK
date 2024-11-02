@@ -31,7 +31,7 @@ services:
     environment:
       - SERVER_HOST
       - SERVER_PORT
-      - RABBITMQ_HOST
+      - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT
       - RABBITMQ_QUEUE
       - SOCKET_GW_PORT
