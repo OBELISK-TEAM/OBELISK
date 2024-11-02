@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { StatsModule } from './modules/stats/stats.module';
 import { MongoModule } from './mongo/mongo.module';
 import { MailingModule } from './mailing/mailing.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MailingModule } from './mailing/mailing.module';
     BoardsModule,
     StatsModule,
     MailingModule,
+    GatewayModule
   ],
   providers: [
     {
