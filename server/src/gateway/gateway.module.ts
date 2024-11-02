@@ -14,6 +14,7 @@ import { CommonService } from './providers/common.service';
 import { CursorActionService } from './providers/cursor.action.service';
 import { StatsModule } from 'src/modules/stats/stats.module';
 import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
+import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ObjectStatsService } from 'src/modules/stats/object/object.stats.servic
     CursorActionService,
     CommonService,
     ObjectStatsService,
+    SlideStatsService,
   ],
 })
 export class GatewayModule {}

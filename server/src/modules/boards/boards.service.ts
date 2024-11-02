@@ -27,6 +27,7 @@ import { randomUUID } from 'crypto';
 import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
 import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
 import { ObjectStatsService } from '../stats/object/object.stats.service';
+import { SlideStatsService } from '../stats/slide/slides.stats.service';
 
 @Injectable()
 export class BoardsService {
@@ -39,7 +40,9 @@ export class BoardsService {
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
     private readonly objectStatsService: ObjectStatsService,
-    private readonly res: ResponseService) {
+    private readonly res: ResponseService,
+    private readonly slideStatsService: SlideStatsService,
+  ) {
     this.maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
   }
 
@@ -66,12 +69,22 @@ export class BoardsService {
     owner: string,
     createBoardDto: CreateBoardDto,
   ): Promise<BoardResponseObject> {
-    return this.res.toResponseBoard(
+    const createdBoard = this.res.toResponseBoard(
       await this.boardModel.create({
         ...createBoardDto,
         owner,
       }),
     );
+
+    if (createdBoard && createdBoard.slides) {
+      void this.slideStatsService.initStats(
+        createdBoard.slides[0].toString(),
+        createdBoard._id.toString(),
+        owner.toString(),
+      );
+    }
+
+    return createdBoard;
   }
 
   async deleteBoard(
@@ -79,11 +92,8 @@ export class BoardsService {
     boardId: string,
   ): Promise<BoardResponseObject> {
     const deletedBoard = await this.deleteBoardById(boardId);
-    void this.objectStatsService.removeStats(
-      null,
-      null,
-      (deletedBoard._id as Types.ObjectId).toString(),
-    );
+    void this.objectStatsService.removeStats(null, null, boardId.toString());
+    void this.slideStatsService.removeStats(null, boardId.toString());
     return this.res.toResponseBoard(deletedBoard);
   }
 
