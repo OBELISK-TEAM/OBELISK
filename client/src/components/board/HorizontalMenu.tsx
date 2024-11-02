@@ -8,6 +8,7 @@ import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
 import { useSocket } from "@/contexts/SocketContext";
 import UserInfo from "@/components/main-header/UserInfo";
+import Link from "next/link";
 interface HorizontalMenuProps {
   groupId: string;
 }
@@ -23,14 +24,12 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
   return (
     <div className={`flex items-center justify-between border-b bg-background px-4 pl-0`}>
       <div className="flex">
-        <button
-          onClick={() => {
-            window.location.href = "/user-boards"; //i needed to add this, because user was not leaving  the board for some reason
-          }}
+        <Link
+          href={"/user-boards"}
           className="h-min-[64px] flex h-[64px] w-[3.5em] cursor-pointer items-center justify-center border-r transition-colors hover:bg-muted"
         >
           <AppLogo width={20} height={20} />
-        </button>
+        </Link>
 
         <div className="flex flex-shrink-0 items-center border-r px-6">
           <span className="text-lg font-semibold">{boardName}</span>

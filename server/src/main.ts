@@ -1,63 +1,36 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  DEFAULT_CORS_ORIGIN,
-  DEFAULT_GW_PORT,
-  DEFAULT_SERVER_HOST,
-  DEFAULT_SERVER_PORT,
-} from './config/dev.config';
+import { DEFAULT_SERVER_PORT } from './config/dev.config';
+import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { getRabbitConfig } from './config/rabbit.config';
+import { getCorsConfig } from './config/cors.config';
+import { getPipeConfig } from './config/pipe.config';
+import { logServerInfo } from './config/logger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
 
-  const serverHost = configService.get<string>(
-    'SERVER_HOST',
-    DEFAULT_SERVER_HOST,
-  );
   const serverPort = configService.get<number>(
     'SERVER_PORT',
     DEFAULT_SERVER_PORT,
   );
-  const gatewayPort = configService.get<number>(
-    'SOCKET_GW_PORT',
-    DEFAULT_GW_PORT,
-  );
-  const corsOrigin = configService.get<string>(
-    'CORS_ORIGIN',
-    DEFAULT_CORS_ORIGIN,
-  );
 
-  app.enableCors({
-    origin: [corsOrigin], // 'true' for all origins, or an array of allowed origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
+  const pipe: ValidationPipe = getPipeConfig();
+  app.useGlobalPipes(pipe);
 
-  // global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // removes properties that are not defined in the DTO
-      forbidNonWhitelisted: true, // throws an error if there are properties that are not defined in the DTO
-      transform: true, // automatically transforms input data to the expected types based on the DTO
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
+  const corsConfig: CorsOptions = getCorsConfig(configService);
+  app.enableCors(corsConfig);
+
+  const rabbitConfig: RmqOptions = getRabbitConfig(configService);
+  app.connectMicroservice<MicroserviceOptions>(rabbitConfig);
+  await app.startAllMicroservices();
 
   await app.listen(serverPort);
-  Logger.log(
-    `Server running at http://${serverHost}:${serverPort}`,
-    'Bootstrap',
-  );
-  Logger.log(
-    `Socket gateway running at ws://${serverHost}:${gatewayPort}/gateway`,
-    'Bootstrap',
-  );
+  logServerInfo(configService);
 }
 
 void bootstrap();

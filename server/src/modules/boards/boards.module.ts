@@ -9,6 +9,8 @@ import {
   SuperBoardSchema,
 } from '../../mongo/schemas/board/super.board.schema';
 import { CacheModule } from '@nestjs/cache-manager';
+import { StatsModule } from '../stats/stats.module';
+import { ObjectStatsService } from '../stats/object/object.stats.service';
 
 @Module({
   imports: [
@@ -21,9 +23,10 @@ import { CacheModule } from '@nestjs/cache-manager';
     ]),
     UsersModule,
     ResponseModule,
+    StatsModule,
   ],
   controllers: [BoardsController],
-  providers: [BoardsService],
+  providers: [BoardsService, ObjectStatsService],
   exports: [BoardsService],
 })
 export class BoardsModule {}

@@ -67,7 +67,7 @@ const LoginCard: React.FC = () => {
           </p>
           <Separator className="flex-1" />
         </div>
-        <Button variant="outline" onClick={googleAuth} disabled={loading}>
+        <Button variant="outline" onClick={googleAuth} disabled={loading || process.env.APP_ENV === "production"}>
           <GoogleIcon width={16} height={16} /> &ensp;Google
         </Button>
       </CardContent>

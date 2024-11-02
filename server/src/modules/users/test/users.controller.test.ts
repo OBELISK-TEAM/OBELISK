@@ -64,6 +64,7 @@ describe('UsersController', () => {
     it('should create a new user', async () => {
       usersServiceMock.createUser.mockResolvedValue(userResponseMock);
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return request(app.getHttpServer())
         .post('/users')
         .send(createUserDto)

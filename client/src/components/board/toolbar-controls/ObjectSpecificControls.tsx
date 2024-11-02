@@ -1,15 +1,13 @@
-import React, { ChangeEvent, ReactElement } from "react";
-import ToolbarInput from "@/components/board/Toolbar/ToolbarInput";
+import React, { ChangeEvent, ReactElement, useCallback } from "react";
+import ToolbarInput from "@/components/board/toolbar/ToolbarInput";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 import { useCanvas } from "@/contexts/CanvasContext";
-import FontStyleControls from "@/components/board/Toolbar/Controls/FontStyleControls";
+import FontStyleControls from "@/components/board/toolbar-controls/FontStyleControls";
 import { setObjectStyle } from "@/lib/board/canvasUtils";
 import { fabric } from "fabric";
-import { UpdateObjectData } from "@/interfaces/socket/SocketEmitsData";
-import { socketEmitUpdateObject } from "@/lib/board/socketEmitUtils";
 import { useSocket } from "@/contexts/SocketContext";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
-import { ModifyCommand } from "@/classes/undo-redo-commands/ModifyCommand";
+import { useToolbar } from "@/contexts/ToolbarContext";
 
 // when we click on an object on the canvas, we can see the object-specific controls in the toolbar
 const ObjectSpecificControls: React.FC = () => {
@@ -17,49 +15,39 @@ const ObjectSpecificControls: React.FC = () => {
     state: { selectedObjectStyles, canvas },
     handleStyleChange,
   } = useCanvas();
-
   const { socket } = useSocket();
+  const { handleToolbarChangeDebounced } = useToolbar();
 
   const { saveCommand } = useUndoRedo();
+
+  const handleChange = useCallback(
+    (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
+      if (!canvas || !socket) {
+        return;
+      }
+      const modifiedObject = canvas.getActiveObject();
+      if (!modifiedObject) {
+        return;
+      }
+
+      const oldValue = modifiedObject.get(key as keyof fabric.Object);
+      const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
+
+      // I know it's cheeky, but otherwise we often register the change twice
+      if (newValue === oldValue) {
+        return;
+      }
+
+      setObjectStyle(canvas, modifiedObject, { [key]: newValue });
+      handleStyleChange();
+      handleToolbarChangeDebounced(key, modifiedObject, oldValue, socket, canvas, saveCommand);
+    },
+    [canvas, socket, saveCommand] // no more, no less
+  );
 
   if (!selectedObjectStyles) {
     return null;
   }
-
-  const handleChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (!canvas || !socket) {
-      return;
-    }
-    const modifiedObject = canvas.getActiveObject();
-    if (!modifiedObject) {
-      return;
-    }
-
-    const oldValue = modifiedObject.get(key as keyof fabric.Object);
-    const newValue = event.target.type === "number" ? parseInt(event.target.value, 10) : event.target.value;
-
-    // I know it's cheeky, but otherwise we often register the change twice
-    if (newValue === oldValue) {
-      return;
-    }
-
-    setObjectStyle(canvas, modifiedObject, { [key]: newValue });
-    handleStyleChange();
-
-    const modifiedObjectJSON = modifiedObject.toJSON(["_id"]) as any;
-    const clonedJSON = JSON.parse(JSON.stringify(modifiedObjectJSON));
-    Object.assign(clonedJSON, { [key]: oldValue });
-
-    const updateObjectData: UpdateObjectData = {
-      object: modifiedObjectJSON,
-    };
-    socketEmitUpdateObject(socket, updateObjectData);
-
-    const objectId: string = modifiedObjectJSON._id;
-    const command = new ModifyCommand(canvas, clonedJSON, modifiedObjectJSON, objectId, handleStyleChange);
-    saveCommand(command);
-  };
-
   const controlsMap: Record<string, ReactElement[]> = {
     [CanvasObjectTypes.I_TEXT]: [
       <ToolbarInput

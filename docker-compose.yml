@@ -27,9 +27,13 @@ services:
     container_name: obelisk_server_container
     depends_on:
       - mongo
+      - rabbitmq
     environment:
       - SERVER_HOST
       - SERVER_PORT
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_QUEUE
       - SOCKET_GW_PORT
       - DB_NAME
       - DB_USER
@@ -41,6 +45,21 @@ services:
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
       - GOOGLE_CALLBACK_URL
+      - MAILING_HOST
+      - MAILING_PORT
+      - MAILING_SECURE
+      - MAILING_USER
+      - MAILING_PASS
+
+  rabbitmq:
+    image: rabbitmq:3.12.2-management
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+    container_name: obelisk_rabbitmq_container
+    environment:
+      - RABBITMQ_USER
+      - RABBITMQ_PASSWORD
 
   mongo:
     image: mongo:latest
@@ -51,3 +70,10 @@ services:
       - MONGO_INITDB_DATABASE=${DB_NAME}
       - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ${DB_VOLUME_LOCATION}
+
+volumes:
+  mongo_data:
+    driver: local
+

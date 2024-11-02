@@ -8,7 +8,7 @@ Please note that this document might (and probably will) change in the future. B
 ## Branches
 
 There are three types of branches:
-- `release branch` - which can be created and merged to from `develop` by DevOps only. For example `release-v1.2.1`
+- `release branch` - which can be created and merged to from `develop` by DevOps only.
 - `develop branch` - we merge feature branches to this branch
 - `feature branch` - a branch that introduces specific feature. It must be named consistently with Jira issue ID - for example `OK-215`
 

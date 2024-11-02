@@ -27,8 +27,19 @@ export class ObjectStatsService {
     await this.changeLastInteraction(objectId, creatorId, null, null);
   }
 
-  async removeStats(objectId: string): Promise<void> {
-    await this.objectStatsModel.findOneAndDelete({ objectId });
+  async removeStats(
+    objectId: string | null,
+    slideId: string | null,
+    boardId: string | null,
+  ): Promise<void> {
+    if (!objectId && !slideId && !boardId) return;
+
+    const query: Record<string, string> = {};
+    if (objectId) query.objectId = objectId;
+    if (slideId) query.slideId = slideId;
+    if (boardId) query.boardId = boardId;
+
+    await this.objectStatsModel.deleteMany(query);
   }
 
   async changeLastInteraction(

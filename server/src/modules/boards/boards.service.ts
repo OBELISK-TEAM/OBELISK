@@ -26,6 +26,7 @@ import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
 import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
 import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
+import { ObjectStatsService } from '../stats/object/object.stats.service';
 
 @Injectable()
 export class BoardsService {
@@ -37,8 +38,8 @@ export class BoardsService {
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
-    private readonly res: ResponseService,
-  ) {
+    private readonly objectStatsService: ObjectStatsService,
+    private readonly res: ResponseService) {
     this.maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
   }
 
@@ -78,6 +79,11 @@ export class BoardsService {
     boardId: string,
   ): Promise<BoardResponseObject> {
     const deletedBoard = await this.deleteBoardById(boardId);
+    void this.objectStatsService.removeStats(
+      null,
+      null,
+      (deletedBoard._id as Types.ObjectId).toString(),
+    );
     return this.res.toResponseBoard(deletedBoard);
   }
 

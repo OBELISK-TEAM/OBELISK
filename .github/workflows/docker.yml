@@ -22,23 +22,33 @@ jobs:
           echo "APP_ENV=${{ vars.APP_ENV }}" >> $GITHUB_ENV
           echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> $GITHUB_ENV
           echo "CLIENT_PORT=${{ vars.CLIENT_PORT }}" >> $GITHUB_ENV
+          echo "CORS_ORIGIN=${{ vars.CORS_ORIGIN }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ vars.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ vars.DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ vars.DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ vars.DB_PORT }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ vars.DB_USER }}" >> $GITHUB_ENV
+          echo "DB_VOLUME_LOCATION=${{ vars.DB_VOLUME_LOCATION }}" >> $GITHUB_ENV
+          echo "GOOGLE_CALLBACK_URL=${{ vars.GOOGLE_CALLBACK_URL }}" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=${{ vars.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "JWT_EXPIRES_IN=${{ vars.JWT_EXPIRES_IN }}" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ vars.JWT_SECRET }}" >> $GITHUB_ENV
+          echo "MAILING_HOST=${{ vars.MAILING_HOST }}" >> $GITHUB_ENV
+          echo "MAILING_PASS=${{ vars.MAILING_PASS }}" >> $GITHUB_ENV
+          echo "MAILING_PORT=${{ vars.MAILING_PORT }}" >> $GITHUB_ENV
+          echo "MAILING_SECURE=${{ vars.MAILING_SECURE }}" >> $GITHUB_ENV
+          echo "MAILING_USER=${{ vars.MAILING_USER }}" >> $GITHUB_ENV
+          echo "NEXT_GW_SERVER_HOST=${{ vars.NEXT_GW_SERVER_HOST }}" >> $GITHUB_ENV
+          echo "RABBITMQ_HOST=${{ vars.RABBITMQ_HOST }}" >> $GITHUB_ENV
+          echo "RABBITMQ_MANAGEMENT_PORT=${{ vars.RABBITMQ_MANAGEMENT_PORT }}" >> $GITHUB_ENV
+          echo "RABBITMQ_PASS=${{ vars.RABBITMQ_PASS }}" >> $GITHUB_ENV
+          echo "RABBITMQ_PORT=${{ vars.RABBITMQ_PORT }}" >> $GITHUB_ENV
+          echo "RABBITMQ_QUEUE=${{ vars.RABBITMQ_QUEUE }}" >> $GITHUB_ENV
+          echo "RABBITMQ_USER=${{ vars.RABBITMQ_USER}}" >> $GITHUB_ENV
           echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> $GITHUB_ENV
           echo "SERVER_PORT=${{ vars.SERVER_PORT }}" >> $GITHUB_ENV
           echo "SOCKET_GW_PORT=${{ vars.SOCKET_GW_PORT }}" >> $GITHUB_ENV
-          echo "JWT_SECRET=${{ vars.JWT_SECRET }}" >> $GITHUB_ENV
-          echo "JWT_EXPIRES_IN=${{ vars.JWT_EXPIRES_IN }}" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_SECRET=${{ vars.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "GOOGLE_CALLBACK_URL=${{ vars.GOOGLE_CALLBACK_URL }}" >> $GITHUB_ENV
-          echo "GOOGLE_EMAIL=${{ vars.GOOGLE_EMAIL }}" >> $GITHUB_ENV
-          echo "GOOGLE_PASSWORD=${{ vars.GOOGLE_PASSWORD }}" >> $GITHUB_ENV
-          echo "NEXT_GW_SERVER_HOST=${{ vars.NEXT_GW_SERVER_HOST }}" >> $GITHUB_ENV
-          echo "CORS_ORIGIN=${{ vars.CORS_ORIGIN }}" >> $GITHUB_ENV
-          echo "DB_NAME=${{ vars.DB_NAME }}" >> $GITHUB_ENV
-          echo "DB_USER=${{ vars.DB_USER }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ vars.DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "DB_HOST=${{ vars.DB_HOST }}" >> $GITHUB_ENV
-          echo "DB_PORT=${{ vars.DB_PORT }}" >> $GITHUB_ENV
 
       - name: Build docker images
         run: docker compose build
