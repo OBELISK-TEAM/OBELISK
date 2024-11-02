@@ -12,10 +12,4 @@ export class ConsumerController {
   async sendMessage(@Message() data: WelcomeEmailMessage) {
     return this.consumerService.sendWelcomeEmail(data);
   }
-
-  // @EventPattern('welcome-email')
-  // async sendMessage(@Ctx() context: RmqContext) {
-  //   const content = this.parseMessage(context) as WelcomeEmailMsg;
-  //   await this.consumerService.sendWelcomeEmail(content);
-  // }
 }
