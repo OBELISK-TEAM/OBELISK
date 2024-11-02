@@ -109,6 +109,8 @@ export class ObjectActionService {
       objectId,
     );
 
+    void this.objectStatsService.removeStats(objectId, null, null);
+
     this.logger.log(`Object deleted: ${objectId} by ${user.email}`);
     client.to(slideId).emit('object-deleted', deletedObject);
     return deletedObject;
