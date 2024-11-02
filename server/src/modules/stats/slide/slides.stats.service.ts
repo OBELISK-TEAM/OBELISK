@@ -17,10 +17,20 @@ export class SlideStatsService {
     ownerId: string,
   ): Promise<void> {
     await this.slideStatsModel.create({ slideId, boardId, ownerId });
+    void this.logAction(slideId, ownerId, null, null, SlideAction.ADD_SLIDE);
   }
 
-  async removeStats(slideId: string): Promise<void> {
-    await this.slideStatsModel.findOneAndDelete({ slideId });
+  async removeStats(
+    slideId: string | null,
+    boardId: string | null,
+  ): Promise<void> {
+    if (!slideId && !boardId) return;
+
+    const query: Record<string, string> = {};
+    if (slideId) query.slideId = slideId;
+    if (boardId) query.boardId = boardId;
+
+    await this.slideStatsModel.deleteMany(query);
   }
 
   async logJoin(slideId: string, userId: string): Promise<void> {
@@ -36,14 +46,19 @@ export class SlideStatsService {
         },
       },
     );
+    void this.logAction(slideId, userId, null, null, SlideAction.USER_JOIN);
   }
 
   async logLeave(slideId: string, userId: string): Promise<void> {
     await this.slideStatsModel.updateOne(
       {
         slideId,
-        'joinLeaveTimeline.userId': userId,
-        'joinLeaveTimeline.leaveDate': null,
+        joinLeaveTimeline: {
+          $elemMatch: {
+            userId,
+            leaveDate: null,
+          },
+        },
       },
       {
         $set: {
@@ -51,24 +66,25 @@ export class SlideStatsService {
         },
       },
     );
+    void this.logAction(slideId, userId, null, null, SlideAction.USER_LEAVE);
   }
 
-  async logEdit(
+  async logAction(
     slideId: string,
     userId: string,
-    x: number,
-    y: number,
+    top: number | null,
+    left: number | null,
     action: SlideAction,
   ): Promise<void> {
     await this.slideStatsModel.updateOne(
       { slideId },
       {
         $push: {
-          editTimeline: {
+          actionTimeline: {
             timestamp: new Date(),
             userId,
-            x,
-            y,
+            top,
+            left,
             action,
           },
         },
