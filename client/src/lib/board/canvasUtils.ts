@@ -2,6 +2,18 @@ import { fabric } from "fabric";
 import { CanvasRef } from "@/interfaces/canvas-context";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 
+fabric.Text.prototype.lockScalingX = true;
+fabric.Text.prototype.lockScalingY = true;
+fabric.Text.prototype.hasRotatingPoint = false;
+fabric.Text.prototype.hasBorders = true;
+fabric.Text.prototype.hasControls = true;
+
+fabric.IText.prototype.lockScalingX = true;
+fabric.IText.prototype.lockScalingY = true;
+fabric.IText.prototype.hasRotatingPoint = false;
+fabric.IText.prototype.hasBorders = true;
+fabric.IText.prototype.hasControls = true;
+
 export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | null => {
   return canvas.getObjects().find((object: any) => object._id === id) || null;
 };
@@ -92,19 +104,4 @@ export const updateDimensions = (obj: any): void => {
     }
   }
   obj.setCoords();
-};
-
-//todo: make use of this zoom function
-export const handleZoom = (opt: fabric.IEvent<WheelEvent>): void => {
-  const evt = opt.e;
-  const target = opt.target as unknown as fabric.Canvas | undefined;
-  if (target && target instanceof fabric.Canvas) {
-    const delta = evt.deltaY;
-    const pointer = target.getPointer(evt);
-    const zoom = target.getZoom();
-    const newZoom = zoom * (1 - delta / 200);
-    target.zoomToPoint(new fabric.Point(pointer.x, pointer.y), newZoom);
-    evt.preventDefault();
-    evt.stopPropagation();
-  }
 };
