@@ -6,13 +6,13 @@ on:
       - develop
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: 
-        name: ci-env
+    environment:
+      name: ci-env
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,6 +39,7 @@ jobs:
           echo "MAILING_PORT=${{ vars.MAILING_PORT }}" >> $GITHUB_ENV
           echo "MAILING_SECURE=${{ vars.MAILING_SECURE }}" >> $GITHUB_ENV
           echo "MAILING_USER=${{ vars.MAILING_USER }}" >> $GITHUB_ENV
+          echo "MAX_BOARD_SIZE_IN_BYTES=${{ vars.MAX_BOARD_SIZE_IN_BYTES }}" >> $GITHUB_ENV
           echo "NEXT_GW_SERVER_HOST=${{ vars.NEXT_GW_SERVER_HOST }}" >> $GITHUB_ENV
           echo "RABBITMQ_HOST=${{ vars.RABBITMQ_HOST }}" >> $GITHUB_ENV
           echo "RABBITMQ_MANAGEMENT_PORT=${{ vars.RABBITMQ_MANAGEMENT_PORT }}" >> $GITHUB_ENV
@@ -48,8 +49,8 @@ jobs:
           echo "RABBITMQ_USER=${{ vars.RABBITMQ_USER}}" >> $GITHUB_ENV
           echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> $GITHUB_ENV
           echo "SERVER_PORT=${{ vars.SERVER_PORT }}" >> $GITHUB_ENV
+          echo "SLIDE_LIMIT_PER_BOARD=${{ vars.SLIDE_LIMIT_PER_BOARD }}" >> $GITHUB_ENV
           echo "SOCKET_GW_PORT=${{ vars.SOCKET_GW_PORT }}" >> $GITHUB_ENV
 
       - name: Build docker images
         run: docker compose build
-  
