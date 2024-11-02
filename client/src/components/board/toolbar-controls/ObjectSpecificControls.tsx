@@ -40,7 +40,6 @@ const ObjectSpecificControls: React.FC = () => {
 
       setObjectStyle(canvas, modifiedObject, { [key]: newValue });
       handleStyleChange();
-      //logger.log("Toolbar changing object style", key);
       handleToolbarChangeDebounced(key, modifiedObject, oldValue, socket, canvas, saveCommand);
     },
     [canvas, socket, saveCommand] // no more, no less

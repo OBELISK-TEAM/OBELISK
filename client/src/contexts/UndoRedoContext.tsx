@@ -47,8 +47,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     lastAction.undo(socket);
     redoStack.current.push(lastAction);
     canvas.renderAll();
-    //toast.dismiss();
-    //toast.message("Undo performed");  for testing purposes
   }, [socket]);
 
   const redo = useCallback(() => {
@@ -65,8 +63,6 @@ export const UndoRedoProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     lastAction.redo(socket);
     undoStack.current.push(lastAction);
     canvas.renderAll();
-    //toast.dismiss();
-    //toast.message("Redo performed"); for testing purposes
   }, [socket]);
 
   useCanvasEventHandlers(canvas, saveCommand, handleStyleChange);

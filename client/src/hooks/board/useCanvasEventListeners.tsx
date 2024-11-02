@@ -51,18 +51,38 @@ const useCanvasEventHandlers = (
       if (activeObjects.length <= 1) {
         return;
       }
+
+      const activeObjectsJSONs = activeObjects.map((obj) => getJsonWithAbsoluteProperties(obj));
+      debouncedActiveSelectionModification(activeObjectsJSONs);
+    };
+
+    const debouncedObjectModified = debounce((targetJSON: any, clonedJSON: any, objectId: string) => {
       if (!socket) {
         return;
       }
 
-      const activeObjectsJSONs = activeObjects.map((obj) => getJsonWithAbsoluteProperties(obj));
+      const updateObjectData: UpdateObjectData = {
+        object: targetJSON,
+      };
+      socketEmitUpdateObject(socket, updateObjectData);
 
-      for (const activeObjectJSON of activeObjectsJSONs) {
+      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, objectId, handleStyleChange);
+      saveCommand(command);
+
+      handleStyleChange();
+    }, DELAYS.OBJECT_MODIFIED);
+
+    const debouncedActiveSelectionModification = debounce((activeObjectsJSONs: any[]) => {
+      if (!socket) {
+        return;
+      }
+
+      activeObjectsJSONs.forEach((activeObjectJSON) => {
         const updateObjectData: UpdateObjectData = {
           object: activeObjectJSON,
         };
         socketEmitUpdateObject(socket, updateObjectData);
-      }
+      });
 
       const commands = activeObjectsJSONs.map((activeObjectJSON, i) => {
         const recentlyActiveObjectJSON = state.recentlyActiveObjects[i];
@@ -71,15 +91,13 @@ const useCanvasEventHandlers = (
       });
 
       saveCommand(new ComplexCommand(commands));
-    };
+    }, DELAYS.OBJECT_MODIFIED);
 
-    const handleObjectModified = debounce((e: fabric.IEvent) => {
+    const handleObjectModified = (e: fabric.IEvent) => {
       if (e.target?.type === "activeSelection") {
         handleActiveSelectionModification();
         return;
       }
-
-      // console.log(e.target);
 
       const oldValues = e.transform?.original;
       const target = e.target;
@@ -94,15 +112,10 @@ const useCanvasEventHandlers = (
       const targetJSON = target.toJSON(["_id"]) as any;
       const clonedJSON = { ...targetJSON, ...oldValues };
 
-      const updateObjectData: UpdateObjectData = {
-        object: targetJSON,
-      };
-      socketEmitUpdateObject(socket, updateObjectData);
-      const command = new ModifyCommand(canvas, clonedJSON, targetJSON, targetJSON._id, handleStyleChange);
-      saveCommand(command);
+      const objectId: string = targetJSON._id;
 
-      handleStyleChange();
-    }, DELAYS.OBJECT_MODIFIED);
+      debouncedObjectModified(targetJSON, clonedJSON, objectId);
+    };
 
     const handleMultipleSelections = () => {
       const activeObjects = canvas.getActiveObjects();
