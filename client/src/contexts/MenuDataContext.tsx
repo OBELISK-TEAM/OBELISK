@@ -18,6 +18,7 @@ import {
   Trash,
   Undo,
   Upload,
+  Share2,
 } from "lucide-react";
 
 import { MenuActions } from "@/enums/MenuActions";
@@ -27,12 +28,16 @@ import { createContext, useContext } from "react";
 import { MenuDataContext as IMenuDataContext, MenuGroup } from "@/interfaces/menu-data-context";
 import { useMenuActions } from "@/hooks/board/useMenuActions";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
+import { useCanvas } from "./CanvasContext";
+import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { performAction, performDebouncedAction } = useMenuActions();
   const { undo, redo } = useUndoRedo();
+  const { boardId } = useCanvas();
+
   const menuList: MenuGroup[] = [
     {
       groupName: "Drawing Tools",
@@ -142,7 +147,6 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         },
         {
           action: () => performDebouncedAction(MenuActions.LOAD_CANVAS),
-
           text: "Load Canvas",
           icon: <Upload />,
           name: MenuActions.LOAD_CANVAS,
@@ -176,6 +180,16 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           text: "Remove Selected Objects",
           icon: <Trash />,
           name: MenuActions.REMOVE_SELECTED,
+        },
+        {
+          action: () => {},
+          text: "Share the board with others",
+          icon: (
+            <ShareBoardDialog boardId={boardId}>
+              <Share2 />
+            </ShareBoardDialog>
+          ),
+          name: MenuActions.SHARE_BOARD,
         },
       ],
     },
