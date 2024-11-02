@@ -31,7 +31,7 @@ import { useUndoRedo } from "@/contexts/UndoRedoContext";
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { performAction } = useMenuActions();
+  const { performAction, performDebouncedAction } = useMenuActions();
   const { undo, redo } = useUndoRedo();
   const menuList: MenuGroup[] = [
     {
@@ -69,25 +69,25 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           name: MenuActions.CHANGE_SIZE,
         },
         {
-          action: () => performAction(MenuActions.ADD_LINE),
+          action: () => performDebouncedAction(MenuActions.ADD_LINE),
           text: "Add Line",
           icon: <Minus />,
           name: MenuActions.ADD_LINE,
         },
         {
-          action: () => performAction(MenuActions.ADD_RECTANGLE),
+          action: () => performDebouncedAction(MenuActions.ADD_RECTANGLE),
           text: "Add Rectangle",
           icon: <Square />,
           name: MenuActions.ADD_RECTANGLE,
         },
         {
-          action: () => performAction(MenuActions.ADD_CIRCLE),
+          action: () => performDebouncedAction(MenuActions.ADD_CIRCLE),
           text: "Add Circle",
           icon: <Circle />,
           name: MenuActions.ADD_CIRCLE,
         },
         {
-          action: () => performAction(MenuActions.ADD_TEXT),
+          action: () => performDebouncedAction(MenuActions.ADD_TEXT),
           text: "Add Text",
           icon: <Text />,
           name: MenuActions.ADD_TEXT,
@@ -99,7 +99,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       groupId: MenuGroups.OBJECT_MANIPULATION,
       items: [
         {
-          action: () => performAction(MenuActions.CLEAR_CANVAS),
+          action: () => performDebouncedAction(MenuActions.CLEAR_CANVAS),
           text: "Clear Canvas",
           icon: <Trash />,
           name: MenuActions.CLEAR_CANVAS,
@@ -123,7 +123,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       groupId: MenuGroups.FILE_AND_CANVAS_OPERATIONS,
       items: [
         {
-          action: () => performAction(MenuActions.EXPORT_PDF),
+          action: () => performDebouncedAction(MenuActions.EXPORT_PDF),
           text: "Export to PDF",
           icon: <Save />,
           name: MenuActions.EXPORT_PDF,
@@ -141,7 +141,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           name: MenuActions.REDO,
         },
         {
-          action: () => performAction(MenuActions.LOAD_CANVAS),
+          action: () => performDebouncedAction(MenuActions.LOAD_CANVAS),
 
           text: "Load Canvas",
           icon: <Upload />,
