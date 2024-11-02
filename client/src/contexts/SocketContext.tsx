@@ -72,11 +72,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       toast.info(`User ${res.email} has left this board`);
     }
     function onUserJoinedSlide(res: BasicUserInfo) {
-      toast.info(`User ${res.email} has joined this slide`);
+      // toast.info(`User ${res.email} has joined this slide`);
+      logger.log(`User ${res.email} has joined this slide`);
     }
     function onUserLeftSlide(res: BasicUserInfo) {
-      toast.info(`User ${res.email} has left this slide`);
-      logger.log("User left slide", res);
+      // toast.info(`User ${res.email} has left this slide`);
+      logger.log(`User ${res.email} has left this slide`);
     }
 
     function onAuthSuccess(res: SimpleMessage) {

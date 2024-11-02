@@ -1,4 +1,5 @@
 "use server";
+
 import { clearCookie, setTokenCookie } from "@/lib/authApiUtils";
 import logger from "@/lib/logger";
 import { apiRequest } from "@/services/requestService";
@@ -46,6 +47,11 @@ export async function logout(): Promise<void> {
 }
 
 export async function googleLogin(state: string): Promise<void> {
+  if (process.env.APP_ENV === "production") {
+    logger.error("Google authentication not allowed on production");
+    return;
+  }
+
   try {
     const response = await apiRequest("/auth/google/login", {
       method: "POST",

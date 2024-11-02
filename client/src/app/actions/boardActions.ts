@@ -4,6 +4,7 @@ import { getCookie } from "@/lib/authApiUtils";
 import { BoardDataResponse } from "@/interfaces/responses/board-data-response";
 import logger from "@/lib/logger";
 import { apiRequest } from "@/services/requestService";
+import { revalidatePath } from "next/cache";
 
 export async function createBoard(name: string): Promise<BoardDataResponse> {
   const token = getCookie("accessToken");
@@ -16,7 +17,7 @@ export async function createBoard(name: string): Promise<BoardDataResponse> {
       },
       body: JSON.stringify({ name }),
     });
-
+    revalidatePath("/user-boards");
     return await response.json();
   } catch (error) {
     logger.error("Error while creating board:", error);

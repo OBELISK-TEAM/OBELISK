@@ -50,16 +50,6 @@ services:
       - MAILING_USER
       - MAILING_PASS
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    container_name: obelisk_mongodb_container
-    environment:
-      - MONGO_INITDB_DATABASE=${DB_NAME}
-      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
-
   rabbitmq:
     image: rabbitmq:3.12.2-management
     ports:
@@ -69,3 +59,20 @@ services:
     environment:
       - RABBITMQ_USER
       - RABBITMQ_PASSWORD
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    container_name: obelisk_mongodb_container
+    environment:
+      - MONGO_INITDB_DATABASE=${DB_NAME}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ${DB_VOLUME_LOCATION}
+
+volumes:
+  mongo_data:
+    driver: local
+

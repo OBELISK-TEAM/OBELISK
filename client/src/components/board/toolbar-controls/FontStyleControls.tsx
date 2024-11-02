@@ -1,6 +1,6 @@
 import React from "react";
 import { Bold, Italic, Underline } from "lucide-react";
-import StyledLabel from "@/components/board/Toolbar/ToolbarLabel";
+import StyledLabel from "@/components/board/toolbar/ToolbarLabel";
 import { Toggle } from "@/components/ui/toggle";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { fabric } from "fabric";

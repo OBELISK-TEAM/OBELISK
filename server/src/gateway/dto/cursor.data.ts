@@ -1,8 +1,4 @@
-import {
-  IsDefined,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDefined, IsNumber, IsString } from 'class-validator';
 
 export class CursorMoveData {
   @IsDefined()
@@ -16,6 +12,4 @@ export class CursorMoveData {
   @IsDefined()
   @IsString()
   color: string;
-
 }
-

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { SlidePagination } from "@/components/board/SlideControls/SlidePagination";
-import { SlideActions } from "@/components/board/SlideControls/SlideActions";
+import { SlidePagination } from "@/components/board/slide-controls/SlidePagination";
+import { SlideActions } from "@/components/board/slide-controls/SlideActions";
 import { SlideControlsProvider } from "@/contexts/SlideControlsContext";
 
 export function SlideControls() {
