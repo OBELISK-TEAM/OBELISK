@@ -18,5 +18,6 @@ import {
   ],
   controllers: [SlideStatsController],
   providers: [SlideStatsService],
+  exports: [SlideStatsService, MongooseModule],
 })
 export class SlideStatsModule {}

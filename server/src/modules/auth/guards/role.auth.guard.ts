@@ -12,7 +12,7 @@ import { UserRole } from '../../../shared/enums/user.role';
 import {
   MINIMUM_USER_ROLE_KEY,
   REQUIRED_USER_ROLE_KEY,
-} from '../decorators/roles.decorator';
+} from '../../../shared/decorators/roles.decorator';
 
 // HTTP REST
 // @UseGuards(JwtAuthGuard, RoleAuthGuard)

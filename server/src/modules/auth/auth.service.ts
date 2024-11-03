@@ -13,6 +13,7 @@ import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 import { Payload } from '../../shared/interfaces/auth/Payload';
+import { ProducerService } from '../../mailing/producer/producer.service';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private cacheManager: Cache,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly producerService: ProducerService,
   ) {}
 
   async validateUserByEmailAndPassword(
@@ -72,6 +74,7 @@ export class AuthService {
       user = await this.handleRegisterWhenEmailExists(createUserDto);
     } else {
       user = await this.usersService.createUser(createUserDto);
+      this.producerService.sendWelcomeEmail(user.email);
     }
 
     return this.generateToken(user);

@@ -47,12 +47,12 @@ export class SlideStats extends Document {
     required: false,
     default: [],
   })
-  editTimeline: [
+  actionTimeline: [
     {
       timestamp: Date;
       userId: string;
-      x: number;
-      y: number;
+      top: number | null;
+      left: number | null;
       action: SlideAction;
     },
   ];

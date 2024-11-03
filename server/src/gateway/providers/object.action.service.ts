@@ -11,6 +11,8 @@ import {
 import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
 import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schema';
 import { Types } from 'mongoose';
+import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
+import { SlideAction } from 'src/shared/enums/actions/slide.action';
 
 @Injectable()
 export class ObjectActionService {
@@ -18,6 +20,7 @@ export class ObjectActionService {
   constructor(
     private readonly objectsService: ObjectsService,
     private readonly objectStatsService: ObjectStatsService,
+    private readonly slideStatsService: SlideStatsService,
   ) {}
 
   async handleAddObject(
@@ -44,6 +47,13 @@ export class ObjectActionService {
       boardId,
       slideId,
       (user._id as Types.ObjectId).toString(),
+    );
+    void this.slideStatsService.logAction(
+      slideId.toString(),
+      (user._id as Types.ObjectId).toString(),
+      createdObject.top ? createdObject.top : null,
+      createdObject.left ? createdObject.left : null,
+      SlideAction.EDIT_SLIDE,
     );
 
     this.logger.log(`Object added: ${createdObject._id} by ${user.email}`);
@@ -84,6 +94,13 @@ export class ObjectActionService {
       oldObject as unknown as SuperObjectDocument,
       updatedObject as unknown as SuperObjectDocument,
     );
+    void this.slideStatsService.logAction(
+      slideId.toString(),
+      (user._id as Types.ObjectId).toString(),
+      updatedObject.top ? updatedObject.top : null,
+      updatedObject.left ? updatedObject.left : null,
+      SlideAction.EDIT_SLIDE,
+    );
 
     this.logger.log(`Object updated: ${updatedObject._id} by ${user.email}`);
     client.to(slideId).emit('object-updated', updatedObject);
@@ -110,6 +127,13 @@ export class ObjectActionService {
     );
 
     void this.objectStatsService.removeStats(objectId, null, null);
+    void this.slideStatsService.logAction(
+      slideId.toString(),
+      (user._id as Types.ObjectId).toString(),
+      deletedObject.top ? deletedObject.top : null,
+      deletedObject.left ? deletedObject.left : null,
+      SlideAction.EDIT_SLIDE,
+    );
 
     this.logger.log(`Object deleted: ${objectId} by ${user.email}`);
     client.to(slideId).emit('object-deleted', deletedObject);

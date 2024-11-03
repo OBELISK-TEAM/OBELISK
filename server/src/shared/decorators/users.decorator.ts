@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
+import { SafeUserDoc } from '../interfaces/auth/SafeUserDoc';
 
 // extract the user from the request,
 // use @User to get the user from the request

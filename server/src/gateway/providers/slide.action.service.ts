@@ -3,12 +3,15 @@ import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
 import { SlidesService } from '../../modules/slides/slides.service';
 import { AddSlideData, DeleteSlideData } from '../dto/slide.data';
 import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
+import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class SlideActionService {
   constructor(
     private readonly slidesService: SlidesService,
     private readonly objectStatsService: ObjectStatsService,
+    private readonly slideStatsService: SlideStatsService,
   ) {}
   private readonly logger = new Logger(SlideActionService.name);
 
@@ -21,6 +24,11 @@ export class SlideActionService {
     const slide = await this.slidesService.createSlide(boardId, slideNumber);
     this.logger.log(`Slide added: ${slide._id} by ${client.data.user.email}`);
     client.to(boardId).emit('slide-added', { ...slide, slideNumber });
+    void this.slideStatsService.initStats(
+      slide._id.toString(),
+      boardId,
+      (client.data.user._id as Types.ObjectId).toString(),
+    );
   }
 
   async handleDeleteSlide(
@@ -33,5 +41,6 @@ export class SlideActionService {
     void this.objectStatsService.removeStats(null, slide._id.toString(), null);
     this.logger.log(`Slide deleted: ${slide._id} by ${client.data.user.email}`);
     client.to(boardId).emit('slide-deleted', { ...slide, slideNumber });
+    void this.slideStatsService.removeStats(slide._id.toString(), null);
   }
 }

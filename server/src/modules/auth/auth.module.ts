@@ -12,6 +12,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { WsAuthStrategy } from './strategies/ws.strategy';
 import { WsAuthGuard } from './guards/ws.auth.guard';
 import { BoardsModule } from '../boards/boards.module';
+import { ProducerModule } from '../../mailing/producer/producer.module';
 import {
   DEFAULT_JWT_EXPIRES_IN,
   DEFAULT_JWT_SECRET,
@@ -36,6 +37,7 @@ import {
     }),
     UsersModule,
     BoardsModule,
+    ProducerModule,
   ],
   providers: [
     AuthService,

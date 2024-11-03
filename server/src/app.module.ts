@@ -7,9 +7,11 @@ import { BoardsModule } from './modules/boards/boards.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-import { GatewayModule } from './gateway/gateway.module';
 import { StatsModule } from './modules/stats/stats.module';
 import { MongoModule } from './mongo/mongo.module';
+import { MailingModule } from './mailing/mailing.module';
+import { GatewayModule } from './gateway/gateway.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -24,8 +26,10 @@ import { MongoModule } from './mongo/mongo.module';
     AuthModule,
     UsersModule,
     BoardsModule,
-    GatewayModule,
     StatsModule,
+    MailingModule,
+    GatewayModule,
+    HealthModule,
   ],
   providers: [
     {

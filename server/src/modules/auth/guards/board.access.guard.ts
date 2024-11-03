@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { BoardPermission } from '../../../shared/enums/board.permission';
 import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
-import { MINIMUM_BOARD_PERMISSION_KEY } from '../decorators/permissions.decorator';
+import { MINIMUM_BOARD_PERMISSION_KEY } from '../../../shared/decorators/permissions.decorator';
 import { Request } from 'express';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
 import { BoardsService } from '../../boards/boards.service';
