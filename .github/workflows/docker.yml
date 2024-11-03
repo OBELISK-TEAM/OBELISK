@@ -9,7 +9,7 @@ on:
       - "*"
 
 jobs:
-  build:
+  docker-pipeline:
     runs-on: ubuntu-latest
     environment:
       name: ci-env
@@ -54,3 +54,17 @@ jobs:
 
       - name: Build docker images
         run: docker compose build
+
+      - name: Start docker compose in detached mode
+        run: docker compose up -d
+
+      - name: Wait for services to start
+        run: sleep 30
+
+      - name: Run health check on server
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ vars.SERVER_HOST }}:${{ vars.SERVER_PORT }}/health)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Health check failed with status code $STATUS"
+            exit 1
+          fi
