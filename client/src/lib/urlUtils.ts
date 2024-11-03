@@ -16,7 +16,7 @@ export const getRawRedirectUrl = (): string | null => {
 
 /**
  * Combines sanitization and retrieval of the redirect URL from cookies.
- * @returns The sanitized and validated redirect URL from the cookie, or `null` if invalid or absent.
+ * @returns The sanitized redirect URL from the cookie, or `null` if absent.
  */
 export const getRedirectUrl = (): string | null => {
   const rawRedirectUrl = getRawRedirectUrl();
