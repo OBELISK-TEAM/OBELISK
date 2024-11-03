@@ -56,12 +56,13 @@ export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ delete
       <HoverCardTrigger asChild>
         <Button
           variant="outline"
-          className="hover:text-muted-foreground"
+          className="p-2 hover:text-muted-foreground"
+          style={{ width: "40px" }}
           aria-label="Delete board"
           onClick={handleButtonClick}
           disabled={isPending}
         >
-          <TrashIcon />
+          <TrashIcon className="h-5 w-5" />
         </Button>
       </HoverCardTrigger>
       <HoverCardContent side="top" className="max-w-36">

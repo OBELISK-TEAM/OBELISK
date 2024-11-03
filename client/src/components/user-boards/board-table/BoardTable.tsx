@@ -89,8 +89,13 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                     }}
                   >
                     <ShareBoardDialog boardId={board._id}>
-                      <Button variant="outline" className="hover:text-muted-foreground" aria-label="Share with others">
-                        <Share2 className="mr-2 h-5 w-5" />
+                      <Button
+                        variant="outline"
+                        className="px-2 hover:text-muted-foreground"
+                        style={{ width: "40px" }}
+                        aria-label="Share with others"
+                      >
+                        <Share2 className="h-5 w-5" />
                       </Button>
                     </ShareBoardDialog>
                     <BoardDeletionButton
