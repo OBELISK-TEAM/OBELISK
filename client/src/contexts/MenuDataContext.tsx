@@ -30,6 +30,7 @@ import { useMenuActions } from "@/hooks/board/useMenuActions";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { useCanvas } from "./CanvasContext";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
+import { Button } from "@/components/ui/button";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 
@@ -184,10 +185,15 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         {
           action: () => {},
           text: "Share the board with others",
-          icon: (
-            <ShareBoardDialog boardId={boardId}>
-              <Share2 />
-            </ShareBoardDialog>
+          icon: <Share2 />,
+          node: (
+            <Button
+              className={`flex items-center rounded bg-inherit p-2 text-muted-foreground hover:bg-muted hover:text-primary`}
+            >
+              <ShareBoardDialog boardId={boardId}>
+                <Share2 />
+              </ShareBoardDialog>
+            </Button>
           ),
           name: MenuActions.SHARE_BOARD,
         },

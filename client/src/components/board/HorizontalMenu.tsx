@@ -9,6 +9,7 @@ import { MenuItem } from "@/interfaces/menu-data-context";
 import { useSocket } from "@/contexts/SocketContext";
 import UserInfo from "@/components/main-header/UserInfo";
 import Link from "next/link";
+import { Button } from "../ui/button";
 interface HorizontalMenuProps {
   groupId: string;
 }
@@ -41,23 +42,29 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
               item.name === MenuActions.GROUP_SELECTED
             ) {
               return null;
-            } else if (!selectedObjectStyles && item.name === MenuActions.REMOVE_SELECTED) {
+            }
+            if (!selectedObjectStyles && item.name === MenuActions.REMOVE_SELECTED) {
               return null;
             }
+
+            const nodeToShow = item.node ? (
+              item.node
+            ) : (
+              <Button
+                variant="mild"
+                className={`p-2 ${
+                  activeItem === item.name
+                    ? "bg-muted text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-primary"
+                }`}
+                onClick={() => item.action()}
+              >
+                {item.icon}
+              </Button>
+            );
             return (
               <HoverCard key={itemIndex}>
-                <HoverCardTrigger asChild>
-                  <button
-                    className={`flex items-center rounded p-2 ${
-                      activeItem === item.name
-                        ? "bg-muted text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-primary"
-                    }`}
-                    onClick={() => item.action()}
-                  >
-                    {item.icon}
-                  </button>
-                </HoverCardTrigger>
+                <HoverCardTrigger asChild>{nodeToShow}</HoverCardTrigger>
                 <HoverCardContent className="w-40">
                   <p>{item.text}</p>
                 </HoverCardContent>
