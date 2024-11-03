@@ -6,10 +6,15 @@ export interface MenuDataContext {
   performAction: (name: MenuActions) => void;
 }
 
+/**
+ * If a node is present, the icon should be ignored.
+ * If a node is absent, the icon should be used to render a button
+ */
 export interface MenuItem {
   action: () => void;
   text: string;
   icon: ReactNode;
+  node?: ReactNode;
   name: string;
 }
 

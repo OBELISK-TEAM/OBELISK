@@ -17,4 +17,5 @@ export enum MenuActions {
   LOAD_IMAGES_JSON = "load-images-json",
   GROUP_SELECTED = "group-selected",
   REMOVE_SELECTED = "remove-selected",
+  SHARE_BOARD = "share-board",
 }

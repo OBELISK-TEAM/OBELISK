@@ -253,6 +253,10 @@ export const useMenuActions = () => {
         }
         exportToPDF(canvas);
       },
+      // No-op: handled by the dialog modal
+      [MenuActions.SHARE_BOARD]: () => {
+        throw new Error("performAction(MenuActions.SHARE_BOARD) should not be called");
+      },
       [MenuActions.UNDO]: () => {
         // No-op: handled directly in MenuDataContext
         throw new Error(
