@@ -13,6 +13,7 @@
     "postinstall": "cd ./node_modules/fabric && node build.js modules=ALL exclude=gestures"
   },
   "dependencies": {
+    "@braintree/sanitize-url": "^7.1.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
