@@ -11,6 +11,7 @@ import { StatsModule } from './modules/stats/stats.module';
 import { MongoModule } from './mongo/mongo.module';
 import { MailingModule } from './mailing/mailing.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { GatewayModule } from './gateway/gateway.module';
     BoardsModule,
     StatsModule,
     MailingModule,
-    GatewayModule
+    GatewayModule,
+    HealthModule,
   ],
   providers: [
     {

@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
+import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CommonService {
+  constructor(private readonly slideStatsService: SlideStatsService) {}
   private readonly logger = new Logger(CommonService.name);
 
   async joinTarget(
@@ -47,5 +50,12 @@ export class CommonService {
     });
 
     this.logger.log(`${user.email} has left the ${targetType} ${targetId}`);
+
+    if (targetType === 'slide') {
+      void this.slideStatsService.logLeave(
+        targetId.toString(),
+        (user._id as Types.ObjectId).toString(),
+      );
+    }
   }
 }

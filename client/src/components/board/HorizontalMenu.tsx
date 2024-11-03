@@ -13,6 +13,8 @@ import {
   shouldRenderMenuItemBasedOnSelection,
 } from "@/lib/board/horizontalMenuUtils";
 import { UserPermissions } from "@/interfaces/user-permissions";
+import { Button } from "../ui/button";
+
 interface HorizontalMenuProps {
   groupId: string;
   currentPermission: UserPermissions;
@@ -47,20 +49,25 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, currentPermissi
             if (!shouldRenderMenuItemBasedOnSelection(selectedObjectStyles, item)) {
               return null;
             }
+
+            const nodeToShow = item.node ? (
+              item.node
+            ) : (
+              <Button
+                variant="mild"
+                className={`p-2 ${
+                  activeItem === item.name
+                    ? "bg-muted text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-primary"
+                }`}
+                onClick={() => item.action()}
+              >
+                {item.icon}
+              </Button>
+            );
             return (
               <HoverCard key={itemIndex}>
-                <HoverCardTrigger asChild>
-                  <button
-                    className={`flex items-center rounded p-2 ${
-                      activeItem === item.name
-                        ? "bg-muted text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-primary"
-                    }`}
-                    onClick={() => item.action()}
-                  >
-                    {item.icon}
-                  </button>
-                </HoverCardTrigger>
+                <HoverCardTrigger asChild>{nodeToShow}</HoverCardTrigger>
                 <HoverCardContent className="w-40">
                   <p>{item.text}</p>
                 </HoverCardContent>

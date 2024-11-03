@@ -11,6 +11,7 @@ import {
 import { CacheModule } from '@nestjs/cache-manager';
 import { StatsModule } from '../stats/stats.module';
 import { ObjectStatsService } from '../stats/object/object.stats.service';
+import { SlideStatsService } from '../stats/slide/slides.stats.service';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { ObjectStatsService } from '../stats/object/object.stats.service';
     StatsModule,
   ],
   controllers: [BoardsController],
-  providers: [BoardsService, ObjectStatsService],
+  providers: [BoardsService, ObjectStatsService, SlideStatsService],
   exports: [BoardsService],
 })
 export class BoardsModule {}
