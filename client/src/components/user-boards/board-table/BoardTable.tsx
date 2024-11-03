@@ -29,11 +29,12 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
   const router = useRouter();
 
   const handleRowClick = (board: BoardResponse) => {
-    if (permissionFunctions.canViewBoard(board.permission)) {
-      router.push(`/user-boards/${board._id}/slides/1`);
+    if (!permissionFunctions.canViewBoard(board.permission)) {
+      toast.dismiss();
+      toast.error("You don't have permission to view this board");
+      return;
     }
-    toast.dismiss();
-    toast.error("You don't have permission to view this board");
+    router.push(`/user-boards/${board._id}/slides/1`);
   };
 
   const handlePageChange = useCallback(
