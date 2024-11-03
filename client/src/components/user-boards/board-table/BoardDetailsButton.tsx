@@ -19,11 +19,12 @@ export const BoardDetailsButton: React.FC<BoardDetailsButtonProps> = ({ boardId 
       <HoverCardTrigger asChild>
         <Button
           variant="outline"
-          className="hover:text-muted-foreground"
+          className="p-2 hover:text-muted-foreground"
+          style={{ width: "40px" }}
           onClick={handleDetailsClick}
           aria-label="Go to board details"
         >
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRightIcon className="h-5 w-5" />
         </Button>
       </HoverCardTrigger>
       <HoverCardContent side="top" className="max-w-36">
