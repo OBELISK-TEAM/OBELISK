@@ -19,7 +19,6 @@ function isAuthenticated(request: NextRequest): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  logger.log(pathname, search);
   if (isAuthenticated(request)) {
     if (pathname.startsWith("/auth")) {
       return NextResponse.redirect(new URL("/user-boards", request.url));
