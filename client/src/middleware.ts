@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { decodeToken } from "@/lib/authApiUtils";
-import logger from "@/lib/logger";
 
 function isAuthenticated(request: NextRequest): boolean {
   const token = request.cookies.get("accessToken")?.value;
