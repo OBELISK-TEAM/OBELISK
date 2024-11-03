@@ -43,17 +43,20 @@ export const hasPermission = (
 };
 
 /**
- * permissionMap defines the hierarchy of permissions.
+ * actionPermissionMap defines the minimum permissions required for each action.
+ * For example, `canViewBoard` requires the user to have at least VIEWER permissions.
  *
- * Update this map to change the hierarchy of permissions.
+ * The permission hierarchy is defined in BoardPermissionNum (higher numbers indicate more permissions).
+ * Update this map to adjust the hierarchy of permissions.
  *
- * To add or delete permissions, modify this map and update
- * corresponding attributes in the UserPermissions interface.
+ * To add or remove permissions, modify this map and update the corresponding attributes
+ * in the `UserPermissions` interface.
  *
- * note: when modifying, adding, or deleting permissions, the permissionFunctions object should be updated automatically.
+ * Note: When modifying, adding, or deleting permissions, the `permissionFunctions` object
+ * should update automatically.
  */
 
-const permissionMap: PermissionMap = {
+const actionPermissionMap: PermissionMap = {
   canEditBoardName: BoardPermissionNum.OWNER,
   canDeleteBoard: BoardPermissionNum.OWNER,
   canControlPermissions: BoardPermissionNum.MODERATOR,
@@ -74,9 +77,9 @@ const permissionMap: PermissionMap = {
 export const getUserPermissions = (currentPermission: string | undefined): UserPermissions => {
   const permissions: Partial<UserPermissions> = {};
 
-  for (const key in permissionMap) {
+  for (const key in actionPermissionMap) {
     const permissionKey = key as keyof UserPermissions;
-    permissions[permissionKey] = hasPermission(currentPermission, permissionMap[permissionKey]);
+    permissions[permissionKey] = hasPermission(currentPermission, actionPermissionMap[permissionKey]);
   }
   return permissions as UserPermissions;
 };
@@ -95,4 +98,4 @@ const generatePermissionFunctions = (map: PermissionMap): PermissionFunctions =>
 /**
  * permissionFunctions is an object containing functions that check if the user has the required permission.
  * **/
-export const permissionFunctions = generatePermissionFunctions(permissionMap);
+export const permissionFunctions = generatePermissionFunctions(actionPermissionMap);
