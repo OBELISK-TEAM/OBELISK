@@ -2,18 +2,22 @@
 import { FC } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { AppLogo } from "@/components/main-header/AppLogo";
-import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 import { MenuItem } from "@/interfaces/menu-data-context";
 import { useSocket } from "@/contexts/SocketContext";
 import UserInfo from "@/components/main-header/UserInfo";
 import Link from "next/link";
+import {
+  shouldRenderMenuItemBasedOnPermissions,
+  shouldRenderMenuItemBasedOnSelection,
+} from "@/lib/board/horizontalMenuUtils";
 interface HorizontalMenuProps {
   groupId: string;
+  canControlObject: boolean;
 }
 
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, canControlObject }) => {
   const { boardName } = useSocket();
   const {
     state: { activeItem, selectedObjectStyles },
@@ -36,12 +40,10 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId }) => {
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
           {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
-            if (
-              !(selectedObjectStyles && selectedObjectStyles.type === "activeSelection") &&
-              item.name === MenuActions.GROUP_SELECTED
-            ) {
+            if (!shouldRenderMenuItemBasedOnPermissions(canControlObject, item)) {
               return null;
-            } else if (!selectedObjectStyles && item.name === MenuActions.REMOVE_SELECTED) {
+            }
+            if (!shouldRenderMenuItemBasedOnSelection(selectedObjectStyles, item)) {
               return null;
             }
             return (

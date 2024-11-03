@@ -2,18 +2,6 @@ import { fabric } from "fabric";
 import { CanvasRef } from "@/interfaces/canvas-context";
 import { CanvasObjectTypes } from "@/enums/CanvasObjectTypes";
 
-fabric.Text.prototype.lockScalingX = true;
-fabric.Text.prototype.lockScalingY = true;
-fabric.Text.prototype.hasRotatingPoint = false;
-fabric.Text.prototype.hasBorders = true;
-fabric.Text.prototype.hasControls = true;
-
-fabric.IText.prototype.lockScalingX = true;
-fabric.IText.prototype.lockScalingY = true;
-fabric.IText.prototype.hasRotatingPoint = false;
-fabric.IText.prototype.hasBorders = true;
-fabric.IText.prototype.hasControls = true;
-
 export const getItemById = (canvas: fabric.Canvas, id: string): fabric.Object | null => {
   return canvas.getObjects().find((object: any) => object._id === id) || null;
 };
@@ -43,21 +31,49 @@ export const setObjectStyle = (
   canvas.requestRenderAll();
 };
 
-export const initializeCanvas = (canvasRef: CanvasRef): fabric.Canvas | null => {
-  // as long as we can't handle scaling and rotating regarding undo/redo commands, we need to lock these possibilities for users
-  fabric.ActiveSelection.prototype.lockScalingX = true;
-  fabric.ActiveSelection.prototype.lockScalingY = true;
-  fabric.ActiveSelection.prototype.lockRotation = true;
-
+export const initializeCanvas = (canvasRef: CanvasRef, canControlObject: boolean): fabric.Canvas | null => {
+  configureGlobalFabricDefaultProperties();
+  configureGlobalFabricInteractivity(canControlObject);
   if (canvasRef.current) {
     return new fabric.Canvas(canvasRef.current, {
       selection: true,
+      interactive: canControlObject,
     });
     // i am not sure if this is needed, i will leave this here if there will be a problem
     //newCanvas.on("before:render", () => (newCanvas.selection = false));
     //newCanvas.on("after:render", () => (newCanvas.selection = true));
   }
   return null;
+};
+
+export const configureGlobalFabricDefaultProperties = (): void => {
+  fabric.Text.prototype.lockScalingX = true;
+  fabric.Text.prototype.lockScalingY = true;
+  fabric.Text.prototype.hasRotatingPoint = false;
+  fabric.Text.prototype.hasBorders = true;
+  fabric.Text.prototype.hasControls = true;
+
+  fabric.IText.prototype.lockScalingX = true;
+  fabric.IText.prototype.lockScalingY = true;
+  fabric.IText.prototype.hasRotatingPoint = false;
+  fabric.IText.prototype.hasBorders = true;
+  fabric.IText.prototype.hasControls = true;
+
+  // as long as we can't handle scaling and rotating regarding undo/redo commands, we need to lock these possibilities for users
+  fabric.ActiveSelection.prototype.lockScalingX = true;
+  fabric.ActiveSelection.prototype.lockScalingY = true;
+  fabric.ActiveSelection.prototype.lockRotation = true;
+};
+
+export const configureGlobalFabricInteractivity = (canControlObject: boolean): void => {
+  // we need to lock some properties for non-interactive users (we can't just use css property `pointer-events: none` because it will block zoom effect)
+
+  fabric.Object.prototype.lockMovementX = !canControlObject;
+  fabric.Object.prototype.lockMovementY = !canControlObject;
+  fabric.Textbox.prototype.editable = canControlObject;
+  fabric.IText.prototype.editable = canControlObject;
+  fabric.Object.prototype.selectable = canControlObject;
+  fabric.Object.prototype.evented = canControlObject;
 };
 
 export const toggleDrawingMode = (canvas: fabric.Canvas | null, isDrawingMode: boolean): void => {

@@ -1,25 +1,37 @@
+"use client";
 import BoardSidebar from "@/components/board/Sidebar";
 import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
 import SlideCanvas from "@/components/board/Canvas";
 import SlideFileInputs from "@/components/board/SlideFileInputs";
 import BoardToolBar from "@/components/board/toolbar/Toolbar";
+import { useScrollToTop } from "@/hooks/window/useScrollToTop";
+import { useSocket } from "@/contexts/SocketContext";
 const Board: React.FC = () => {
+  useScrollToTop();
+  const {
+    currentPermission: { canControlObject },
+  } = useSocket();
+  const canvasWrapperWidth = canControlObject ? `calc(100% - ${2 * 56}px)` : "100%";
   return (
     <div className="flex flex-col">
-      <BoardHorizontalMenu groupId={MenuGroups.FILE_AND_CANVAS_OPERATIONS} />
+      <BoardHorizontalMenu groupId={MenuGroups.FILE_AND_CANVAS_OPERATIONS} canControlObject={canControlObject} />
       <div className="flex">
-        <BoardSidebar withSettings={true} groupId={MenuGroups.DRAWING_TOOLS} />
-        <BoardSidebar groupId={MenuGroups.OBJECT_MANIPULATION} />
+        {canControlObject && (
+          <>
+            <BoardSidebar withSettings={true} groupId={MenuGroups.DRAWING_TOOLS} />
+            <BoardSidebar groupId={MenuGroups.OBJECT_MANIPULATION} />
+          </>
+        )}
         <div
           className="flex flex-col items-center bg-muted text-muted-foreground"
           style={{
-            width: `calc(100% - ${2 * 56}px)`,
+            width: canvasWrapperWidth,
           }}
         >
-          <BoardToolBar />
+          {canControlObject && <BoardToolBar />}
           <SlideCanvas />
-          <SlideFileInputs />
+          {canControlObject && <SlideFileInputs />}
         </div>
       </div>
     </div>
