@@ -56,13 +56,14 @@ export const hasPermission = (
 const permissionMap: PermissionMap = {
   canEditBoardName: BoardPermissionNum.OWNER,
   canDeleteBoard: BoardPermissionNum.OWNER,
-  canAssignPermissions: BoardPermissionNum.MODERATOR,
+  canControlPermissions: BoardPermissionNum.MODERATOR,
   canViewOtherStats: BoardPermissionNum.MODERATOR,
   canViewOwnStats: BoardPermissionNum.EDITOR,
   canControlSlide: BoardPermissionNum.EDITOR,
   canControlObject: BoardPermissionNum.EDITOR,
   canExportBoard: BoardPermissionNum.VIEWER,
   canViewBoard: BoardPermissionNum.VIEWER,
+  canViewBoardDetails: BoardPermissionNum.EDITOR,
 };
 
 /**
