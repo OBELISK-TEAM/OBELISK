@@ -80,7 +80,7 @@ export const getUserPermissions = (currentPermission: string | undefined): UserP
   return permissions as UserPermissions;
 };
 
-const generateHasPermissionFunctions = (map: PermissionMap): PermissionFunctions => {
+const generatePermissionFunctions = (map: PermissionMap): PermissionFunctions => {
   const functions = {} as PermissionFunctions;
 
   (Object.keys(map) as (keyof UserPermissions)[]).forEach((key) => {
@@ -94,4 +94,4 @@ const generateHasPermissionFunctions = (map: PermissionMap): PermissionFunctions
 /**
  * permissionFunctions is an object containing functions that check if the user has the required permission.
  * **/
-export const permissionFunctions = generateHasPermissionFunctions(permissionMap);
+export const permissionFunctions = generatePermissionFunctions(permissionMap);
