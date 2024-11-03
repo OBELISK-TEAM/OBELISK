@@ -19,7 +19,6 @@ interface HorizontalMenuProps {
   groupId: string;
   currentPermission: UserPermissions;
 }
-
 const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, currentPermission }) => {
   const { boardName } = useSocket();
   const {
