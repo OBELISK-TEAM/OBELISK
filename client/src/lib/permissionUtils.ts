@@ -1,7 +1,8 @@
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardPermissionNum } from "@/enums/BoardPermissionNum";
 import { UserPermissions } from "@/interfaces/user-permissions";
-import { PermissionMap } from "@/types/PermissionMap";
+import { PermissionFunctions } from "@/types/permissions/PermissionFunctions";
+import { PermissionMap } from "@/types/permissions/PermissionMap";
 
 /**
  * Converts BoardPermission to BoardPermissionNum.
@@ -42,14 +43,17 @@ export const hasPermission = (
 };
 
 /**
- * This map will define hierarchy of permissions.
+ * permissionMap defines the hierarchy of permissions.
  *
- * If we update the hierarchy of permissions, we will need to change this map.
+ * Update this map to change the hierarchy of permissions.
  *
- * If we want to add/delete a permission, we will need to change this map and add/delete
- * the corresponding permission in the UserPermissions interface.
+ * To add or delete permissions, modify this map and update
+ * corresponding attributes in the UserPermissions interface.
+ *
+ * note: when modifying, adding, or deleting permissions, the permissionFunctions object should be updated automatically.
  */
-export const permissionMap: PermissionMap = {
+
+const permissionMap: PermissionMap = {
   canEditBoardName: BoardPermissionNum.OWNER,
   canDeleteBoard: BoardPermissionNum.OWNER,
   canAssignPermissions: BoardPermissionNum.MODERATOR,
@@ -60,6 +64,12 @@ export const permissionMap: PermissionMap = {
   canExportBoard: BoardPermissionNum.VIEWER,
   canViewBoard: BoardPermissionNum.VIEWER,
 };
+
+/**
+ * Returns the user's permissions as an object.
+ * @param currentPermission - The user's current permission.
+ * @returns The user's permissions as an object.
+ */
 export const getUserPermissions = (currentPermission: string | undefined): UserPermissions => {
   const permissions: Partial<UserPermissions> = {};
 
@@ -70,38 +80,18 @@ export const getUserPermissions = (currentPermission: string | undefined): UserP
   return permissions as UserPermissions;
 };
 
-export const hasPermissionToEditBoardName = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canEditBoardName);
+const generateHasPermissionFunctions = (map: PermissionMap): PermissionFunctions => {
+  const functions = {} as PermissionFunctions;
+
+  (Object.keys(map) as (keyof UserPermissions)[]).forEach((key) => {
+    const functionName = key as keyof PermissionFunctions;
+    functions[functionName] = (currentPermission: string | undefined) => hasPermission(currentPermission, map[key]);
+  });
+
+  return functions;
 };
 
-export const hasPermissionToDeleteBoard = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canDeleteBoard);
-};
-
-export const hasPermissionToAssignPermissions = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canAssignPermissions);
-};
-
-export const hasPermissionToViewOtherStats = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canViewOtherStats);
-};
-
-export const hasPermissionToViewOwnStats = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canViewOwnStats);
-};
-
-export const hasPermissionToControlSlide = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canControlSlide);
-};
-
-export const hasPermissionToControlObject = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canControlObject);
-};
-
-export const hasPermissionToExportBoard = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canExportBoard);
-};
-
-export const hasPermissionToViewBoard = (currentPermission: string | undefined): boolean => {
-  return hasPermission(currentPermission, permissionMap.canViewBoard);
-};
+/**
+ * permissionFunctions is an object containing functions that check if the user has the required permission.
+ * **/
+export const permissionFunctions = generateHasPermissionFunctions(permissionMap);
