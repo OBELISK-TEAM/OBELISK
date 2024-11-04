@@ -69,5 +69,13 @@ jobs:
             exit 1
           fi
 
+      - name: Run health check on client
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ vars.CLIENT_HOST }}:${{ vars.CLIENT_PORT }}/api/health)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Health check failed with status code $STATUS"
+            exit 1
+          fi
+
       - name: Stop docker containers
         run: docker compose down --volumes
