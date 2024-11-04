@@ -9,9 +9,9 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { BoardsFilter } from '../../shared/enums/boardsFilter';
+import { BoardsFilter } from '../../../shared/enums/boardsFilter';
 import { SortOrder } from './boards.service';
-import { BoardPermission } from '../../shared/enums/board.permission';
+import { BoardPermission } from '../../../shared/enums/board.permission';
 
 export class CreateBoardDto {
   @IsString({

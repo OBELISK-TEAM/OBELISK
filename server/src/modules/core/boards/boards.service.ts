@@ -9,29 +9,29 @@ import {
 import {
   SuperBoard,
   SuperBoardDocument,
-} from '../../mongo/schemas/board/super.board.schema';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermission } from '../../shared/enums/board.permission';
-import { ResponseService } from '../response/response.service';
+} from '../../../mongo/schemas/board/super.board.schema';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
+import { BoardPermission } from '../../../shared/enums/board.permission';
+import { ResponseService } from '../../response/response.service';
 import { BoardsFilter } from 'src/shared/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
 import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
-} from '../../shared/interfaces/response-objects/PaginatedUserBoards';
-import { BoardWithSlideCount } from '../../shared/interfaces/BoardWithSlideCount';
-import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
-import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
+} from '../../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithSlideCount } from '../../../shared/interfaces/BoardWithSlideCount';
+import { ClientBoardInfo } from '../../../shared/interfaces/ClientBoardInfo';
+import { BoardWithPopulatedPermissions } from '../../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
+import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../../config/dev.config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
-import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
-import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
-import { ObjectStatsService } from '../stats/object/object.stats.service';
-import { SlideStatsService } from '../stats/slide/slides.stats.service';
+import { CreatePermissionStrResponse } from '../../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../../shared/interfaces/response-objects/GrantPermission';
+import { ObjectStatsService } from '../../stats/object/object.stats.service';
+import { SlideStatsService } from '../../stats/slide/slides.stats.service';
 
 @Injectable()
 export class BoardsService {

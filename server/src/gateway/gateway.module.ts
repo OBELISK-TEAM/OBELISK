@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { Gateway } from './gateway';
 import { AuthModule } from '../modules/auth/auth.module';
-import { BoardsModule } from '../modules/boards/boards.module';
+import { BoardsModule } from '../modules/core/boards/boards.module';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
 import { JoinSlideService } from './providers/join.slide.service';
-import { SlidesModule } from '../modules/slides/slides.module';
+import { SlidesModule } from '../modules/core/slides/slides.module';
 import { SlideActionService } from './providers/slide.action.service';
 import { ObjectActionService } from './providers/object.action.service';
-import { ObjectsModule } from '../modules/objects/objects.module';
+import { ObjectsModule } from '../modules/core/objects/objects.module';
 import { ResponseModule } from '../modules/response/response.module';
 import { CommonService } from './providers/common.service';
 import { CursorActionService } from './providers/cursor.action.service';

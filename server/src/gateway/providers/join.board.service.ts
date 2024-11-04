@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BoardsService } from '../../modules/boards/boards.service';
+import { BoardsService } from '../../modules/core/boards/boards.service';
 import {
   GwSocket,
   GwSocketWithTarget,
