@@ -11,6 +11,7 @@ import {
   googleLogin as googleLoginAction,
 } from "@/app/actions/authActions";
 import { useRouter } from "next/navigation";
+import { getRedirectUrl } from "@/lib/urlUtils";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
@@ -19,33 +20,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
   decodedToken,
 }) => {
   const router = useRouter();
-  const login = async (credentials: { email: string; password: string }, successRedirect?: string) => {
+  const login = async (credentials: { email: string; password: string }) => {
     await loginAction(credentials.email, credentials.password);
 
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged in succesfully");
-    router.push(successRedirect || "/user-boards");
+    const redirect = getRedirectUrl() || "/user-boards";
+    router.push(redirect);
   };
 
-  const signup = async (credentials: { email: string; password: string }, successRedirect?: string) => {
+  const signup = async (credentials: { email: string; password: string }) => {
     await registerAction(credentials.email, credentials.password);
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Registered successfully");
-    router.push(successRedirect || "/user-boards");
+    const redirect = getRedirectUrl() || "/user-boards";
+    router.push(redirect);
   };
 
-  const logout = async (successRedirect?: string) => {
+  const logout = async () => {
     await logoutAction();
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged out successfully");
-    router.push(successRedirect || "/auth/login");
+    router.push("/auth/login");
   };
 
-  const loginGoogleUser = async (userTempId: string, successRedirect?: string) => {
+  const loginGoogleUser = async (userTempId: string) => {
     await googleLoginAction(userTempId);
     toast.dismiss();
     complexToast(ToastTypes.SUCCESS, "Logged in with Google successfully");
-    router.push(successRedirect || "/user-boards");
+    const redirect = getRedirectUrl() || "/user-boards";
+    router.push(redirect);
   };
 
   return (
