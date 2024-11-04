@@ -1,4 +1,4 @@
-export interface UserPermissions {
+export interface UserActions {
   canEditBoardName: boolean;
   canDeleteBoard: boolean;
   canControlPermissions: boolean;

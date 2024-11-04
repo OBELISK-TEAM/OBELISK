@@ -12,12 +12,12 @@ import {
   shouldRenderMenuItemBasedOnPermissions,
   shouldRenderMenuItemBasedOnSelection,
 } from "@/lib/board/horizontalMenuUtils";
-import { UserPermissions } from "@/interfaces/user-permissions";
+import { UserActions } from "@/interfaces/user-actions";
 import { Button } from "../ui/button";
 
 interface HorizontalMenuProps {
   groupId: string;
-  currentPermission: UserPermissions;
+  currentPermission: UserActions;
 }
 const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, currentPermission }) => {
   const { boardName } = useSocket();

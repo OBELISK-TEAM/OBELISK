@@ -9,8 +9,8 @@ import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/so
 import logger from "@/lib/logger";
 import { getSocket } from "@/services/socketService";
 import { BoardError } from "@/components/error/BoardError";
-import { getUserPermissions } from "@/lib/permissionUtils";
-import { UserPermissions } from "@/interfaces/user-permissions";
+import { getUserActions } from "@/lib/permissionUtils";
+import { UserActions } from "@/interfaces/user-actions";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -19,7 +19,7 @@ interface SocketContextProps {
   boardId: string | undefined;
   boardName: string | undefined;
   boardOwner: string | undefined;
-  currentPermission: UserPermissions;
+  currentPermission: UserActions;
   isBoardJoined: boolean;
   firstSlideChanged: boolean;
   setFirstSlideChanged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +38,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
   const [boardName, setBoardName] = useState<string | undefined>(undefined);
-  const [currentPermission, setCurrentPermission] = useState<UserPermissions>(getUserPermissions(undefined));
+  const [currentPermission, setCurrentPermission] = useState<UserActions>(getUserActions(undefined));
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
@@ -56,7 +56,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     function handleJoinBoard(res: JoinBoardResponse) {
       setTotalSlides(res.slideCount);
       setBoardName(res.name);
-      setCurrentPermission(getUserPermissions(res.permission));
+      setCurrentPermission(getUserActions(res.permission));
       setBoardOwner(res.owner);
       setIsBoardJoined(true);
       setConnectionError(false);
