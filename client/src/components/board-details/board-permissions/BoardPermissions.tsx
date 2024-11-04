@@ -73,7 +73,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
             <span className="font-bold text-foreground">{board.owner.email}</span>
           </div>
 
-          {actionFunctions.canControlPermissions(board.permission) && (
+          {actionFunctions.canManageUsersPermissions(board.permission) && (
             <ShareBoardDialog boardId={board._id}>
               <Button>
                 <Share2 className="mr-2 h-5 w-5" />
@@ -98,7 +98,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
                 </div>
               </TableCell>
               <TableCell>
-                {actionFunctions.canControlPermissions(board.permission) ? (
+                {actionFunctions.canManageUsersPermissions(board.permission) ? (
                   <BoardPermissionsSelect
                     boardMemberPermission={user.permission}
                     onChange={(newPermission) => handlePermissionChange(index, newPermission)}
@@ -109,7 +109,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
               </TableCell>
 
               <TableCell className="flex items-center justify-center">
-                {actionFunctions.canControlPermissions(board.permission) && (
+                {actionFunctions.canManageUsersPermissions(board.permission) && (
                   <DeleteCollaboratorButton
                     username={user.name}
                     deleteUser={() => {

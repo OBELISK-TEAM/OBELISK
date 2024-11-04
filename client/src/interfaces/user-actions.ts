@@ -1,11 +1,11 @@
 export interface UserActions {
   canEditBoardName: boolean;
   canDeleteBoard: boolean;
-  canControlPermissions: boolean;
+  canManageUsersPermissions: boolean;
   canViewOtherStats: boolean;
   canViewOwnStats: boolean;
-  canControlSlide: boolean;
-  canControlObject: boolean;
+  canManageSlide: boolean;
+  canManageObject: boolean;
   canExportBoard: boolean;
   canViewBoard: boolean;
   canViewBoardDetails: boolean;

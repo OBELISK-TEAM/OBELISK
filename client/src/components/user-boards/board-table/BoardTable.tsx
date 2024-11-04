@@ -98,7 +98,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                       e.stopPropagation();
                     }}
                   >
-                    {actionFunctions.canControlPermissions(board.permission) && (
+                    {actionFunctions.canManageUsersPermissions(board.permission) && (
                       <ShareBoardDialog boardId={board._id}>
                         <Button
                           variant="outline"

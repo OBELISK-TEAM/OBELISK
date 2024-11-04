@@ -42,13 +42,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const { handleZoom } = useZoom();
   const {
     socket,
-    permittedActions: { canControlObject },
+    permittedActions: { canManageObject },
   } = useSocket();
   const { decodedToken } = useAuth();
   const email = decodedToken?.email ?? "";
   const userColor = useMemo(() => getColorFromEmail(email), [email]);
   useEffect(() => {
-    const newCanvas = initializeCanvas({ current: canvasRef.current }, canControlObject);
+    const newCanvas = initializeCanvas({ current: canvasRef.current }, canManageObject);
     dispatch({ type: CanvasReducerAction.SET_CANVAS, canvas: newCanvas });
 
     const handleSelectionCreated = () => {

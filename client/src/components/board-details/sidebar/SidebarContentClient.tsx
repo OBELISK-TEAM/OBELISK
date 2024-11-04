@@ -14,7 +14,8 @@ interface SidebarContentClientProps {
 
 const SidebarContentClient: React.FC<SidebarContentClientProps> = ({ boardData }) => {
   const pathname = usePathname();
-
+  const normalizePath = (path: string) => (path.endsWith("/") ? path.slice(0, -1) : path);
+  const currentPath = normalizePath(pathname);
   const navItems: INavItem[] = [
     { icon: Info, label: "Information", href: `/user-boards/${boardData?._id}`, enabled: true },
     { icon: Shield, label: "Permissions", href: `/user-boards/${boardData?._id}/permissions`, enabled: true },
@@ -28,10 +29,6 @@ const SidebarContentClient: React.FC<SidebarContentClientProps> = ({ boardData }
         actionFunctions.canViewOtherStats(boardData?.permission),
     },
   ];
-
-  const normalizePath = (path: string) => (path.endsWith("/") ? path.slice(0, -1) : path);
-
-  const currentPath = normalizePath(pathname);
 
   return (
     <nav className="flex flex-col space-y-2 p-2">

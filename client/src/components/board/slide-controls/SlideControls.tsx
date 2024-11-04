@@ -7,7 +7,7 @@ import { useSocket } from "@/contexts/SocketContext";
 
 export function SlideControls() {
   const {
-    permittedActions: { canControlSlide },
+    permittedActions: { canManageSlide },
   } = useSocket();
   const emptySpace = <div className="flex flex-grow items-center"></div>;
   return (
@@ -15,7 +15,7 @@ export function SlideControls() {
       <div className="flex items-center justify-between border-t p-2">
         {emptySpace}
         <SlidePagination />
-        {canControlSlide ? <SlideActions /> : emptySpace}
+        {canManageSlide ? <SlideActions /> : emptySpace}
       </div>
     </SlideControlsProvider>
   );

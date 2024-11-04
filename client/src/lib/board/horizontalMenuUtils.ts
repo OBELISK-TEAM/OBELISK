@@ -21,5 +21,5 @@ export const shouldRenderMenuItemBasedOnPermissions = (permittedActions: UserAct
   if (item.name === MenuActions.EXPORT_PDF) {
     return permittedActions.canExportBoard;
   }
-  return permittedActions.canControlObject;
+  return permittedActions.canManageObject;
 };
