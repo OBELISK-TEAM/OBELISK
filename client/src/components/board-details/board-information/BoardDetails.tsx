@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { BOARD_LIMITS } from "@/config/boardConfig";
+import { updateBoardName } from "@/app/actions/boardActions";
 
 interface BoardDetailsProps {
   board: BoardDetailsResponse | undefined;
@@ -58,13 +59,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
 
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
-          <BoardNameField
-            board={board}
-            id={"board-name"}
-            mutate={() => {
-              /*todo: implement changing board name*/
-            }}
-          />
+          <BoardNameField board={board} id={"board-name"} />
 
           <BoardInfoInputItem
             label="Owner"

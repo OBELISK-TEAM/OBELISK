@@ -6,6 +6,7 @@ import { complexToast } from "@/contexts/complexToast";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
+import { updateBoardName } from "@/app/actions/boardActions";
 
 type State = {
   name: string;
@@ -40,7 +41,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-export const useBoardName = (board: BoardDetailsResponse | undefined, action: (obj: any) => void) => {
+export const useBoardName = (board: BoardDetailsResponse | undefined) => {
   const [state, dispatch] = useReducer(reducer, {
     name: "",
     isEditing: false,
@@ -75,11 +76,7 @@ export const useBoardName = (board: BoardDetailsResponse | undefined, action: (o
 
     try {
       dispatch({ type: "START_UPDATING" });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // TODO: JIRA[OK-212] implement action of updating the board name
-      // await action({ name: trimmedName, _id: board._id });
-      logger.log("need to use somewhere action otherwise linter will do brrr", JSON.stringify(action));
-      throw new Error("Not implemented");
+      await updateBoardName(board._id, trimmedName);
       toast.success("Board name updated successfully");
     } catch (error: any) {
       logger.error("Error while creating object:", error);

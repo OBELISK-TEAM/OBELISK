@@ -9,14 +9,10 @@ import { BoardDetailsResponse } from "@/interfaces/responses/board-details-respo
 interface BoardNameFieldProps {
   board: BoardDetailsResponse | undefined;
   id: string;
-  mutate: () => void;
 }
 
-const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id, mutate }) => {
-  const { name, isEditing, updating, setName, handleEditClick, handleCancel, handleConfirm } = useBoardName(
-    board,
-    mutate
-  );
+const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id }) => {
+  const { name, isEditing, updating, setName, handleEditClick, handleCancel, handleConfirm } = useBoardName(board);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
