@@ -1,5 +1,5 @@
 "use client";
-import React, { KeyboardEvent, useEffect } from "react";
+import React, { KeyboardEvent } from "react";
 import { Pencil, Save, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BoardInfoInputItem from "@/components/board-details/board-information/BoardInfoInputItem";
@@ -12,21 +12,15 @@ interface BoardNameFieldProps {
 }
 
 const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id }) => {
-  const { name, isEditing, updating, setName, handleEditClick, handleCancel, handleConfirm } = useBoardName(board);
-
+  const { name, isEditing, updating, isEnabledConfirmButton, setName, handleEditClick, handleCancel, handleConfirm } =
+    useBoardName(board);
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && isEnabledConfirmButton) {
       handleConfirm();
     } else if (e.key === "Escape") {
       handleCancel();
     }
   };
-  useEffect(() => {
-    if (board) {
-      setName(board.name);
-    }
-  }, [board]);
-
   return (
     <BoardInfoInputItem
       label="Board name"
@@ -46,7 +40,7 @@ const BoardNameField: React.FC<BoardNameFieldProps> = ({ board, id }) => {
               aria-label="Confirm name"
               onClick={handleConfirm}
               className={updating ? "cursor-not-allowed opacity-50" : ""}
-              disabled={updating}
+              disabled={updating || !isEnabledConfirmButton}
             >
               <div className="flex items-center gap-2">
                 <Save size={12} />

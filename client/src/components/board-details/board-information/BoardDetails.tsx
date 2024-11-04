@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { BOARD_LIMITS } from "@/config/boardConfig";
-import { updateBoardName } from "@/app/actions/boardActions";
 
 interface BoardDetailsProps {
   board: BoardDetailsResponse | undefined;
