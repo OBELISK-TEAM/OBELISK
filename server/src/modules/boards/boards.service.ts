@@ -1,7 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { BoardPermissionDto, CreateBoardDto } from './boards.dto';
+import {
+  BoardPermissionDto,
+  CreateBoardDto,
+  UpdateBoardDto,
+} from './boards.dto';
 import {
   SuperBoard,
   SuperBoardDocument,
@@ -85,6 +89,21 @@ export class BoardsService {
     }
 
     return createdBoard;
+  }
+
+  async updateBoard(
+    owner: string,
+    boardId: string,
+    updateBoardDto: UpdateBoardDto,
+  ): Promise<BoardResponseObject> {
+    const updatedBoard = await this.boardModel.findByIdAndUpdate(
+      boardId,
+      updateBoardDto,
+      { new: true },
+    );
+    if (!updatedBoard)
+      throw new HttpException('Board not found', HttpStatus.NOT_FOUND);
+    return this.res.toResponseBoard(updatedBoard);
   }
 
   async deleteBoard(

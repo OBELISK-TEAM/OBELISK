@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import {
   BoardPermissionDto,
   BoardQueryDto,
   CreateBoardDto,
+  UpdateBoardDto,
 } from './boards.dto';
 import { User } from '../../shared/decorators/users.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
@@ -49,6 +51,17 @@ export class BoardsController {
   @Get(':boardId')
   getBoard(@Param('boardId') boardId: string): Promise<BoardResponseObject> {
     return this.boardsService.getBoardById(boardId);
+  }
+
+  @Put(':boardId')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.OWNER)
+  async updateBoard(
+    @User('_id') userId: string,
+    @Param('boardId') boardId: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+  ): Promise<BoardResponseObject> {
+    return this.boardsService.updateBoard(userId, boardId, updateBoardDto);
   }
 
   @Get(':boardId/details')
