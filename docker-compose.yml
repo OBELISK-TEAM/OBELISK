@@ -12,6 +12,9 @@ services:
         - GOOGLE_CLIENT_SECRET
         - GOOGLE_CALLBACK_URL
         - NEXT_GW_SERVER_HOST
+        - SLIDE_LIMIT_PER_BOARD
+        - MAX_BOARD_SIZE_IN_BYTES
+
     ports:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
     container_name: obelisk_client_container

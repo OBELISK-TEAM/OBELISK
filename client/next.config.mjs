@@ -15,6 +15,8 @@ const nextConfig = {
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
         SOCKET_GW_PORT: process.env.SOCKET_GW_PORT,
         APP_ENV: process.env.APP_ENV,
+        SLIDE_LIMIT_PER_BOARD: process.env.SLIDE_LIMIT_PER_BOARD,
+        MAX_BOARD_SIZE_IN_BYTES: process.env.MAX_BOARD_SIZE_IN_BYTES
     }
 };
 

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { permissionFunctions } from "@/lib/permissionUtils";
+import { BOARD_LIMITS } from "@/config/boardConfig";
 
 interface BoardDetailsProps {
   board: BoardDetailsResponse | undefined;
@@ -32,7 +33,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
   const lastUpdated = board.updatedAt ? new Date(board.updatedAt).toLocaleString() : "";
 
   const totalSizeUsed = board.sizeInBytes;
-  const usedPercentage = board.maxBoardSizeInBytes ? (totalSizeUsed / board.maxBoardSizeInBytes) * 100 : 0;
+  const usedPercentage = (totalSizeUsed / BOARD_LIMITS.MAX_BOARD_SIZE_IN_BYTES) * 100;
 
   const collaboratingUsers = [
     ...(board.permissions.viewer || []),
@@ -110,8 +111,11 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
           <BoardInfoItem label="Used space">
             <div className="flex w-full items-center justify-between gap-4 text-xs">
               <Progress value={usedPercentage} className="w-full" />
-              <Badge variant="secondary" className="border-1 h-10 w-40 rounded-md px-4 py-2 text-xs">
-                <span className="text-muted-foreground">{`${(totalSizeUsed / 1024).toFixed(2)} / ${(board.maxBoardSizeInBytes / 1024).toFixed(2)} KB`}</span>
+              <Badge
+                variant="secondary"
+                className="border-1 w-max-56 flex h-10 w-40 items-center justify-center rounded-md px-4 py-2 text-xs"
+              >
+                <span className="text-muted-foreground">{`${Math.round(totalSizeUsed / 1024)} / ${Math.round(BOARD_LIMITS.MAX_BOARD_SIZE_IN_BYTES / 1024)} KB`}</span>
               </Badge>
             </div>
           </BoardInfoItem>
@@ -119,7 +123,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
           {/* Number of Slides */}
           <BoardInfoItem label="No slides">
             <Badge variant="outline" className="h-10 w-fit rounded-md px-4 py-2 text-xs">
-              <span className="text-muted-foreground">{`${board.slideCount} / 10`}</span>
+              <span className="text-muted-foreground">{`${board.slideCount} / ${BOARD_LIMITS.SLIDE_LIMIT_PER_BOARD}`}</span>
             </Badge>
           </BoardInfoItem>
         </article>
