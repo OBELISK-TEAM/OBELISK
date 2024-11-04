@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { AddSlideData, DeleteSlideData } from "@/interfaces/socket/SocketEmitsData";
 import { socketEmitAddSlide, socketEmitDeleteSlide } from "@/lib/board/socketEmitUtils";
 import { SlideDeletedResponse } from "@/interfaces/socket/SocketCallbacksData";
+import { BOARD_LIMITS } from "@/config/boardConfig";
 
 interface SlideControlsContext {
   currentSlide: number;
@@ -26,7 +27,7 @@ export const SlideControlsProvider: React.FC<{ children: React.ReactNode }> = ({
   const { socket, totalSlides, setTotalSlides, setFirstSlideChanged } = useSocket();
   const { slideIndex: currentSlide, boardId, slideId } = useCanvas(); // currentSlide is a 1-based system! That means that slides have numbers 1, 2, 3, ...
   const router = useRouter();
-  const SLIDE_LIMIT = 10;
+  const SLIDE_LIMIT = BOARD_LIMITS.SLIDE_LIMIT_PER_BOARD;
   const [lastSlideDeleted, setLastSlideDeleted] = useState<boolean>(false);
   useEffect(() => {
     if (lastSlideDeleted) {
