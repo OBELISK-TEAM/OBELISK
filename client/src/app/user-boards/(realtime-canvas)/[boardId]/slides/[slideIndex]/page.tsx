@@ -9,13 +9,13 @@ import { useScrollToTop } from "@/hooks/window/useScrollToTop";
 import { useSocket } from "@/contexts/SocketContext";
 const Board: React.FC = () => {
   useScrollToTop();
-  const { currentPermission } = useSocket();
-  const canvasWrapperWidth = currentPermission.canControlObject ? `calc(100% - ${2 * 56}px)` : "100%";
+  const { permittedActions } = useSocket();
+  const canvasWrapperWidth = permittedActions.canControlObject ? `calc(100% - ${2 * 56}px)` : "100%";
   return (
     <div className="flex flex-col">
-      <BoardHorizontalMenu groupId={MenuGroups.FILE_AND_CANVAS_OPERATIONS} currentPermission={currentPermission} />
+      <BoardHorizontalMenu groupId={MenuGroups.FILE_AND_CANVAS_OPERATIONS} permittedActions={permittedActions} />
       <div className="flex">
-        {currentPermission.canControlObject && (
+        {permittedActions.canControlObject && (
           <>
             <BoardSidebar withSettings={true} groupId={MenuGroups.DRAWING_TOOLS} />
             <BoardSidebar groupId={MenuGroups.OBJECT_MANIPULATION} />
@@ -27,9 +27,9 @@ const Board: React.FC = () => {
             width: canvasWrapperWidth,
           }}
         >
-          {currentPermission.canControlObject && <BoardToolBar />}
+          {permittedActions.canControlObject && <BoardToolBar />}
           <SlideCanvas />
-          {currentPermission.canControlObject && <SlideFileInputs />}
+          {permittedActions.canControlObject && <SlideFileInputs />}
         </div>
       </div>
     </div>

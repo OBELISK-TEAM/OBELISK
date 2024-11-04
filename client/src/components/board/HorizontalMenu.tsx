@@ -17,9 +17,9 @@ import { Button } from "../ui/button";
 
 interface HorizontalMenuProps {
   groupId: string;
-  currentPermission: UserActions;
+  permittedActions: UserActions;
 }
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, currentPermission }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, permittedActions }) => {
   const { boardName } = useSocket();
   const {
     state: { activeItem, selectedObjectStyles },
@@ -42,7 +42,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, currentPermissi
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
           {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
-            if (!shouldRenderMenuItemBasedOnPermissions(currentPermission, item)) {
+            if (!shouldRenderMenuItemBasedOnPermissions(permittedActions, item)) {
               return null;
             }
             if (!shouldRenderMenuItemBasedOnSelection(selectedObjectStyles, item)) {

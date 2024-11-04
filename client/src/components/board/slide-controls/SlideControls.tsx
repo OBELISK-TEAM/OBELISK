@@ -7,7 +7,7 @@ import { useSocket } from "@/contexts/SocketContext";
 
 export function SlideControls() {
   const {
-    currentPermission: { canControlSlide },
+    permittedActions: { canControlSlide },
   } = useSocket();
   const emptySpace = <div className="flex flex-grow items-center"></div>;
   return (

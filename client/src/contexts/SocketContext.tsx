@@ -19,7 +19,7 @@ interface SocketContextProps {
   boardId: string | undefined;
   boardName: string | undefined;
   boardOwner: string | undefined;
-  currentPermission: UserActions;
+  permittedActions: UserActions;
   isBoardJoined: boolean;
   firstSlideChanged: boolean;
   setFirstSlideChanged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +38,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
   const [boardName, setBoardName] = useState<string | undefined>(undefined);
-  const [currentPermission, setCurrentPermission] = useState<UserActions>(getUserActions(undefined));
+  const [permittedActions, setPermittedActions] = useState<UserActions>(getUserActions(undefined));
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
@@ -56,7 +56,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     function handleJoinBoard(res: JoinBoardResponse) {
       setTotalSlides(res.slideCount);
       setBoardName(res.name);
-      setCurrentPermission(getUserActions(res.permission));
+      setPermittedActions(getUserActions(res.permission));
       setBoardOwner(res.owner);
       setIsBoardJoined(true);
       setConnectionError(false);
@@ -156,7 +156,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         boardName,
         boardOwner,
         boardId,
-        currentPermission,
+        permittedActions,
         isBoardJoined,
         firstSlideChanged,
         setFirstSlideChanged,

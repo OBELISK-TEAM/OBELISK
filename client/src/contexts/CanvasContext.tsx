@@ -42,7 +42,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   const { handleZoom } = useZoom();
   const {
     socket,
-    currentPermission: { canControlObject },
+    permittedActions: { canControlObject },
   } = useSocket();
   const { decodedToken } = useAuth();
   const email = decodedToken?.email ?? "";

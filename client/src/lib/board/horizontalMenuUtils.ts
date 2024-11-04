@@ -17,9 +17,9 @@ export const shouldRenderMenuItemBasedOnSelection = (
   return true;
 };
 
-export const shouldRenderMenuItemBasedOnPermissions = (currentPermission: UserActions, item: MenuItem): boolean => {
+export const shouldRenderMenuItemBasedOnPermissions = (permittedActions: UserActions, item: MenuItem): boolean => {
   if (item.name === MenuActions.EXPORT_PDF) {
-    return currentPermission.canExportBoard;
+    return permittedActions.canExportBoard;
   }
-  return currentPermission.canControlObject;
+  return permittedActions.canControlObject;
 };
