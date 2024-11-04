@@ -84,5 +84,13 @@ jobs:
             exit 1
           fi
 
+      - name: Run health check on RabbitMQ
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -u ${{ vars.RABBITMQ_USER }}:${{ vars.RABBITMQ_PASS }} http://${{ vars.RABBITMQ_HOST }}:${{ vars.RABBITMQ_MANAGEMENT_PORT }}/api/health/checks/alarms)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "RabbitMQ health check failed with status code $STATUS"
+            exit 1
+          fi
+
       - name: Stop docker containers
         run: docker compose down --volumes
