@@ -56,7 +56,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
           Go to the board
         </Button>
       </header>
-
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
           {permissionFunctions.canEditBoardName(board.permission) ? (
@@ -78,7 +77,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
               }}
             />
           )}
-
           <BoardInfoInputItem
             label="Owner"
             value={board.owner.email}
@@ -88,7 +86,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
               readOnly: true,
             }}
           />
-
           <BoardInfoInputItem
             label="Creation Date"
             id={"creation-date"}
@@ -98,7 +95,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
               readOnly: true,
             }}
           />
-
           <BoardInfoInputItem
             label="Last Updated"
             id={"last-updated"}
@@ -119,7 +115,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
               </Badge>
             </div>
           </BoardInfoItem>
-
           {/* Number of Slides */}
           <BoardInfoItem label="No slides">
             <Badge variant="outline" className="h-10 w-fit rounded-md px-4 py-2 text-xs">
@@ -127,7 +122,6 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
             </Badge>
           </BoardInfoItem>
         </article>
-
         <CollaboratingUsers users={collaboratingUsers} />
       </main>
     </section>
