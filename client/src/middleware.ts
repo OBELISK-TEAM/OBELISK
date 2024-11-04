@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/user-boards", request.url));
     }
   } else {
-    if (pathname.startsWith("/user-boards") && !pathname.startsWith("/auth")) {
+    if (pathname.startsWith("/user-boards")) {
       const response = NextResponse.redirect(new URL("/auth/login", request.url));
       response.cookies.set("redirectUrl", pathname + search, {
         path: "/",

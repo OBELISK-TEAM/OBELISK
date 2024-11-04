@@ -1,10 +1,6 @@
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import Cookies from "js-cookie";
 
-export const sanitize = (input: string): string => {
-  return sanitizeUrl(input);
-};
-
 export const getRawRedirectUrl = (): string | null => {
   const redirectUrl = Cookies.get("redirectUrl");
   if (redirectUrl) {
@@ -23,5 +19,5 @@ export const getRedirectUrl = (): string | null => {
   if (!rawRedirectUrl) {
     return null;
   }
-  return sanitize(rawRedirectUrl);
+  return sanitizeUrl(rawRedirectUrl);
 };
