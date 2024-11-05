@@ -1,6 +1,6 @@
 import { MenuActions } from "@/enums/MenuActions";
 import { MenuItem } from "@/interfaces/menu-data-context";
-import { UserActions } from "@/interfaces/user-actions";
+import { UserCapabilities } from "@/interfaces/user-capabilities";
 
 export const shouldRenderMenuItemBasedOnSelection = (
   selectedObjectStyles: { [p: string]: any } | null,
@@ -17,9 +17,9 @@ export const shouldRenderMenuItemBasedOnSelection = (
   return true;
 };
 
-export const shouldRenderMenuItemBasedOnPermissions = (permittedActions: UserActions, item: MenuItem): boolean => {
+export const shouldRenderMenuItemBasedOnPermissions = (userCapabilities: UserCapabilities, item: MenuItem): boolean => {
   if (item.name === MenuActions.EXPORT_PDF) {
-    return permittedActions.canExportBoard;
+    return userCapabilities.canExportBoard;
   }
-  return permittedActions.canManageObject;
+  return userCapabilities.canManageObject;
 };

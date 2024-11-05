@@ -16,7 +16,7 @@ import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardD
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
 import { deleteBoard } from "@/app/actions/boardActions";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
-import { actionFunctions } from "@/lib/permissionUtils";
+import { capabilityFunctions } from "@/lib/permissionUtils";
 import { toast } from "sonner";
 
 interface BoardTableProps {
@@ -29,7 +29,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
   const router = useRouter();
 
   const handleRowClick = (board: BoardResponse) => {
-    if (!actionFunctions.canViewBoard(board.permission)) {
+    if (!capabilityFunctions.canViewBoard(board.permission)) {
       toast.dismiss();
       toast.error("You don't have permission to view this board");
       return;
@@ -81,7 +81,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                 <TableRow
                   key={board._id}
                   className={
-                    actionFunctions.canViewBoard(board.permission)
+                    capabilityFunctions.canViewBoard(board.permission)
                       ? "cursor-pointer border-b hover:bg-muted/50"
                       : "opacity-90"
                   }
@@ -98,7 +98,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                       e.stopPropagation();
                     }}
                   >
-                    {actionFunctions.canManageUsersPermissions(board.permission) && (
+                    {capabilityFunctions.canManageUsersPermissions(board.permission) && (
                       <ShareBoardDialog boardId={board._id}>
                         <Button
                           variant="outline"
@@ -110,13 +110,13 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                         </Button>
                       </ShareBoardDialog>
                     )}
-                    {actionFunctions.canDeleteBoard(board.permission) && (
+                    {capabilityFunctions.canDeleteBoard(board.permission) && (
                       <BoardDeletionButton
                         revalidateFunc={() => router.refresh()}
                         deleteBoard={() => deleteBoard(board._id)}
                       />
                     )}
-                    {actionFunctions.canViewBoardDetails(board.permission) && (
+                    {capabilityFunctions.canViewBoardDetails(board.permission) && (
                       <BoardDetailsButton boardId={board._id} />
                     )}
                   </TableCell>

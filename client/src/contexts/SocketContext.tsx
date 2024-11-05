@@ -9,8 +9,8 @@ import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/so
 import logger from "@/lib/logger";
 import { getSocket } from "@/services/socketService";
 import { BoardError } from "@/components/error/BoardError";
-import { getUserActions } from "@/lib/permissionUtils";
-import { UserActions } from "@/interfaces/user-actions";
+import { getUserCapabilities } from "@/lib/permissionUtils";
+import { UserCapabilities } from "@/interfaces/user-capabilities";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -19,7 +19,7 @@ interface SocketContextProps {
   boardId: string | undefined;
   boardName: string | undefined;
   boardOwner: string | undefined;
-  permittedActions: UserActions;
+  userCapabilities: UserCapabilities;
   isBoardJoined: boolean;
   firstSlideChanged: boolean;
   setFirstSlideChanged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +38,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
   const [boardName, setBoardName] = useState<string | undefined>(undefined);
-  const [permittedActions, setPermittedActions] = useState<UserActions>(getUserActions(undefined));
+  const [userCapabilities, setUserCapabilities] = useState<UserCapabilities>(getUserCapabilities(undefined));
   const [boardOwner, setBoardOwner] = useState<string | undefined>(undefined);
   const [isBoardJoined, setIsBoardJoined] = useState(false);
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
@@ -56,7 +56,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
     function handleJoinBoard(res: JoinBoardResponse) {
       setTotalSlides(res.slideCount);
       setBoardName(res.name);
-      setPermittedActions(getUserActions(res.permission));
+      setUserCapabilities(getUserCapabilities(res.permission));
       setBoardOwner(res.owner);
       setIsBoardJoined(true);
       setConnectionError(false);
@@ -156,7 +156,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
         boardName,
         boardOwner,
         boardId,
-        permittedActions,
+        userCapabilities,
         isBoardJoined,
         firstSlideChanged,
         setFirstSlideChanged,

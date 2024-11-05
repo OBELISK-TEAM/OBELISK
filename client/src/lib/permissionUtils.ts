@@ -1,8 +1,8 @@
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardPermissionNum } from "@/enums/BoardPermissionNum";
-import { UserActions } from "@/interfaces/user-actions";
-import { ActionFunctions } from "@/types/permissions/ActionFunctions";
-import { ActionPermissionMap } from "@/types/permissions/ActionPermissionMap";
+import { UserCapabilities } from "@/interfaces/user-capabilities";
+import { CapabilityFunctions } from "@/types/permissions/CapabilityFunctions";
+import { CapabilityPermissionMap } from "@/types/permissions/CapabilityPermissionMap";
 
 /**
  * Converts BoardPermission to BoardPermissionNum.
@@ -43,7 +43,7 @@ export const hasPermission = (
 };
 
 /**
- * actionPermissionMap defines the minimum permissions required for each action.
+ * capabilityPermissionMap defines the minimum permissions required for each action.
  * For example, `canViewBoard` requires the user to have at least VIEWER permissions.
  *
  * The permission hierarchy is defined in BoardPermissionNum (higher numbers indicate more permissions).
@@ -56,7 +56,7 @@ export const hasPermission = (
  * should update automatically.
  */
 
-const actionPermissionMap: ActionPermissionMap = {
+const capabilityPermissionMap: CapabilityPermissionMap = {
   canEditBoardName: BoardPermissionNum.OWNER,
   canDeleteBoard: BoardPermissionNum.OWNER,
   canManageUsersPermissions: BoardPermissionNum.MODERATOR,
@@ -74,21 +74,21 @@ const actionPermissionMap: ActionPermissionMap = {
  * @param currentPermission - The user's current permission.
  * @returns The user's permissions as an object.
  */
-export const getUserActions = (currentPermission: string | undefined): UserActions => {
-  const actions: Partial<UserActions> = {};
+export const getUserCapabilities = (currentPermission: string | undefined): UserCapabilities => {
+  const capabilities: Partial<UserCapabilities> = {};
 
-  for (const key in actionPermissionMap) {
-    const actionKey = key as keyof UserActions;
-    actions[actionKey] = hasPermission(currentPermission, actionPermissionMap[actionKey]);
+  for (const key in capabilityPermissionMap) {
+    const capabilityKey = key as keyof UserCapabilities;
+    capabilities[capabilityKey] = hasPermission(currentPermission, capabilityPermissionMap[capabilityKey]);
   }
-  return actions as UserActions;
+  return capabilities as UserCapabilities;
 };
 
-const generateActionFunctions = (map: ActionPermissionMap): ActionFunctions => {
-  const functions = {} as ActionFunctions;
+const generateCapabilityFunctions = (map: CapabilityPermissionMap): CapabilityFunctions => {
+  const functions = {} as CapabilityFunctions;
 
-  (Object.keys(map) as (keyof UserActions)[]).forEach((key) => {
-    const functionName = key as keyof ActionFunctions;
+  (Object.keys(map) as (keyof UserCapabilities)[]).forEach((key) => {
+    const functionName = key as keyof CapabilityFunctions;
     functions[functionName] = (currentPermission: string | undefined) => hasPermission(currentPermission, map[key]);
   });
 
@@ -96,6 +96,6 @@ const generateActionFunctions = (map: ActionPermissionMap): ActionFunctions => {
 };
 
 /**
- * actionFunctions is an object containing functions that check if the user has the required permission for given action.
+ * capabilityFunctions  is an object containing functions that check if the user has the required permission for given action.
  * **/
-export const actionFunctions = generateActionFunctions(actionPermissionMap);
+export const capabilityFunctions = generateCapabilityFunctions(capabilityPermissionMap);

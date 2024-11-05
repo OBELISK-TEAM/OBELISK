@@ -5,7 +5,7 @@ import { Info, Shield, BarChart2 } from "lucide-react";
 import { SidebarButton } from "@/components/board-details/SidebarButton";
 import { usePathname } from "next/navigation";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
-import { actionFunctions } from "@/lib/permissionUtils";
+import { capabilityFunctions } from "@/lib/permissionUtils";
 import { INavItem } from "@/interfaces/sidebar-nav-items";
 
 interface SidebarContentClientProps {
@@ -25,8 +25,8 @@ const SidebarContentClient: React.FC<SidebarContentClientProps> = ({ boardData }
       href: `/user-boards/${boardData?._id}/statistics`,
       // if user do not have permission to view own stats and view other stats, disable the statistics tab
       enabled:
-        actionFunctions.canViewOwnStats(boardData?.permission) ||
-        actionFunctions.canViewOtherStats(boardData?.permission),
+        capabilityFunctions.canViewOwnStats(boardData?.permission) ||
+        capabilityFunctions.canViewOtherStats(boardData?.permission),
     },
   ];
 

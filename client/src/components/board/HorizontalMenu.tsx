@@ -12,14 +12,14 @@ import {
   shouldRenderMenuItemBasedOnPermissions,
   shouldRenderMenuItemBasedOnSelection,
 } from "@/lib/board/horizontalMenuUtils";
-import { UserActions } from "@/interfaces/user-actions";
+import { UserCapabilities } from "@/interfaces/user-capabilities";
 import { Button } from "../ui/button";
 
 interface HorizontalMenuProps {
   groupId: string;
-  permittedActions: UserActions;
+  userCapabilities: UserCapabilities;
 }
-const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, permittedActions }) => {
+const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, userCapabilities }) => {
   const { boardName } = useSocket();
   const {
     state: { activeItem, selectedObjectStyles },
@@ -42,7 +42,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, permittedAction
         </div>
         <div className="flex items-center space-x-2 overflow-x-auto px-4">
           {menuItems?.items.map((item: MenuItem, itemIndex: number) => {
-            if (!shouldRenderMenuItemBasedOnPermissions(permittedActions, item)) {
+            if (!shouldRenderMenuItemBasedOnPermissions(userCapabilities, item)) {
               return null;
             }
             if (!shouldRenderMenuItemBasedOnSelection(selectedObjectStyles, item)) {

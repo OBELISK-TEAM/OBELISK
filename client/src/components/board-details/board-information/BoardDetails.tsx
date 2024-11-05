@@ -11,7 +11,7 @@ import BoardInfoItem from "./BoardInfoItem";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
-import { actionFunctions } from "@/lib/permissionUtils";
+import { capabilityFunctions } from "@/lib/permissionUtils";
 import { BOARD_LIMITS } from "@/config/boardConfig";
 
 interface BoardDetailsProps {
@@ -58,7 +58,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
       </header>
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
-          {actionFunctions.canEditBoardName(board.permission) ? (
+          {capabilityFunctions.canEditBoardName(board.permission) ? (
             <BoardNameField
               board={board}
               id={"board-name"}
