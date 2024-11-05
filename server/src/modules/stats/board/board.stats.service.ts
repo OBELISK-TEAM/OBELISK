@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BoardStats } from 'src/mongo/schemas/stats/board.stats.schema';
+import { BoardAction } from 'src/shared/enums/actions/board.action';
+import { BoardPermission } from 'src/shared/enums/board.permission';
 
 @Injectable()
 export class BoardStatsService {
@@ -12,6 +14,7 @@ export class BoardStatsService {
 
   async initStats(boardId: string, ownerId: string): Promise<void> {
     await this.boardStatsModel.create({ boardId, ownerId });
+    void this.logAction(boardId, ownerId, null, BoardAction.ADD_BOARD);
   }
 
   async removeStats(boardId: string): Promise<void> {
@@ -31,14 +34,19 @@ export class BoardStatsService {
         },
       },
     );
+    void this.logAction(boardId, userId, null, BoardAction.USER_JOIN_BOARD);
   }
 
   async logLeave(boardId: string, userId: string): Promise<void> {
     await this.boardStatsModel.updateOne(
       {
         boardId,
-        'joinLeaveTimeline.userId': userId,
-        'joinLeaveTimeline.leaveDate': null,
+        joinLeaveTimeline: {
+          $elemMatch: {
+            userId,
+            leaveDate: null,
+          },
+        },
       },
       {
         $set: {
@@ -46,9 +54,14 @@ export class BoardStatsService {
         },
       },
     );
+    void this.logAction(boardId, userId, null, BoardAction.USER_LEAVE_BOARD);
   }
 
-  async logShare(boardId: string, userId: string): Promise<void> {
+  async logShare(
+    boardId: string,
+    userId: string,
+    permission: BoardPermission,
+  ): Promise<void> {
     await this.boardStatsModel.updateOne(
       { boardId },
       {
@@ -56,20 +69,29 @@ export class BoardStatsService {
           shareTimeline: {
             timestamp: new Date(),
             userId,
+            permission,
           },
         },
       },
     );
+    void this.logAction(boardId, userId, null, BoardAction.SHARE_BOARD);
   }
 
-  async logEdit(boardId: string, userId: string): Promise<void> {
+  async logAction(
+    boardId: string,
+    userId: string,
+    slideId: string | null,
+    action: BoardAction,
+  ): Promise<void> {
     await this.boardStatsModel.updateOne(
       { boardId },
       {
         $push: {
-          editTimeline: {
+          actionTimeline: {
             timestamp: new Date(),
             userId,
+            slideId,
+            action,
           },
         },
       },
