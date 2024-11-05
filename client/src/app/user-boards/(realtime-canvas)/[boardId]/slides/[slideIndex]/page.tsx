@@ -25,6 +25,7 @@ const Board: React.FC = () => {
           className="flex flex-col items-center bg-muted text-muted-foreground"
           style={{
             width: canvasWrapperWidth,
+            height: "calc(100vh - 64px)",
           }}
         >
           {userCapabilities.canManageObject && <BoardToolBar />}

@@ -21,5 +21,8 @@ export const shouldRenderMenuItemBasedOnPermissions = (userCapabilities: UserCap
   if (item.name === MenuActions.EXPORT_PDF) {
     return userCapabilities.canExportBoard;
   }
+  if (item.name === MenuActions.SHARE_BOARD) {
+    return userCapabilities.canManageUsersPermissions;
+  }
   return userCapabilities.canManageObject;
 };
