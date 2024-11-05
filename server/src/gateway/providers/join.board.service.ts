@@ -11,6 +11,8 @@ import { ResponseService } from '../../modules/response/response.service';
 import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { WsException } from '@nestjs/websockets';
 import { CommonService } from './common.service';
+import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class JoinBoardService {
@@ -18,6 +20,7 @@ export class JoinBoardService {
     private readonly boardsService: BoardsService,
     private readonly commonService: CommonService,
     private readonly res: ResponseService,
+    private readonly boardStatsService: BoardStatsService,
   ) {}
   private readonly logger = new Logger(JoinBoardService.name);
 
@@ -81,6 +84,10 @@ export class JoinBoardService {
       _id: user._id,
     });
     this.logger.log(`${user.email} has joined the board ${boardId}`);
+    void this.boardStatsService.logJoin(
+      boardId.toString(),
+      (user._id as Types.ObjectId).toString(),
+    );
   }
 
   async handleLeaveBoardAndSlide(client: GwSocketWithTarget): Promise<void> {

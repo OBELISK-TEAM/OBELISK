@@ -33,6 +33,7 @@ import { CreatePermissionStrResponse } from '../../../shared/interfaces/response
 import { GrantPermissionResponse } from '../../../shared/interfaces/response-objects/GrantPermission';
 import { ObjectStatsService } from '../../stats/object/object.stats.service';
 import { SlideStatsService } from '../../stats/slide/slides.stats.service';
+import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
 
 @Injectable()
 export class BoardsService {
@@ -44,9 +45,10 @@ export class BoardsService {
     @InjectModel(SuperBoard.name)
     private readonly boardModel: Model<SuperBoard>,
     private readonly configService: ConfigService,
-    private readonly objectStatsService: ObjectStatsService,
     private readonly res: ResponseService,
+    private readonly objectStatsService: ObjectStatsService,
     private readonly slideStatsService: SlideStatsService,
+    private readonly boardStatsService: BoardStatsService,
   ) {
     this.maxBoardSizeInBytes = this.getMaxBoardSizeInBytes();
   }
@@ -87,6 +89,10 @@ export class BoardsService {
         createdBoard._id.toString(),
         owner.toString(),
       );
+      void this.boardStatsService.initStats(
+        createdBoard._id.toString(),
+        owner.toString(),
+      );
     }
 
     return createdBoard;
@@ -114,6 +120,7 @@ export class BoardsService {
     const deletedBoard = await this.deleteBoardById(boardId);
     void this.objectStatsService.removeStats(null, null, boardId.toString());
     void this.slideStatsService.removeStats(null, boardId.toString());
+    void this.boardStatsService.removeStats(boardId.toString());
     return this.res.toResponseBoard(deletedBoard);
   }
 
@@ -308,6 +315,11 @@ export class BoardsService {
     permission: BoardPermission,
   ): Promise<void> {
     userId = userId.toString();
+    void this.boardStatsService.logShare(
+      (board._id as Types.ObjectId).toString(),
+      userId,
+      BoardPermission.NONE,
+    );
     switch (permission) {
       case BoardPermission.NONE:
         return;
@@ -340,6 +352,11 @@ export class BoardsService {
     userId: string,
     permission: BoardPermission,
   ): Promise<void> {
+    void this.boardStatsService.logShare(
+      (board._id as Types.ObjectId).toString(),
+      userId.toString(),
+      permission,
+    );
     switch (permission) {
       case BoardPermission.NONE:
         return;
