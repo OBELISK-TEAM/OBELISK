@@ -4,6 +4,7 @@ import { FilterQuery, Model, Types } from 'mongoose';
 import {
   BoardPermissionDto,
   CreateBoardDto,
+  ModifyPermissionDto,
   UpdateBoardDto,
 } from './boards.dto';
 import {
@@ -340,6 +341,8 @@ export class BoardsService {
     permission: BoardPermission,
   ): Promise<void> {
     switch (permission) {
+      case BoardPermission.NONE:
+        return;
       case BoardPermission.VIEWER:
         board.permissions.viewer.push(userId);
         break;
@@ -353,6 +356,17 @@ export class BoardsService {
         throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
     await board.save();
+  }
+
+  async modifyPermission(
+    boardId: string,
+    modifyPermissionDto: ModifyPermissionDto,
+  ): Promise<void> {
+    const { userId, permission } = modifyPermissionDto;
+    const board = await this.findBoardById(boardId);
+    const currPermission = this.determineUserPermission(board, userId);
+    await this.removePermission(board, userId, currPermission);
+    await this.assignPermission(board, userId, permission);
   }
 
   private calculateBoardSizeInBytes(board: SuperBoardDocument): number {

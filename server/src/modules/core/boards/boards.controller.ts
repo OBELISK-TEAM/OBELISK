@@ -14,6 +14,7 @@ import {
   BoardPermissionDto,
   BoardQueryDto,
   CreateBoardDto,
+  ModifyPermissionDto,
   UpdateBoardDto,
 } from './boards.dto';
 import { User } from '../../../shared/decorators/users.decorator';
@@ -112,5 +113,15 @@ export class BoardsController {
     @Param('permissionString') permissionStr: string,
   ): Promise<GrantPermissionResponse> {
     return this.boardsService.grantPermission(userId, permissionStr);
+  }
+
+  @Put(':boardId/permissions/modify')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  async modifyPermission(
+    @Param('boardId') boardId: string,
+    @Body() modifyPermissionDto: ModifyPermissionDto,
+  ): Promise<void> {
+    return this.boardsService.modifyPermission(boardId, modifyPermissionDto);
   }
 }

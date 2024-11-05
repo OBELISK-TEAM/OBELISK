@@ -50,6 +50,12 @@ export class BoardQueryDto {
 }
 
 export class BoardPermissionDto {
-  @IsEnum(BoardPermission) // only viewer/editor/moderator!!!
+  @IsEnum(BoardPermission) // only none/viewer/editor/moderator!!!
   permission: BoardPermission;
+}
+
+export class ModifyPermissionDto extends BoardPermissionDto {
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
 }
