@@ -3,7 +3,8 @@ import { Document, Types } from 'mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 import { SuperBoard } from '../board/super.board.schema';
 import { User } from '../user.schema';
-import { UserActionTimeline } from 'src/shared/interfaces/UserActionTimeline';
+import { BoardPermission } from 'src/shared/enums/board.permission';
+import { BoardAction } from 'src/shared/enums/actions/board.action';
 
 @Schema({
   timestamps: true,
@@ -39,14 +40,23 @@ export class BoardStats extends Document {
     required: false,
     default: [],
   })
-  shareTimeline: UserActionTimeline;
+  shareTimeline: [
+    { userId: string; permission: BoardPermission; timestamp: Date },
+  ];
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
     required: false,
     default: [],
   })
-  editTimeline: UserActionTimeline;
+  actionTimeline: [
+    {
+      timestamp: Date;
+      userId: string;
+      slideId: string | null;
+      action: BoardAction;
+    },
+  ];
 }
 
 export const BoardStatsSchema = SchemaFactory.createForClass(BoardStats);
