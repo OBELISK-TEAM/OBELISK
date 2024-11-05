@@ -4,7 +4,7 @@ import { getCookie } from "@/lib/authApiUtils";
 import logger from "@/lib/logger";
 import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { BoardPermission } from "@/enums/BoardPermission";
-import { boardPermissionToNum } from "@/lib/boardPermissionConverter";
+import { boardPermissionToNum } from "@/lib/permissionUtils";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
 import { apiRequest } from "@/services/requestService";
 

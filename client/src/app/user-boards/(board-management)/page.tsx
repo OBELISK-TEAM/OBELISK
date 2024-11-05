@@ -8,6 +8,7 @@ import {
   BoardsActiveTabMap,
   BoardsActiveTabReverseMap,
 } from "@/enums/BoardsActiveTab";
+import UserBoardsError from "@/components/error/UserBoardsError";
 
 export default async function UserBoardsPage({
   searchParams,
@@ -29,13 +30,6 @@ export default async function UserBoardsPage({
 
     return <UserBoards data={data} activeTab={activeTab} currentPage={currentPage} />;
   } catch (error: any) {
-    return (
-      <div
-        className="ms-center flex w-screen justify-center rounded-lg border bg-card p-4"
-        style={{ height: "calc(100vh - 64px)" }}
-      >
-        <p className={"text-red-600"}>{"Oops! " + error.message || "error while fetching boards"}</p>
-      </div>
-    );
+    return <UserBoardsError error={error} />;
   }
 }

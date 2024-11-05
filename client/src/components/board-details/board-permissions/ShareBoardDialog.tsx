@@ -83,7 +83,7 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
                 Permission
               </label>
               <BoardPermissionsSelect
-                currentPermission={permission}
+                boardMemberPermission={permission}
                 className="w-48"
                 onChange={(newPermission) => setPermission(newPermission)}
               />

@@ -1,7 +1,8 @@
 import React, { FC } from "react";
-import BoardSidebar from "@/components/board-details/BoardSidebar";
+import BoardSidebar from "@/components/board-details/sidebar/BoardSidebar";
 import { Metadata } from "next";
 import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
+import logger from "@/lib/logger";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       title: `${boardData.name} | Obelisk`,
     };
   } catch (error) {
-    console.error("Error while fetching board details in generate metadata:", error);
+    logger.error("Error while fetching board details in generate metadata:", error);
     return {
       title: `Board details | Obelisk`,
     };
