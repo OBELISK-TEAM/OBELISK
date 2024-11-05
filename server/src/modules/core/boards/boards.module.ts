@@ -2,16 +2,16 @@ import { Module } from '@nestjs/common';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from '../users/users.module';
-import { ResponseModule } from '../response/response.module';
+import { UsersModule } from '../../users/users.module';
+import { ResponseModule } from '../../response/response.module';
 import {
   SuperBoard,
   SuperBoardSchema,
-} from '../../mongo/schemas/board/super.board.schema';
+} from '../../../mongo/schemas/board/super.board.schema';
 import { CacheModule } from '@nestjs/cache-manager';
-import { StatsModule } from '../stats/stats.module';
-import { ObjectStatsService } from '../stats/object/object.stats.service';
-import { SlideStatsService } from '../stats/slide/slides.stats.service';
+import { StatsModule } from '../../stats/stats.module';
+import { ObjectStatsService } from '../../stats/object/object.stats.service';
+import { SlideStatsService } from '../../stats/slide/slides.stats.service';
 
 @Module({
   imports: [

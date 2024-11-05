@@ -16,18 +16,18 @@ import {
   CreateBoardDto,
   UpdateBoardDto,
 } from './boards.dto';
-import { User } from '../../shared/decorators/users.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { User } from '../../../shared/decorators/users.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
 import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
-} from '../../shared/interfaces/response-objects/PaginatedUserBoards';
-import { BoardAccessGuard } from '../auth/guards/board.access.guard';
-import { MinimumBoardPermission } from '../../shared/decorators/permissions.decorator';
-import { BoardPermission } from '../../shared/enums/board.permission';
-import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
-import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
+} from '../../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardAccessGuard } from '../../auth/guards/board.access.guard';
+import { MinimumBoardPermission } from '../../../shared/decorators/permissions.decorator';
+import { BoardPermission } from '../../../shared/enums/board.permission';
+import { CreatePermissionStrResponse } from '../../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../../shared/interfaces/response-objects/GrantPermission';
 
 @Controller('boards')
 export class BoardsController {

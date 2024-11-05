@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { ObjectsService } from '../../modules/objects/objects.service';
+import { ObjectsService } from '../../modules/core/objects/objects.service';
 import { WsException } from '@nestjs/websockets';
 import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import {

@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SuperBoardDocument } from '../../mongo/schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../../mongo/schemas/board/super.board.schema';
 import {
   SuperSlide,
   SuperSlideDocument,
-} from '../../mongo/schemas/slide/super.slide.schema';
-import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
-import { ResponseService } from '../response/response.service';
+} from '../../../mongo/schemas/slide/super.slide.schema';
+import { SlideResponseObject } from '../../../shared/interfaces/response-objects/SlideResponseObject';
+import { ResponseService } from '../../response/response.service';
 import { BoardsService } from '../boards/boards.service';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_SLIDE_LIMIT_PER_BOARD } from '../../config/dev.config';
+import { DEFAULT_SLIDE_LIMIT_PER_BOARD } from '../../../config/dev.config';
 
 @Injectable()
 export class SlidesService {
