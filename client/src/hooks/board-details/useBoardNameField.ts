@@ -14,7 +14,7 @@ interface UseBoardNameFormProps {
   onSuccess: () => void;
 }
 
-export const boardNameSchema = (currentName: string) =>
+const boardNameSchema = (currentName: string) =>
   z.object({
     name: z
       .string()
