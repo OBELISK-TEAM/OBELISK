@@ -4,34 +4,35 @@ import { FilterQuery, Model, Types } from 'mongoose';
 import {
   BoardPermissionDto,
   CreateBoardDto,
+  ModifyPermissionDto,
   UpdateBoardDto,
 } from './boards.dto';
 import {
   SuperBoard,
   SuperBoardDocument,
-} from '../../mongo/schemas/board/super.board.schema';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
-import { BoardPermission } from '../../shared/enums/board.permission';
-import { ResponseService } from '../response/response.service';
+} from '../../../mongo/schemas/board/super.board.schema';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
+import { BoardPermission } from '../../../shared/enums/board.permission';
+import { ResponseService } from '../../response/response.service';
 import { BoardsFilter } from 'src/shared/enums/boardsFilter';
 import { FilterQueryBuilder } from './filter.query.builder';
 import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
-} from '../../shared/interfaces/response-objects/PaginatedUserBoards';
-import { BoardWithSlideCount } from '../../shared/interfaces/BoardWithSlideCount';
-import { ClientBoardInfo } from '../../shared/interfaces/ClientBoardInfo';
-import { BoardWithPopulatedPermissions } from '../../shared/interfaces/PopulatedBoard';
+} from '../../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardWithSlideCount } from '../../../shared/interfaces/BoardWithSlideCount';
+import { ClientBoardInfo } from '../../../shared/interfaces/ClientBoardInfo';
+import { BoardWithPopulatedPermissions } from '../../../shared/interfaces/PopulatedBoard';
 import { BSON } from 'bson';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../config/dev.config';
+import { DEFAULT_MAX_BOARD_SIZE_IN_BYTES } from '../../../config/dev.config';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
-import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
-import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
-import { ObjectStatsService } from '../stats/object/object.stats.service';
-import { SlideStatsService } from '../stats/slide/slides.stats.service';
+import { CreatePermissionStrResponse } from '../../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../../shared/interfaces/response-objects/GrantPermission';
+import { ObjectStatsService } from '../../stats/object/object.stats.service';
+import { SlideStatsService } from '../../stats/slide/slides.stats.service';
 
 @Injectable()
 export class BoardsService {
@@ -340,6 +341,8 @@ export class BoardsService {
     permission: BoardPermission,
   ): Promise<void> {
     switch (permission) {
+      case BoardPermission.NONE:
+        return;
       case BoardPermission.VIEWER:
         board.permissions.viewer.push(userId);
         break;
@@ -353,6 +356,17 @@ export class BoardsService {
         throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
     await board.save();
+  }
+
+  async modifyPermission(
+    boardId: string,
+    modifyPermissionDto: ModifyPermissionDto,
+  ): Promise<void> {
+    const { userId, permission } = modifyPermissionDto;
+    const board = await this.findBoardById(boardId);
+    const currPermission = this.determineUserPermission(board, userId);
+    await this.removePermission(board, userId, currPermission);
+    await this.assignPermission(board, userId, permission);
   }
 
   private calculateBoardSizeInBytes(board: SuperBoardDocument): number {

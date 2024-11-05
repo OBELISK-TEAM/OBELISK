@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { SlidesService } from './slides.service';
-import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
-import { IntDefaultValuePipe } from '../../shared/pipes/IntDefaultValuePipe';
+import { SlideResponseObject } from '../../../shared/interfaces/response-objects/SlideResponseObject';
+import { IntDefaultValuePipe } from '../../../shared/pipes/IntDefaultValuePipe';
 
 @Controller('boards/:boardId/slides')
 export class SlidesController {

@@ -1,6 +1,6 @@
 "use client";
 import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/board-permissions/BoardPermissionsInfoDialog";
@@ -14,6 +14,9 @@ import DeleteCollaboratorButton from "@/components/board-details/board-permissio
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import logger from "@/lib/logger";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
+import { capabilityFunctions } from "@/lib/permissionUtils";
+import { Badge } from "@/components/ui/badge";
+import { getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => {
   const mapPermissions = useCallback((board: BoardDetailsResponse): BoardPermissionsUser[] => {
     const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
@@ -70,12 +73,14 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
             <span className="font-bold text-foreground">{board.owner.email}</span>
           </div>
 
-          <ShareBoardDialog boardId={board._id}>
-            <Button>
-              <Share2 className="mr-2 h-5 w-5" />
-              Share with others
-            </Button>
-          </ShareBoardDialog>
+          {capabilityFunctions.canManageUsersPermissions(board.permission) && (
+            <ShareBoardDialog boardId={board._id}>
+              <Button>
+                <Share2 className="mr-2 h-5 w-5" />
+                Share with others
+              </Button>
+            </ShareBoardDialog>
+          )}
         </div>
       </div>
       <Table>
@@ -93,19 +98,25 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
                 </div>
               </TableCell>
               <TableCell>
-                <BoardPermissionsSelect
-                  currentPermission={user.permission}
-                  onChange={(newPermission) => handlePermissionChange(index, newPermission)}
-                />
+                {capabilityFunctions.canManageUsersPermissions(board.permission) ? (
+                  <BoardPermissionsSelect
+                    boardMemberPermission={user.permission}
+                    onChange={(newPermission) => handlePermissionChange(index, newPermission)}
+                  />
+                ) : (
+                  <Badge variant={getPermissionVariant(user.permission)}>{getPermissionLabel(user.permission)}</Badge>
+                )}
               </TableCell>
 
               <TableCell className="flex items-center justify-center">
-                <DeleteCollaboratorButton
-                  username={user.name}
-                  deleteUser={() => {
-                    /*todo: implement collaborator deletion*/
-                  }}
-                />
+                {capabilityFunctions.canManageUsersPermissions(board.permission) && (
+                  <DeleteCollaboratorButton
+                    username={user.name}
+                    deleteUser={() => {
+                      /*todo: implement collaborator deletion*/
+                    }}
+                  />
+                )}
               </TableCell>
             </TableRow>
           ))}

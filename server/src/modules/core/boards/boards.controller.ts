@@ -14,20 +14,21 @@ import {
   BoardPermissionDto,
   BoardQueryDto,
   CreateBoardDto,
+  ModifyPermissionDto,
   UpdateBoardDto,
 } from './boards.dto';
-import { User } from '../../shared/decorators/users.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { User } from '../../../shared/decorators/users.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.auth.guard';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
 import {
   PaginatedBoardsResponseObject,
   PopulatedBoardResponseObject,
-} from '../../shared/interfaces/response-objects/PaginatedUserBoards';
-import { BoardAccessGuard } from '../auth/guards/board.access.guard';
-import { MinimumBoardPermission } from '../../shared/decorators/permissions.decorator';
-import { BoardPermission } from '../../shared/enums/board.permission';
-import { CreatePermissionStrResponse } from '../../shared/interfaces/response-objects/CreatePermissionsStr';
-import { GrantPermissionResponse } from '../../shared/interfaces/response-objects/GrantPermission';
+} from '../../../shared/interfaces/response-objects/PaginatedUserBoards';
+import { BoardAccessGuard } from '../../auth/guards/board.access.guard';
+import { MinimumBoardPermission } from '../../../shared/decorators/permissions.decorator';
+import { BoardPermission } from '../../../shared/enums/board.permission';
+import { CreatePermissionStrResponse } from '../../../shared/interfaces/response-objects/CreatePermissionsStr';
+import { GrantPermissionResponse } from '../../../shared/interfaces/response-objects/GrantPermission';
 
 @Controller('boards')
 export class BoardsController {
@@ -112,5 +113,15 @@ export class BoardsController {
     @Param('permissionString') permissionStr: string,
   ): Promise<GrantPermissionResponse> {
     return this.boardsService.grantPermission(userId, permissionStr);
+  }
+
+  @Put(':boardId/permissions/modify')
+  @UseGuards(JwtAuthGuard, BoardAccessGuard)
+  @MinimumBoardPermission(BoardPermission.MODERATOR)
+  async modifyPermission(
+    @Param('boardId') boardId: string,
+    @Body() modifyPermissionDto: ModifyPermissionDto,
+  ): Promise<void> {
+    return this.boardsService.modifyPermission(boardId, modifyPermissionDto);
   }
 }

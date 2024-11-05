@@ -5,7 +5,7 @@ import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
 import { MINIMUM_BOARD_PERMISSION_KEY } from '../../../shared/decorators/permissions.decorator';
 import { Request } from 'express';
 import { SafeUserDoc } from '../../../shared/interfaces/auth/SafeUserDoc';
-import { BoardsService } from '../../boards/boards.service';
+import { BoardsService } from '../../core/boards/boards.service';
 
 // WS:
 // @UseGuards(BoardAccessGuard)

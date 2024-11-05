@@ -16,6 +16,8 @@ import { BoardDeletionButton } from "@/components/user-boards/board-table/BoardD
 import { BoardDetailsButton } from "@/components/user-boards/board-table/BoardDetailsButton";
 import { deleteBoard } from "@/app/actions/boardActions";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
+import { capabilityFunctions } from "@/lib/permissionUtils";
+import { toast } from "sonner";
 
 interface BoardTableProps {
   data: PaginatedBoardsResponse;
@@ -26,8 +28,13 @@ interface BoardTableProps {
 const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
   const router = useRouter();
 
-  const handleRowClick = (boardId: string) => {
-    router.push(`/user-boards/${boardId}/slides/1`);
+  const handleRowClick = (board: BoardResponse) => {
+    if (!capabilityFunctions.canViewBoard(board.permission)) {
+      toast.dismiss();
+      toast.error("You don't have permission to view this board");
+      return;
+    }
+    router.push(`/user-boards/${board._id}/slides/1`);
   };
 
   const handlePageChange = useCallback(
@@ -49,7 +56,6 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
   }
 
   const columns = getColumnsForTab(activeTab);
-
   return (
     <div className="flex max-h-[570px] min-h-[570px] flex-col rounded-lg border bg-card p-4">
       <div className="mb-4 flex items-start justify-between">
@@ -74,8 +80,12 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
               data.boards.map((board: BoardResponse) => (
                 <TableRow
                   key={board._id}
-                  className="cursor-pointer border-b hover:bg-muted/50"
-                  onClick={() => handleRowClick(board._id)}
+                  className={
+                    capabilityFunctions.canViewBoard(board.permission)
+                      ? "cursor-pointer border-b hover:bg-muted/50"
+                      : "opacity-90"
+                  }
+                  onClick={() => handleRowClick(board)}
                 >
                   {columns.map((col) => (
                     <TableCell key={col} className="py-2">
@@ -83,26 +93,32 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                     </TableCell>
                   ))}
                   <TableCell
-                    className="flex items-center justify-center space-x-1"
+                    className="flex min-h-16 items-center justify-center space-x-1"
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
                   >
-                    <ShareBoardDialog boardId={board._id}>
-                      <Button
-                        variant="outline"
-                        className="px-2 hover:text-muted-foreground"
-                        style={{ width: "40px" }}
-                        aria-label="Share with others"
-                      >
-                        <Share2 className="h-5 w-5" />
-                      </Button>
-                    </ShareBoardDialog>
-                    <BoardDeletionButton
-                      revalidateFunc={() => router.refresh()}
-                      deleteBoard={() => deleteBoard(board._id)}
-                    />
-                    <BoardDetailsButton boardId={board._id} />
+                    {capabilityFunctions.canManageUsersPermissions(board.permission) && (
+                      <ShareBoardDialog boardId={board._id}>
+                        <Button
+                          variant="outline"
+                          className="px-2 hover:text-muted-foreground"
+                          style={{ width: "40px" }}
+                          aria-label="Share with others"
+                        >
+                          <Share2 className="h-5 w-5" />
+                        </Button>
+                      </ShareBoardDialog>
+                    )}
+                    {capabilityFunctions.canDeleteBoard(board.permission) && (
+                      <BoardDeletionButton
+                        revalidateFunc={() => router.refresh()}
+                        deleteBoard={() => deleteBoard(board._id)}
+                      />
+                    )}
+                    {capabilityFunctions.canViewBoardDetails(board.permission) && (
+                      <BoardDetailsButton boardId={board._id} />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
