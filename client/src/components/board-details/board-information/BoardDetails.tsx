@@ -59,13 +59,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
       <main className="mt-4 flex flex-col flex-wrap gap-24 p-2 lg:flex-row">
         <article className="flex flex-col lg:flex-[2]">
           {capabilityFunctions.canEditBoardName(board.permission) ? (
-            <BoardNameField
-              board={board}
-              id={"board-name"}
-              mutate={() => {
-                /*todo: implement changing board name*/
-              }}
-            />
+            <BoardNameField board={board} id={"board-name"} />
           ) : (
             <BoardInfoInputItem
               label="Name"
@@ -77,6 +71,7 @@ const BoardDetails: React.FC<BoardDetailsProps> = ({ board }) => {
               }}
             />
           )}
+
           <BoardInfoInputItem
             label="Owner"
             value={board.owner.email}

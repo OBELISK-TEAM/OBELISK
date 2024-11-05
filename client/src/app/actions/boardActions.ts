@@ -25,6 +25,25 @@ export async function createBoard(name: string): Promise<BoardDataResponse> {
   }
 }
 
+export async function updateBoardName(boardId: string, newName: string): Promise<BoardDataResponse> {
+  const token = getCookie("accessToken");
+  try {
+    const response = await apiRequest(`/boards/${boardId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name: newName }),
+    });
+    revalidatePath(`/user-boards/${boardId}`);
+    return await response.json();
+  } catch (error) {
+    logger.error("Error while updating board name:", error);
+    throw error;
+  }
+}
+
 export const deleteBoard = async (boardId: string) => {
   const accessToken = getCookie("accessToken");
 
