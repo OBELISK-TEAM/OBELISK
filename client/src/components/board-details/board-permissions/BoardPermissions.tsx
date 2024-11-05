@@ -1,6 +1,6 @@
 "use client";
 import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
-import React, { useCallback, useMemo, useState } from "react";
+import React from "react";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { BoardHeader } from "@/components/user-boards/BoardHeader";
 import BoardPermissionsInfoDialog from "@/components/board-details/board-permissions/BoardPermissionsInfoDialog";
@@ -12,50 +12,62 @@ import BoardPermissionsSelect from "@/components/board-details/board-permissions
 import { BoardTableLeadRow } from "@/components/user-boards/board-table/BoardTableLeadRow";
 import DeleteCollaboratorButton from "@/components/board-details/board-permissions/DeleteCollaboratorButton";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
-import logger from "@/lib/logger";
 import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
-import { capabilityFunctions } from "@/lib/permissionUtils";
+import { boardPermissionToNum, capabilityFunctions } from "@/lib/permissionUtils";
 import { Badge } from "@/components/ui/badge";
 import { getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
+import { modifyPermission } from "@/app/actions/permissionsActions";
+import { BoardPermissionModifyRequest } from "@/interfaces/requests/board-permission-modify-request";
+import logger from "@/lib/logger";
+import { useAuth } from "@/contexts/AuthContext";
+
 export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => {
-  const mapPermissions = useCallback((board: BoardDetailsResponse): BoardPermissionsUser[] => {
-    const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
-    const users: BoardPermissionsUser[] = [];
+  const { decodedToken } = useAuth();
+  const users: BoardPermissionsUser[] = React.useMemo(() => {
+    const mapPermissionsAndSortUsers = (board: BoardDetailsResponse): BoardPermissionsUser[] => {
+      const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
+      const users: BoardPermissionsUser[] = [];
 
-    viewers.forEach((user) => {
-      users.push({
-        name: user.email, // Using email as name for display
-        permission: BoardPermission.VIEWER,
+      viewers.forEach((user) => {
+        users.push({
+          name: user.email,
+          permission: BoardPermission.VIEWER,
+          id: user._id,
+        });
       });
-    });
 
-    editors.forEach((user) => {
-      users.push({
-        name: user.email,
-        permission: BoardPermission.EDITOR,
+      editors.forEach((user) => {
+        users.push({
+          name: user.email,
+          permission: BoardPermission.EDITOR,
+          id: user._id,
+        });
       });
-    });
 
-    moderators.forEach((user) => {
-      users.push({
-        name: user.email,
-        permission: BoardPermission.MODERATOR,
+      moderators.forEach((user) => {
+        users.push({
+          name: user.email,
+          permission: BoardPermission.MODERATOR,
+          id: user._id,
+        });
       });
-    });
 
-    return users;
-  }, []);
+      users.sort((a, b) => a.name.localeCompare(b.name));
+      return users;
+    };
 
-  const [users] = useState<BoardPermissionsUser[]>(mapPermissions(board));
+    return mapPermissionsAndSortUsers(board);
+  }, [board]);
 
-  const handlePermissionChange = (index: number, newPermission: BoardPermission) => {
-    logger.log(`User ${users[index].name} permission changed to ${newPermission}`);
-    /*todo: implement this method*/
+  const handlePermissionChange = async (index: number, newPermission: BoardPermission) => {
+    const user = users[index];
+    logger.log(`Changing permission for user:${users[index].name} to ${newPermission}`);
+    const boardPermissionModifyRequest: BoardPermissionModifyRequest = {
+      userId: user.id,
+      permission: boardPermissionToNum(newPermission),
+    };
+    await modifyPermission(board._id, boardPermissionModifyRequest);
   };
-
-  const sortedUsers = useMemo(() => {
-    return [...users].sort((a, b) => a.name.localeCompare(b.name));
-  }, [users]);
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow">
@@ -86,22 +98,24 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
       <Table>
         <BoardTableLeadRow columns={["User", "Permission"]} />
         <TableBody>
-          {sortedUsers.map((user, index) => (
-            <TableRow key={user.name} className="border-b border-border hover:bg-muted/50">
+          {users.map((user, index) => (
+            <TableRow key={user.id} className="border-b border-border hover:bg-muted/50">
               <TableCell>
                 <div className="flex items-center space-x-2">
                   <Avatar>
                     <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                    <AvatarImage src="https://via.placeholder.com/150" alt={user.name} />
+                    <AvatarImage src="#" alt={user.name} />
                   </Avatar>
                   <span className="text-foreground">{user.name}</span>
                 </div>
               </TableCell>
               <TableCell>
-                {capabilityFunctions.canManageUsersPermissions(board.permission) ? (
+                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== decodedToken?._id ? (
                   <BoardPermissionsSelect
                     boardMemberPermission={user.permission}
-                    onChange={(newPermission) => handlePermissionChange(index, newPermission)}
+                    onSendRequest={async (newPermission) => {
+                      await handlePermissionChange(index, newPermission);
+                    }}
                   />
                 ) : (
                   <Badge variant={getPermissionVariant(user.permission)}>{getPermissionLabel(user.permission)}</Badge>
@@ -113,7 +127,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
                   <DeleteCollaboratorButton
                     username={user.name}
                     deleteUser={() => {
-                      /*todo: implement collaborator deletion*/
+                      /* Implement collaborator deletion */
                     }}
                   />
                 )}
