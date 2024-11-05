@@ -46,7 +46,13 @@ export class SlideStatsService {
         },
       },
     );
-    void this.logAction(slideId, userId, null, null, SlideAction.USER_JOIN);
+    void this.logAction(
+      slideId,
+      userId,
+      null,
+      null,
+      SlideAction.USER_JOIN_SLIDE,
+    );
   }
 
   async logLeave(slideId: string, userId: string): Promise<void> {
@@ -66,7 +72,13 @@ export class SlideStatsService {
         },
       },
     );
-    void this.logAction(slideId, userId, null, null, SlideAction.USER_LEAVE);
+    void this.logAction(
+      slideId,
+      userId,
+      null,
+      null,
+      SlideAction.USER_LEAVE_SLIDE,
+    );
   }
 
   async logAction(
