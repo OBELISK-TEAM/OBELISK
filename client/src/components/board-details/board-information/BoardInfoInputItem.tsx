@@ -8,6 +8,7 @@ interface BoardInfoInputItemProps {
   value: string;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   isEditing?: boolean;
+  isError?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   actions?: React.ReactNode;
   id: string;
@@ -19,6 +20,7 @@ const BoardInfoInputItem: React.FC<BoardInfoInputItemProps> = ({
   value,
   inputProps,
   isEditing,
+  isError,
   onKeyDown,
   actions,
   id,
@@ -26,7 +28,7 @@ const BoardInfoInputItem: React.FC<BoardInfoInputItemProps> = ({
   <div className="mb-4 flex flex-col gap-1">
     <Label className="flex items-center text-sm font-semibold" htmlFor={id}>
       {icon}
-      <span>{label}</span>
+      <span className={isError ? "text-error-foreground" : ""}>{label}</span>
     </Label>
     <div className="flex items-center">
       <Input
