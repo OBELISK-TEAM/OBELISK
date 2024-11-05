@@ -6,6 +6,9 @@ import { BoardPermission } from "@/enums/BoardPermission";
 import { getPermissionLabel, getPermissionVariant } from "@/lib/userBoardsUtils";
 import logger from "@/lib/logger";
 import { toast } from "sonner";
+import { ApiError } from "@/errors/ApiError";
+import { complexToast } from "@/contexts/complexToast";
+import { ToastTypes } from "@/enums/ToastType";
 
 interface PermissionSelectProps {
   boardMemberPermission: BoardPermission;
@@ -32,9 +35,13 @@ const BoardPermissionsSelect: React.FC<PermissionSelectProps> = ({
     try {
       await onSendRequest(newPermission);
       setSelectedPermission(newPermission);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(`Failed to change permission`, error);
-      toast.error(`Failed to update permission`);
+      if (error instanceof ApiError) {
+        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+      } else {
+        toast.error(error.message || "Failed to update permission");
+      }
     } finally {
       setIsLoading(false);
     }

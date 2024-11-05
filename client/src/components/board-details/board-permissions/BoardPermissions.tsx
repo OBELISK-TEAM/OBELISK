@@ -66,7 +66,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
       userId: user.id,
       permission: boardPermissionToNum(newPermission),
     };
-    await modifyPermission(board._id, boardPermissionModifyRequest);
+    await modifyPermission(board._id, boardPermissionModifyRequest); //note: I don't want to throw an error here, it should be handled in the BoardPermissionsSelect component
   };
 
   return (
@@ -123,13 +123,8 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
               </TableCell>
 
               <TableCell className="flex items-center justify-center">
-                {capabilityFunctions.canManageUsersPermissions(board.permission) && (
-                  <DeleteCollaboratorButton
-                    username={user.name}
-                    deleteUser={() => {
-                      /* Implement collaborator deletion */
-                    }}
-                  />
+                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== decodedToken?._id && (
+                  <DeleteCollaboratorButton user={user} boardId={board._id} />
                 )}
               </TableCell>
             </TableRow>

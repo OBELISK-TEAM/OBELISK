@@ -8,6 +8,7 @@ import { boardPermissionToNum } from "@/lib/permissionUtils";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
 import { apiRequest } from "@/services/requestService";
 import { BoardPermissionModifyRequest } from "@/interfaces/requests/board-permission-modify-request";
+import { revalidatePath } from "next/cache";
 
 export async function generatePermissionCode(
   boardId: string,
@@ -67,6 +68,7 @@ export async function modifyPermission(
       },
       body: JSON.stringify(boardPermissionModifyRequest),
     });
+    revalidatePath(`/boards/${boardId}/permissions`);
   } catch (error) {
     logger.error("Error while modifying permission:", error);
     throw error;
