@@ -1,0 +1,15 @@
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { ITextSection } from "@/interfaces/start-page/text-section";
+interface TextSectionProps {
+  textSection: ITextSection;
+}
+export const TextSection = ({ textSection }: TextSectionProps) => {
+  const { title, description, button } = textSection;
+  return (
+    <Card className="flex max-w-[80%] flex-col items-center gap-10 border-none text-center font-bold">
+      <CardTitle className={"text-4xl"}>{title}</CardTitle>
+      <CardDescription className={"text-xl"}>{description}</CardDescription>
+      {button}
+    </Card>
+  );
+};
