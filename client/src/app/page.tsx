@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import logger from "@/lib/logger";
+import HexagonLayout from "@/components/start/HexagonLayout";
+
 const Home = () => {
   logger.log("Redirecting to /user-boards");
-  redirect("/user-boards");
+  //redirect("/user-boards");
   // todo: JIRA[OK-39] - create a home page
   // return (
   //   <div className="flex">
@@ -13,6 +15,8 @@ const Home = () => {
   //     </div>
   //   </div>
   // );
+
+  return <HexagonLayout />;
 };
 
 export default Home;
