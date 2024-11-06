@@ -84,8 +84,6 @@ const DeleteCollaboratorButton: React.FC<DeleteCollaboratorButtonProps> = ({ use
             <DialogTitle>Delete Collaborator</DialogTitle>
             <DialogDescription>
               Are you sure you want to remove collaborator <strong>{user.name}</strong> from this board?
-              <br />
-              This action is <strong>irreversible!</strong>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex justify-between">

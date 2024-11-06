@@ -80,7 +80,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
             <span className="text-muted-foreground">Board owner:</span>
             <Avatar>
               <AvatarFallback>{board.owner.email.slice(0, 2).toUpperCase()}</AvatarFallback>
-              <AvatarImage src="https://via.placeholder.com/150" alt={board.owner.email} />
+              <AvatarImage src="#" alt={board.owner.email} />
             </Avatar>
             <span className="font-bold text-foreground">{board.owner.email}</span>
           </div>
