@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation";
 import logger from "@/lib/logger";
-import HexagonLayout from "@/components/start/HexagonLayout";
+import { CardSection } from "@/components/start/card-section/CardSection";
+import { usefulCapabilitiesData } from "@/data/start/useful-capabilities-section";
+import { targetAudienceData } from "@/data/start/target-audience-data";
+import { toolFeaturesData } from "@/data/start/tool-features-data";
 
 const Home = () => {
   logger.log("Redirecting to /user-boards");
@@ -16,7 +18,13 @@ const Home = () => {
   //   </div>
   // );
 
-  return <HexagonLayout />;
+  return (
+    <main className={"flex flex-col gap-20 p-32"}>
+      <CardSection cardSection={usefulCapabilitiesData} />
+      <CardSection cardSection={targetAudienceData} />
+      <CardSection cardSection={toolFeaturesData} />
+    </main>
+  );
 };
 
 export default Home;

@@ -1,5 +1,5 @@
 import "./hexagon.css";
-import HexagonItem from "@/components/start/Hexagon";
+import HexagonItem from "@/components/start/hexagons-section/Hexagon";
 
 const HexagonLayout = () => {
   return (
