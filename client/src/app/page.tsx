@@ -19,7 +19,7 @@ const Home = () => {
   // );
 
   return (
-    <main className={"flex flex-col gap-20 p-32"}>
+    <main className={"flex flex-col gap-20 p-2 py-10 lg:p-32 2xl:p-64"}>
       <CardSection cardSection={usefulCapabilitiesData} />
       <CardSection cardSection={targetAudienceData} />
       <CardSection cardSection={toolFeaturesData} />

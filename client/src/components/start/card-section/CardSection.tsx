@@ -12,9 +12,9 @@ export const CardSection = ({ cardSection }: CardSectionProps) => {
         <CardTitle className={"text-4xl"}>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </div>
-      <div className={"flex justify-between gap-10"}>
+      <div className={"flex flex-col justify-between gap-10 xl:flex-row"}>
         {cards.map((card, index) => (
-          <div key={index} className={`flex flex-1 flex-col`}>
+          <div key={index} className="flex flex-1 flex-col">
             {card.imageSrc && (
               <div className="relative top-2 h-[10em] w-full">
                 <Image src={card.imageSrc} alt={card.title} fill className="object-cover" />
