@@ -7,19 +7,19 @@ export const usefulCapabilitiesData: ICardSection = {
     {
       title: "Real-Time Collaboration",
       description: "Instantly share ideas and get feedback as you work. Designed for interactive, efficient teamwork.",
-      //imageSrc: "/images/start-page/real-time-collaboration.jpg",
     },
     {
       title: "User Activity Statistics",
       description: "Keep track of team engagement and contributions.",
     },
-    {
-      title: "Board Version History",
-      description: "Access past versions easily to track changes and improve organization.",
-    },
+
     {
       title: "Quick and Secure Access",
       description: "Fast authentication, including Google login, so you’re ready to work in seconds.",
+    },
+    {
+      title: "Exporting Boards",
+      description: "Download your boards as may useful formats like PDF, PNG and more",
     },
   ],
 };

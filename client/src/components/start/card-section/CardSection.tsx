@@ -7,7 +7,7 @@ interface CardSectionProps {
 export const CardSection = ({ cardSection }: CardSectionProps) => {
   const { title, description, cards } = cardSection;
   return (
-    <Card className="flex flex-col items-center gap-10 border-none">
+    <Card className="flex flex-col items-center gap-10 border-none shadow-none">
       <div className={"flex flex-col items-center gap-2"}>
         <CardTitle className={"text-4xl"}>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>

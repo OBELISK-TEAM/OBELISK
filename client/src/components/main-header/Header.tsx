@@ -3,8 +3,11 @@ import HeaderLinks from "../user-boards/HeaderLinks";
 import { AppLogo } from "./AppLogo";
 import Link from "next/link";
 import UserInfo from "@/components/main-header/UserInfo";
+import { getCookie } from "@/lib/authApiUtils";
+import AuthHeaderButtons from "@/components/user-boards/AuthHeaderButtons";
 
 const Header: FC = () => {
+  const authToken = getCookie("accessToken");
   return (
     <div className="h-min-[64px] x-4 sticky top-0 z-10 flex h-[64px] items-center justify-between border-b bg-background pl-0">
       <div className="flex">
@@ -13,13 +16,18 @@ const Header: FC = () => {
             <AppLogo width={20} height={20} />
           </div>
         </Link>
-        <div className="flex">
-          <HeaderLinks />
+        {authToken && (
+          <div className="flex">
+            <HeaderLinks />
+          </div>
+        )}
+      </div>
+      {authToken && (
+        <div className="flex items-center space-x-4 pr-6">
+          <UserInfo />
         </div>
-      </div>
-      <div className="flex items-center space-x-4 pr-6">
-        <UserInfo />
-      </div>
+      )}
+      {!authToken && <AuthHeaderButtons />}
     </div>
   );
 };

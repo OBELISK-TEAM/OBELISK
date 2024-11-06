@@ -4,7 +4,7 @@ import ThemeToggle from "@/components/main-header/ThemeToggle";
 
 const AuthHeaderButtons: React.FC = () => {
   return (
-    <div className="flex flex-1 flex-row-reverse gap-3">
+    <div className="flex flex-1 flex-row-reverse gap-3 px-2">
       <ThemeToggle />
       <Button variant="default" className="p-0">
         <Link href={"/auth/signup"} className="px-4 py-2">
