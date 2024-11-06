@@ -85,7 +85,7 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
               <BoardPermissionsSelect
                 boardMemberPermission={permission}
                 className="w-48"
-                onChange={(newPermission) => setPermission(newPermission)}
+                onSendRequest={(newPermission) => setPermission(newPermission)}
               />
             </div>
             <Button onClick={generateLink} disabled={isPending} className="w-full">

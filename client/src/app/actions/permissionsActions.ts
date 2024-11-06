@@ -7,6 +7,8 @@ import { BoardPermission } from "@/enums/BoardPermission";
 import { boardPermissionToNum } from "@/lib/permissionUtils";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
 import { apiRequest } from "@/services/requestService";
+import { BoardPermissionModifyRequest } from "@/interfaces/requests/board-permission-modify-request";
+import { revalidatePath } from "next/cache";
 
 export async function generatePermissionCode(
   boardId: string,
@@ -47,6 +49,28 @@ export async function grantPermission(code: string): Promise<GrantPermissionResp
     return await response.json();
   } catch (error) {
     logger.error("Error while granting permission:", error);
+    throw error;
+  }
+}
+
+export async function modifyPermission(
+  boardId: string,
+  boardPermissionModifyRequest: BoardPermissionModifyRequest
+): Promise<void> {
+  logger.log(`Modifying permission for user ${boardPermissionModifyRequest.userId} on board ${boardId}`);
+  const token = getCookie("accessToken");
+  try {
+    await apiRequest(`/boards/${boardId}/permissions/modify`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(boardPermissionModifyRequest),
+    });
+    revalidatePath(`/boards/${boardId}/permissions`);
+  } catch (error) {
+    logger.error("Error while modifying permission:", error);
     throw error;
   }
 }
