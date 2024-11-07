@@ -1,11 +1,11 @@
 import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { CardItem } from "@/components/start/card-section/CardItem";
+import { StartPageCardItem } from "@/components/start/card-section/StartPageCardItem";
 
 interface CardSectionProps {
   cardSection: IStartPageCardSection;
 }
-export const CardSection = ({ cardSection }: CardSectionProps) => {
+export const StartPageCardSection = ({ cardSection }: CardSectionProps) => {
   const { title, description, cards } = cardSection;
   return (
     <Card className="flex flex-col items-center gap-10 border-none shadow-none">
@@ -15,7 +15,7 @@ export const CardSection = ({ cardSection }: CardSectionProps) => {
       </div>
       <div className="flex flex-col justify-between gap-10 xl:flex-row">
         {cards.map((card, index) => (
-          <CardItem key={index} card={card} />
+          <StartPageCardItem key={index} card={card} />
         ))}
       </div>
     </Card>

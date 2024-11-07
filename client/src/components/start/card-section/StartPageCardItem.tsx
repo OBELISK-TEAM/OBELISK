@@ -9,7 +9,7 @@ interface CardSectionProps {
 }
 const fallbackImage = "/images/start-page/fallback-image.jpg";
 
-export const CardItem = ({ card }: CardSectionProps) => {
+export const StartPageCardItem = ({ card }: CardSectionProps) => {
   const [imgSrc, setImgSrc] = useState(card.imageSrc || fallbackImage);
 
   return (

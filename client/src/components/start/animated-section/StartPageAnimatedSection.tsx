@@ -6,7 +6,7 @@ interface AnimatedSectionProps {
   children: React.ReactNode;
 }
 
-const AnimatedSection: React.FC<AnimatedSectionProps> = ({ children }) => {
+const StartPageAnimatedSection: React.FC<AnimatedSectionProps> = ({ children }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -20,4 +20,4 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({ children }) => {
   );
 };
 
-export default AnimatedSection;
+export default StartPageAnimatedSection;

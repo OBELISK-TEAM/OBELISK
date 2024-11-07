@@ -6,7 +6,7 @@ interface HexagonProps {
   className?: string;
 }
 
-const Hexagon: React.FC<HexagonProps> = ({ text, hoverText, className }) => {
+const StartPageHexagon: React.FC<HexagonProps> = ({ text, hoverText, className }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -36,4 +36,4 @@ const Hexagon: React.FC<HexagonProps> = ({ text, hoverText, className }) => {
   );
 };
 
-export default Hexagon;
+export default StartPageHexagon;

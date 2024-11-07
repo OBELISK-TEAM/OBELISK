@@ -1,18 +1,18 @@
 "use client";
 import React from "react";
-import Hexagon from "./Hexagon";
+import StartPageHexagon from "./StartPageHexagon";
 import { IStartPageHexagonsSection } from "@/interfaces/start-page/hexagons-section";
 interface HexagonsSectionProps {
   hexagonsSection: IStartPageHexagonsSection[];
 }
-const HexagonsSection = ({ hexagonsSection }: HexagonsSectionProps) => {
+const StartPageHexagonsSection = ({ hexagonsSection }: HexagonsSectionProps) => {
   return (
     <div className="flex w-full flex-wrap items-center justify-around md:w-[780px]">
       {hexagonsSection.map((data, index) => (
-        <Hexagon key={index} text={data.text} hoverText={data.hoverText} className={data.className} />
+        <StartPageHexagon key={index} text={data.text} hoverText={data.hoverText} className={data.className} />
       ))}
     </div>
   );
 };
 
-export default HexagonsSection;
+export default StartPageHexagonsSection;
