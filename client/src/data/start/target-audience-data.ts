@@ -1,5 +1,5 @@
-import { ICardSection } from "@/interfaces/start-page/card-section";
-export const targetAudienceData: ICardSection = {
+import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
+export const targetAudienceData: IStartPageCardSection = {
   title: "Who is it for?",
   description: "Designed with users of (almost) all scales in mind",
   cards: [

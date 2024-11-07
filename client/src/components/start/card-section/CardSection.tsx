@@ -1,9 +1,9 @@
-import { ICardSection } from "@/interfaces/start-page/card-section";
+import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { CardItem } from "@/components/start/card-section/CardItem";
 
 interface CardSectionProps {
-  cardSection: ICardSection;
+  cardSection: IStartPageCardSection;
 }
 export const CardSection = ({ cardSection }: CardSectionProps) => {
   const { title, description, cards } = cardSection;

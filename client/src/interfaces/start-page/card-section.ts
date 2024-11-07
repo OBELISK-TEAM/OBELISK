@@ -1,7 +1,7 @@
-import { ICard } from "@/interfaces/start-page/card";
+import { IStartPageCard } from "@/interfaces/start-page/card";
 
-export interface ICardSection {
+export interface IStartPageCardSection {
   title: string;
   description: string;
-  cards: ICard[];
+  cards: IStartPageCard[];
 }

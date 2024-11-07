@@ -1,6 +1,6 @@
-import { ICardSection } from "@/interfaces/start-page/card-section";
+import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
 
-export const toolFeaturesData: ICardSection = {
+export const toolFeaturesData: IStartPageCardSection = {
   title: "Easy to use tools",
   description: "We've made it intuitive so you can focus on what matters",
   cards: [

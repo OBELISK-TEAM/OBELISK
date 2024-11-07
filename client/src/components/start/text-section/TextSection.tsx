@@ -1,7 +1,7 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { ITextSection } from "@/interfaces/start-page/text-section";
+import { IStartPageTextSection } from "@/interfaces/start-page/text-section";
 interface TextSectionProps {
-  textSection: ITextSection;
+  textSection: IStartPageTextSection;
 }
 export const TextSection = ({ textSection }: TextSectionProps) => {
   const { title, description, button } = textSection;

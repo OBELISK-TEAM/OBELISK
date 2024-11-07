@@ -1,6 +1,6 @@
-import { ICardSection } from "@/interfaces/start-page/card-section";
+import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
 
-export const usefulCapabilitiesData: ICardSection = {
+export const usefulCapabilitiesData: IStartPageCardSection = {
   title: "Useful capabilities",
   description: "Essential tools for seamless teamwork and creativity",
   cards: [

@@ -2,10 +2,10 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { useState } from "react";
-import { ICard } from "@/interfaces/start-page/card";
+import { IStartPageCard } from "@/interfaces/start-page/card";
 
 interface CardSectionProps {
-  card: ICard;
+  card: IStartPageCard;
 }
 const fallbackImage = "/images/start-page/fallback-image.jpg";
 

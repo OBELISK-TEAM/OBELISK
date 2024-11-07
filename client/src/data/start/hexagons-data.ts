@@ -1,6 +1,6 @@
-import { IHexagonsSection } from "@/interfaces/start-page/hexagons-section";
+import { IStartPageHexagonsSection } from "@/interfaces/start-page/hexagons-section";
 
-export const hexagonsData: IHexagonsSection[] = [
+export const hexagonsData: IStartPageHexagonsSection[] = [
   {
     text: "Brainstorming",
     hoverText: "Generate and explore ideas collectively in a dynamic, visual workspace.",

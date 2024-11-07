@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import Hexagon from "./Hexagon";
-import { IHexagonsSection } from "@/interfaces/start-page/hexagons-section";
+import { IStartPageHexagonsSection } from "@/interfaces/start-page/hexagons-section";
 interface HexagonsSectionProps {
-  hexagonsSection: IHexagonsSection[];
+  hexagonsSection: IStartPageHexagonsSection[];
 }
 const HexagonsSection = ({ hexagonsSection }: HexagonsSectionProps) => {
   return (
