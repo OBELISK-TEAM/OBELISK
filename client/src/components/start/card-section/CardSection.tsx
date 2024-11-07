@@ -1,6 +1,7 @@
 import { ICardSection } from "@/interfaces/start-page/card-section";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
+
 interface CardSectionProps {
   cardSection: ICardSection;
 }
@@ -17,7 +18,13 @@ export const CardSection = ({ cardSection }: CardSectionProps) => {
           <div key={index} className="flex flex-1 flex-col">
             {card.imageSrc && (
               <div className="relative top-2 h-[10em] w-full">
-                <Image src={card.imageSrc} alt={card.title} fill className="object-cover" />
+                <Image
+                  src={card.imageSrc}
+                  alt={card.title}
+                  fill
+                  className="object-cover"
+                  blurDataURL={"/images/fallback-image.jpg"}
+                />
               </div>
             )}
             <Card className={"flex flex-1 flex-col gap-2 px-8 " + (card.imageSrc ? "border-t-0 py-4" : "py-8")}>
