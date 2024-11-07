@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 
-interface ItemProps {
+interface HexagonProps {
   text: string;
   hoverText: string;
   className?: string;
 }
 
-const Hexagon: React.FC<ItemProps> = ({ text, hoverText, className }) => {
+const Hexagon: React.FC<HexagonProps> = ({ text, hoverText, className }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
-      className={`relative flex h-36 w-36 items-center justify-center border text-center font-medium transition-all duration-300 ease-in-out md:h-48 md:w-48 ${className} ${
+      className={`relative flex h-36 w-36 cursor-pointer items-center justify-center border text-center font-medium transition-all delay-100 duration-300 ease-in-out hover:scale-110 md:h-48 md:w-48 ${className} ${
         isHovered ? "bg-primary" : "bg-muted"
       }`}
       style={{
@@ -20,11 +20,18 @@ const Hexagon: React.FC<ItemProps> = ({ text, hoverText, className }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <span
-        className={`p-3 transition-all duration-300 ease-in-out md:p-6 ${isHovered ? "text-xs text-muted md:text-sm" : "text-sm md:text-base"}`}
-      >
-        {isHovered ? hoverText : text}
-      </span>
+      <div className="relative p-3 md:p-6">
+        <div className={`transition-opacity duration-300 ${isHovered ? "opacity-0" : "opacity-100"}`}>
+          <span className="text-sm md:text-base">{text}</span>
+        </div>
+        <div
+          className={`absolute left-0 top-0 flex h-[100%] w-[100%] items-center justify-center p-4 transition-opacity delay-150 duration-300 ${
+            isHovered ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <span className="text-xs text-muted md:text-sm">{hoverText}</span>
+        </div>
+      </div>
     </div>
   );
 };

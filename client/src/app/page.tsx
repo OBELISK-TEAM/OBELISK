@@ -6,8 +6,9 @@ import { toolFeaturesData } from "@/data/start/tool-features-data";
 import { getStartedData } from "@/data/start/get-started-data";
 import { joinCommunityData } from "@/data/start/join-community-data";
 import Header from "@/components/main-header/Header";
-import HexagonLayout from "@/components/start/hexagons-section/HexagonLayout";
+import HexagonsSection from "@/components/start/hexagons-section/HexagonsSection";
 import AnimatedSection from "@/components/start/animated-section/AnimatedSection";
+import { hexagonsData } from "@/data/start/hexagons-data";
 
 const Home = () => {
   return (
@@ -29,7 +30,7 @@ const Home = () => {
           <CardSection cardSection={toolFeaturesData} />
         </AnimatedSection>
         <AnimatedSection>
-          <HexagonLayout />
+          <HexagonsSection hexagonsSection={hexagonsData} />
         </AnimatedSection>
         <AnimatedSection>
           <TextSection textSection={joinCommunityData} />
