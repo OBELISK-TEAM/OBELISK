@@ -1,5 +1,4 @@
 import { ICardSection } from "@/interfaces/start-page/card-section";
-
 export const targetAudienceData: ICardSection = {
   title: "Who is it for?",
   description: "Designed with users of (almost) all scales in mind",
