@@ -19,7 +19,7 @@ function isAuthenticated(request: NextRequest): boolean {
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (isAuthenticated(request)) {
-    if (pathname.startsWith("/auth")) {
+    if (pathname.startsWith("/auth") || pathname === "/") {
       return NextResponse.redirect(new URL("/user-boards", request.url));
     }
   } else {
@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
       response.cookies.set("redirectUrl", pathname + search, {
         path: "/",
         httpOnly: false, // Our cookie needs to be accessible client-side (from authContext)
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.APP_ENV === "production",
         sameSite: "lax",
       });
       return response;
@@ -38,5 +38,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/user-boards/:path*", "/auth/:path*"],
+  matcher: ["/:path*"],
 };
