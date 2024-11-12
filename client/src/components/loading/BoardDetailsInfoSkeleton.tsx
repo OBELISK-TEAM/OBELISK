@@ -1,13 +1,13 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BoardHeader } from "@/components/user-boards/BoardHeader";
+import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 
 const SkeletonBoardDetails: React.FC = () => {
   return (
     <section className="rounded-lg border border-border bg-card p-4 shadow">
       {/* Header */}
       <header className="flex items-center justify-between gap-6 p-2">
-        <BoardHeader
+        <SectionHeader
           title="Board Details"
           description="Detailed information regarding everything connected to this board"
         />

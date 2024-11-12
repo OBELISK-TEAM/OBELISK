@@ -1,4 +1,4 @@
-import UserBoards from "@/components/user-boards/UserBoards";
+import UserBoards from "@/app/user-boards/(board-management)/_components/UserBoards";
 import { getCookie } from "@/lib/authApiUtils";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { fetchBoards } from "@/services/board/fetchBoards";

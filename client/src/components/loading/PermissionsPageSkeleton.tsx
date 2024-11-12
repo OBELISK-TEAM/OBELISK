@@ -2,15 +2,15 @@
 
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BoardHeader } from "@/components/user-boards/BoardHeader";
+import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 
 const SkeletonBoardPermissions: React.FC = () => {
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow">
       <div className="mb-6">
-        <BoardHeader title="Board permissions" description="How others can collaborate with you on this board">
+        <SectionHeader title="Board permissions" description="How others can collaborate with you on this board">
           <Skeleton className="h-6 w-6 rounded-full" />
-        </BoardHeader>
+        </SectionHeader>
 
         <div className="flex items-end justify-between p-2">
           <div className="mt-12 flex items-center space-x-4">

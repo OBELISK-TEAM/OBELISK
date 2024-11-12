@@ -1,5 +1,5 @@
 import React from "react";
-import { BoardPermissions } from "@/components/board-details/board-permissions/BoardPermissions";
+import { BoardPermissions } from "@/app/user-boards/(board-management)/[boardId]/permissions/_components/BoardPermissions";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
 interface PermissionsPageProps {

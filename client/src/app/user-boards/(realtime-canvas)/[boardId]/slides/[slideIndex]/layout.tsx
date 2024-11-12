@@ -4,7 +4,7 @@ import { MenuDataProvider } from "@/contexts/MenuDataContext";
 import { FileProvider } from "@/contexts/FileContext";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { UndoRedoProvider } from "@/contexts/UndoRedoContext";
-import KeydownListenerWrapper from "@/providers/KeydownListenerWrapper";
+import KeydownListenerProvider from "@/providers/KeydownListenerProvider";
 import { ZoomUIProvider } from "@/contexts/ZoomUIContext";
 import { notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
@@ -64,7 +64,7 @@ const SliderLayout = ({ children, params }: UserBoardLayout) => {
         <UndoRedoProvider>
           <MenuDataProvider>
             <FileProvider>
-              <KeydownListenerWrapper>{children}</KeydownListenerWrapper>
+              <KeydownListenerProvider>{children}</KeydownListenerProvider>
             </FileProvider>
           </MenuDataProvider>
         </UndoRedoProvider>

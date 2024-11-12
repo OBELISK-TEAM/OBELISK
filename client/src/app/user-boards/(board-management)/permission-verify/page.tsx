@@ -1,7 +1,7 @@
 import React from "react";
-import PermissionVerifySuccess from "@/components/board-permission-verify/PermissionVerifySuccess";
+import PermissionVerifySuccess from "@/app/user-boards/(board-management)/permission-verify/_components/PermissionVerifySuccess";
 import { grantPermission } from "@/app/actions/permissionsActions";
-import PermissionVerifyFailure from "@/components/board-permission-verify/PermissionVerifyFailure";
+import PermissionVerifyFailure from "@/app/user-boards/(board-management)/permission-verify/_components/PermissionVerifyFailure";
 import { GrantPermissionResponse } from "@/interfaces/responses/board-permission/grant-permission-response";
 interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };

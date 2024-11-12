@@ -1,0 +1,22 @@
+"use client";
+import React from "react";
+import { SlidePagination } from "@/components/common/paginations/SlidePagination";
+import { SlideActions } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/slide-controls/SlideActions";
+import { SlideControlsProvider } from "@/contexts/SlideControlsContext";
+import { useSocket } from "@/contexts/SocketContext";
+
+export function SlideControls() {
+  const {
+    userCapabilities: { canManageSlide },
+  } = useSocket();
+  const emptySpace = <div className="flex flex-grow items-center"></div>;
+  return (
+    <SlideControlsProvider>
+      <div className="flex items-center justify-between border-t p-2">
+        {emptySpace}
+        <SlidePagination />
+        {canManageSlide ? <SlideActions /> : emptySpace}
+      </div>
+    </SlideControlsProvider>
+  );
+}

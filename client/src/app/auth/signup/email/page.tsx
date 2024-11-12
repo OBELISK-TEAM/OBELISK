@@ -1,7 +1,7 @@
 "use client";
-import AuthHeaderButtons from "@/components/user-boards/AuthHeaderButtons";
-import ExpandedLogoAbbreviation from "@/components/user-boards/ExpandedLogoAbbreviation";
-import EmailSignupCard from "./EmailSignupCard";
+import AuthHeaderButtons from "@/components/common/headers/main-header/AuthHeaderButtons";
+import ExpandedLogoAbbreviation from "@/components/common/expanded-logo-abbreviation/ExpandedLogoAbbreviation";
+import EmailSignupCard from "./_components/EmailSignupCard";
 
 const SignupWithEmail: React.FC = () => {
   return (

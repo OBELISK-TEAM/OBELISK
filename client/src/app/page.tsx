@@ -1,13 +1,13 @@
-import { StartPageCardSection } from "@/components/start/card-section/StartPageCardSection";
-import { TextSection } from "@/components/start/text-section/TextSection";
+import { StartPageCardSection } from "@/app/_components/card-section/StartPageCardSection";
+import { StartPageTextSection } from "@/app/_components/text-section/StartPageTextSection";
 import { usefulCapabilitiesData } from "@/data/start/useful-capabilities-section";
 import { targetAudienceData } from "@/data/start/target-audience-data";
 import { toolFeaturesData } from "@/data/start/tool-features-data";
 import { getStartedData } from "@/data/start/get-started-data";
 import { joinCommunityData } from "@/data/start/join-community-data";
-import Header from "@/components/main-header/Header";
-import HexagonsSection from "@/components/start/hexagons-section/StartPageHexagonsSection";
-import StartPageAnimatedSection from "@/components/start/animated-section/StartPageAnimatedSection";
+import Header from "@/components/common/headers/main-header/Header";
+import HexagonsSection from "@/app/_components/hexagons-section/StartPageHexagonsSection";
+import StartPageAnimatedSection from "@/app/_components/animated-section/StartPageAnimatedSection";
 import { hexagonsData } from "@/data/start/hexagons-data";
 
 const Home = () => {
@@ -18,7 +18,7 @@ const Home = () => {
       </div>
       <main className={"flex flex-col items-center gap-20 p-2 py-10 pb-24 lg:px-32 2xl:px-64"}>
         <StartPageAnimatedSection>
-          <TextSection textSection={getStartedData} />
+          <StartPageTextSection textSection={getStartedData} />
         </StartPageAnimatedSection>
         <StartPageAnimatedSection>
           <StartPageCardSection cardSection={usefulCapabilitiesData} />
@@ -33,7 +33,7 @@ const Home = () => {
           <HexagonsSection hexagonsSection={hexagonsData} />
         </StartPageAnimatedSection>
         <StartPageAnimatedSection>
-          <TextSection textSection={joinCommunityData} />
+          <StartPageTextSection textSection={joinCommunityData} />
         </StartPageAnimatedSection>
       </main>
     </>
