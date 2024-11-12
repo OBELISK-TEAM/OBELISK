@@ -12,7 +12,7 @@ import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/BoardsActiveTab";
 import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 import { BoardTableLeadRow } from "@/app/user-boards/(board-management)/_components/board-table/BoardTableLeadRow";
 import { useRouter } from "next/navigation";
-import { BoardDeletionButton } from "@/components/common/buttons/BoardDeletionButton";
+import { DeleteBoardDialog } from "@/components/common/dialogs/DeleteBoardDialog";
 import { BoardDetailsButton } from "@/components/common/buttons/BoardDetailsButton";
 import { deleteBoard } from "@/app/actions/boardActions";
 import ShareBoardDialog from "@/components/common/dialogs/ShareBoardDialog";
@@ -111,7 +111,7 @@ const BoardTable: React.FC<BoardTableProps> = ({ data, activeTab }) => {
                       </ShareBoardDialog>
                     )}
                     {capabilityFunctions.canDeleteBoard(board.permission) && (
-                      <BoardDeletionButton
+                      <DeleteBoardDialog
                         revalidateFunc={() => router.refresh()}
                         deleteBoard={() => deleteBoard(board._id)}
                       />

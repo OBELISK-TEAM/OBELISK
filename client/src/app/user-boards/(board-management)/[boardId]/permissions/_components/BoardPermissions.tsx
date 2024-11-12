@@ -10,7 +10,7 @@ import { Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import BoardPermissionsSelect from "@/components/common/board-permissions-select/BoardPermissionsSelect";
 import { BoardTableLeadRow } from "@/app/user-boards/(board-management)/_components/board-table/BoardTableLeadRow";
-import DeleteCollaboratorButton from "@/components/common/buttons/DeleteCollaboratorButton";
+import DeleteCollaboratorDialog from "@/components/common/dialogs/DeleteCollaboratorDialog";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import ShareBoardDialog from "@/components/common/dialogs/ShareBoardDialog";
 import { boardPermissionToNum, capabilityFunctions } from "@/lib/permissionUtils";
@@ -124,7 +124,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
 
               <TableCell className="flex items-center justify-center">
                 {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== decodedToken?._id && (
-                  <DeleteCollaboratorButton user={user} boardId={board._id} />
+                  <DeleteCollaboratorDialog user={user} boardId={board._id} />
                 )}
               </TableCell>
             </TableRow>

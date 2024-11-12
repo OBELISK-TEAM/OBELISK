@@ -22,7 +22,7 @@ interface BoardDeletionButtonProps {
   revalidateFunc: () => void;
 }
 
-export const BoardDeletionButton: React.FC<BoardDeletionButtonProps> = ({ deleteBoard, revalidateFunc }) => {
+export const DeleteBoardDialog: React.FC<BoardDeletionButtonProps> = ({ deleteBoard, revalidateFunc }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const triggerButtonRef = React.useRef<HTMLButtonElement>(null);
   const [isPending, startTransition] = useTransition();

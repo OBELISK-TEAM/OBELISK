@@ -26,7 +26,7 @@ interface DeleteCollaboratorButtonProps {
   boardId: string;
 }
 
-const DeleteCollaboratorButton: React.FC<DeleteCollaboratorButtonProps> = ({ user, boardId }) => {
+const DeleteCollaboratorDialog: React.FC<DeleteCollaboratorButtonProps> = ({ user, boardId }) => {
   const triggerButtonRef = React.useRef<HTMLButtonElement>(null);
   const [isPending, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -100,4 +100,4 @@ const DeleteCollaboratorButton: React.FC<DeleteCollaboratorButtonProps> = ({ use
   );
 };
 
-export default DeleteCollaboratorButton;
+export default DeleteCollaboratorDialog;
