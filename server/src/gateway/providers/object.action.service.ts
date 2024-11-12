@@ -13,6 +13,8 @@ import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schem
 import { Types } from 'mongoose';
 import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
 import { SlideAction } from 'src/shared/enums/actions/slide.action';
+import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
+import { BoardAction } from 'src/shared/enums/actions/board.action';
 
 @Injectable()
 export class ObjectActionService {
@@ -21,6 +23,7 @@ export class ObjectActionService {
     private readonly objectsService: ObjectsService,
     private readonly objectStatsService: ObjectStatsService,
     private readonly slideStatsService: SlideStatsService,
+    private readonly boardStatsService: BoardStatsService,
   ) {}
 
   async handleAddObject(
@@ -42,18 +45,25 @@ export class ObjectActionService {
       objectProps,
     );
 
+    const userId = (user._id as Types.ObjectId).toString();
     await this.objectStatsService.initStats(
       createdObject._id.toString(),
       boardId,
       slideId,
-      (user._id as Types.ObjectId).toString(),
+      userId,
     );
     void this.slideStatsService.logAction(
-      slideId.toString(),
-      (user._id as Types.ObjectId).toString(),
+      slideId,
+      userId,
       createdObject.top ? createdObject.top : null,
       createdObject.left ? createdObject.left : null,
       SlideAction.EDIT_SLIDE,
+    );
+    void this.boardStatsService.logAction(
+      boardId,
+      userId,
+      slideId,
+      BoardAction.EDIT_SLIDE,
     );
 
     this.logger.log(`Object added: ${createdObject._id} by ${user.email}`);
@@ -88,18 +98,25 @@ export class ObjectActionService {
       props,
     );
 
+    const userId = (user._id as Types.ObjectId).toString();
     await this.objectStatsService.changeLastInteraction(
       _id,
-      (user._id as Types.ObjectId).toString(),
+      userId,
       oldObject as unknown as SuperObjectDocument,
       updatedObject as unknown as SuperObjectDocument,
     );
     void this.slideStatsService.logAction(
-      slideId.toString(),
-      (user._id as Types.ObjectId).toString(),
+      slideId,
+      userId,
       updatedObject.top ? updatedObject.top : null,
       updatedObject.left ? updatedObject.left : null,
       SlideAction.EDIT_SLIDE,
+    );
+    void this.boardStatsService.logAction(
+      boardId,
+      userId,
+      slideId,
+      BoardAction.EDIT_SLIDE,
     );
 
     this.logger.log(`Object updated: ${updatedObject._id} by ${user.email}`);
@@ -126,13 +143,20 @@ export class ObjectActionService {
       objectId,
     );
 
+    const userId = (user._id as Types.ObjectId).toString();
     void this.objectStatsService.removeStats(objectId, null, null);
     void this.slideStatsService.logAction(
-      slideId.toString(),
-      (user._id as Types.ObjectId).toString(),
+      slideId,
+      userId,
       deletedObject.top ? deletedObject.top : null,
       deletedObject.left ? deletedObject.left : null,
       SlideAction.EDIT_SLIDE,
+    );
+    void this.boardStatsService.logAction(
+      boardId,
+      userId,
+      slideId,
+      BoardAction.EDIT_SLIDE,
     );
 
     this.logger.log(`Object deleted: ${objectId} by ${user.email}`);

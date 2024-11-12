@@ -18,5 +18,6 @@ import {
   ],
   controllers: [BoardStatsController],
   providers: [BoardStatsService],
+  exports: [BoardStatsService, MongooseModule],
 })
 export class BoardStatsModule {}
