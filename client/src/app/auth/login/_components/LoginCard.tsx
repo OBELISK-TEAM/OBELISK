@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
+import GoogleIcon from "@/components/common/non-lucid-icons/GoogleIcon";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import React from "react";
 

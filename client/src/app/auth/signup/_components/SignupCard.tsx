@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import GoogleIcon from "@/components/non-lucid-icons/GoogleIcon";
+import GoogleIcon from "@/components/common/non-lucid-icons/GoogleIcon";
 import { Mail } from "lucide-react";
 import { useHandleAuth } from "@/hooks/auth/useHandleAuth";
 import React from "react";
