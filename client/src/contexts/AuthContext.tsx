@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { ToastTypes } from "@/enums/ToastType";
-import { complexToast } from "./complexToast";
+import { complexToastContext } from "./ComplexToastContext";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
 import { DecodedToken } from "@/interfaces/decoded-token/decoded-token";
@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
     await loginAction(credentials.email, credentials.password);
 
     toast.dismiss();
-    complexToast(ToastTypes.SUCCESS, "Logged in succesfully");
+    complexToastContext(ToastTypes.SUCCESS, "Logged in succesfully");
     const redirect = getRedirectUrl() || "/user-boards";
     router.push(redirect);
   };
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
   const signup = async (credentials: { email: string; password: string }) => {
     await registerAction(credentials.email, credentials.password);
     toast.dismiss();
-    complexToast(ToastTypes.SUCCESS, "Registered successfully");
+    complexToastContext(ToastTypes.SUCCESS, "Registered successfully");
     const redirect = getRedirectUrl() || "/user-boards";
     router.push(redirect);
   };
@@ -40,14 +40,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
   const logout = async () => {
     await logoutAction();
     toast.dismiss();
-    complexToast(ToastTypes.SUCCESS, "Logged out successfully");
+    complexToastContext(ToastTypes.SUCCESS, "Logged out successfully");
     router.push("/auth/login");
   };
 
   const loginGoogleUser = async (userTempId: string) => {
     await googleLoginAction(userTempId);
     toast.dismiss();
-    complexToast(ToastTypes.SUCCESS, "Logged in with Google successfully");
+    complexToastContext(ToastTypes.SUCCESS, "Logged in with Google successfully");
     const redirect = getRedirectUrl() || "/user-boards";
     router.push(redirect);
   };

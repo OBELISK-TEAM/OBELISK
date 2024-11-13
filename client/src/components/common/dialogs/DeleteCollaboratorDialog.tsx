@@ -14,8 +14,8 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/h
 import { BoardPermissionsUser } from "@/interfaces/board-permissions-user";
 import { toast } from "sonner";
 import logger from "@/lib/logger";
-import { ApiError } from "@/errors/ApiError";
-import { complexToast } from "@/contexts/complexToast";
+import { ApiError } from "@/classes/errors/ApiError";
+import { complexToastContext } from "@/contexts/ComplexToastContext";
 import { ToastTypes } from "@/enums/ToastType";
 import { BoardPermissionModifyRequest } from "@/interfaces/requests/board-permission-modify-request";
 import { modifyPermission } from "@/app/actions/permissionsActions";
@@ -53,7 +53,7 @@ const DeleteCollaboratorDialog: React.FC<DeleteCollaboratorButtonProps> = ({ use
       } catch (error: any) {
         logger.error("Error in handleDeleteUser:", error);
         if (error instanceof ApiError) {
-          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+          complexToastContext(ToastTypes.ERROR, error.messages, { duration: Infinity });
         } else {
           toast.error(error.message || "Failed to delete board");
         }

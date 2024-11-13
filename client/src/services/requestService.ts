@@ -1,5 +1,5 @@
 import { extractMessagesFromApiError } from "@/lib/toastsUtils";
-import { ApiError } from "@/errors/ApiError";
+import { ApiError } from "@/classes/errors/ApiError";
 
 const API_HOST = process.env.SERVER_HOST;
 const API_PORT = process.env.SERVER_PORT;

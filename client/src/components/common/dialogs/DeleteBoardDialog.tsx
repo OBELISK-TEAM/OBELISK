@@ -12,8 +12,8 @@ import {
 import { TrashIcon } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { toast } from "sonner";
-import { ApiError } from "@/errors/ApiError";
-import { complexToast } from "@/contexts/complexToast";
+import { ApiError } from "@/classes/errors/ApiError";
+import { complexToastContext } from "@/contexts/ComplexToastContext";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
 
@@ -44,7 +44,7 @@ export const DeleteBoardDialog: React.FC<BoardDeletionButtonProps> = ({ deleteBo
       } catch (error: any) {
         logger.error("Error in handleDeleteBoard:", error);
         if (error instanceof ApiError) {
-          complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+          complexToastContext(ToastTypes.ERROR, error.messages, { duration: Infinity });
         } else {
           toast.error(error.message || "Failed to delete board");
         }

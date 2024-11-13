@@ -4,11 +4,11 @@ import { AuthAction } from "@/enums/AuthAction";
 import { HandleAuth } from "@/interfaces/handle-auth";
 import { useAuthForm } from "./useAuthForm";
 import { useGoogleAuth } from "@/hooks/auth/useGoogleAuth";
-import { complexToast } from "@/contexts/complexToast";
+import { complexToastContext } from "@/contexts/ComplexToastContext";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
 import { toast } from "sonner";
-import { ApiError } from "@/errors/ApiError";
+import { ApiError } from "@/classes/errors/ApiError";
 
 export const useHandleAuth = (): HandleAuth => {
   const authForm = useAuthForm();
@@ -41,7 +41,7 @@ export const useHandleAuth = (): HandleAuth => {
         } catch (error: any) {
           logger.error("Error during authentication:", error);
           if (error instanceof ApiError) {
-            complexToast(ToastTypes.ERROR, error.messages);
+            complexToastContext(ToastTypes.ERROR, error.messages);
           } else {
             toast.error(error.message || "An error occurred");
           }
