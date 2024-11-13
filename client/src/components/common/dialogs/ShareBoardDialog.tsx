@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import BoardPermissionsSelect from "@/components/common/board-permissions-select/BoardPermissionsSelect";
 import { BoardPermission } from "@/enums/BoardPermission";
-import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { LoadingSpinner } from "@/components/common/loading/LoadingSpinner";
 import { toast } from "sonner";
 //import { ClipboardIcon, CopyIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";

@@ -1,6 +1,6 @@
 import React from "react";
 import { CardContent, CardHeader, CardTitle, CardDescription, Card } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { LoadingSpinner } from "@/components/common/loading/LoadingSpinner";
 
 const PermissionVerifying: React.FC = () => {
   return (

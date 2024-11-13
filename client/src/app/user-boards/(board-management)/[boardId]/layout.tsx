@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import BoardDetailsSidebar from "@/components/common/sidebars/board-details-sidebar/BoardDetailsSidebar";
+import BoardDetailsSidebar from "@/app/user-boards/(board-management)/[boardId]/_components/board-details-sidebar/BoardDetailsSidebar";
 import { Metadata } from "next";
 import { getBoardDetailsData } from "@/services/board/fetchBoardDetails";
 import logger from "@/lib/logger";

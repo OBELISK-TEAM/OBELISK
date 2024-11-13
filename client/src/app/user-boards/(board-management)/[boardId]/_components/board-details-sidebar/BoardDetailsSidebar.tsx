@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import BoardDetailsSidebarContent from "./BoardDetailsSidebarContent";
-import LoadingSidebar from "@/components/loading/LoadingSidebar";
+import LoadingSidebar from "@/app/user-boards/(board-management)/[boardId]/_loading/LoadingSidebar";
 
 interface BoardDetailsSidebarProps {
   boardId: string;

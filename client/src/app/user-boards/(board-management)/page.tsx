@@ -8,7 +8,6 @@ import {
   BoardsActiveTabMap,
   BoardsActiveTabReverseMap,
 } from "@/enums/BoardsActiveTab";
-import UserBoardsError from "@/components/error/UserBoardsError";
 
 export default async function UserBoardsPage({
   searchParams,
@@ -23,13 +22,9 @@ export default async function UserBoardsPage({
   const pageParam = Array.isArray(searchParams.page) ? searchParams.page[0] : searchParams.page;
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
 
-  try {
-    const data: PaginatedBoardsResponse = await fetchBoards(accessToken as string)(
-      `/boards?tab=${boardActiveTabConverter(BoardsActiveTabMap[activeTab])}&page=${currentPage}&limit=5`
-    );
+  const data: PaginatedBoardsResponse = await fetchBoards(accessToken as string)(
+    `/boards?tab=${boardActiveTabConverter(BoardsActiveTabMap[activeTab])}&page=${currentPage}&limit=5`
+  );
 
-    return <UserBoards data={data} activeTab={activeTab} currentPage={currentPage} />;
-  } catch (error: any) {
-    return <UserBoardsError error={error} />;
-  }
+  return <UserBoards data={data} activeTab={activeTab} currentPage={currentPage} />;
 }

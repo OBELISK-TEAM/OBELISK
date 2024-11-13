@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Info, Shield, BarChart2 } from "lucide-react";
-import { BoardDetailsSidebarButton } from "@/components/common/sidebars/board-details-sidebar/BoardDetailsSidebarButton";
+import { BoardDetailsSidebarButton } from "@/app/user-boards/(board-management)/[boardId]/_components/board-details-sidebar/BoardDetailsSidebarButton";
 import { usePathname } from "next/navigation";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { capabilityFunctions } from "@/lib/permissionUtils";

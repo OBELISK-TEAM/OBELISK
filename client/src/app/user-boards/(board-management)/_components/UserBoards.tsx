@@ -1,7 +1,7 @@
 "use client";
 
 import BoardTable from "@/app/user-boards/(board-management)/_components/board-table/BoardTable";
-import CreateBoardButton from "@/components/common/buttons/CreateBoardButton";
+import CreateBoardButton from "@/app/user-boards/(board-management)/_components/CreateBoardButton";
 import UserBoardsTabButtons from "@/app/user-boards/(board-management)/_components/UserBoardsTabButtons";
 import { useState, useEffect } from "react";
 import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/BoardsActiveTab";

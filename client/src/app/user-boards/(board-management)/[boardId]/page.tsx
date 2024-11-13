@@ -10,11 +10,7 @@ interface BoardDetailsPageProps {
   };
 }
 const BoardDetailsPage = async ({ params }: BoardDetailsPageProps) => {
-  try {
-    const boardData: BoardDetailsResponse = await getBoardDetailsData(params.boardId);
-    return <BoardDetailsInfo board={boardData} />;
-  } catch (error: any) {
-    return <BoardDetailsError error={error} />;
-  }
+  const boardData: BoardDetailsResponse = await getBoardDetailsData(params.boardId);
+  return <BoardDetailsInfo board={boardData} />;
 };
 export default BoardDetailsPage;

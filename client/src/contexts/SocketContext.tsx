@@ -3,12 +3,12 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { Socket } from "socket.io-client";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-import SocketLoading from "@/components/loading/SocketLoading";
+import SocketLoading from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_loading/SocketLoading";
 import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/socket/SocketCallbacksData";
 import logger from "@/lib/logger";
 import { getSocket } from "@/services/socketService";
-import { BoardError } from "@/components/error/BoardError";
+import { BoardError } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_error/BoardError";
 import { getUserCapabilities } from "@/lib/permissionUtils";
 import { UserCapabilities } from "@/interfaces/user-capabilities";
 

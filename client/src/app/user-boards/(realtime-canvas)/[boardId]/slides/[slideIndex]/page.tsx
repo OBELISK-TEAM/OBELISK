@@ -1,5 +1,5 @@
 "use client";
-import BoardSidebar from "@/components/common/sidebars/board-sidebar/BoardSidebar";
+import BoardSidebar from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/board-sidebar/BoardSidebar";
 import BoardHorizontalMenu from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
 import Slide from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/Slide";

@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { DeleteSlideDialog } from "@/components/common/dialogs/DeleteSlideDialog";
+import { DeleteSlideDialog } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/slide-controls/DeleteSlideDialog";
 import { useSlideControls } from "@/contexts/SlideControlsContext";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { SlidePagination } from "@/components/common/paginations/SlidePagination";
+import { SlidePagination } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/slide-controls/SlidePagination";
 import { SlideActions } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/slide-controls/SlideActions";
 import { SlideControlsProvider } from "@/contexts/SlideControlsContext";
 import { useSocket } from "@/contexts/SocketContext";

@@ -1,4 +1,4 @@
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "../../../../../../../components/common/loading/LoadingSpinner";
 
 const SocketLoading = () => {
   return (
