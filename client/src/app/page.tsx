@@ -1,14 +1,14 @@
 import { StartPageCardSection } from "@/app/_components/card-section/StartPageCardSection";
 import { StartPageTextSection } from "@/app/_components/text-section/StartPageTextSection";
-import { usefulCapabilitiesData } from "@/data/start/useful-capabilities-section";
-import { targetAudienceData } from "@/data/start/target-audience-data";
-import { toolFeaturesData } from "@/data/start/tool-features-data";
-import { getStartedData } from "@/data/start/get-started-data";
-import { joinCommunityData } from "@/data/start/join-community-data";
+import { usefulCapabilitiesData } from "@/data/start-page/useful-capabilities-section";
+import { targetAudienceData } from "@/data/start-page/target-audience-data";
+import { toolFeaturesData } from "@/data/start-page/tool-features-data";
+import { getStartedData } from "@/data/start-page/get-started-data";
+import { joinCommunityData } from "@/data/start-page/join-community-data";
 import Header from "@/components/common/headers/main-header/Header";
 import HexagonsSection from "@/app/_components/hexagons-section/StartPageHexagonsSection";
 import StartPageAnimatedSection from "@/app/_components/animated-section/StartPageAnimatedSection";
-import { hexagonsData } from "@/data/start/hexagons-data";
+import { hexagonsData } from "@/data/start-page/hexagons-data";
 
 const Home = () => {
   return (

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from "react";
-import { ZoomOptions } from "@/enums/ZoomOptions";
+import { ZoomConfig } from "@/config/zoomConfig";
 import { ZoomContext as IZoomContext } from "@/interfaces/zoom-context";
 const ZoomUIContext = createContext<IZoomContext | undefined>(undefined);
 
@@ -11,7 +11,7 @@ export const ZoomUIProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const handleZoom = useCallback(
     (newZoom: number) => {
-      const zoomPercentage = ((newZoom - 1) / (ZoomOptions.MAX_ZOOM - 1)) * 100;
+      const zoomPercentage = ((newZoom - 1) / (ZoomConfig.MAX_ZOOM - 1)) * 100;
       setZoomValue(zoomPercentage);
       setShowZoomBadge(true);
 

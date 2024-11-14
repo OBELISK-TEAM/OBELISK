@@ -1,4 +1,4 @@
-import { LoggerOptions } from "@/interfaces/LoggerOptions";
+import { LoggerOptions } from "@/interfaces/logger-options";
 import { LogLevel } from "@/enums/LogLevel";
 
 class ConsoleLogger {
