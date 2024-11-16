@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
-import Cookies from "js-cookie";
 import { toast } from "sonner";
 import SocketLoading from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_loading/SocketLoading";
 import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
@@ -11,6 +10,7 @@ import { getSocket } from "@/services/socketService";
 import { BoardError } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_error/BoardError";
 import { getUserCapabilities } from "@/lib/permissionUtils";
 import { UserCapabilities } from "@/interfaces/user-capabilities";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -33,7 +33,7 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
-  const token = `Bearer ${Cookies.get("accessToken")}`;
+  const { userInfo } = useAuth();
   const socketRef = useRef<Socket | null>(null);
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
@@ -137,7 +137,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socketRef?.current?.disconnect();
       socketRef.current = null;
     };
-  }, [token, boardId]);
+  }, [userInfo, boardId]);
 
   if (connectionError) {
     return <BoardError />;

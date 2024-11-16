@@ -4,7 +4,7 @@ import { MenuActions } from "@/enums/MenuActions";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { useMenuData } from "@/contexts/MenuDataContext";
 
-const KeydownListenerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const SlideKeydownListenerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { undo, redo } = useUndoRedo();
   const { performAction } = useMenuData();
 
@@ -38,4 +38,4 @@ const KeydownListenerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   return <>{children}</>;
 };
 
-export default KeydownListenerProvider;
+export default SlideKeydownListenerProvider;
