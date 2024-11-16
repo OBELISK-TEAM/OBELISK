@@ -3,7 +3,6 @@ import { ToastTypes } from "@/enums/ToastType";
 import { complexToastContext } from "./ComplexToastContext";
 import { AuthContext as IAuthContext } from "@/interfaces/auth-context";
 import { toast } from "sonner";
-import { DecodedToken } from "@/interfaces/decoded-token/decoded-token";
 import {
   register as registerAction,
   login as loginAction,
@@ -12,12 +11,13 @@ import {
 } from "@/app/actions/authActions";
 import { useRouter } from "next/navigation";
 import { getRedirectUrl } from "@/lib/urlUtils";
+import { User } from "@/interfaces/user/user";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: DecodedToken | null }> = ({
+export const AuthProvider: React.FC<{ children: React.ReactNode; userInfo: User | null }> = ({
   children,
-  decodedToken,
+  userInfo,
 }) => {
   const router = useRouter();
   const login = async (credentials: { email: string; password: string }) => {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode; decodedToken: D
         signup,
         logout,
         loginGoogleUser,
-        decodedToken,
+        userInfo,
       }}
     >
       {children}

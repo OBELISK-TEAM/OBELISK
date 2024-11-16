@@ -22,7 +22,7 @@ import logger from "@/lib/logger";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => {
-  const { decodedToken } = useAuth();
+  const { userInfo } = useAuth();
   const users: BoardPermissionsUser[] = React.useMemo(() => {
     const mapPermissionsAndSortUsers = (board: BoardDetailsResponse): BoardPermissionsUser[] => {
       const { viewer: viewers, editor: editors, moderator: moderators } = board.permissions;
@@ -110,7 +110,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
                 </div>
               </TableCell>
               <TableCell>
-                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== decodedToken?._id ? (
+                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== userInfo?._id ? (
                   <BoardPermissionsSelect
                     boardMemberPermission={user.permission}
                     onSendRequest={async (newPermission) => {
@@ -123,7 +123,7 @@ export const BoardPermissions = ({ board }: { board: BoardDetailsResponse }) => 
               </TableCell>
 
               <TableCell className="flex items-center justify-center">
-                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== decodedToken?._id && (
+                {capabilityFunctions.canManageUsersPermissions(board.permission) && user.id !== userInfo?._id && (
                   <DeleteCollaboratorDialog user={user} boardId={board._id} />
                 )}
               </TableCell>

@@ -63,6 +63,10 @@ export default function RootLayout({
 }>) {
   const token = getCookie("accessToken");
   const decodedToken = decodeToken(token);
+  let user = null;
+  if (decodedToken) {
+    user = { _id: decodedToken._id, email: decodedToken.email };
+  }
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -71,7 +75,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Obelisk" />
       </head>
       <body className={inter.className}>
-        <AppProviders decodedToken={decodedToken}>{children}</AppProviders>
+        <AppProviders userInfo={user}>{children}</AppProviders>
         <Footer />
       </body>
     </html>

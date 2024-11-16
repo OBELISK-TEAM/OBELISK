@@ -5,13 +5,13 @@ import LogoutButton from "@/components/common/headers/main-header/LougoutButton"
 import { useAuth } from "@/contexts/AuthContext";
 
 const UserInfo = ({ withoutLogout }: { withoutLogout?: boolean }) => {
-  const { decodedToken } = useAuth();
+  const { userInfo } = useAuth();
   return (
     <>
-      <span className="hidden font-semibold lg:block">{decodedToken?.email}</span>
+      <span className="hidden font-semibold lg:block">{userInfo?.email}</span>
       <Avatar>
         <AvatarImage src="#" />
-        <AvatarFallback>{decodedToken?.email.slice(0, 2).toUpperCase()}</AvatarFallback>
+        <AvatarFallback>{userInfo?.email.slice(0, 2).toUpperCase()}</AvatarFallback>
       </Avatar>
       <ThemeToggle />
       {!withoutLogout && <LogoutButton />}

@@ -44,8 +44,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     socket,
     userCapabilities: { canManageObject },
   } = useSocket();
-  const { decodedToken } = useAuth();
-  const email = decodedToken?.email ?? "";
+  const { userInfo } = useAuth();
+  const email = userInfo?.email ?? "";
   const userColor = useMemo(() => getColorFromEmail(email), [email]);
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current }, canManageObject);
