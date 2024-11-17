@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BoardStats } from 'src/mongo/schemas/stats/board.stats.schema';
 import { BoardAction } from 'src/shared/enums/actions/board.action';
 import { BoardPermission } from 'src/shared/enums/board.permission';
+import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/ChartData';
 
 @Injectable()
 export class BoardStatsService {
@@ -95,6 +96,100 @@ export class BoardStatsService {
           },
         },
       },
+    );
+  }
+
+  private getActiveUsersOverTimeMap(
+    joinLeaveTimeline: [
+      { userId: string; joinDate: Date; leaveDate: Date | null },
+    ],
+    startDateMs: number,
+    endDateMs: number,
+    aggregationIntervalMs: number,
+  ): Map<number, number> {
+    const activeUsersOverTimeMap = new Map<number, number>();
+
+    for (let i = startDateMs; i <= endDateMs; i += aggregationIntervalMs) {
+      activeUsersOverTimeMap.set(i, 0);
+    }
+
+    activeUsersOverTimeMap.forEach((_, aggregationPointDateMs) => {
+      const usersCountedMap = new Map<string, boolean>();
+
+      for (const joinLeaveLog of joinLeaveTimeline) {
+        const joinTimeMs = joinLeaveLog.joinDate.getTime();
+        const leaveTimeMs = joinLeaveLog.leaveDate
+          ? joinLeaveLog.leaveDate.getTime()
+          : Infinity;
+        const userId = joinLeaveLog.userId;
+
+        if (
+          joinTimeMs <= aggregationPointDateMs + aggregationIntervalMs / 2 &&
+          leaveTimeMs > aggregationPointDateMs - aggregationIntervalMs / 2 &&
+          !usersCountedMap.get(userId)
+        ) {
+          activeUsersOverTimeMap.set(
+            aggregationPointDateMs,
+            (activeUsersOverTimeMap.get(aggregationPointDateMs) || 0) + 1,
+          );
+          usersCountedMap.set(userId, true);
+        }
+      }
+    });
+
+    return activeUsersOverTimeMap;
+  }
+
+  private convertActiveUsersOverTimeMapToChartDataArray(
+    activeUsersOverTimeMap: Map<number, number>,
+  ): NumericalTimelineChartData[] {
+    const chartDataArray = [] as NumericalTimelineChartData[];
+    activeUsersOverTimeMap.forEach((noActiveUsers, aggregationPointDateMs) => {
+      if (noActiveUsers > 0) {
+        chartDataArray.push({
+          timestamp: new Date(aggregationPointDateMs),
+          value: noActiveUsers,
+        });
+      }
+    });
+    return chartDataArray;
+  }
+
+  async getActiveUsersOverTime(
+    boardId: string,
+    startDate: Date,
+    endDate: Date,
+    aggregationIntervalMinutes: number,
+  ): Promise<NumericalTimelineChartData[]> {
+    if (startDate.toString() === 'Invalid Date') startDate = new Date(0);
+    if (endDate.toString() === 'Invalid Date' || endDate > new Date()) endDate = new Date();
+
+    if (startDate >= endDate) {
+      throw new HttpException('Invalid dates', HttpStatus.BAD_REQUEST);
+    }
+
+    const boardStats = await this.boardStatsModel.findOne({
+      boardId,
+      'joinLeaveTimeline.joinDate': { $lte: endDate },
+      $or: [
+        { 'joinLeaveTimeline.leaveDate': { $gte: startDate } },
+        { 'joinLeaveTimeline.leaveDate': null },
+      ],
+    });
+
+    if (!boardStats || !boardStats.joinLeaveTimeline) {
+      return [];
+    }
+
+    const activeUsersOverTimeMap = this.getActiveUsersOverTimeMap(
+      boardStats.joinLeaveTimeline,
+      startDate.getTime(),
+      endDate.getTime(),
+      aggregationIntervalMinutes * 60 * 1000,
+    );
+
+    return this.convertActiveUsersOverTimeMapToChartDataArray(
+      activeUsersOverTimeMap,
     );
   }
 }
