@@ -1,4 +1,5 @@
 import { SocketProvider } from "@/contexts/SocketContext";
+import { getCookie } from "@/lib/authApiUtils";
 
 interface UserBoardLayout {
   children: React.ReactNode;
@@ -9,8 +10,12 @@ interface UserBoardLayout {
 
 const SliderLayout = ({ children, params }: UserBoardLayout) => {
   const { boardId } = params;
-
-  return <SocketProvider boardId={boardId}>{children}</SocketProvider>;
+  const token = getCookie("accessToken");
+  return (
+    <SocketProvider token={token} boardId={boardId}>
+      {children}
+    </SocketProvider>
+  );
 };
 
 export default SliderLayout;

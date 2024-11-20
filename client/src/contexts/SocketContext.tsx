@@ -30,9 +30,10 @@ const SocketContext = createContext<SocketContextProps | undefined>(undefined);
 interface SocketProviderProps {
   children: React.ReactNode;
   boardId: string;
+  token: string | undefined;
 }
 
-export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
+export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId, token }) => {
   const { userInfo } = useAuth();
   const socketRef = useRef<Socket | null>(null);
   const [isSocketReady, setIsSocketReady] = useState(false);
@@ -44,8 +45,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
   const [connectionError, setConnectionError] = useState(false);
   useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = getSocket(socketRef.current);
+    if (!socketRef.current && token) {
+      socketRef.current = getSocket(socketRef.current, token);
     }
 
     const socket = socketRef.current;
@@ -137,7 +138,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socketRef?.current?.disconnect();
       socketRef.current = null;
     };
-  }, [userInfo, boardId]);
+  }, [userInfo, boardId, token]);
 
   if (connectionError) {
     return <BoardError />;
