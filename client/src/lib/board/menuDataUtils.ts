@@ -2,12 +2,12 @@ import { fabric } from "fabric";
 import { jsPDF } from "jspdf";
 import { ImageData } from "@/interfaces/menu-data-context";
 import { CanvasMode } from "@/enums/CanvasMode";
-import { BrushOptions } from "@/enums/BrushOptions";
+import { BrushConfig } from "@/config/brushConfig";
 import logger from "@/lib/logger";
 
 const configureBrush = (brush: fabric.BaseBrush, size: number, color?: string) => {
   brush.width = size;
-  brush.decimate = BrushOptions.DECIMATE;
+  brush.decimate = BrushConfig.DECIMATE;
   if (color) {
     brush.color = color;
   }

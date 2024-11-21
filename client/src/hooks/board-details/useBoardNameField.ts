@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { toast } from "sonner";
-import { ApiError } from "@/errors/ApiError";
-import { complexToast } from "@/contexts/complexToast";
+import { ApiError } from "@/classes/errors/ApiError";
+import { complexToastContext } from "@/contexts/ComplexToastContext";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
 import { z } from "zod";
@@ -55,7 +55,7 @@ export const useBoardNameField = ({ board, onSuccess }: UseBoardNameFormProps) =
     } catch (error: any) {
       logger.error("Error while updating board name:", error);
       if (error instanceof ApiError) {
-        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        complexToastContext(ToastTypes.ERROR, error.messages, { duration: Infinity });
       } else {
         toast.error(error.message || "Failed to rename the board");
       }

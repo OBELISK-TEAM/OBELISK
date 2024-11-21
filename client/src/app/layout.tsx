@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Providers from "./Providers";
+import AppProviders from "../providers/AppProviders";
 import { decodeToken, getCookie } from "@/lib/authApiUtils";
-import Footer from "./Footer";
+import Footer from "../components/common/footers/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -63,6 +63,10 @@ export default function RootLayout({
 }>) {
   const token = getCookie("accessToken");
   const decodedToken = decodeToken(token);
+  let user = null;
+  if (decodedToken) {
+    user = { _id: decodedToken._id, email: decodedToken.email };
+  }
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -71,7 +75,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Obelisk" />
       </head>
       <body className={inter.className}>
-        <Providers decodedToken={decodedToken}>{children}</Providers>
+        <AppProviders userInfo={user}>{children}</AppProviders>
         <Footer />
       </body>
     </html>

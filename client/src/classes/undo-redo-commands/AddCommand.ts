@@ -1,7 +1,7 @@
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/lib/board/canvasUtils";
 import { toast } from "sonner";
-import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
+import { FabricObjectIdError } from "@/classes/errors/FabricObjectIdError";
 import { fabric } from "fabric";
 import { addListenersBack, removeListenersTemporarily } from "@/lib/board/undoRedoUtils";
 import { Socket } from "socket.io-client";

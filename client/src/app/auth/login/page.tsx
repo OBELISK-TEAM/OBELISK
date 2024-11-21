@@ -1,7 +1,7 @@
 "use client";
-import AuthHeaderButtons from "@/components/user-boards/AuthHeaderButtons";
-import ExpandedLogoAbbreviation from "@/components/user-boards/ExpandedLogoAbbreviation";
-import LoginCard from "./LoginCard";
+import AuthHeaderButtons from "@/components/common/headers/main-header/AuthHeaderButtons";
+import ExpandedLogoAbbreviation from "@/components/common/expanded-logo-abbreviation/ExpandedLogoAbbreviation";
+import LoginCard from "./_components/LoginCard";
 
 const Login: React.FC = () => {
   return (

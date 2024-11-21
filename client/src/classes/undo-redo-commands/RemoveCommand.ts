@@ -1,4 +1,4 @@
-import { FabricObjectIdError } from "@/errors/FabricObjectIdError";
+import { FabricObjectIdError } from "@/classes/errors/FabricObjectIdError";
 import { UndoRedoCommand } from "@/interfaces/undo-redo-context";
 import { getItemById } from "@/lib/board/canvasUtils";
 import { toast } from "sonner";

@@ -10,7 +10,7 @@ import {
   toggleDrawingMode,
   updateDimensions,
 } from "@/lib/board/canvasUtils";
-import { ZoomOptions } from "@/enums/ZoomOptions";
+import { ZoomConfig } from "@/config/zoomConfig";
 import { useZoom } from "./ZoomUIContext";
 import useSocketListeners from "@/hooks/socket/useSocketListeners";
 import { useSocket } from "./SocketContext";
@@ -44,8 +44,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     socket,
     userCapabilities: { canManageObject },
   } = useSocket();
-  const { decodedToken } = useAuth();
-  const email = decodedToken?.email ?? "";
+  const { userInfo } = useAuth();
+  const email = userInfo?.email ?? "";
   const userColor = useMemo(() => getColorFromEmail(email), [email]);
   useEffect(() => {
     const newCanvas = initializeCanvas({ current: canvasRef.current }, canManageObject);
@@ -89,9 +89,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
       }
       const delta = evt.deltaY;
       let zoom = newCanvas.getZoom();
-      zoom *= ZoomOptions.ZOOM_SMOOTHICITY ** delta;
-      if (zoom > ZoomOptions.MAX_ZOOM) {
-        zoom = ZoomOptions.MAX_ZOOM;
+      zoom *= ZoomConfig.ZOOM_SMOOTHICITY ** delta;
+      if (zoom > ZoomConfig.MAX_ZOOM) {
+        zoom = ZoomConfig.MAX_ZOOM;
       }
       if (zoom < 1) {
         zoom = 1;

@@ -1,5 +1,5 @@
 import React from "react";
-import { BoardStatistics } from "@/components/board-details/BoardStatistics";
+import { BoardStatistics } from "@/app/user-boards/(board-management)/[boardId]/statistics/_components/BoardStatistics";
 const PermissionsPage = () => {
   return <BoardStatistics />;
 };

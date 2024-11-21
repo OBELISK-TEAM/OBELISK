@@ -1,10 +1,10 @@
 "use client";
-import BoardSidebar from "@/components/board/Sidebar";
-import BoardHorizontalMenu from "@/components/board/HorizontalMenu";
+import BoardSidebar from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/board-sidebar/BoardSidebar";
+import BoardHorizontalMenu from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/HorizontalMenu";
 import { MenuGroups } from "@/enums/MenuGroups";
-import SlideCanvas from "@/components/board/Canvas";
-import SlideFileInputs from "@/components/board/SlideFileInputs";
-import BoardToolBar from "@/components/board/toolbar/Toolbar";
+import Slide from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/Slide";
+import SlideFileInputs from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/SlideFileInputs";
+import BoardToolBar from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_components/toolbar/Toolbar";
 import { useScrollToTop } from "@/hooks/window/useScrollToTop";
 import { useSocket } from "@/contexts/SocketContext";
 const Board: React.FC = () => {
@@ -29,7 +29,7 @@ const Board: React.FC = () => {
           }}
         >
           {userCapabilities.canManageObject && <BoardToolBar />}
-          <SlideCanvas />
+          <Slide />
           {userCapabilities.canManageObject && <SlideFileInputs />}
         </div>
       </div>

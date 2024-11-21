@@ -1,16 +1,16 @@
 "use client";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
-import Cookies from "js-cookie";
 import { toast } from "sonner";
-import SocketLoading from "@/components/loading/SocketLoading";
+import SocketLoading from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_loading/SocketLoading";
 import { socketEmitJoinBoard } from "@/lib/board/socketEmitUtils";
 import { BasicUserInfo, JoinBoardResponse, SimpleMessage } from "@/interfaces/socket/SocketCallbacksData";
 import logger from "@/lib/logger";
 import { getSocket } from "@/services/socketService";
-import { BoardError } from "@/components/error/BoardError";
+import { BoardError } from "@/app/user-boards/(realtime-canvas)/[boardId]/slides/[slideIndex]/_error/BoardError";
 import { getUserCapabilities } from "@/lib/permissionUtils";
 import { UserCapabilities } from "@/interfaces/user-capabilities";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SocketContextProps {
   totalSlides: number;
@@ -30,10 +30,11 @@ const SocketContext = createContext<SocketContextProps | undefined>(undefined);
 interface SocketProviderProps {
   children: React.ReactNode;
   boardId: string;
+  token: string | undefined;
 }
 
-export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId }) => {
-  const token = `Bearer ${Cookies.get("accessToken")}`;
+export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardId, token }) => {
+  const { userInfo } = useAuth();
   const socketRef = useRef<Socket | null>(null);
   const [isSocketReady, setIsSocketReady] = useState(false);
   const [totalSlides, setTotalSlides] = useState<number>(100);
@@ -44,8 +45,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
   const [firstSlideChanged, setFirstSlideChanged] = useState(false);
   const [connectionError, setConnectionError] = useState(false);
   useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = getSocket(socketRef.current);
+    if (!socketRef.current && token) {
+      socketRef.current = getSocket(socketRef.current, token);
     }
 
     const socket = socketRef.current;
@@ -137,7 +138,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children, boardI
       socketRef?.current?.disconnect();
       socketRef.current = null;
     };
-  }, [token, boardId]);
+  }, [userInfo, boardId, token]);
 
   if (connectionError) {
     return <BoardError />;

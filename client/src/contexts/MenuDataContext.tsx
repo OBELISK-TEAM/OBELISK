@@ -29,7 +29,7 @@ import { MenuDataContext as IMenuDataContext, MenuGroup } from "@/interfaces/men
 import { useMenuActions } from "@/hooks/board/useMenuActions";
 import { useUndoRedo } from "@/contexts/UndoRedoContext";
 import { useCanvas } from "./CanvasContext";
-import ShareBoardDialog from "@/components/board-details/board-permissions/ShareBoardDialog";
+import ShareBoardDialog from "@/components/common/dialogs/ShareBoardDialog";
 import { Button } from "@/components/ui/button";
 
 const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);

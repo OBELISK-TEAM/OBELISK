@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { createBoard } from "@/app/actions/boardActions";
 import { toast } from "sonner";
-import { ApiError } from "@/errors/ApiError";
-import { complexToast } from "@/contexts/complexToast";
+import { ApiError } from "@/classes/errors/ApiError";
+import { complexToastContext } from "@/contexts/ComplexToastContext";
 import { ToastTypes } from "@/enums/ToastType";
 import logger from "@/lib/logger";
 
@@ -29,7 +29,7 @@ export const CreateBoardProvider = ({ children }: { children: ReactNode }) => {
       logger.error("Error in handleCreateNewBoard:", error);
       if (error instanceof ApiError) {
         setIsLoading(false);
-        complexToast(ToastTypes.ERROR, error.messages, { duration: Infinity });
+        complexToastContext(ToastTypes.ERROR, error.messages, { duration: Infinity });
       } else {
         toast.error(error.message || "Failed to create board");
       }
