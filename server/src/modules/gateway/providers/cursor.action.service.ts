@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
+import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
 import { CursorMoveData } from '../dto/cursor.data';
 
 @Injectable()

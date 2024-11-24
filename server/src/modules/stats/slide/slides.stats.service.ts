@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SlideStats } from 'src/mongo/schemas/stats/slide.stats.schema';
+import { SlideStats } from 'src/modules/mongo/schemas/stats/slide.stats.schema';
 import { SlideAction } from 'src/shared/enums/actions/slide.action';
 import { HeatmapPoint } from 'src/shared/interfaces/stats/HeatmapPoint';
 

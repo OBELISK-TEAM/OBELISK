@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BoardStats } from 'src/mongo/schemas/stats/board.stats.schema';
+import { BoardStats } from 'src/modules/mongo/schemas/stats/board.stats.schema';
 import { BoardAction } from 'src/shared/enums/actions/board.action';
 import { BoardPermission } from 'src/shared/enums/board.permission';
 import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/ChartData';
@@ -162,7 +162,8 @@ export class BoardStatsService {
     aggregationIntervalMinutes: number,
   ): Promise<NumericalTimelineChartData[]> {
     if (startDate.toString() === 'Invalid Date') startDate = new Date(0);
-    if (endDate.toString() === 'Invalid Date' || endDate > new Date()) endDate = new Date();
+    if (endDate.toString() === 'Invalid Date' || endDate > new Date())
+      endDate = new Date();
 
     if (startDate >= endDate) {
       throw new HttpException('Invalid dates', HttpStatus.BAD_REQUEST);

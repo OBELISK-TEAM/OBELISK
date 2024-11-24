@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schema';
-import { ObjectStats } from 'src/mongo/schemas/stats/object.stats.schema';
+import { SuperObjectDocument } from 'src/modules/mongo/schemas/object/super.object.schema';
+import { ObjectStats } from 'src/modules/mongo/schemas/stats/object.stats.schema';
 import { ObjectAction } from 'src/shared/enums/actions/object.action';
 
 @Injectable()

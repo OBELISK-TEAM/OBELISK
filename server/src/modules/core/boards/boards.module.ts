@@ -7,7 +7,7 @@ import { ResponseModule } from '../../response/response.module';
 import {
   SuperBoard,
   SuperBoardSchema,
-} from '../../../mongo/schemas/board/super.board.schema';
+} from '../../mongo/schemas/board/super.board.schema';
 import { CacheModule } from '@nestjs/cache-manager';
 import { StatsModule } from '../../stats/stats.module';
 import { ObjectStatsService } from '../../stats/object/object.stats.service';

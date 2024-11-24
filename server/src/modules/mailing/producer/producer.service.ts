@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { BaseMessage } from '../../shared/interfaces/mailing/Message';
+import { BaseMessage } from '../../../shared/interfaces/mailing/Message';
 
 @Injectable()
 export class ProducerService {

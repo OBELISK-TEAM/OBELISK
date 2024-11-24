@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
+import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
 import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
 import { Types } from 'mongoose';
 import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';

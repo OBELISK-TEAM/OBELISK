@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   ObjectStats,
   ObjectStatsSchema,
-} from 'src/mongo/schemas/stats/object.stats.schema';
+} from 'src/modules/mongo/schemas/stats/object.stats.schema';
 
 @Module({
   imports: [

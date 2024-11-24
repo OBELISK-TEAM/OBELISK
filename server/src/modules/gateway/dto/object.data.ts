@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ObjectProps } from '../../modules/core/objects/objects.dto';
+import { ObjectProps } from '../../core/objects/objects.dto';
 
 export class OnlyId {
   @IsString()

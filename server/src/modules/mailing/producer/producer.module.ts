@@ -3,7 +3,7 @@ import { ProducerService } from './producer.service';
 import { ClientProxyFactory } from '@nestjs/microservices';
 import { ProducerController } from './producer.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getRabbitConfig } from '../../config/rabbit.config';
+import { getRabbitConfig } from '../../../config/rabbit.config';
 
 @Module({
   imports: [ConfigModule],

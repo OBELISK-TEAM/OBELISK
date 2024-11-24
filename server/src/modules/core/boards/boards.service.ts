@@ -10,7 +10,7 @@ import {
 import {
   SuperBoard,
   SuperBoardDocument,
-} from '../../../mongo/schemas/board/super.board.schema';
+} from '../../mongo/schemas/board/super.board.schema';
 import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
 import { BoardPermission } from '../../../shared/enums/board.permission';
 import { ResponseService } from '../../response/response.service';

@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { ObjectsService } from '../../modules/core/objects/objects.service';
+import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
+import { ObjectsService } from '../../core/objects/objects.service';
 import { WsException } from '@nestjs/websockets';
-import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
+import { ObjectResponseObject } from '../../../shared/interfaces/response-objects/ObjectResponseObject';
 import {
   AddObjectData,
   DeleteObjectData,
   UpdateObjectData,
 } from '../dto/object.data';
 import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
-import { SuperObjectDocument } from 'src/mongo/schemas/object/super.object.schema';
+import { SuperObjectDocument } from 'src/modules/mongo/schemas/object/super.object.schema';
 import { Types } from 'mongoose';
 import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';
 import { SlideAction } from 'src/shared/enums/actions/slide.action';
