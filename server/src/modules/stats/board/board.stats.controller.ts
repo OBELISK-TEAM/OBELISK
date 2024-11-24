@@ -22,4 +22,10 @@ export class BoardStatsController {
       aggregationIntervalMinutes,
     );
   }
+
+  @Get(':boardId/unique-visitors')
+  @UseGuards(JwtAuthGuard)
+  async getTotalUniqeVisitors(@Param('boardId') boardId: string) {
+    return this.boardStatsService.getTotalUniqeVisitors(boardId);
+  }
 }

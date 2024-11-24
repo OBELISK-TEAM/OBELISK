@@ -162,7 +162,8 @@ export class BoardStatsService {
     aggregationIntervalMinutes: number,
   ): Promise<NumericalTimelineChartData[]> {
     if (startDate.toString() === 'Invalid Date') startDate = new Date(0);
-    if (endDate.toString() === 'Invalid Date' || endDate > new Date()) endDate = new Date();
+    if (endDate.toString() === 'Invalid Date' || endDate > new Date())
+      endDate = new Date();
 
     if (startDate >= endDate) {
       throw new HttpException('Invalid dates', HttpStatus.BAD_REQUEST);
@@ -191,5 +192,24 @@ export class BoardStatsService {
     return this.convertActiveUsersOverTimeMapToChartDataArray(
       activeUsersOverTimeMap,
     );
+  }
+
+  async getTotalUniqeVisitors(boardId: string): Promise<number> {
+    const result = await this.boardStatsModel.aggregate([
+      { $match: { boardId } },
+      { $unwind: '$joinLeaveTimeline' },
+      { $group: { _id: '$joinLeaveTimeline.userId' } },
+      { $count: 'uniqueVisitorsCount' },
+    ]);
+
+    if (!result || result.length === 0) {
+      throw new HttpException(
+        `Stats not found for the given boardID: ${boardId}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+    return result[0].uniqueVisitorsCount;
   }
 }
