@@ -4,7 +4,7 @@ import { CanvasReducerAction as CanvasReducerActionEnum } from "@/enums/CanvasRe
 
 export const initialState: CanvasReducerState = {
   canvas: null,
-  canvasMode: CanvasMode.SELECTION,
+  canvasMode: CanvasMode.SIMPLE_DRAWING,
   color: "#000000",
   size: 5,
   selectedObjectStyles: null,
