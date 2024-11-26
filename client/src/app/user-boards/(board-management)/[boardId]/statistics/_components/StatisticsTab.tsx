@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   StatisticsActiveTab,

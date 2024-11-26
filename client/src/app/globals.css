@@ -47,6 +47,11 @@
 
     --badge-viewer-bg: #3b5388;
     --badge-viewer-foreground: #ffffff; /* base/white */
+
+    --axis-text-color: #000000;
+
+    --chart-stroke: #203563;
+
   }
 
   .dark {
@@ -91,6 +96,9 @@
 
     --badge-viewer-bg: #203563;
     --badge-viewer-foreground: #ffffff; /* base/white */
+
+    --axis-text-color: #ffffff;
+    --chart-stroke: #33ccff;
   }
 }
 

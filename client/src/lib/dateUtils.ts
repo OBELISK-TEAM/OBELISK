@@ -7,9 +7,10 @@ import {
   differenceInWeeks,
   differenceInMonths,
   differenceInYears,
+  addDays,
 } from "date-fns";
 import { TimeUnit } from "@/interfaces/time-unit";
-
+import { DateRange } from "@/interfaces/date-range";
 /**
  * Converts a date string into a human-readable relative time format.
  *
@@ -122,3 +123,33 @@ export function formatDuration(ms: number): string {
 
   return parts.join(", ");
 }
+
+/**
+ * Parses dates from searchParams based on prefix.
+ *
+ * @param searchParams - URL parameters
+ * @param prefix - Prefix used to name parameters
+ * @param defaultStartDate - Default start date (optional)
+ * @param defaultEndDate - Default end date (optional)
+ * @returns An object containing startDate and endDate
+ */
+export const parseDateRange = (
+  searchParams: { [key: string]: string | string[] | undefined },
+  prefix: string,
+  defaultStartDate: Date = addDays(new Date(), -7),
+  defaultEndDate: Date = new Date()
+): DateRange => {
+  const parseDate = (dateParam: string | string[] | undefined, defaultDate: Date): Date => {
+    const dateStr = Array.isArray(dateParam) ? dateParam[0] : dateParam;
+    const parsedDate = dateStr ? new Date(dateStr) : defaultDate;
+    return isNaN(parsedDate.getTime()) ? defaultDate : parsedDate;
+  };
+
+  const startParam = searchParams[`${prefix}-start-date`];
+  const endParam = searchParams[`${prefix}-end-date`];
+
+  return {
+    startDate: parseDate(startParam, defaultStartDate),
+    endDate: parseDate(endParam, defaultEndDate),
+  };
+};
