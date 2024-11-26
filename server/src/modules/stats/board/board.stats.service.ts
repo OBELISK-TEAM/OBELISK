@@ -2,15 +2,18 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BoardStats } from 'src/modules/mongo/schemas/stats/board.stats.schema';
+import { UsersService } from 'src/modules/users/users.service';
 import { BoardAction } from 'src/shared/enums/actions/board.action';
 import { BoardPermission } from 'src/shared/enums/board.permission';
-import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/ChartData';
+import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/NumericalTimelineChartData';
+import { TimeSpentData } from 'src/shared/interfaces/stats/TimeSpentData';
 
 @Injectable()
 export class BoardStatsService {
   constructor(
     @InjectModel(BoardStats.name)
     private readonly boardStatsModel: Model<BoardStats>,
+    private readonly usersService: UsersService,
   ) {}
 
   async initStats(boardId: string, ownerId: string): Promise<void> {
@@ -211,5 +214,62 @@ export class BoardStatsService {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
     return result[0].uniqueVisitorsCount;
+  }
+
+  private getTimesSpentMap(
+    joinLeaveTimeline: [
+      { userId: string; joinDate: Date; leaveDate: Date | null },
+    ],
+  ): Map<string, number> {
+    const timesSpentMap = new Map<string, number>();
+
+    for (let joinLeaveLog of joinLeaveTimeline) {
+      let time;
+
+      if (joinLeaveLog.leaveDate) {
+        time =
+          joinLeaveLog.leaveDate.getTime() - joinLeaveLog.joinDate.getTime();
+      } else {
+        time = new Date().getTime() - joinLeaveLog.joinDate.getTime();
+      }
+
+      timesSpentMap.set(
+        joinLeaveLog.userId,
+        (timesSpentMap.get(joinLeaveLog.userId) || 0) + time,
+      );
+    }
+
+    return timesSpentMap;
+  }
+
+  private async convertTimesSpentMapToTimeSpentDataArray(
+    timesSpentMap: Map<string, number>,
+  ): Promise<TimeSpentData[]> {
+    const timeSpentDataArray = Array.from(timesSpentMap.entries()).map(
+      async ([userId, timeSpent]) => {
+        const user = await this.usersService.findUserById(userId);
+        return {
+          timeSpent,
+          email: user.email,
+        } as TimeSpentData;
+      },
+    );
+
+    return await Promise.all(timeSpentDataArray);
+  }
+
+  async getTimesSpentOnBoardInMs(boardId: string): Promise<TimeSpentData[]> {
+    const boardStats = await this.boardStatsModel.findOne({ boardId });
+
+    if (!boardStats) {
+      throw new HttpException(
+        `Stats not found for the given boardID: ${boardId}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const timesSpentMap = this.getTimesSpentMap(boardStats.joinLeaveTimeline);
+
+    return this.convertTimesSpentMapToTimeSpentDataArray(timesSpentMap);
   }
 }
