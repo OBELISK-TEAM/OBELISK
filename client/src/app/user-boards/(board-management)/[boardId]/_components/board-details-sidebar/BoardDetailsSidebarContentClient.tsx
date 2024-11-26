@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { Info, Shield, BarChart2 } from "lucide-react";
+import { BarChart2, Info, Shield } from "lucide-react";
 import { BoardDetailsSidebarButton } from "@/app/user-boards/(board-management)/[boardId]/_components/board-details-sidebar/BoardDetailsSidebarButton";
 import { usePathname } from "next/navigation";
 import { BoardDetailsResponse } from "@/interfaces/responses/board-details-response";
 import { capabilityFunctions } from "@/lib/permissionUtils";
 import { INavItem } from "@/interfaces/sidebar-nav-items";
+import { BoardDetailsNavItemLabel } from "@/enums/BoardDetailsNavItemLabel";
 
 interface SidebarContentClientProps {
   boardData?: BoardDetailsResponse;
@@ -14,15 +15,20 @@ interface SidebarContentClientProps {
 
 const BoardDetailsSidebarContentClient: React.FC<SidebarContentClientProps> = ({ boardData }) => {
   const pathname = usePathname();
-  const normalizePath = (path: string) => (path.endsWith("/") ? path.slice(0, -1) : path);
-  const currentPath = normalizePath(pathname);
+  const pathSegments = pathname.split("/").filter(Boolean);
+
   const navItems: INavItem[] = [
-    { icon: Info, label: "Information", href: `/user-boards/${boardData?._id}`, enabled: true },
-    { icon: Shield, label: "Permissions", href: `/user-boards/${boardData?._id}/permissions`, enabled: true },
+    { icon: Info, label: BoardDetailsNavItemLabel.Information, href: `/user-boards/${boardData?._id}`, enabled: true },
+    {
+      icon: Shield,
+      label: BoardDetailsNavItemLabel.Permissions,
+      href: `/user-boards/${boardData?._id}/permissions`,
+      enabled: true,
+    },
     {
       icon: BarChart2,
-      label: "Statistics",
-      href: `/user-boards/${boardData?._id}/statistics`,
+      label: BoardDetailsNavItemLabel.Statistics,
+      href: `/user-boards/${boardData?._id}/statistics/activity`,
       // if user do not have permission to view own stats and view other stats, disable the statistics tab
       enabled:
         capabilityFunctions.canViewOwnStats(boardData?.permission) ||
@@ -30,14 +36,24 @@ const BoardDetailsSidebarContentClient: React.FC<SidebarContentClientProps> = ({
     },
   ];
 
+  const isItemActive = (label: BoardDetailsNavItemLabel): boolean => {
+    switch (label) {
+      case BoardDetailsNavItemLabel.Permissions:
+        return pathSegments.length === 3 && pathSegments[2] === "permissions";
+      case BoardDetailsNavItemLabel.Statistics:
+        return pathSegments.length >= 3 && pathSegments[2] === "statistics";
+      default:
+        return pathSegments.length === 2;
+    }
+  };
+
   return (
     <nav className="flex flex-col space-y-2 p-2">
       {boardData !== undefined &&
         navItems
           .filter((item) => item.enabled)
           .map((item) => {
-            const normalizedHref = normalizePath(item.href);
-            const isActive = currentPath === normalizedHref;
+            const isActive = isItemActive(item.label);
 
             return (
               <BoardDetailsSidebarButton key={item.label} href={item.href} isActive={isActive}>

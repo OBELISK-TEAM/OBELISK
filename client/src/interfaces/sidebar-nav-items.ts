@@ -1,8 +1,9 @@
 import { LucideIcon } from "lucide-react";
+import { BoardDetailsNavItemLabel } from "@/enums/BoardDetailsNavItemLabel";
 
 export interface INavItem {
   icon: LucideIcon;
-  label: string;
+  label: BoardDetailsNavItemLabel;
   href: string;
   enabled: boolean;
 }
