@@ -2,7 +2,7 @@ import React from "react";
 import { ActiveUsersResponse } from "@/interfaces/responses/statistics/active-users-response";
 import { statsConfig } from "@/config/statsConfig";
 import { StatisticsCard } from "@/components/common/statistics/StatisticsCard";
-import { ActiveUsersChart } from "@/components/common/statistics/charts/ActiveUsersChart";
+import { ActiveUsersChart } from "@/app/user-boards/(board-management)/[boardId]/statistics/activity/_components/ActiveUsersChart";
 
 interface ActiveUsersCardProps {
   data: ActiveUsersResponse[];

@@ -197,19 +197,3 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   opacity: 0;
   filter: blur(5px);
 }
-
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out;
-}
