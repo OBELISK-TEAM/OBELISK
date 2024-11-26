@@ -38,6 +38,7 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
         };
       }
     }
+
     return {
       from: startOfDay(addDays(new Date(), -7)),
       to: new Date(),
