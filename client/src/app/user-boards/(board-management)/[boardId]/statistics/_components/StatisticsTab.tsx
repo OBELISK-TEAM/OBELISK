@@ -26,12 +26,6 @@ const StatisticsTabs: React.FC = () => {
     const boardId = pathSegments[pathSegments.length - 3];
     router.push(`/user-boards/${boardId}/statistics/${tabPath}`);
   };
-  useEffect(() => {
-    if (!StatisticsActiveTabMap[activeTab]) {
-      const boardId = pathSegments[pathSegments.length - 3];
-      router.replace(`/user-boards/${boardId}/statistics/${StatisticsActiveTabMap[StatisticsActiveTab.ACTIVITY]}`);
-    }
-  }, [activeTab, pathSegments, router]);
 
   return (
     <div className={"flex w-full"}>
