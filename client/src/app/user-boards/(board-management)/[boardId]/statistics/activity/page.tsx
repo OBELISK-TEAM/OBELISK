@@ -1,6 +1,6 @@
 import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 import React from "react";
-import { DatePickerWithRange } from "@/components/common/date-picker/DatePicker";
+import { DatePickerWithRange } from "@/components/common/date-picker/DateRangePicker";
 import { getActiveUsers } from "@/services/statistics/fetchBoardActiveUsersStats";
 import { DateRange } from "@/interfaces/date-range";
 import { parseDateRange } from "@/lib/dateUtils";
@@ -20,7 +20,7 @@ const ActivityPage = async ({
     boardId: params.boardId,
     startDate,
     endDate,
-    aggregationIntervalMinutes: 60,
+    aggregationIntervalMinutes: 1440, //it is one day in minutes
   });
   return (
     <section className="rounded-lg border border-border bg-card p-4 shadow">

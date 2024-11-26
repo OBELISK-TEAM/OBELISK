@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { addDays, format, endOfDay, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -10,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DateRangeSelector } from "@/components/common/date-picker/DateRangeSelector";
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   prefix: string;
@@ -46,6 +46,8 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
     };
   });
 
+  const [preset, setPreset] = React.useState<string>("1w");
+
   const updateQueryParams = (newDate: DateRange | undefined) => {
     if (!newDate) {
       return;
@@ -81,18 +83,28 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
     router.replace(`${window.location.pathname}?${params.toString()}`);
   };
 
+  const handlePresetChange = (presetValue: string, newDateRange: { from: Date; to: Date }) => {
+    setPreset(presetValue);
+    setDate({
+      from: newDateRange.from,
+      to: newDateRange.to,
+    });
+  };
+
   React.useEffect(() => {
     updateQueryParams(date);
   }, [date]);
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("flex gap-4", className)}>
+      <DateRangeSelector currentPreset={preset} onValueChange={handlePresetChange} />
+
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id={`${prefix}-date-picker`}
             variant={"outline"}
-            className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+            className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
@@ -114,7 +126,12 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(selectedDate) => {
+              setDate(selectedDate);
+              if (selectedDate) {
+                setPreset("custom");
+              }
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

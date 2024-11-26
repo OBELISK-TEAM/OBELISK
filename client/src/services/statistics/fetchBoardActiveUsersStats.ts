@@ -16,8 +16,6 @@ export async function getActiveUsers(request: ActiveUsersRequest): Promise<Activ
       endDate: endDate.toISOString(),
       aggregationIntervalMinutes: aggregationIntervalMinutes.toString(),
     });
-    console.log(`/stats/board/${boardId}/active-users-over-time?${params.toString()}`);
-    console.log(`Bearer ${accessToken}`);
     const response = await apiRequest(`/stats/board/${boardId}/active-users-over-time?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
