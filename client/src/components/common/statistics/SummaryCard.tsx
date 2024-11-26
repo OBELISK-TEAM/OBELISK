@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
 
 interface SummaryCardProps {
   value: string;
@@ -9,11 +9,9 @@ interface SummaryCardProps {
 
 export const SummaryCard: React.FC<SummaryCardProps> = ({ value, description, className }) => {
   return (
-    <Card className={cn("w-full p-6 text-center", className)}>
-      <CardHeader>
-        <h2 className="text-4xl font-extrabold text-primary">{value}</h2>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">{description}</CardContent>
+    <Card className={cn("flex w-full flex-col items-center gap-2 p-8 text-center", className)}>
+      <CardHeader className={"p-0 text-4xl font-extrabold text-primary"}>{value}</CardHeader>
+      <CardDescription className="text-md m-0 max-w-[320px] text-muted-foreground">{description}</CardDescription>
     </Card>
   );
 };
