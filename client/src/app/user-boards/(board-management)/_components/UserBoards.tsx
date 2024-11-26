@@ -2,9 +2,9 @@
 
 import BoardTable from "@/app/user-boards/(board-management)/_components/board-table/BoardTable";
 import CreateBoardButton from "@/app/user-boards/(board-management)/_components/CreateBoardButton";
-import UserBoardsTabButtons from "@/app/user-boards/(board-management)/_components/UserBoardsTabButtons";
+import TabButtons from "@/components/common/tab-buttons/TabButtons";
 import { useState, useEffect } from "react";
-import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/BoardsActiveTab";
+import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/active-tab/BoardsActiveTab";
 import { useRouter } from "next/navigation";
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 
@@ -38,7 +38,7 @@ export default function UserBoards({ data, activeTab, currentPage }: UserBoardsP
   return (
     <main className="flex-1 bg-background p-6" style={{ height: "calc(100vh - 64px)" }}>
       <div className="mb-2 flex items-center justify-between">
-        <UserBoardsTabButtons tabs={tabs} activeTab={activeTabState} onTabChange={handleTabChange} />
+        <TabButtons tabs={tabs} activeTab={activeTabState} onTabChange={handleTabChange} />
         <CreateBoardButton />
       </div>
       <BoardTable data={data} activeTab={activeTabState} currentPage={page} />

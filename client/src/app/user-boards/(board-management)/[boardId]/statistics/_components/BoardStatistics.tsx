@@ -1,4 +1,3 @@
-// todo: add statistics for board
 export const BoardStatistics = () => {
   return (
     <div>
