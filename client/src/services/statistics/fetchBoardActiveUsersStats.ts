@@ -22,11 +22,6 @@ export async function getActiveUsers(request: ActiveUsersRequest): Promise<Activ
         "Content-Type": "application/json",
       },
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch active users over time.");
-    }
     return await response.json();
   } catch (error) {
     logger.error("Error while fetching active users over time:", error);

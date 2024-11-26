@@ -1,11 +1,9 @@
-import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 import React from "react";
-import { DatePickerWithRange } from "@/components/common/date-picker/DateRangePicker";
 import { getActiveUsers } from "@/services/statistics/fetchBoardActiveUsersStats";
 import { DateRange } from "@/interfaces/date-range";
 import { parseDateRange } from "@/lib/dateUtils";
-import { ActiveUsersResponse } from "@/interfaces/responses/statistics/active-users-response";
-import { ActiveUsersChart } from "@/components/common/charts/ActiveUsersChart";
+import { statsConfig } from "@/config/statsConfig";
+import { ActiveUsersCard } from "@/app/user-boards/(board-management)/[boardId]/statistics/activity/_components/ActiveUsersCard";
 const ActivityPage = async ({
   searchParams,
   params,
@@ -15,26 +13,14 @@ const ActivityPage = async ({
     boardId: string;
   };
 }) => {
-  const { startDate, endDate }: DateRange = parseDateRange(searchParams, "active-users");
-  const activeUsersData: ActiveUsersResponse[] = await getActiveUsers({
+  const { startDate, endDate }: DateRange = parseDateRange(searchParams, statsConfig.activeUsers);
+  const activeUsersData = await getActiveUsers({
     boardId: params.boardId,
     startDate,
     endDate,
-    aggregationIntervalMinutes: 1440, //it is one day in minutes
+    aggregationIntervalMinutes: 1440, // One day in minutes
   });
-  return (
-    <section className="rounded-lg border border-border bg-card p-4 shadow">
-      <header className="flex items-center justify-between gap-6 p-2">
-        <SectionHeader
-          title="Active users over time"
-          description="Number of active users tracked across a specified time period"
-        />
-        <DatePickerWithRange prefix={"active-users"} />
-      </header>
-      <div className="mt-4">
-        <ActiveUsersChart data={activeUsersData} />
-      </div>
-    </section>
-  );
+
+  return <ActiveUsersCard data={activeUsersData}></ActiveUsersCard>;
 };
 export default ActivityPage;
