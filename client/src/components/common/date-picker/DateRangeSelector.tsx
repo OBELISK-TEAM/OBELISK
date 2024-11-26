@@ -69,6 +69,7 @@ export const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({ currentPre
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Predefined intervals</SelectLabel>
+          <SelectItem value="custom">Custom Interval</SelectItem>
           <SelectItem value="1d">1 day</SelectItem>
           <SelectItem value="3d">3 days</SelectItem>
           <SelectItem value="1w">1 week</SelectItem>
@@ -79,7 +80,6 @@ export const DateRangeSelector: React.FC<DateRangeSelectorProps> = ({ currentPre
           <SelectItem value="1y">1 year</SelectItem>
           <SelectItem value="2y">2 years</SelectItem>
           <SelectItem value="3y">3 years</SelectItem>
-          <SelectItem value="custom">Custom Interval</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
