@@ -153,3 +153,11 @@ export const parseDateRange = (
     endDate: parseDate(endParam, defaultEndDate),
   };
 };
+
+export const parseDate = (dateString: string | null): Date | undefined => {
+  if (!dateString) {
+    return undefined;
+  }
+  const parsedDate = new Date(dateString);
+  return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+};

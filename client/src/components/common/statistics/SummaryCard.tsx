@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Card, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardDescription } from "@/components/ui/card";
 
 interface SummaryCardProps {
   value: string;

@@ -3,13 +3,14 @@ import * as React from "react";
 import { addDays, format, endOfDay, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DateRangeSelector } from "@/components/common/date-picker/DateRangeSelector";
+import { parseDate } from "@/lib/dateUtils";
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   prefix: string;
@@ -18,14 +19,9 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
 export function DatePickerWithRange({ className, prefix }: DatePickerWithRangeProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  const parseDate = (dateString: string | null): Date | undefined => {
-    if (!dateString) {
-      return undefined;
-    }
-    const parsedDate = new Date(dateString);
-    return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
-  };
+  const [timeInterval, setTimeInterval] = React.useState<string>("1w");
 
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     const startParam = searchParams.get(`${prefix}-start-date`);
@@ -34,40 +30,39 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
       const fromDate = parseDate(startParam);
       const toDate = parseDate(endParam);
       if (fromDate && toDate) {
+        const now = new Date();
+        const adjustedToDate = toDate > now ? now : toDate;
         return {
-          from: fromDate,
-          to: toDate,
+          from: startOfDay(fromDate),
+          to: adjustedToDate,
         };
       }
     }
     return {
-      from: addDays(new Date(), -7),
+      from: startOfDay(addDays(new Date(), -7)),
       to: new Date(),
     };
   });
-
-  const [preset, setPreset] = React.useState<string>("1w");
 
   const updateQueryParams = (newDate: DateRange | undefined) => {
     if (!newDate) {
       return;
     }
-
     let { from, to } = newDate;
-
+    const now = new Date();
     if (from) {
       from = startOfDay(from);
     }
     if (to) {
       to = endOfDay(to);
+      if (to > now) {
+        to = now;
+      }
     }
-
     if (from && to && from > to) {
       from = to;
     }
-
     const params = new URLSearchParams(Array.from(searchParams.entries()));
-
     if (from) {
       params.set(`${prefix}-start-date`, from.toISOString());
     } else {
@@ -79,25 +74,22 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
     } else {
       params.delete(`${prefix}-end-date`);
     }
-
-    router.replace(`${window.location.pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   const handlePresetChange = (presetValue: string, newDateRange: { from: Date; to: Date }) => {
-    setPreset(presetValue);
-    setDate({
-      from: newDateRange.from,
-      to: newDateRange.to,
-    });
+    setTimeInterval(presetValue);
+    const convertedDateRange = {
+      from: startOfDay(newDateRange.from),
+      to: newDateRange.to > new Date() ? new Date() : newDateRange.to,
+    };
+    setDate(convertedDateRange);
+    updateQueryParams(convertedDateRange);
   };
-
-  React.useEffect(() => {
-    updateQueryParams(date);
-  }, [date]);
 
   return (
     <div className={cn("flex gap-4", className)}>
-      <DateRangeSelector currentPreset={preset} onValueChange={handlePresetChange} />
+      <DateRangeSelector currentPreset={timeInterval} onValueChange={handlePresetChange} />
 
       <Popover>
         <PopoverTrigger asChild>
@@ -129,7 +121,8 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
             onSelect={(selectedDate) => {
               setDate(selectedDate);
               if (selectedDate) {
-                setPreset("custom");
+                setTimeInterval("custom");
+                updateQueryParams(selectedDate);
               }
             }}
             numberOfMonths={2}
