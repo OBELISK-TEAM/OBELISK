@@ -105,3 +105,13 @@ export const darkerColor = (hex: string, percent: number): string => {
 
   return rgbToHex(newR, newG, newB);
 };
+
+export const getColorInHsl = (index: number): string => {
+  if (index < 5) {
+    return `hsl(var(--chart-${index + 1}))`;
+  }
+  const hue = Math.floor(Math.random() * 360);
+  const saturation = Math.floor(Math.random() * 50) + 50; // 50-100%
+  const lightness = Math.floor(Math.random() * 40) + 30; // 30-70%
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+};

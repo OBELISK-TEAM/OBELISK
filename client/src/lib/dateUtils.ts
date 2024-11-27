@@ -144,7 +144,6 @@ export const getParsedDateRangeFromUrl = (
   });
 
   const dateRange = getDateRangeFromUrl(urlSearchParams, prefix);
-
   return {
     startDate: dateRange.from || defaultStartDate,
     endDate: dateRange.to || defaultEndDate,
