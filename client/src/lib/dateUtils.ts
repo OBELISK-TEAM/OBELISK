@@ -8,11 +8,14 @@ import {
   differenceInMonths,
   differenceInYears,
   addDays,
+  startOfDay,
 } from "date-fns";
 import { TimeUnit } from "@/interfaces/time-unit";
-import { DateRange } from "@/interfaces/date-range";
+import { DateRange as IDateRange } from "@/interfaces/date-range";
 import { TimeInterval } from "@/interfaces/time-interval";
 import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { ReadonlyURLSearchParams } from "next/navigation";
+import { DateRange } from "react-day-picker";
 /**
  * Converts a date string into a human-readable relative time format.
  *
@@ -126,21 +129,12 @@ export function formatDuration(ms: number): string {
   return parts.join(", ");
 }
 
-/**
- * Parses dates from searchParams based on prefix.
- *
- * @param searchParams - URL parameters
- * @param prefix - Prefix used to name parameters
- * @param defaultStartDate - Default start date (optional)
- * @param defaultEndDate - Default end date (optional)
- * @returns An object containing startDate and endDate
- */
 export const parseDateRange = (
   searchParams: { [key: string]: string | string[] | undefined },
   prefix: string,
   defaultStartDate: Date = addDays(new Date(), -7),
   defaultEndDate: Date = new Date()
-): DateRange => {
+): IDateRange => {
   const parseDate = (dateParam: string | string[] | undefined, defaultDate: Date): Date => {
     const dateStr = Array.isArray(dateParam) ? dateParam[0] : dateParam;
     const parsedDate = dateStr ? new Date(dateStr) : defaultDate;
@@ -189,4 +183,22 @@ export const determineTimeInterval = (from: Date, to: Date): TimeIntervalEnum =>
   const diffDays = differenceInDays(to, from);
   const interval = TIME_INTERVALS.find((interval) => interval.days === diffDays);
   return interval ? interval.value : TimeIntervalEnum.CUSTOM;
+};
+
+export const getDateFromUrl = (searchParams: ReadonlyURLSearchParams, prefix: string): DateRange => {
+  const fromDate = parseDate(searchParams.get(`${prefix}-start-date`));
+  const toDate = parseDate(searchParams.get(`${prefix}-end-date`));
+  const now = new Date();
+
+  if (fromDate && toDate) {
+    return {
+      from: startOfDay(fromDate),
+      to: toDate > now ? now : toDate,
+    };
+  }
+
+  return {
+    from: startOfDay(addDays(now, -7)),
+    to: now,
+  };
 };

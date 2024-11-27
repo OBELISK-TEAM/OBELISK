@@ -38,6 +38,8 @@ export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, d
     if (date?.from && date.to) {
       const newInterval = determineTimeInterval(date.from, date.to);
       setTimeInterval(newInterval);
+    } else {
+      setTimeInterval(TimeIntervalEnum.CUSTOM);
     }
   }, [date]);
 
