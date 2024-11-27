@@ -1,3 +1,5 @@
+import { CurveType } from "recharts/types/shape/Curve";
+
 export interface YAxisConfig<T> {
   axisY: keyof T;
   labelY: string;
@@ -10,4 +12,22 @@ export interface StatisticsChartProps<T> {
   yAxes: YAxisConfig<T>[];
   height?: string;
   width?: string;
+  type?: CurveType | undefined;
 }
+
+/* type= 'basis' |
+    'basisClosed' |
+    'basisOpen' |
+    'bumpX' |
+    'bumpY' |
+    'bump' |
+    'linear' |
+    'linearClosed' |
+    'natural' |
+    'monotoneX' |
+    'monotoneY' |
+    'monotone' |
+    'step' |
+    'stepBefore' |
+    'stepAfter' |
+     CurveFactory; */

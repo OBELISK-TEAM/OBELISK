@@ -32,6 +32,7 @@ export const StatisticsChart = <T,>({
   yAxes,
   height = "400px",
   width = "100%",
+  type = "natural",
 }: StatisticsChartProps<T>) => {
   const formattedData = prepareChartData(data, axisX, yAxes);
 
@@ -96,7 +97,7 @@ export const StatisticsChart = <T,>({
             return (
               <Area
                 key={String(axisY)}
-                type="natural"
+                type={type}
                 dataKey={String(axisY)}
                 fill={`url(#${gradientId})`}
                 fillOpacity={0.4}
