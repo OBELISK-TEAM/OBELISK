@@ -1,6 +1,6 @@
 "use client";
-import * as React from "react";
-import { addDays, format, endOfDay, startOfDay } from "date-fns";
+import { HTMLAttributes, useState } from "react";
+import { addDays, format, endOfDay, startOfDay, isToday } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DateRangeSelector } from "@/components/common/date-picker/DateRangeSelector";
 import { parseDate } from "@/lib/dateUtils";
 
-interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DatePickerWithRangeProps extends HTMLAttributes<HTMLDivElement> {
   prefix: string;
 }
 
@@ -21,24 +21,16 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const [timeInterval, setTimeInterval] = React.useState<string>("1w");
-
-  const [date, setDate] = React.useState<DateRange | undefined>(() => {
-    const startParam = searchParams.get(`${prefix}-start-date`);
-    const endParam = searchParams.get(`${prefix}-end-date`);
-    if (startParam && endParam) {
-      const fromDate = parseDate(startParam);
-      const toDate = parseDate(endParam);
-      if (fromDate && toDate) {
-        const now = new Date();
-        const adjustedToDate = toDate > now ? now : toDate;
-        return {
-          from: startOfDay(fromDate),
-          to: adjustedToDate,
-        };
-      }
+  const [date, setDate] = useState<DateRange | undefined>(() => {
+    const fromDate = parseDate(searchParams.get(`${prefix}-start-date`));
+    const toDate = parseDate(searchParams.get(`${prefix}-end-date`));
+    if (fromDate && toDate) {
+      const now = new Date();
+      return {
+        from: startOfDay(fromDate),
+        to: toDate > now ? now : toDate,
+      };
     }
-
     return {
       from: startOfDay(addDays(new Date(), -7)),
       to: new Date(),
@@ -78,8 +70,7 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const handlePresetChange = (presetValue: string, newDateRange: { from: Date; to: Date }) => {
-    setTimeInterval(presetValue);
+  const handleDateRangeSelectorChange = (newDateRange: { from: Date; to: Date }) => {
     const convertedDateRange = {
       from: startOfDay(newDateRange.from),
       to: newDateRange.to > new Date() ? new Date() : newDateRange.to,
@@ -88,10 +79,19 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
     updateQueryParams(convertedDateRange);
   };
 
+  const handleDateRangePickerChange = (selectedDate: DateRange | undefined) => {
+    if (selectedDate && selectedDate.to) {
+      const now = new Date();
+      selectedDate.to = isToday(selectedDate.to) || now < selectedDate.to ? now : endOfDay(selectedDate.to);
+    }
+
+    setDate(selectedDate);
+    updateQueryParams(selectedDate);
+  };
+
   return (
     <div className={cn("flex gap-4", className)}>
-      <DateRangeSelector currentPreset={timeInterval} onValueChange={handlePresetChange} />
-
+      <DateRangeSelector onValueChange={handleDateRangeSelectorChange} date={date} />
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -106,7 +106,7 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
                   {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, "LLL dd, y") + " - Present"
               )
             ) : (
               <span>Choose a date</span>
@@ -119,13 +119,7 @@ export function DatePickerWithRange({ className, prefix }: DatePickerWithRangePr
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={(selectedDate) => {
-              setDate(selectedDate);
-              if (selectedDate) {
-                setTimeInterval("custom");
-                updateQueryParams(selectedDate);
-              }
-            }}
+            onSelect={handleDateRangePickerChange}
             numberOfMonths={2}
           />
         </PopoverContent>
