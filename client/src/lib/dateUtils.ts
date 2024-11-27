@@ -14,7 +14,6 @@ import { TimeUnit } from "@/interfaces/time-unit";
 import { DateRange as IDateRange } from "@/interfaces/date-range";
 import { TimeInterval } from "@/interfaces/time-interval";
 import { TimeIntervalEnum } from "@/enums/TimeInterval";
-import { ReadonlyURLSearchParams } from "next/navigation";
 import { DateRange } from "react-day-picker";
 /**
  * Converts a date string into a human-readable relative time format.
@@ -129,24 +128,26 @@ export function formatDuration(ms: number): string {
   return parts.join(", ");
 }
 
-export const parseDateRange = (
+export const getParsedDateRangeFromUrl = (
   searchParams: { [key: string]: string | string[] | undefined },
   prefix: string,
   defaultStartDate: Date = addDays(new Date(), -7),
   defaultEndDate: Date = new Date()
 ): IDateRange => {
-  const parseDate = (dateParam: string | string[] | undefined, defaultDate: Date): Date => {
-    const dateStr = Array.isArray(dateParam) ? dateParam[0] : dateParam;
-    const parsedDate = dateStr ? new Date(dateStr) : defaultDate;
-    return isNaN(parsedDate.getTime()) ? defaultDate : parsedDate;
-  };
+  const urlSearchParams = new URLSearchParams();
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => urlSearchParams.append(key, v));
+    } else if (typeof value === "string") {
+      urlSearchParams.append(key, value);
+    }
+  });
 
-  const startParam = searchParams[`${prefix}-start-date`];
-  const endParam = searchParams[`${prefix}-end-date`];
+  const dateRange = getDateRangeFromUrl(urlSearchParams, prefix);
 
   return {
-    startDate: parseDate(startParam, defaultStartDate),
-    endDate: parseDate(endParam, defaultEndDate),
+    startDate: dateRange.from || defaultStartDate,
+    endDate: dateRange.to || defaultEndDate,
   };
 };
 
@@ -185,7 +186,7 @@ export const determineTimeInterval = (from: Date, to: Date): TimeIntervalEnum =>
   return interval ? interval.value : TimeIntervalEnum.CUSTOM;
 };
 
-export const getDateFromUrl = (searchParams: ReadonlyURLSearchParams, prefix: string): DateRange => {
+export const getDateRangeFromUrl = (searchParams: URLSearchParams, prefix: string): DateRange => {
   const fromDate = parseDate(searchParams.get(`${prefix}-start-date`));
   const toDate = parseDate(searchParams.get(`${prefix}-end-date`));
   const now = new Date();

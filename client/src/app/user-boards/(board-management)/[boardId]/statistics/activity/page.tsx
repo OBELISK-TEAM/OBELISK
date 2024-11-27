@@ -1,7 +1,7 @@
 import React from "react";
 import { getActiveUsers } from "@/services/statistics/fetchBoardActiveUsersStats";
 import { DateRange } from "@/interfaces/date-range";
-import { parseDateRange } from "@/lib/dateUtils";
+import { getParsedDateRangeFromUrl } from "@/lib/dateUtils";
 import { statsConfig } from "@/config/statsConfig";
 import { ActiveUsersCard } from "@/app/user-boards/(board-management)/[boardId]/statistics/activity/_components/ActiveUsersCard";
 const ActivityPage = async ({
@@ -13,7 +13,7 @@ const ActivityPage = async ({
     boardId: string;
   };
 }) => {
-  const { startDate, endDate }: DateRange = parseDateRange(searchParams, statsConfig.activeUsers);
+  const { startDate, endDate }: DateRange = getParsedDateRangeFromUrl(searchParams, statsConfig.activeUsers);
   const activeUsersData = await getActiveUsers({
     boardId: params.boardId,
     startDate,

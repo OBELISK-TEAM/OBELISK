@@ -5,7 +5,7 @@ import { DateRange } from "react-day-picker";
 import { startOfDay, endOfDay, isToday } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { getDateFromUrl } from "@/lib/dateUtils";
+import { getDateRangeFromUrl } from "@/lib/dateUtils";
 
 interface UseDateRangeProps {
   prefix: string;
@@ -17,7 +17,7 @@ export function useDateRange({ prefix }: UseDateRangeProps) {
   const pathname = usePathname();
 
   const initializeDate = (): DateRange | undefined => {
-    return getDateFromUrl(searchParams, prefix);
+    return getDateRangeFromUrl(searchParams, prefix);
   };
 
   const [date, setDate] = useState<DateRange | undefined>(initializeDate);
