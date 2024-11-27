@@ -38,8 +38,8 @@ export const ActiveUsersChart: React.FC<ActiveUsersChartProps> = ({ data }) => {
               <stop offset="95%" stopColor="var(--chart-stroke)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} strokeDasharray="3 3" />
-          <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--axis-text-color)" }} />
+          <CartesianGrid vertical={true} horizontal={false} strokeDasharray="3 3" />
+          <XAxis dataKey="date" tickLine={false} axisLine={false} />
           <YAxis
             label={{
               value: "active users",
@@ -47,7 +47,6 @@ export const ActiveUsersChart: React.FC<ActiveUsersChartProps> = ({ data }) => {
               position: "insideLeft",
               style: { textAnchor: "middle", fill: "var(--axis-text-color)" },
             }}
-            tick={{ fill: "var(--axis-text-color)" }}
             tickLine={false}
             axisLine={false}
           />
