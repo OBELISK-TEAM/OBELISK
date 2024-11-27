@@ -25,27 +25,13 @@ export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, d
 
   const handleTimeIntervalChange = (value: TimeIntervalEnum) => {
     const today = new Date();
-    let fromDate: Date;
-
-    if (value === TimeIntervalEnum.CUSTOM) {
-      onValueChange({ from: date?.from || today, to: today });
-      setTimeInterval(value);
+    const selectedInterval = TIME_INTERVALS.find((interval) => interval.value === value);
+    if (!selectedInterval) {
       return;
     }
-
-    const selectedInterval = TIME_INTERVALS.find((interval) => interval.value === value);
-    if (selectedInterval) {
-      fromDate = addDays(today, -selectedInterval.days);
-      setTimeInterval(value);
-      onValueChange({ from: fromDate, to: today });
-    } else {
-      const defaultInterval = TIME_INTERVALS.find((interval) => interval.value === TimeIntervalEnum.ONE_WEEK);
-      if (defaultInterval) {
-        fromDate = addDays(today, -defaultInterval.days);
-        setTimeInterval(TimeIntervalEnum.ONE_WEEK);
-        onValueChange({ from: fromDate, to: today });
-      }
-    }
+    const fromDate = addDays(today, -selectedInterval.days);
+    setTimeInterval(value);
+    onValueChange({ from: fromDate, to: today });
   };
 
   useEffect(() => {
