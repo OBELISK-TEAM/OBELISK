@@ -17,7 +17,7 @@ const Board: React.FC = () => {
       <div className="flex">
         {userCapabilities.canManageObject && (
           <>
-            <BoardSidebar withSettings={true} groupId={MenuGroups.DRAWING_TOOLS} />
+            <BoardSidebar groupId={MenuGroups.DRAWING_TOOLS} />
             <BoardSidebar groupId={MenuGroups.OBJECT_MANIPULATION} />
           </>
         )}

@@ -17,7 +17,6 @@ import {
   Text,
   Trash,
   Undo,
-  Upload,
   Share2,
 } from "lucide-react";
 
@@ -145,30 +144,6 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           text: "Redo",
           icon: <Redo />,
           name: MenuActions.REDO,
-        },
-        {
-          action: () => performDebouncedAction(MenuActions.LOAD_CANVAS),
-          text: "Load Canvas",
-          icon: <Upload />,
-          name: MenuActions.LOAD_CANVAS,
-        },
-        {
-          action: () => performAction(MenuActions.SAVE_CANVAS),
-          text: "Save Canvas",
-          icon: <Save />,
-          name: MenuActions.SAVE_CANVAS,
-        },
-        {
-          action: () => performAction(MenuActions.SAVE_IMAGES),
-          text: "Save Images",
-          icon: <Save />,
-          name: MenuActions.SAVE_IMAGES,
-        },
-        {
-          action: () => performAction(MenuActions.LOAD_IMAGES_JSON),
-          text: "Load Images from JSON",
-          icon: <Upload />,
-          name: MenuActions.LOAD_IMAGES_JSON,
         },
         {
           action: () => performAction(MenuActions.GROUP_SELECTED),
