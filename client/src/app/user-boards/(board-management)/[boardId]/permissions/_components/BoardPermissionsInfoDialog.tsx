@@ -12,7 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { InfoIcon } from "lucide-react";
-const BoardPermissionsInfoDialog = () => {
+import { cn } from "@/lib/utils";
+interface BoardPermissionsInfoDialogProps {
+  className?: string;
+}
+const BoardPermissionsInfoDialog: React.FC<BoardPermissionsInfoDialogProps> = ({ className = "" }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const triggerButtonRef = React.useRef<HTMLButtonElement>(null);
   const handleDialogOpenChange = (open: boolean) => {
@@ -24,7 +28,7 @@ const BoardPermissionsInfoDialog = () => {
   return (
     <HoverCard openDelay={100} closeDelay={200}>
       <HoverCardTrigger asChild>
-        <button ref={triggerButtonRef} onClick={() => setIsDialogOpen(true)} className={"flex"}>
+        <button ref={triggerButtonRef} onClick={() => setIsDialogOpen(true)} className={cn("flex", className)}>
           <InfoIcon />
         </button>
       </HoverCardTrigger>
