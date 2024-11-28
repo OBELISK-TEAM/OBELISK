@@ -42,7 +42,7 @@ const BoardDetailsSidebarContentClient: React.FC<SidebarContentClientProps> = ({
             return (
               <BoardDetailsSidebarButton key={item.label} href={item.href} isActive={isActive}>
                 <item.icon className="h-5 w-5 flex-shrink-0" />
-                <span className="ml-3 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <span className="ml-3 text-ellipsis whitespace-nowrap text-sm font-medium opacity-100 transition-opacity duration-300">
                   {item.label}
                 </span>
               </BoardDetailsSidebarButton>
