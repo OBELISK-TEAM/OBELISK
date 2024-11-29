@@ -10,7 +10,7 @@ export const targetAudienceData: IStartPageCardSection = {
     },
     {
       title: "Small Teams",
-      description: "Collaborate seamlessly on shared boards to enhance teamwork and keep projects organized.",
+      description: "Collaborate on shared boards to enhance teamwork and keep projects organized.",
       imageSrc: "/images/start-page/small-teams.jpg",
     },
     {
