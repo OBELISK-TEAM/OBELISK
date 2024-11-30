@@ -1,14 +1,12 @@
 "use client";
 import React from "react";
-import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
-
-interface TabButtonProps {
-  tabs: { label: string; value: BoardsActiveTab }[];
-  activeTab: BoardsActiveTab;
-  onTabChange: (tab: BoardsActiveTab) => void;
+interface TabButtonProps<T> {
+  tabs: { label: string; value: T }[];
+  activeTab: T;
+  onTabChange: (tab: T) => void;
 }
 
-const UserBoardsTabButtons: React.FC<TabButtonProps> = ({ tabs, activeTab, onTabChange }) => {
+const TabButtons = <T extends string | number>({ tabs, activeTab, onTabChange }: TabButtonProps<T>) => {
   const tabClasses =
     "px-4 py-2 text-sm bg-muted text-muted-foreground rounded-md hover:bg-background hover:text-foreground";
   const activeTabClasses = "px-4 py-2 text-sm bg-background text-foreground font-semibold rounded-md shadow-sm";
@@ -28,4 +26,4 @@ const UserBoardsTabButtons: React.FC<TabButtonProps> = ({ tabs, activeTab, onTab
   );
 };
 
-export default UserBoardsTabButtons;
+export default TabButtons;

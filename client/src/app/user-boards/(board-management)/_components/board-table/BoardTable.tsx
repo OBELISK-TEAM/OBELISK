@@ -8,7 +8,7 @@ import { CellContent } from "@/app/user-boards/(board-management)/_components/bo
 
 import { PaginatedBoardsResponse } from "@/interfaces/responses/user-boards/paginated-boards-response";
 import { BoardResponse } from "@/interfaces/responses/user-boards/board-response";
-import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/BoardsActiveTab";
+import { BoardsActiveTab, BoardsActiveTabMap } from "@/enums/active-tab/BoardsActiveTab";
 import { SectionHeader } from "@/components/common/headers/section-header/SectionHeader";
 import { BoardTableLeadRow } from "@/app/user-boards/(board-management)/_components/board-table/BoardTableLeadRow";
 import { useRouter } from "next/navigation";

@@ -1,4 +1,4 @@
-import { BoardsActiveTab } from "@/enums/BoardsActiveTab";
+import { BoardsActiveTab } from "@/enums/active-tab/BoardsActiveTab";
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
 import { BoardPermission } from "@/enums/BoardPermission";
 import { PermissionsResponse } from "@/interfaces/responses/permissions-response";

@@ -1,6 +1,11 @@
-import React from "react";
-import { BoardStatistics } from "@/app/user-boards/(board-management)/[boardId]/statistics/_components/BoardStatistics";
-const PermissionsPage = () => {
-  return <BoardStatistics />;
+import { redirect } from "next/navigation";
+
+interface StatisticsPageProps {
+  params: {
+    boardId: string;
+  };
+}
+const StatisticsPage = ({ params }: StatisticsPageProps) => {
+  return redirect(`/user-boards/${params.boardId}/statistics/activity`);
 };
-export default PermissionsPage;
+export default StatisticsPage;
