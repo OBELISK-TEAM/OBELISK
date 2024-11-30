@@ -1,7 +1,7 @@
 import { IStartPageCardSection } from "@/interfaces/start-page/card-section";
 
 export const usefulCapabilitiesData: IStartPageCardSection = {
-  title: "Useful capabilities",
+  title: "Useful whiteboard capabilities",
   description: "Essential tools for seamless teamwork and creativity",
   cards: [
     {
@@ -19,7 +19,7 @@ export const usefulCapabilitiesData: IStartPageCardSection = {
     },
     {
       title: "Exporting Boards",
-      description: "Download your boards as may useful formats like PDF, PNG and more",
+      description: "Download your boards as may useful formats like PDF, PNG and more.",
     },
   ],
 };
