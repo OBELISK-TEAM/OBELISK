@@ -1,5 +1,5 @@
 export enum BoardDetailsNavItemLabel {
-  Information = "Information",
-  Permissions = "Permissions",
-  Statistics = "Statistics",
+  INFORMATION = "Information",
+  PERMISSIONS = "Permissions",
+  STATISTICS = "Statistics",
 }

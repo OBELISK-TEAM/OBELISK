@@ -18,16 +18,16 @@ const BoardDetailsSidebarContentClient: React.FC<SidebarContentClientProps> = ({
   const pathSegments = pathname.split("/").filter(Boolean);
 
   const navItems: INavItem[] = [
-    { icon: Info, label: BoardDetailsNavItemLabel.Information, href: `/user-boards/${boardData?._id}`, enabled: true },
+    { icon: Info, label: BoardDetailsNavItemLabel.INFORMATION, href: `/user-boards/${boardData?._id}`, enabled: true },
     {
       icon: Shield,
-      label: BoardDetailsNavItemLabel.Permissions,
+      label: BoardDetailsNavItemLabel.PERMISSIONS,
       href: `/user-boards/${boardData?._id}/permissions`,
       enabled: true,
     },
     {
       icon: BarChart2,
-      label: BoardDetailsNavItemLabel.Statistics,
+      label: BoardDetailsNavItemLabel.STATISTICS,
       href: `/user-boards/${boardData?._id}/statistics/activity`,
       // if user do not have permission to view own stats and view other stats, disable the statistics tab
       enabled:
@@ -38,9 +38,9 @@ const BoardDetailsSidebarContentClient: React.FC<SidebarContentClientProps> = ({
 
   const isItemActive = (label: BoardDetailsNavItemLabel): boolean => {
     switch (label) {
-      case BoardDetailsNavItemLabel.Permissions:
+      case BoardDetailsNavItemLabel.PERMISSIONS:
         return pathSegments.length === 3 && pathSegments[2] === "permissions";
-      case BoardDetailsNavItemLabel.Statistics:
+      case BoardDetailsNavItemLabel.STATISTICS:
         return pathSegments.length >= 3 && pathSegments[2] === "statistics";
       default:
         return pathSegments.length === 2;
