@@ -21,7 +21,7 @@ const ActivityPage = async ({
     endDate,
     aggregationIntervalMinutes: aggregationIntervalRule.intervalInMinutes,
   });
-  // we need to feel missing data and cut off data before first date with value > 0
+  // we need to fill missing data and cut off data before first date with value > 0
   const completedActiveUsersData = fillMissingData(activeUsersData, aggregationIntervalRule, endDate);
 
   return (
