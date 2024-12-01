@@ -9,12 +9,22 @@ import {
   differenceInYears,
   addDays,
   startOfDay,
+  isBefore,
+  addWeeks,
+  addMonths,
+  addYears,
+  isEqual,
+  isAfter,
+  addHours,
 } from "date-fns";
 import { TimeUnit } from "@/interfaces/time-unit";
 import { DateRange as IDateRange } from "@/interfaces/date-range";
 import { TimeInterval } from "@/interfaces/time-interval";
-import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { TimeIntervalEnum } from "@/enums/statistics/TimeInterval";
 import { DateRange } from "react-day-picker";
+import { AggregationInterval } from "@/enums/statistics/AggregationInterval";
+import { ActiveUsersResponse } from "@/interfaces/responses/statistics/active-users-response";
+import { AggregationRule } from "@/interfaces/stats/aggregation-rule";
 /**
  * Converts a date string into a human-readable relative time format.
  *
@@ -201,4 +211,84 @@ export const getDateRangeFromUrl = (searchParams: URLSearchParams, prefix: strin
     from: startOfDay(addDays(now, -7)),
     to: now,
   };
+};
+
+export const AGGREGATION_RULES: AggregationRule[] = [
+  {
+    maxDays: 4,
+    intervalInMinutes: AggregationInterval.FOUR_HOURS,
+    incrementDate: (date: Date) => addHours(date, 4),
+  },
+  {
+    maxDays: 12,
+    intervalInMinutes: AggregationInterval.DAILY,
+    incrementDate: (date: Date) => addDays(date, 1),
+  },
+  {
+    maxDays: 40,
+    intervalInMinutes: AggregationInterval.WEEKLY,
+    incrementDate: (date: Date) => addWeeks(date, 1),
+  },
+  {
+    maxDays: 500,
+    intervalInMinutes: AggregationInterval.MONTHLY,
+    incrementDate: (date: Date) => addMonths(date, 1),
+  },
+  {
+    maxDays: Infinity,
+    intervalInMinutes: AggregationInterval.YEARLY,
+    incrementDate: (date: Date) => addYears(date, 1),
+  },
+];
+
+export function determineAggregationRule(startDate: Date, endDate: Date): AggregationRule {
+  if (startDate > endDate) {
+    throw new Error("startDate must be less than or equal to endDate");
+  }
+
+  const totalDays = differenceInDays(endDate, startDate);
+
+  for (const rule of AGGREGATION_RULES) {
+    if (totalDays <= rule.maxDays) {
+      return rule;
+    }
+  }
+  return AGGREGATION_RULES[AGGREGATION_RULES.length - 1];
+}
+
+export const fillMissingData = (
+  data: ActiveUsersResponse[],
+  aggregationRule: AggregationRule,
+  endDate: Date
+): ActiveUsersResponse[] => {
+  const completeData: ActiveUsersResponse[] = [];
+
+  const dataMap = new Map<string, number>(data.map((item) => [item.timestamp, item.value]));
+
+  const firstNonZeroIndex = data.findIndex((item) => item.value > 0);
+  if (firstNonZeroIndex === -1) {
+    return completeData;
+  }
+
+  const lastNonZeroIndex = data.length - 1 - [...data].reverse().findIndex((item) => item.value > 0);
+
+  const filteredData = data.slice(firstNonZeroIndex, lastNonZeroIndex + 1);
+
+  let currentDate = new Date(filteredData[0].timestamp);
+
+  while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
+    const timestamp = currentDate.toISOString();
+    const value = dataMap.get(timestamp) ?? 0;
+    if (
+      isBefore(currentDate, new Date(filteredData[0].timestamp)) ||
+      isAfter(currentDate, new Date(filteredData[filteredData.length - 1].timestamp))
+    ) {
+      currentDate = aggregationRule.incrementDate(currentDate);
+      continue;
+    }
+    completeData.push({ timestamp, value });
+    currentDate = aggregationRule.incrementDate(currentDate);
+  }
+
+  return completeData;
 };

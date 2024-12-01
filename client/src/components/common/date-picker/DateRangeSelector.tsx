@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useState, FC, useEffect } from "react";
 import { DateRange } from "react-day-picker";
-import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { TimeIntervalEnum } from "@/enums/statistics/TimeInterval";
 import { determineTimeInterval, TIME_INTERVALS } from "@/lib/dateUtils";
 
 interface DateRangeSelectorProps {
