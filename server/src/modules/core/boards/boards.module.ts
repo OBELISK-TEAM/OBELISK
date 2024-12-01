@@ -10,9 +10,6 @@ import {
 } from '../../mongo/schemas/board/super.board.schema';
 import { CacheModule } from '@nestjs/cache-manager';
 import { StatsModule } from '../../stats/stats.module';
-import { ObjectStatsService } from '../../stats/object/object.stats.service';
-import { SlideStatsService } from '../../stats/slide/slides.stats.service';
-import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
 
 @Module({
   imports: [
@@ -28,12 +25,7 @@ import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
     StatsModule,
   ],
   controllers: [BoardsController],
-  providers: [
-    BoardsService,
-    ObjectStatsService,
-    SlideStatsService,
-    BoardStatsService,
-  ],
+  providers: [BoardsService],
   exports: [BoardsService],
 })
 export class BoardsModule {}

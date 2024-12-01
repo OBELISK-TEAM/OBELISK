@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { BoardStatsService } from './board.stats.service';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.auth.guard';
-import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/ChartData';
+import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/NumericalTimelineChartData';
+import { TimeSpentData } from 'src/shared/interfaces/stats/TimeSpentData';
 
 @Controller('stats/board')
 export class BoardStatsController {
@@ -25,7 +26,17 @@ export class BoardStatsController {
 
   @Get(':boardId/unique-visitors')
   @UseGuards(JwtAuthGuard)
-  async getTotalUniqeVisitors(@Param('boardId') boardId: string) {
+  async getTotalUniqeVisitors(
+    @Param('boardId') boardId: string,
+  ): Promise<number> {
     return this.boardStatsService.getTotalUniqeVisitors(boardId);
+  }
+
+  @Get(':boardId/times-spent')
+  @UseGuards(JwtAuthGuard)
+  async getTimesSpentOnBoardInMs(
+    @Param('boardId') boardId: string,
+  ): Promise<TimeSpentData[]> {
+    return this.boardStatsService.getTimesSpentOnBoardInMs(boardId);
   }
 }
