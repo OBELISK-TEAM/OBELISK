@@ -223,7 +223,7 @@ export class BoardStatsService {
   ): Map<string, number> {
     const timesSpentMap = new Map<string, number>();
 
-    for (let joinLeaveLog of joinLeaveTimeline) {
+    for (const joinLeaveLog of joinLeaveTimeline) {
       let time;
 
       if (joinLeaveLog.leaveDate) {
