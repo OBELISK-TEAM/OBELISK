@@ -7,7 +7,7 @@ import {
   BoardsActiveTab,
   BoardsActiveTabMap,
   BoardsActiveTabReverseMap,
-} from "@/enums/BoardsActiveTab";
+} from "@/enums/active-tab/BoardsActiveTab";
 
 export default async function UserBoardsPage({
   searchParams,

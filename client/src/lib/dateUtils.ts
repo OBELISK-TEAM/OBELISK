@@ -7,9 +7,14 @@ import {
   differenceInWeeks,
   differenceInMonths,
   differenceInYears,
+  addDays,
+  startOfDay,
 } from "date-fns";
 import { TimeUnit } from "@/interfaces/time-unit";
-
+import { DateRange as IDateRange } from "@/interfaces/date-range";
+import { TimeInterval } from "@/interfaces/time-interval";
+import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { DateRange } from "react-day-picker";
 /**
  * Converts a date string into a human-readable relative time format.
  *
@@ -122,3 +127,78 @@ export function formatDuration(ms: number): string {
 
   return parts.join(", ");
 }
+
+export const getParsedDateRangeFromUrl = (
+  searchParams: { [key: string]: string | string[] | undefined },
+  prefix: string,
+  defaultStartDate: Date = addDays(new Date(), -7),
+  defaultEndDate: Date = new Date()
+): IDateRange => {
+  const urlSearchParams = new URLSearchParams();
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => urlSearchParams.append(key, v));
+    } else if (typeof value === "string") {
+      urlSearchParams.append(key, value);
+    }
+  });
+
+  const dateRange = getDateRangeFromUrl(urlSearchParams, prefix);
+  return {
+    startDate: dateRange.from || defaultStartDate,
+    endDate: dateRange.to || defaultEndDate,
+  };
+};
+
+export const parseDate = (dateString: string | null): Date | undefined => {
+  if (!dateString) {
+    return undefined;
+  }
+  const parsedDate = new Date(dateString);
+  return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+};
+
+const isToday = (date: Date): boolean => {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+};
+
+export const TIME_INTERVALS: TimeInterval[] = [
+  { value: TimeIntervalEnum.ONE_DAY, label: "1 day", days: 1 },
+  { value: TimeIntervalEnum.THREE_DAYS, label: "3 days", days: 3 },
+  { value: TimeIntervalEnum.ONE_WEEK, label: "1 week", days: 7 },
+  { value: TimeIntervalEnum.TWO_WEEKS, label: "2 weeks", days: 14 },
+  { value: TimeIntervalEnum.ONE_MONTH, label: "1 month", days: 30 },
+  { value: TimeIntervalEnum.THREE_MONTHS, label: "3 months", days: 90 },
+  { value: TimeIntervalEnum.SIX_MONTHS, label: "6 months", days: 180 },
+  { value: TimeIntervalEnum.ONE_YEAR, label: "1 year", days: 365 },
+  { value: TimeIntervalEnum.TWO_YEARS, label: "2 years", days: 730 },
+  { value: TimeIntervalEnum.THREE_YEARS, label: "3 years", days: 1095 },
+];
+
+export const determineTimeInterval = (from: Date, to: Date): TimeIntervalEnum => {
+  if (!isToday(to)) {
+    return TimeIntervalEnum.CUSTOM;
+  }
+  const diffDays = differenceInDays(to, from);
+  const interval = TIME_INTERVALS.find((interval) => interval.days === diffDays);
+  return interval ? interval.value : TimeIntervalEnum.CUSTOM;
+};
+
+export const getDateRangeFromUrl = (searchParams: URLSearchParams, prefix: string): DateRange => {
+  const fromDate = parseDate(searchParams.get(`${prefix}-start-date`));
+  const toDate = parseDate(searchParams.get(`${prefix}-end-date`));
+  const now = new Date();
+
+  if (fromDate && toDate) {
+    return {
+      from: startOfDay(fromDate),
+      to: toDate > now ? now : toDate,
+    };
+  }
+
+  return {
+    from: startOfDay(addDays(now, -7)),
+    to: now,
+  };
+};

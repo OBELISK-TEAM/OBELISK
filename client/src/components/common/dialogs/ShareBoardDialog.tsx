@@ -21,6 +21,7 @@ import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-per
 import { formatDuration } from "@/lib/dateUtils";
 //import logger from "@/lib/logger";
 import { Badge } from "@/components/ui/badge";
+import BoardPermissionsInfoDialog from "@/app/user-boards/(board-management)/[boardId]/permissions/_components/BoardPermissionsInfoDialog";
 
 interface ShareBoardDialogProps {
   boardId: string;
@@ -72,7 +73,9 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="flex-col gap-10 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share the board with others</DialogTitle>
+          <DialogTitle className={"flex items-center gap-1"}>
+            <span>Share the board with others</span> <BoardPermissionsInfoDialog className={"scale-75"} />
+          </DialogTitle>
           <DialogDescription>Generate an invitation link and send it to others</DialogDescription>
         </DialogHeader>
 
