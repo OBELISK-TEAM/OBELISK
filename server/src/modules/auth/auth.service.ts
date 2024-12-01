@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { UserDocument } from '../../mongo/schemas/user.schema';
+import { UserDocument } from '../mongo/schemas/user.schema';
 import { SafeUserDoc } from '../../shared/interfaces/auth/SafeUserDoc';
 import { CreateUserDto, UpdateUserDto } from '../users/users.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -13,7 +13,7 @@ import { AuthToken } from '../../shared/interfaces/auth/AuthToken';
 import { UserAuthProvider } from 'src/shared/enums/user.auth.provider';
 import { UserResponseObject } from '../../shared/interfaces/response-objects/UserResponseObject';
 import { Payload } from '../../shared/interfaces/auth/Payload';
-import { ProducerService } from '../../mailing/producer/producer.service';
+import { ProducerService } from '../mailing/producer/producer.service';
 
 @Injectable()
 export class AuthService {

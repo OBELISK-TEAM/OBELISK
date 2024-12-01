@@ -7,9 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { StatsModule } from './modules/stats/stats.module';
-import { MongoModule } from './mongo/mongo.module';
-import { MailingModule } from './mailing/mailing.module';
-import { GatewayModule } from './gateway/gateway.module';
+import { MongoModule } from './modules/mongo/mongo.module';
+import { MailingModule } from './modules/mailing/mailing.module';
+import { GatewayModule } from './modules/gateway/gateway.module';
 import { HealthModule } from './modules/health/health.module';
 import { CoreModule } from './modules/core/core.module';
 

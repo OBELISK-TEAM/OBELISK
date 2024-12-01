@@ -1,10 +1,10 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
-import { WsAuthGuard } from '../../modules/auth/guards/ws.auth.guard';
+import { WsAuthGuard } from '../../auth/guards/ws.auth.guard';
 import { Socket } from 'socket.io';
 import {
   GwSocket,
   GwSocketWithTarget,
-} from '../../shared/interfaces/auth/GwSocket';
+} from '../../../shared/interfaces/auth/GwSocket';
 import { JoinBoardService } from './join.board.service';
 
 // unfortunately, filters cannot be applied to connection handlers

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserStats } from 'src/mongo/schemas/stats/user.stats.schema';
+import { UserStats } from 'src/modules/mongo/schemas/stats/user.stats.schema';
 import { GlobalActionType } from 'src/shared/enums/actions/global.action';
 
 @Injectable()

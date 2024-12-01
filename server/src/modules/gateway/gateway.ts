@@ -8,7 +8,7 @@ import { Socket } from 'socket.io';
 import {
   GwSocket,
   GwSocketWithTarget,
-} from '../shared/interfaces/auth/GwSocket';
+} from '../../shared/interfaces/auth/GwSocket';
 import {
   AddObjectData,
   DeleteObjectData,
@@ -17,22 +17,22 @@ import {
 import { CursorMoveData } from './dto/cursor.data';
 import { ConnectionService } from './providers/connection.service';
 import { JoinBoardService } from './providers/join.board.service';
-import { BoardAccessGuard } from '../modules/auth/guards/board.access.guard';
+import { BoardAccessGuard } from '../auth/guards/board.access.guard';
 import {
   UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { MinimumBoardPermission } from '../shared/decorators/permissions.decorator';
-import { BoardPermission } from '../shared/enums/board.permission';
+import { MinimumBoardPermission } from '../../shared/decorators/permissions.decorator';
+import { BoardPermission } from '../../shared/enums/board.permission';
 import { JoinSlideService } from './providers/join.slide.service';
-import { SlideResponseObject } from '../shared/interfaces/response-objects/SlideResponseObject';
+import { SlideResponseObject } from '../../shared/interfaces/response-objects/SlideResponseObject';
 import { SlideActionService } from './providers/slide.action.service';
-import { ObjectResponseObject } from '../shared/interfaces/response-objects/ObjectResponseObject';
+import { ObjectResponseObject } from '../../shared/interfaces/response-objects/ObjectResponseObject';
 import { ObjectActionService } from './providers/object.action.service';
-import { WsExceptionFilter } from '../shared/filters/ws.error.filter';
-import { BoardResponseObject } from '../shared/interfaces/response-objects/BoardResponseObject';
+import { WsExceptionFilter } from '../../shared/filters/ws.error.filter';
+import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
 import { JoinBoardData } from './dto/board.data';
 import { AddSlideData, DeleteSlideData, JoinSlideData } from './dto/slide.data';
 import { CursorActionService } from './providers/cursor.action.service';

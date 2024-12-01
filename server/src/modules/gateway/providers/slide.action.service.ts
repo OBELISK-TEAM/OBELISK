@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GwSocketWithTarget } from '../../shared/interfaces/auth/GwSocket';
-import { SlidesService } from '../../modules/core/slides/slides.service';
+import { GwSocketWithTarget } from '../../../shared/interfaces/auth/GwSocket';
+import { SlidesService } from '../../core/slides/slides.service';
 import { AddSlideData, DeleteSlideData } from '../dto/slide.data';
 import { ObjectStatsService } from 'src/modules/stats/object/object.stats.service';
 import { SlideStatsService } from 'src/modules/stats/slide/slides.stats.service';

@@ -4,8 +4,8 @@ import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import { getMailingConfig } from '../../config/mailing.config';
-import { WelcomeEmailMessage } from '../../shared/interfaces/mailing/Message';
+import { getMailingConfig } from '../../../config/mailing.config';
+import { WelcomeEmailMessage } from '../../../shared/interfaces/mailing/Message';
 
 @Injectable()
 export class ConsumerService {

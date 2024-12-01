@@ -1,4 +1,4 @@
-import { SuperBoardDocument } from '../../mongo/schemas/board/super.board.schema';
+import { SuperBoardDocument } from '../../modules/mongo/schemas/board/super.board.schema';
 import { UserPermission } from './UserPermission';
 
 export interface BoardWithPopulatedPermissions

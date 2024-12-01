@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BoardsService } from '../../modules/core/boards/boards.service';
+import { BoardsService } from '../../core/boards/boards.service';
 import {
   GwSocket,
   GwSocketWithTarget,
-} from '../../shared/interfaces/auth/GwSocket';
+} from '../../../shared/interfaces/auth/GwSocket';
 import { JoinBoardData } from '../dto/board.data';
 import { Socket } from 'socket.io';
-import { BoardPermission } from '../../shared/enums/board.permission';
-import { ResponseService } from '../../modules/response/response.service';
-import { BoardResponseObject } from '../../shared/interfaces/response-objects/BoardResponseObject';
+import { BoardPermission } from '../../../shared/enums/board.permission';
+import { ResponseService } from '../../response/response.service';
+import { BoardResponseObject } from '../../../shared/interfaces/response-objects/BoardResponseObject';
 import { WsException } from '@nestjs/websockets';
 import { CommonService } from './common.service';
 import { BoardStatsService } from 'src/modules/stats/board/board.stats.service';
