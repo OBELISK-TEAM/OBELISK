@@ -242,16 +242,6 @@ export const AGGREGATION_RULES: AggregationRule[] = [
     intervalInMinutes: AggregationInterval.DAILY,
     incrementDate: (date: Date) => addDays(date, 1),
   },
-  {
-    maxMinutes: 241920, // To 168 days (24 weeks)
-    intervalInMinutes: AggregationInterval.WEEKLY,
-    incrementDate: (date: Date) => addWeeks(date, 1),
-  },
-  {
-    maxMinutes: Infinity, // Above 168 days
-    intervalInMinutes: AggregationInterval.MONTHLY,
-    incrementDate: (date: Date) => addMonths(date, 1),
-  },
 ];
 
 export function determineAggregationRule(startDate: Date, endDate: Date): AggregationRule {
