@@ -46,7 +46,7 @@ export function DateRangePicker({ className, prefix }: DatePickerProps) {
   };
 
   return (
-    <div className={cn("flex justify-between gap-4", className)}>
+    <div className={cn("mt-6 flex justify-between gap-4", className)}>
       <div>
         <Label htmlFor={`${prefix}-start-date-picker`} className="block text-sm font-medium">
           Start Date
