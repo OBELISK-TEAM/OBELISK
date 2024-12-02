@@ -17,6 +17,7 @@ export const ActiveUsersCard: React.FC<ActiveUsersCardProps> = ({ data, aggregat
     Chart={
       <StatisticsChart
         data={data}
+        type="monotone"
         axisX={"timestamp"}
         yAxes={[{ labelY: "active users", axisY: "value", colorY: "hsl(var(--chart-1))" }]}
         aggregationInterval={aggregationIntervalMinutes}

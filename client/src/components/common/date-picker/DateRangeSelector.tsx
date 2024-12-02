@@ -20,6 +20,7 @@ interface DateRangeSelectorProps {
   date?: DateRange | undefined;
 }
 
+//not used. Waiting for better time
 export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, date }) => {
   const [timeInterval, setTimeInterval] = useState<TimeIntervalEnum>(TimeIntervalEnum.ONE_WEEK);
 
@@ -29,7 +30,7 @@ export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, d
     if (!selectedInterval) {
       return;
     }
-    const fromDate = addDays(today, -selectedInterval.days);
+    const fromDate = addDays(today, -selectedInterval.minutes);
     setTimeInterval(value);
     onValueChange({ from: fromDate, to: today });
   };

@@ -45,8 +45,6 @@ const formatXAxis = (tickItem: string, aggregationInterval: AggregationInterval)
       return format(date, "MMM dd, yyyy");
     case AggregationInterval.MONTHLY:
       return format(date, "MMM yyyy");
-    case AggregationInterval.YEARLY:
-      return format(date, "yyyy");
     default:
       return format(date, "MMM dd, yyyy HH:mm");
   }
