@@ -51,7 +51,7 @@ export class AuthService {
   }
 
   private extractUserWithoutPassword(user: UserDocument): SafeUserDoc {
-    const userObj: UserDocument = user.toObject();
+    const userObj: UserDocument = user.toObject() as UserDocument;
     const { password, ...userWithoutPassword } = userObj;
     return userWithoutPassword as SafeUserDoc;
   }
