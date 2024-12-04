@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
 import { canvasReducer, initialState } from "@/reducers/canvasReducer";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { CanvasReducerAction } from "@/enums/CanvasReducerAction";
@@ -37,13 +37,16 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
   slideIndex,
   boardId,
 }) => {
-  const [state, dispatch] = useReducer(canvasReducer, initialState);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const { handleZoom } = useZoom();
   const {
     socket,
     userCapabilities: { canManageObject },
   } = useSocket();
+  const [state, dispatch] = useReducer(canvasReducer, {
+    ...initialState,
+    canvasMode: canManageObject ? CanvasMode.SIMPLE_DRAWING : CanvasMode.SELECTION,
+  });
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { handleZoom } = useZoom();
   const { userInfo } = useAuth();
   const email = userInfo?.email ?? "";
   const userColor = useMemo(() => getColorFromEmail(email), [email]);
