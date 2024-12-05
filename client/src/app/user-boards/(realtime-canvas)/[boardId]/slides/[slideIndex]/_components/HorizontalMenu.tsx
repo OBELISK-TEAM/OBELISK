@@ -37,7 +37,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, userCapabilitie
               className="h-min-[64px] flex h-[64px] cursor-pointer items-center justify-center gap-2 border-r p-4 transition-colors hover:bg-muted"
             >
               <AppLogo width={15} height={15} />
-              <span className={"text-lg font-semibold text-muted-foreground"}>Dashboard</span>
+              <span className={"text-sm font-semibold text-muted-foreground"}>Dashboard</span>
             </Link>
           </HoverCardTrigger>
           <HoverCardContent>Go to dashboard</HoverCardContent>
@@ -49,7 +49,7 @@ const BoardHorizontalMenu: FC<HorizontalMenuProps> = ({ groupId, userCapabilitie
               href={`/user-boards/${boardId}`}
               className="flex h-full cursor-pointer items-center border-r px-6 hover:bg-muted"
             >
-              <span className="text-lg font-semibold">{boardName}</span>
+              <span className="font-semibold">{boardName}</span>
             </Link>
           </HoverCardTrigger>
           <HoverCardContent>Go to board details</HoverCardContent>
