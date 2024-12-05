@@ -3,7 +3,10 @@ import { BoardStatsService } from './board.stats.service';
 import { BoardStatsController } from './board.stats.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from 'src/modules/users/users.module';
-import { BoardStats, BoardStatsSchema } from 'src/modules/mongo/schemas/stats/board.stats.schema';
+import {
+  BoardStats,
+  BoardStatsSchema,
+} from 'src/modules/mongo/schemas/stats/board.stats.schema';
 
 @Module({
   imports: [
