@@ -158,9 +158,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     if (state.canvas) {
       toggleDrawingMode(state.canvas, state.canvasMode !== CanvasMode.SELECTION);
       state.canvas.freeDrawingBrush.color = state.color;
-      state.canvas.freeDrawingBrush.width = state.size;
+      if (state.canvasMode === CanvasMode.ERASER) {
+        state.canvas.freeDrawingBrush.width = state.eraserSize;
+      } else if (state.canvasMode === CanvasMode.SIMPLE_DRAWING) {
+        state.canvas.freeDrawingBrush.width = state.penSize;
+      }
     }
-  }, [state.canvasMode, state.color, state.size, state.canvas]);
+  }, [state.canvasMode, state.color, state.penSize, state.eraserSize, state.canvas]);
 
   const setCanvasMode = useCallback((mode: CanvasMode) => {
     dispatch({ type: CanvasReducerAction.SET_CANVAS_MODE, canvasMode: mode });
@@ -170,8 +174,12 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
     dispatch({ type: CanvasReducerAction.SET_COLOR, color });
   }, []);
 
-  const setSize = useCallback((size: number) => {
-    dispatch({ type: CanvasReducerAction.SET_SIZE, size });
+  const setPenSize = useCallback((penSize: number) => {
+    dispatch({ type: CanvasReducerAction.SET_PEN_SIZE, penSize });
+  }, []);
+
+  const setEraserSize = useCallback((eraserSize: number) => {
+    dispatch({ type: CanvasReducerAction.SET_ERASER_SIZE, eraserSize });
   }, []);
 
   const setActiveItem = useCallback((activeItem: string | null) => {
@@ -194,7 +202,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({
         canvasRef,
         setCanvasMode,
         setColor,
-        setSize,
+        setPenSize,
+        setEraserSize,
         handleStyleChange,
         setActiveItem,
         slideIndex,

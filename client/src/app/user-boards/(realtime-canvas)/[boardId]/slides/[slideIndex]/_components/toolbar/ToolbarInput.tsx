@@ -10,17 +10,23 @@ interface ToolbarInputProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ToolbarInput: React.FC<ToolbarInputProps> = ({ styleKey, labelText, inputType = "text", value, onChange }) => (
-  <div className={`flex items-center space-x-2 border-r pr-4`}>
-    <StyledLabel htmlFor={styleKey}>{labelText}</StyledLabel>
-    <Input
-      type={inputType}
-      id={styleKey}
-      className={inputType === "color" ? "h-5 w-5 rounded-full p-0" : "w-[5.5em]"}
-      value={value || ""}
-      onChange={onChange}
-    />
-  </div>
-);
+const ToolbarInput: React.FC<ToolbarInputProps> = ({ styleKey, labelText, inputType = "text", value, onChange }) => {
+  let properValue = value || "";
+  if (inputType === "number") {
+    properValue = parseInt(properValue as string, 10) || 0;
+  }
+  return (
+    <div className={`flex items-center space-x-2 border-r pr-4`}>
+      <StyledLabel htmlFor={styleKey}>{labelText}</StyledLabel>
+      <Input
+        type={inputType}
+        id={styleKey}
+        className={inputType === "color" ? "h-5 w-5 rounded-full p-0" : "w-[5.5em]"}
+        value={properValue}
+        onChange={onChange}
+      />
+    </div>
+  );
+};
 
 export default ToolbarInput;

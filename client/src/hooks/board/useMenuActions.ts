@@ -32,19 +32,19 @@ import { ComplexCommand } from "@/classes/undo-redo-commands/ComplexCommand";
 import { debounce } from "lodash";
 import { DELAYS } from "@/config/delayConfig";
 
-const getProperties = (color: string, size: number): CanvasActionProperties => ({
+const getProperties = (color: string): CanvasActionProperties => ({
   color,
-  strokeWidth: size,
+  strokeWidth: 0,
   fillColor: color,
   fontSize: 20,
-  width: size * 10,
-  height: size * 5,
-  radius: size * 5,
+  width: 100,
+  height: 50,
+  radius: 50,
 });
 
 export const useMenuActions = () => {
   const {
-    state: { canvas, color, size },
+    state: { canvas, color, penSize, eraserSize },
     setCanvasMode,
   } = useCanvas();
   const { saveCommand } = useUndoRedo();
@@ -99,17 +99,19 @@ export const useMenuActions = () => {
         }
         setSelectionMode(setCanvasMode);
       },
-      [CanvasMode.SIMPLE_DRAWING]: ({ canvas, color, size, setCanvasMode }) => {
+      [CanvasMode.SIMPLE_DRAWING]: ({ canvas, color, penSize, setCanvasMode }) => {
         if (!canvas || !setCanvasMode) {
           return;
         }
-        setDrawingMode(canvas, color as string, size as number, setCanvasMode);
+        console.log("DRAWING MODE");
+        setDrawingMode(canvas, color as string, penSize as number, setCanvasMode);
       },
-      [CanvasMode.ERASER]: ({ canvas, size, setCanvasMode }) => {
+      [CanvasMode.ERASER]: ({ canvas, eraserSize, setCanvasMode }) => {
         if (!canvas || !setCanvasMode) {
           return;
         }
-        setEraserMode(canvas, size as number, setCanvasMode);
+        console.log("ERASER MODE");
+        setEraserMode(canvas, eraserSize as number, setCanvasMode);
       },
       [MenuActions.ADD_LINE]: async ({ canvas, properties, setCanvasMode }) => {
         if (!canvas || !properties || !setCanvasMode) {
@@ -287,7 +289,7 @@ export const useMenuActions = () => {
 
   const performAction = useCallback(
     (name: MenuActions | CanvasMode) => {
-      const properties = getProperties(color, size);
+      const properties = getProperties(color);
       const handler = actionHandlers[name];
       if (handler) {
         handler({
@@ -295,11 +297,12 @@ export const useMenuActions = () => {
           properties,
           setCanvasMode,
           color,
-          size,
+          penSize,
+          eraserSize,
         });
       }
     },
-    [canvas, color, size, actionHandlers, setCanvasMode]
+    [canvas, color, penSize, eraserSize, actionHandlers, setCanvasMode]
   );
 
   const performDebouncedAction = useMemo(() => debounce(performAction, DELAYS.MENU_ACTIONS), [performAction]);

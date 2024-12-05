@@ -8,5 +8,6 @@ export type CanvasActionHandler = (args: {
   undo?: () => void;
   redo?: () => void;
   color?: string;
-  size?: number;
+  penSize?: number;
+  eraserSize?: number;
 }) => void;

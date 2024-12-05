@@ -36,7 +36,10 @@ const MenuDataContext = createContext<IMenuDataContext | undefined>(undefined);
 export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { performAction, performDebouncedAction } = useMenuActions();
   const { undo, redo } = useUndoRedo();
-  const { boardId } = useCanvas();
+  const {
+    boardId,
+    state: { canvasMode },
+  } = useCanvas();
 
   const menuList: MenuGroup[] = [
     {
@@ -48,54 +51,70 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           text: "Selection Mode",
           icon: <MousePointer />,
           name: CanvasMode.SELECTION,
+          enabled: true,
         },
         {
           action: () => performAction(CanvasMode.SIMPLE_DRAWING),
           text: "Drawing Mode",
           icon: <Pencil />,
           name: CanvasMode.SIMPLE_DRAWING,
+          enabled: true,
+        },
+        {
+          action: () => {},
+          text: "Pen Color",
+          icon: <Color />,
+          name: MenuActions.CHANGE_COLOR,
+          enabled: canvasMode === CanvasMode.SIMPLE_DRAWING,
+        },
+        {
+          action: () => {},
+          text: "Pen Size",
+          icon: <Size />,
+          name: MenuActions.CHANGE_SIZE,
+          enabled: canvasMode === CanvasMode.SIMPLE_DRAWING,
         },
         {
           action: () => performAction(CanvasMode.ERASER),
           text: "Eraser Mode",
           icon: <EraserIcon />,
           name: CanvasMode.ERASER,
+          enabled: true,
         },
         {
           action: () => {},
-          text: "Change Color",
-          icon: <Color />,
-          name: MenuActions.CHANGE_COLOR,
-        },
-        {
-          action: () => {},
-          text: "Change Size",
+          text: "Eraser Size",
           icon: <Size />,
           name: MenuActions.CHANGE_SIZE,
+          enabled: canvasMode === CanvasMode.ERASER,
         },
         {
           action: () => performDebouncedAction(MenuActions.ADD_LINE),
           text: "Add Line",
           icon: <Minus />,
           name: MenuActions.ADD_LINE,
+          enabled: true,
         },
         {
           action: () => performDebouncedAction(MenuActions.ADD_RECTANGLE),
           text: "Add Rectangle",
           icon: <Square />,
           name: MenuActions.ADD_RECTANGLE,
+          enabled: true,
         },
         {
           action: () => performDebouncedAction(MenuActions.ADD_CIRCLE),
           text: "Add Circle",
           icon: <Circle />,
           name: MenuActions.ADD_CIRCLE,
+          enabled: true,
         },
         {
           action: () => performDebouncedAction(MenuActions.ADD_TEXT),
           text: "Add Text",
           icon: <Text />,
           name: MenuActions.ADD_TEXT,
+          enabled: true,
         },
       ],
     },
@@ -108,18 +127,21 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           text: "Clear Canvas",
           icon: <Trash />,
           name: MenuActions.CLEAR_CANVAS,
+          enabled: true,
         },
         {
           action: () => performAction(MenuActions.ADD_IMAGE_URL),
           text: "Add Image from URL",
           icon: <UrlIcon />,
           name: MenuActions.ADD_IMAGE_URL,
+          enabled: true,
         },
         {
           action: () => performAction(MenuActions.ADD_IMAGE_DISK),
           text: "Add Image from disk",
           icon: <ImageIcon />,
           name: MenuActions.ADD_IMAGE_DISK,
+          enabled: true,
         },
       ],
     },
@@ -132,30 +154,35 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           text: "Export to PDF",
           icon: <Save />,
           name: MenuActions.EXPORT_PDF,
+          enabled: true,
         },
         {
           action: () => undo(),
           text: "Undo",
           icon: <Undo />,
           name: MenuActions.UNDO,
+          enabled: true,
         },
         {
           action: () => redo(),
           text: "Redo",
           icon: <Redo />,
           name: MenuActions.REDO,
+          enabled: true,
         },
         {
           action: () => performAction(MenuActions.GROUP_SELECTED),
           text: "Group Selected Objects",
           icon: <Group />,
           name: MenuActions.GROUP_SELECTED,
+          enabled: true,
         },
         {
           action: () => performAction(MenuActions.REMOVE_SELECTED),
           text: "Remove Selected Objects",
           icon: <Trash />,
           name: MenuActions.REMOVE_SELECTED,
+          enabled: true,
         },
         {
           action: () => {},
@@ -171,6 +198,7 @@ export const MenuDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             </Button>
           ),
           name: MenuActions.SHARE_BOARD,
+          enabled: true,
         },
       ],
     },

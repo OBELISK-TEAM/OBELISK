@@ -16,6 +16,7 @@ export interface MenuItem {
   icon: ReactNode;
   node?: ReactNode;
   name: string;
+  enabled: boolean;
 }
 
 export interface MenuGroup {
