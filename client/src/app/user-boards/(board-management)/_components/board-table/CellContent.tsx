@@ -5,6 +5,8 @@ import { BoardResponse } from "@/interfaces/responses/user-boards/board-response
 import { BoardTableColumns } from "@/enums/BoardTableColumns";
 import { prettyDate } from "@/lib/dateUtils";
 import { bytesToKilobytes } from "@/lib/bytesConverter";
+import Link from "next/link";
+
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
   let sharedUsers: string[] = [];
   if (board.permissions) {
@@ -33,22 +35,24 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
 
     case BoardTableColumns.SHARED_WITH:
       return (
-        <div className="flex flex-col items-start space-y-1">
-          {sharedUsers && sharedUsers.length > 0 ? (
-            <>
-              {sharedUsers.length > 2 ? (
-                <>
-                  <Badge>{sharedUsers[0]}</Badge>
-                  <span className="text-xs text-muted-foreground">... (+{sharedUsers.length - 1} more)</span>
-                </>
-              ) : (
-                sharedUsers.map((user: string) => <Badge key={user}>{user}</Badge>)
-              )}
-            </>
-          ) : (
-            "---"
-          )}
-        </div>
+        <Link href={`/user-boards/${board._id}`} onClick={(e) => e.stopPropagation()}>
+          <div className="flex flex-col items-start space-y-1">
+            {sharedUsers && sharedUsers.length > 0 ? (
+              <>
+                {sharedUsers.length > 2 ? (
+                  <>
+                    <Badge>{sharedUsers[0]}</Badge>
+                    <span className="text-xs text-muted-foreground">... (+{sharedUsers.length - 1} more)</span>
+                  </>
+                ) : (
+                  sharedUsers.map((user: string) => <Badge key={user}>{user}</Badge>)
+                )}
+              </>
+            ) : (
+              "---"
+            )}
+          </div>
+        </Link>
       );
 
     case BoardTableColumns.SIZE:
