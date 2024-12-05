@@ -103,14 +103,12 @@ export const useMenuActions = () => {
         if (!canvas || !setCanvasMode) {
           return;
         }
-        console.log("DRAWING MODE");
         setDrawingMode(canvas, color as string, penSize as number, setCanvasMode);
       },
       [CanvasMode.ERASER]: ({ canvas, eraserSize, setCanvasMode }) => {
         if (!canvas || !setCanvasMode) {
           return;
         }
-        console.log("ERASER MODE");
         setEraserMode(canvas, eraserSize as number, setCanvasMode);
       },
       [MenuActions.ADD_LINE]: async ({ canvas, properties, setCanvasMode }) => {

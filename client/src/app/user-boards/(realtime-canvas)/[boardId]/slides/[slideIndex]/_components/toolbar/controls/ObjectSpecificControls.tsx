@@ -37,6 +37,9 @@ const ObjectSpecificControls: React.FC = () => {
       if (newValue === oldValue) {
         return;
       }
+      if (event.target.type === "number" && parseInt(event.target.value, 10) < 0) {
+        return;
+      }
 
       setObjectStyle(canvas, modifiedObject, { [key]: newValue });
       handleStyleChange();
@@ -80,7 +83,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="stroke"
         styleKey="stroke"
-        labelText="Stroke Color"
+        labelText="Border Color"
         inputType="color"
         value={selectedObjectStyles.stroke}
         onChange={handleChange("stroke")}
@@ -88,7 +91,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="strokeWidth"
         styleKey="strokeWidth"
-        labelText="Stroke Width"
+        labelText="Border Width"
         inputType="number"
         value={selectedObjectStyles.strokeWidth}
         onChange={handleChange("strokeWidth")}
@@ -130,7 +133,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="stroke"
         styleKey="stroke"
-        labelText="Stroke Color"
+        labelText="Border Color"
         inputType="color"
         value={selectedObjectStyles.stroke}
         onChange={handleChange("stroke")}
@@ -138,7 +141,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="strokeWidth"
         styleKey="strokeWidth"
-        labelText="Stroke Width"
+        labelText="Border Width"
         inputType="number"
         value={selectedObjectStyles.strokeWidth}
         onChange={handleChange("strokeWidth")}
@@ -164,7 +167,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="stroke"
         styleKey="stroke"
-        labelText="Stroke Color"
+        labelText="Border Color"
         inputType="color"
         value={selectedObjectStyles.stroke}
         onChange={handleChange("stroke")}
@@ -172,7 +175,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="strokeWidth"
         styleKey="strokeWidth"
-        labelText="Stroke Width"
+        labelText="Border Width"
         inputType="number"
         value={selectedObjectStyles.strokeWidth}
         onChange={handleChange("strokeWidth")}
@@ -182,7 +185,7 @@ const ObjectSpecificControls: React.FC = () => {
       <ToolbarInput
         key="stroke"
         styleKey="stroke"
-        labelText="Stroke Color"
+        labelText="Border Color"
         inputType="color"
         value={selectedObjectStyles.stroke}
         onChange={handleChange("stroke")}
