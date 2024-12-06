@@ -6,16 +6,19 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { parseDate } from "@/lib/dateUtils";
 import { getColorInHsl } from "@/lib/colorUtils";
 import { StatisticsChartProps, YAxisConfig } from "@/interfaces/stats/statistics-chart";
+import { AggregationInterval } from "@/enums/statistics/AggregationInterval";
+import { format } from "date-fns";
 
-const prepareChartData = <T,>(data: T[], axisX: keyof T, yAxes: YAxisConfig<T>[]) => {
+const prepareChartData = <T,>(
+  data: T[],
+  axisX: keyof T,
+  yAxes: YAxisConfig<T>[],
+  aggregationInterval: AggregationInterval
+) => {
   return data.map((item) => {
     const formattedItem: any = {};
-
     formattedItem[axisX] = parseDate(item[axisX] as any)
-      ? new Date(item[axisX] as any).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })
+      ? formatXAxis(new Date(item[axisX] as any).toISOString(), aggregationInterval)
       : item[axisX];
 
     yAxes.forEach(({ axisY }) => {
@@ -26,6 +29,27 @@ const prepareChartData = <T,>(data: T[], axisX: keyof T, yAxes: YAxisConfig<T>[]
   });
 };
 
+const formatXAxis = (tickItem: string, aggregationInterval: AggregationInterval) => {
+  const date = new Date(tickItem);
+
+  if (isNaN(date.getTime())) {
+    return tickItem;
+  }
+
+  switch (aggregationInterval) {
+    case AggregationInterval.FOUR_HOURS:
+      return format(date, "MMM dd, yyyy HH:mm");
+    case AggregationInterval.DAILY:
+      return format(date, "MMM dd, yyyy");
+    case AggregationInterval.WEEKLY:
+      return format(date, "MMM dd, yyyy");
+    case AggregationInterval.MONTHLY:
+      return format(date, "MMM yyyy");
+    default:
+      return format(date, "MMM dd, yyyy HH:mm");
+  }
+};
+
 export const StatisticsChart = <T,>({
   data,
   axisX,
@@ -33,8 +57,9 @@ export const StatisticsChart = <T,>({
   height = "400px",
   width = "100%",
   type = "natural",
+  aggregationInterval = AggregationInterval.DAILY,
 }: StatisticsChartProps<T>) => {
-  const formattedData = prepareChartData(data, axisX, yAxes);
+  const formattedData = prepareChartData(data, axisX, yAxes, aggregationInterval);
 
   const chartConfig: { [key: string]: { label: string; color: string } } = {};
 

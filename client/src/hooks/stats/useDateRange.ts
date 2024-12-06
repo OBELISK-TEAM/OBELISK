@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
-import { startOfDay, endOfDay, isToday } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { getDateRangeFromUrl } from "@/lib/dateUtils";
+import { isAfter, startOfDay } from "date-fns";
 
 interface UseDateRangeProps {
   prefix: string;
@@ -16,6 +16,8 @@ export function useDateRange({ prefix }: UseDateRangeProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const now = new Date();
+
   const initializeDate = (): DateRange | undefined => {
     return getDateRangeFromUrl(searchParams, prefix);
   };
@@ -23,36 +25,16 @@ export function useDateRange({ prefix }: UseDateRangeProps) {
   const [date, setDate] = useState<DateRange | undefined>(initializeDate);
 
   const updateQueryParams = (newDate: DateRange | undefined) => {
-    if (!newDate) {
-      return;
-    }
-
-    let { from, to } = newDate;
-    const now = new Date();
-
-    if (from) {
-      from = startOfDay(from);
-    }
-    if (to) {
-      to = endOfDay(to);
-      if (to > now) {
-        to = now;
-      }
-    }
-    if (from && to && from > to) {
-      from = to;
-    }
-
     const params = new URLSearchParams(searchParams.toString());
 
-    if (from) {
-      params.set(`${prefix}-start-date`, from.toISOString());
+    if (newDate?.from) {
+      params.set(`${prefix}-start-date`, newDate.from.toISOString());
     } else {
       params.delete(`${prefix}-start-date`);
     }
 
-    if (to) {
-      params.set(`${prefix}-end-date`, to.toISOString());
+    if (newDate?.to) {
+      params.set(`${prefix}-end-date`, newDate.to.toISOString());
     } else {
       params.delete(`${prefix}-end-date`);
     }
@@ -61,13 +43,22 @@ export function useDateRange({ prefix }: UseDateRangeProps) {
   };
 
   const handleDateChange = (newDateRange: DateRange | undefined) => {
-    if (newDateRange && newDateRange.to) {
-      const now = new Date();
-      newDateRange.to = isToday(newDateRange.to) || now < newDateRange.to ? now : endOfDay(newDateRange.to);
+    let { from, to } = newDateRange || {};
+
+    if (from && to && isAfter(from, to)) {
+      from = startOfDay(to);
     }
 
-    setDate(newDateRange);
-    updateQueryParams(newDateRange);
+    // Prevent dates in the future
+    if (from && isAfter(from, now)) {
+      from = now;
+    }
+    if (to && isAfter(to, now)) {
+      to = now;
+    }
+
+    setDate({ from, to });
+    updateQueryParams({ from, to });
   };
 
   return { date, setDate: handleDateChange };

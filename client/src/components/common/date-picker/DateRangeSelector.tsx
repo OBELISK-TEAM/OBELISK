@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useState, FC, useEffect } from "react";
 import { DateRange } from "react-day-picker";
-import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { TimeIntervalEnum } from "@/enums/statistics/TimeInterval";
 import { determineTimeInterval, TIME_INTERVALS } from "@/lib/dateUtils";
 
 interface DateRangeSelectorProps {
@@ -20,6 +20,7 @@ interface DateRangeSelectorProps {
   date?: DateRange | undefined;
 }
 
+//not used. Waiting for better time
 export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, date }) => {
   const [timeInterval, setTimeInterval] = useState<TimeIntervalEnum>(TimeIntervalEnum.ONE_WEEK);
 
@@ -29,7 +30,7 @@ export const DateRangeSelector: FC<DateRangeSelectorProps> = ({ onValueChange, d
     if (!selectedInterval) {
       return;
     }
-    const fromDate = addDays(today, -selectedInterval.days);
+    const fromDate = addDays(today, -selectedInterval.minutes);
     setTimeInterval(value);
     onValueChange({ from: fromDate, to: today });
   };

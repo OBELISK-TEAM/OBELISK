@@ -1,0 +1,10 @@
+export enum AggregationInterval {
+  FIVE_MINUTES = 5,
+  FIFTEEN_MINUTES = 15,
+  THIRTY_MINUTES = 30,
+  ONE_HOUR = 60,
+  FOUR_HOURS = 240,
+  DAILY = 1440,
+  WEEKLY = 10080,
+  MONTHLY = 43800,
+}
