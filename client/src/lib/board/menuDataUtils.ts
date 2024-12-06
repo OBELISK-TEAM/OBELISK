@@ -26,7 +26,6 @@ export const setDrawingMode = (
     return;
   }
   const pencilBrush = new fabric.PencilBrush(canvas);
-  console.log("pencilBrush", pencilBrush, size, color);
   configureBrush(pencilBrush, size, color);
   canvas.freeDrawingBrush = pencilBrush;
   setCanvasMode(CanvasMode.SIMPLE_DRAWING);
@@ -44,7 +43,6 @@ export const setEraserMode = (
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const eraserBrush = new fabric.EraserBrush(canvas);
-  console.log("eraserBrush", eraserBrush, size);
   configureBrush(eraserBrush, size);
   canvas.freeDrawingBrush = eraserBrush;
   setCanvasMode(CanvasMode.ERASER);

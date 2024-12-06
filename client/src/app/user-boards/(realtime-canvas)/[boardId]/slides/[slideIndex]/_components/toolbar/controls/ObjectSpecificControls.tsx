@@ -40,6 +40,10 @@ const ObjectSpecificControls: React.FC = () => {
       if (event.target.type === "number" && parseInt(event.target.value, 10) < 0) {
         return;
       }
+      if (event.target.type === "number" && event.target.value === "") {
+        event.target.value = "0";
+        return;
+      }
 
       setObjectStyle(canvas, modifiedObject, { [key]: newValue });
       handleStyleChange();
