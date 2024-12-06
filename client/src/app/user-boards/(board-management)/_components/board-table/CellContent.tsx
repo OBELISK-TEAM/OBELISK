@@ -8,6 +8,7 @@ import { prettyDate } from "@/lib/dateUtils";
 import { bytesToKilobytes } from "@/lib/bytesConverter";
 import Link from "next/link";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { capabilityFunctions } from "@/lib/permissionUtils";
 
 export const CellContent = (column: BoardTableColumns, board: BoardResponse) => {
   let sharedUsers: string[] = [];
@@ -41,16 +42,15 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
           {sharedUsers && sharedUsers.length > 0 ? (
             <>
               {sharedUsers.length > 2 ? (
-                <BoardDetailsLink boardId={board._id}>
+                <div className={"flex flex-col"}>
                   <Badge>{sharedUsers[0]}</Badge>
-                  <span className="text-xs text-muted-foreground">... (+{sharedUsers.length - 1} more)</span>
-                </BoardDetailsLink>
-              ) : (
-                sharedUsers.map((user: string) => (
-                  <BoardDetailsLink key={user} boardId={board._id}>
-                    <Badge key={user}>{user}</Badge>
+
+                  <BoardDetailsLink board={board}>
+                    <span className="text-xs text-muted-foreground">... (+{sharedUsers.length - 1} more)</span>
                   </BoardDetailsLink>
-                ))
+                </div>
+              ) : (
+                sharedUsers.map((user: string) => <Badge key={user}>{user}</Badge>)
               )}
             </>
           ) : (
@@ -67,15 +67,22 @@ export const CellContent = (column: BoardTableColumns, board: BoardResponse) => 
   }
 };
 
-const BoardDetailsLink = ({ boardId, children }: { boardId: string; children: React.ReactNode }) => {
+const BoardDetailsLink = ({ board, children }: { board: BoardResponse; children: React.ReactNode }) => {
+  const canViewBoardDetails = capabilityFunctions.canViewBoardDetails(board.permission);
+  const hoverContent = canViewBoardDetails ? "See all shared users" : "You cannot see full list of shared users";
+
   return (
     <HoverCard openDelay={200} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <Link href={`/user-boards/${boardId}`} onClick={(e) => e.stopPropagation()}>
-          {children}
-        </Link>
+        {canViewBoardDetails ? (
+          <Link href={`/user-boards/${board._id}`} onClick={(e) => e.stopPropagation()}>
+            {children}
+          </Link>
+        ) : (
+          children
+        )}
       </HoverCardTrigger>
-      <HoverCardContent>See all shared users</HoverCardContent>
+      <HoverCardContent>{hoverContent}</HoverCardContent>
     </HoverCard>
   );
 };
