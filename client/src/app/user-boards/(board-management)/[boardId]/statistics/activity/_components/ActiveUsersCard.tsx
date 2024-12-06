@@ -6,9 +6,10 @@ import { StatisticsChart } from "@/components/common/statistics/StatisticsChart"
 
 interface ActiveUsersCardProps {
   data: ActiveUsersResponse[];
+  aggregationIntervalMinutes: number;
 }
 
-export const ActiveUsersCard: React.FC<ActiveUsersCardProps> = ({ data }) => (
+export const ActiveUsersCard: React.FC<ActiveUsersCardProps> = ({ data, aggregationIntervalMinutes }) => (
   <StatisticsCard
     title="Active Users Over Time"
     description="Number of active users tracked across a specified time period"
@@ -16,8 +17,10 @@ export const ActiveUsersCard: React.FC<ActiveUsersCardProps> = ({ data }) => (
     Chart={
       <StatisticsChart
         data={data}
+        type="monotone"
         axisX={"timestamp"}
         yAxes={[{ labelY: "active users", axisY: "value", colorY: "hsl(var(--chart-1))" }]}
+        aggregationInterval={aggregationIntervalMinutes}
       />
     }
   />

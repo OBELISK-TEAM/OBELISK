@@ -1,4 +1,5 @@
 import { CurveType } from "recharts/types/shape/Curve";
+import { AggregationInterval } from "@/enums/statistics/AggregationInterval";
 
 export interface YAxisConfig<T> {
   axisY: keyof T;
@@ -13,6 +14,7 @@ export interface StatisticsChartProps<T> {
   height?: string;
   width?: string;
   type?: CurveType | undefined;
+  aggregationInterval?: AggregationInterval;
 }
 
 /* type= 'basis' |

@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BoardStats } from 'src/modules/mongo/schemas/stats/board.stats.schema';
@@ -9,12 +15,34 @@ import { NumericalTimelineChartData } from 'src/shared/interfaces/stats/Numerica
 import { TimeSpentData } from 'src/shared/interfaces/stats/TimeSpentData';
 
 @Injectable()
-export class BoardStatsService {
+export class BoardStatsService implements OnModuleInit, OnApplicationShutdown {
   constructor(
     @InjectModel(BoardStats.name)
     private readonly boardStatsModel: Model<BoardStats>,
     private readonly usersService: UsersService,
   ) {}
+
+  onModuleInit() {
+    void this.setMissingLeaveDates();
+  }
+
+  onApplicationShutdown() {
+    void this.setMissingLeaveDates();
+  }
+
+  private async setMissingLeaveDates() {
+    await this.boardStatsModel.updateMany(
+      { 'joinLeaveTimeline.leaveDate': null },
+      {
+        $set: {
+          'joinLeaveTimeline.$[element].leaveDate': new Date(),
+        },
+      },
+      {
+        arrayFilters: [{ 'element.leaveDate': null }],
+      },
+    );
+  }
 
   async initStats(boardId: string, ownerId: string): Promise<void> {
     await this.boardStatsModel.create({ boardId, ownerId });

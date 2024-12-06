@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SlideStats } from 'src/modules/mongo/schemas/stats/slide.stats.schema';
@@ -6,11 +12,33 @@ import { SlideAction } from 'src/shared/enums/actions/slide.action';
 import { HeatmapPoint } from 'src/shared/interfaces/stats/HeatmapPoint';
 
 @Injectable()
-export class SlideStatsService {
+export class SlideStatsService implements OnModuleInit, OnApplicationShutdown {
   constructor(
     @InjectModel(SlideStats.name)
     private readonly slideStatsModel: Model<SlideStats>,
   ) {}
+
+  onModuleInit() {
+    void this.setMissingLeaveDates();
+  }
+
+  onApplicationShutdown() {
+    void this.setMissingLeaveDates();
+  }
+
+  private async setMissingLeaveDates() {
+    await this.slideStatsModel.updateMany(
+      { 'joinLeaveTimeline.leaveDate': null },
+      {
+        $set: {
+          'joinLeaveTimeline.$[element].leaveDate': new Date(),
+        },
+      },
+      {
+        arrayFilters: [{ 'element.leaveDate': null }],
+      },
+    );
+  }
 
   async initStats(
     slideId: string,

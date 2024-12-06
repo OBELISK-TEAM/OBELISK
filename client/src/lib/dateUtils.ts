@@ -8,13 +8,21 @@ import {
   differenceInMonths,
   differenceInYears,
   addDays,
-  startOfDay,
+  isBefore,
+  isEqual,
+  isAfter,
+  addHours,
+  addMinutes,
 } from "date-fns";
 import { TimeUnit } from "@/interfaces/time-unit";
 import { DateRange as IDateRange } from "@/interfaces/date-range";
 import { TimeInterval } from "@/interfaces/time-interval";
-import { TimeIntervalEnum } from "@/enums/TimeInterval";
+import { TimeIntervalEnum } from "@/enums/statistics/TimeInterval";
 import { DateRange } from "react-day-picker";
+import { AggregationInterval } from "@/enums/statistics/AggregationInterval";
+import { ActiveUsersResponse } from "@/interfaces/responses/statistics/active-users-response";
+import { AggregationRule } from "@/interfaces/stats/aggregation-rule";
+import { statsConfig } from "@/config/statsConfig";
 /**
  * Converts a date string into a human-readable relative time format.
  *
@@ -131,7 +139,7 @@ export function formatDuration(ms: number): string {
 export const getParsedDateRangeFromUrl = (
   searchParams: { [key: string]: string | string[] | undefined },
   prefix: string,
-  defaultStartDate: Date = addDays(new Date(), -7),
+  defaultStartDate: Date = statsConfig.defaultStartDate,
   defaultEndDate: Date = new Date()
 ): IDateRange => {
   const urlSearchParams = new URLSearchParams();
@@ -164,24 +172,21 @@ const isToday = (date: Date): boolean => {
 };
 
 export const TIME_INTERVALS: TimeInterval[] = [
-  { value: TimeIntervalEnum.ONE_DAY, label: "1 day", days: 1 },
-  { value: TimeIntervalEnum.THREE_DAYS, label: "3 days", days: 3 },
-  { value: TimeIntervalEnum.ONE_WEEK, label: "1 week", days: 7 },
-  { value: TimeIntervalEnum.TWO_WEEKS, label: "2 weeks", days: 14 },
-  { value: TimeIntervalEnum.ONE_MONTH, label: "1 month", days: 30 },
-  { value: TimeIntervalEnum.THREE_MONTHS, label: "3 months", days: 90 },
-  { value: TimeIntervalEnum.SIX_MONTHS, label: "6 months", days: 180 },
-  { value: TimeIntervalEnum.ONE_YEAR, label: "1 year", days: 365 },
-  { value: TimeIntervalEnum.TWO_YEARS, label: "2 years", days: 730 },
-  { value: TimeIntervalEnum.THREE_YEARS, label: "3 years", days: 1095 },
+  { value: TimeIntervalEnum.ONE_HOUR, label: "1 hour", minutes: 60 },
+  { value: TimeIntervalEnum.TWO_HOURS, label: "2 hours", minutes: 120 },
+  { value: TimeIntervalEnum.FOUR_HOURS, label: "4 hours", minutes: 240 },
+  { value: TimeIntervalEnum.ONE_DAY, label: "1 day", minutes: 1440 },
+  { value: TimeIntervalEnum.THREE_DAYS, label: "3 days", minutes: 4320 },
+  { value: TimeIntervalEnum.ONE_WEEK, label: "1 week", minutes: 10080 },
+  { value: TimeIntervalEnum.TWO_WEEKS, label: "2 weeks", minutes: 20160 },
 ];
 
 export const determineTimeInterval = (from: Date, to: Date): TimeIntervalEnum => {
   if (!isToday(to)) {
     return TimeIntervalEnum.CUSTOM;
   }
-  const diffDays = differenceInDays(to, from);
-  const interval = TIME_INTERVALS.find((interval) => interval.days === diffDays);
+  const diffDate = differenceInMinutes(to, from);
+  const interval = TIME_INTERVALS.find((interval) => interval.minutes === diffDate);
   return interval ? interval.value : TimeIntervalEnum.CUSTOM;
 };
 
@@ -192,13 +197,101 @@ export const getDateRangeFromUrl = (searchParams: URLSearchParams, prefix: strin
 
   if (fromDate && toDate) {
     return {
-      from: startOfDay(fromDate),
+      from: fromDate,
       to: toDate > now ? now : toDate,
     };
   }
 
   return {
-    from: startOfDay(addDays(now, -7)),
+    from: statsConfig.defaultStartDate,
     to: now,
   };
+};
+
+export const AGGREGATION_RULES: AggregationRule[] = [
+  {
+    maxMinutes: 120, // To 2 hours
+    intervalInMinutes: AggregationInterval.FIVE_MINUTES,
+    incrementDate: (date: Date) => addMinutes(date, 5),
+  },
+  {
+    maxMinutes: 360, // To 6 hours
+    intervalInMinutes: AggregationInterval.FIFTEEN_MINUTES,
+    incrementDate: (date: Date) => addMinutes(date, 15),
+  },
+  {
+    maxMinutes: 720, // To 12 hours
+    intervalInMinutes: AggregationInterval.THIRTY_MINUTES,
+    incrementDate: (date: Date) => addMinutes(date, 30),
+  },
+  {
+    maxMinutes: 1440, // To 24 hours
+    intervalInMinutes: AggregationInterval.ONE_HOUR,
+    incrementDate: (date: Date) => addHours(date, 1),
+  },
+
+  {
+    maxMinutes: 5760, // To 4 days (96 hours)
+    intervalInMinutes: AggregationInterval.FOUR_HOURS,
+    incrementDate: (date: Date) => addHours(date, 4),
+  },
+  {
+    maxMinutes: 34560, // To 24 days (576 hours)
+    intervalInMinutes: AggregationInterval.DAILY,
+    incrementDate: (date: Date) => addDays(date, 1),
+  },
+];
+
+export function determineAggregationRule(startDate: Date, endDate: Date): AggregationRule {
+  if (startDate > endDate) {
+    const temp = startDate;
+    startDate = endDate;
+    endDate = temp;
+  }
+
+  const totalDays = differenceInMinutes(endDate, startDate);
+
+  for (const rule of AGGREGATION_RULES) {
+    if (totalDays <= rule.maxMinutes) {
+      return rule;
+    }
+  }
+  return AGGREGATION_RULES[AGGREGATION_RULES.length - 1];
+}
+
+export const fillMissingData = (
+  data: ActiveUsersResponse[],
+  aggregationRule: AggregationRule,
+  endDate: Date
+): ActiveUsersResponse[] => {
+  const completeData: ActiveUsersResponse[] = [];
+
+  const dataMap = new Map<string, number>(data.map((item) => [item.timestamp, item.value]));
+
+  const firstNonZeroIndex = data.findIndex((item) => item.value > 0);
+  if (firstNonZeroIndex === -1) {
+    return completeData;
+  }
+
+  const lastNonZeroIndex = data.length - 1 - [...data].reverse().findIndex((item) => item.value > 0);
+
+  const filteredData = data.slice(firstNonZeroIndex, lastNonZeroIndex + 1);
+
+  let currentDate = new Date(filteredData[0].timestamp);
+
+  while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
+    const timestamp = currentDate.toISOString();
+    const value = dataMap.get(timestamp) ?? 0;
+    if (
+      isBefore(currentDate, new Date(filteredData[0].timestamp)) ||
+      isAfter(currentDate, new Date(filteredData[filteredData.length - 1].timestamp))
+    ) {
+      currentDate = aggregationRule.incrementDate(currentDate);
+      continue;
+    }
+    completeData.push({ timestamp, value });
+    currentDate = aggregationRule.incrementDate(currentDate);
+  }
+
+  return completeData;
 };

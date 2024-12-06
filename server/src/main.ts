@@ -19,6 +19,8 @@ async function bootstrap() {
     DEFAULT_SERVER_PORT,
   );
 
+  app.enableShutdownHooks();
+
   const pipe: ValidationPipe = getPipeConfig();
   app.useGlobalPipes(pipe);
 
