@@ -4,6 +4,10 @@ import { MenuActions } from "@/enums/MenuActions";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { CanvasMode } from "@/enums/CanvasMode";
 import { MenuItem } from "@/interfaces/menu-data-context";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { BrushConfig } from "@/config/brushConfig";
 
 const isActiveItem = (itemName: string, activeItem: string | null, canvasMode: CanvasMode): boolean => {
   return itemName === activeItem || itemName === canvasMode.toString();
@@ -16,9 +20,10 @@ interface SidebarItemProps {
 const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
   const {
     setActiveItem,
-    state: { activeItem, color, size, canvasMode },
+    state: { activeItem, color, penSize, eraserSize, canvasMode },
     setColor,
-    setSize,
+    setPenSize,
+    setEraserSize,
   } = useCanvas();
   const handleClick = (name: string, action?: () => void) => {
     if (setActiveItem) {
@@ -28,10 +33,24 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
       action();
     }
   };
+
+  const setSize = (value: number) => {
+    if (value < 1 || value > BrushConfig.MAX_BRUSH_SIZE) {
+      return;
+    }
+    if (canvasMode === CanvasMode.SIMPLE_DRAWING) {
+      setPenSize(value);
+    } else if (canvasMode === CanvasMode.ERASER) {
+      setEraserSize(value);
+    }
+  };
+  const size = canvasMode === CanvasMode.SIMPLE_DRAWING ? penSize : canvasMode === CanvasMode.ERASER ? eraserSize : 0;
+
   return (
     <div>
-      <button
-        className={`flex cursor-pointer items-center rounded p-2 text-left hover:bg-muted hover:text-primary ${
+      <Button
+        variant={"mild"}
+        className={`flex w-52 justify-normal p-2 text-left ${
           isActiveItem(item.name, activeItem, canvasMode)
             ? "bg-muted text-primary"
             : "bg-background text-muted-foreground"
@@ -52,23 +71,23 @@ const BoardSidebarItem: React.FC<SidebarItemProps> = ({ item }) => {
         ) : (
           <div className="flex h-6 w-6 items-center justify-center">{item.icon}</div>
         )}
-        <label
+        <Label
           htmlFor={item.name}
-          className="ml-8 cursor-pointer whitespace-nowrap text-sm font-medium transition-all duration-300 ease-in-out group-hover:ml-2 group-hover:opacity-100"
+          className="transition-ml ml-8 flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium duration-300 ease-in-out group-hover:ml-2"
         >
-          {item.name === MenuActions.CHANGE_SIZE ? "Size" : ""}
+          {item.name === MenuActions.CHANGE_SIZE ? item.text : ""}
           {item.name === MenuActions.CHANGE_SIZE ? (
-            <input
+            <Input
               type="number"
               value={size}
               onChange={(e) => setSize(e.target.value as unknown as number)}
-              className="ml-2 w-20 cursor-pointer rounded border bg-background p-2 text-muted-foreground"
+              className="ml-2 w-14 rounded border bg-background p-2 text-muted-foreground"
             />
           ) : (
             item.text
           )}
-        </label>
-      </button>
+        </Label>
+      </Button>
     </div>
   );
 };

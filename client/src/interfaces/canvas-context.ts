@@ -7,7 +7,8 @@ export interface CanvasContext {
   canvasRef: MutableRefObject<HTMLCanvasElement | null>;
   setCanvasMode: (mode: CanvasMode) => void;
   setColor: (color: string) => void;
-  setSize: (size: number) => void;
+  setPenSize: (size: number) => void;
+  setEraserSize: (size: number) => void;
   handleStyleChange: () => void;
   setActiveItem: (activeItem: string | null) => void;
   slideIndex: number;

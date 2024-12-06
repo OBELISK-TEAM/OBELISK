@@ -63,6 +63,10 @@ export const configureGlobalFabricDefaultProperties = (): void => {
   fabric.ActiveSelection.prototype.lockScalingX = true;
   fabric.ActiveSelection.prototype.lockScalingY = true;
   fabric.ActiveSelection.prototype.lockRotation = true;
+
+  // default properties for all objects
+  fabric.Object.prototype.stroke = "#000000";
+  fabric.Object.prototype.strokeWidth = 0;
 };
 
 export const configureGlobalFabricInteractivity = (canControlObject: boolean): void => {

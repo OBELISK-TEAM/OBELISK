@@ -19,11 +19,13 @@ const BoardSidebar: FC<BoardSidebarProps> = ({ groupId, fromRight = false }) => 
     >
       <div className="flex flex-1 flex-col space-y-4 p-2">
         <div className="grow">
-          {menuGroup?.items.map((item, itemIndex) => (
-            <div key={itemIndex}>
-              <BoardSidebarItem item={item} />
-            </div>
-          ))}
+          {menuGroup?.items
+            .filter((item) => item.enabled)
+            .map((item, itemIndex) => (
+              <div key={itemIndex}>
+                <BoardSidebarItem item={item} />
+              </div>
+            ))}
         </div>
         {/* as long as we will not implement this functionality, we will not display settings*/}
         {/*{(*/}
