@@ -282,12 +282,12 @@ export const fillMissingData = (
   while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
     const timestamp = currentDate.toISOString();
     const value = dataMap.get(timestamp) ?? 0;
-    if (
-      isBefore(currentDate, new Date(filteredData[0].timestamp)) ||
-      isAfter(currentDate, new Date(filteredData[filteredData.length - 1].timestamp))
-    ) {
+    if (isBefore(currentDate, new Date(filteredData[0].timestamp))) {
       currentDate = aggregationRule.incrementDate(currentDate);
       continue;
+    }
+    if (isAfter(currentDate, endDate)) {
+      break;
     }
     completeData.push({ timestamp, value });
     currentDate = aggregationRule.incrementDate(currentDate);
