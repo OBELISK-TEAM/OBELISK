@@ -297,8 +297,15 @@ export const fillMissingData = (
 };
 
 export const timeInHoursAndMinutes = (milliseconds: number): string => {
-  const totalMinutes = Math.floor(milliseconds / 60000);
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
+  const seconds = totalSeconds % 60;
+
+  if (hours === 0 && minutes === 0) {
+    return `${seconds} sec`;
+  }
+
   return hours > 0 ? `${hours} h ${minutes} min` : `${minutes} min`;
 };
