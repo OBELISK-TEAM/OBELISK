@@ -1,4 +1,5 @@
-import { StatisticsChartProps } from "@/interfaces/stats/statistics-chart";
+import { StatisticsChartProps } from "@/interfaces/stats/statistics-timeline-chart";
+import { HTMLProps } from "react";
 
 export interface StatisticsCardProps<T> {
   title: string;
@@ -6,4 +7,5 @@ export interface StatisticsCardProps<T> {
   datePickerPrefix?: string;
   Chart?: React.ReactElement<StatisticsChartProps<T>>;
   children?: React.ReactNode;
+  className?: HTMLProps<HTMLElement>["className"];
 }

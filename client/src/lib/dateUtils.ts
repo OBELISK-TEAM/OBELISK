@@ -295,3 +295,17 @@ export const fillMissingData = (
 
   return completeData;
 };
+
+export const timeInHoursAndMinutesOrSeconds = (milliseconds: number): string => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const seconds = totalSeconds % 60;
+
+  if (hours === 0 && minutes === 0) {
+    return `${seconds} sec`;
+  }
+
+  return hours > 0 ? `${hours} h ${minutes} min` : `${minutes} min`;
+};

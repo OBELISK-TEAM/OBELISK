@@ -1,5 +1,4 @@
-import { UniqueVisitors } from "@/app/user-boards/(board-management)/[boardId]/statistics/time-spent/_components/UniqueVisitors";
-import { getUniqueVisitors } from "@/services/statistics/fetchUniqueVisitors";
+import { TimeSpentCard } from "@/app/user-boards/(board-management)/[boardId]/statistics/time-spent/_components/TimeSpentCard";
 
 const TimeSpentPage = async ({
   params,
@@ -8,7 +7,6 @@ const TimeSpentPage = async ({
     boardId: string;
   };
 }) => {
-  const uniqueVisitorsData = await getUniqueVisitors(params.boardId);
-  return <UniqueVisitors uniqueVisitors={uniqueVisitorsData} />;
+  return <TimeSpentCard boardId={params.boardId} />;
 };
 export default TimeSpentPage;
