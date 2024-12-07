@@ -4,11 +4,11 @@ import { StatisticsCard } from "@/components/common/statistics/StatisticsCard";
 import { StatisticsPieChart } from "@/components/common/statistics/StatisticsPieChart";
 //import { SummaryCard } from "@/components/common/statistics/SummaryCard";
 import { TimeSpentResponse } from "@/interfaces/responses/statistics/time-spent-response";
-import { timeInHoursAndMinutes } from "@/lib/dateUtils";
+import { timeInHoursAndMinutesOrSeconds } from "@/lib/dateUtils";
 
 const aggregateTimeSpent = (timeSpentData: TimeSpentResponse[]): string => {
   const totalTime = timeSpentData.reduce((acc, item) => acc + item.timeSpent, 0); // Aggregate time
-  return timeInHoursAndMinutes(totalTime);
+  return timeInHoursAndMinutesOrSeconds(totalTime);
 };
 export const TimeSpentCard = async ({ boardId }: { boardId: string }) => {
   const [

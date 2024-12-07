@@ -296,7 +296,7 @@ export const fillMissingData = (
   return completeData;
 };
 
-export const timeInHoursAndMinutes = (milliseconds: number): string => {
+export const timeInHoursAndMinutesOrSeconds = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
   const totalMinutes = Math.floor(totalSeconds / 60);
   const hours = Math.floor(totalMinutes / 60);

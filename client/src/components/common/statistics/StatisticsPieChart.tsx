@@ -5,7 +5,7 @@ import { PieChart, Pie, ResponsiveContainer, Label, TooltipProps } from "rechart
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip } from "@/components/ui/chart";
 import { getColorFromEmail } from "@/lib/colorUtils";
 import { StatisticsPieChartProps } from "@/interfaces/stats/statistics-pie-chart";
-import { timeInHoursAndMinutes } from "@/lib/dateUtils";
+import { timeInHoursAndMinutesOrSeconds } from "@/lib/dateUtils";
 
 function preparePieChartData<T>(data: T[], nameKey: keyof T, valueKey: keyof T) {
   return data.map((item) => {
@@ -47,7 +47,7 @@ export function StatisticsPieChart<T>({
     }
 
     const tooltipPayload = payload[0].payload as { name: string; rawValue: number; fill: string };
-    const formattedValue = timeInHoursAndMinutes(tooltipPayload.rawValue);
+    const formattedValue = timeInHoursAndMinutesOrSeconds(tooltipPayload.rawValue);
 
     return (
       <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
