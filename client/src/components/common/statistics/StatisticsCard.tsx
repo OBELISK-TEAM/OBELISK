@@ -17,7 +17,7 @@ export const StatisticsCard = <T,>({
     <header className="flex items-center justify-between gap-6 p-2">
       <SectionHeader title={title} description={description} />
     </header>
-    {Chart && <main className="mt-4">{Chart}</main>}
+    {Chart && <main className="my-2">{Chart}</main>}
     {datePickerPrefix && <DateRangePicker prefix={datePickerPrefix} />}
     <div>{children}</div>
   </Card>
