@@ -3,6 +3,7 @@ import { SectionHeader } from "@/components/common/headers/section-header/Sectio
 import { DateRangePicker } from "@/components/common/date-picker/DateRangePicker";
 import { Card } from "@/components/ui/card";
 import { StatisticsCardProps } from "@/interfaces/stats/statistics-card";
+import { cn } from "@/lib/utils";
 
 export const StatisticsCard = <T,>({
   title,
@@ -10,8 +11,9 @@ export const StatisticsCard = <T,>({
   datePickerPrefix,
   Chart,
   children,
+  className,
 }: StatisticsCardProps<T>) => (
-  <Card className="rounded-lg border border-border bg-card p-4 shadow">
+  <Card className={cn("rounded-lg border border-border bg-card p-4 shadow", className)}>
     <header className="flex items-center justify-between gap-6 p-2">
       <SectionHeader title={title} description={description} />
     </header>

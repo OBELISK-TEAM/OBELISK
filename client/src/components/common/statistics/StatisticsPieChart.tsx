@@ -2,28 +2,21 @@
 
 import * as React from "react";
 import { PieChart, Pie, ResponsiveContainer, Label, TooltipProps } from "recharts";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip } from "@/components/ui/chart";
 import { getColorFromEmail } from "@/lib/colorUtils";
 import { StatisticsPieChartProps } from "@/interfaces/stats/statistics-pie-chart";
-
-function formatTime(milliseconds: number): string {
-  const totalMinutes = Math.floor(milliseconds / 60000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
-  }
-}
+import { timeInHoursAndMinutes } from "@/lib/dateUtils";
 
 function preparePieChartData<T>(data: T[], nameKey: keyof T, valueKey: keyof T) {
-  return data.map((item) => ({
-    name: String(item[nameKey]),
-    rawValue: Number(item[valueKey]),
-    value: Number(item[valueKey]),
-    fill: getColorFromEmail(String(item[nameKey])),
-  }));
+  return data.map((item) => {
+    const rawValue = Number(item[valueKey]);
+    return {
+      name: String(item[nameKey]),
+      rawValue,
+      value: rawValue,
+      fill: getColorFromEmail(String(item[nameKey])),
+    };
+  });
 }
 
 export function StatisticsPieChart<T>({
@@ -34,29 +27,37 @@ export function StatisticsPieChart<T>({
   height = "400px",
   innerRadius = 60,
   strokeWidth = 5,
-  label = "",
   innerValues,
 }: StatisticsPieChartProps<T>) {
   const chartData = preparePieChartData(data, nameKey, valueKey);
 
-  // this is only created because ChartContainer requires it, but it's not used
   const chartConfig = {
-    pie: {
-      label,
-      icon: undefined,
-    },
+    ...chartData.reduce((acc: any, cur) => {
+      acc[cur.name] = {
+        label: cur.name,
+        color: cur.fill,
+      };
+      return acc;
+    }, {}),
   };
 
   const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
-    if (active && payload && payload.length > 0) {
-      const d = payload[0].payload as { name: string; rawValue: number };
-      return (
-        <div className="rounded-md bg-popover p-2 text-sm text-foreground shadow-md">
-          {d.name}: <strong>{formatTime(d.rawValue)}</strong>
-        </div>
-      );
+    if (!active || !payload || payload.length === 0) {
+      return null;
     }
-    return null;
+
+    const tooltipPayload = payload[0].payload as { name: string; rawValue: number; fill: string };
+    const formattedValue = timeInHoursAndMinutes(tooltipPayload.rawValue);
+
+    return (
+      <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-[30%]" style={{ backgroundColor: tooltipPayload.fill }} />
+          <span className="font-mono font-medium tabular-nums text-muted-foreground">{tooltipPayload.name}</span>
+          <span className="font-medium text-foreground">{formattedValue}</span>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -85,6 +86,10 @@ export function StatisticsPieChart<T>({
               }}
             />
           </Pie>
+          <ChartLegend
+            content={<ChartLegendContent nameKey="name" />}
+            className="flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+          />
         </PieChart>
       </ChartContainer>
     </ResponsiveContainer>
