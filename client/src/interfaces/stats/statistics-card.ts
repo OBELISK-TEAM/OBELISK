@@ -1,4 +1,4 @@
-import { StatisticsChartProps } from "@/interfaces/stats/statistics-chart";
+import { StatisticsChartProps } from "@/interfaces/stats/statistics-timeline-chart";
 
 export interface StatisticsCardProps<T> {
   title: string;

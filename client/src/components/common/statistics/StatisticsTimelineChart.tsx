@@ -5,7 +5,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContai
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { parseDate } from "@/lib/dateUtils";
 import { getColorInHsl } from "@/lib/colorUtils";
-import { StatisticsChartProps, YAxisConfig } from "@/interfaces/stats/statistics-chart";
+import { StatisticsChartProps, YAxisConfig } from "@/interfaces/stats/statistics-timeline-chart";
 import { AggregationInterval } from "@/enums/statistics/AggregationInterval";
 import { format } from "date-fns";
 
@@ -50,7 +50,7 @@ const formatXAxis = (tickItem: string, aggregationInterval: AggregationInterval)
   }
 };
 
-export const StatisticsChart = <T,>({
+export const StatisticsTimelineChart = <T,>({
   data,
   axisX,
   yAxes,
