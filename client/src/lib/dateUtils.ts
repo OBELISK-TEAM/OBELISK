@@ -266,9 +266,7 @@ export const fillMissingDates = (
   endDate: Date
 ): ActiveUsersResponse[] => {
   const completeData: ActiveUsersResponse[] = [];
-
   const dataMap = new Map<string, number>(data.map((item) => [item.timestamp, item.value]));
-
   let currentDate = new Date(startDate);
 
   while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
