@@ -1,7 +1,7 @@
 import React from "react";
 import { getActiveUsers } from "@/services/statistics/fetchBoardActiveUsersStats";
 import { DateRange } from "@/interfaces/date-range";
-import { determineAggregationRule, fillMissingData, getParsedDateRangeFromUrl } from "@/lib/dateUtils";
+import { determineAggregationRule, fillMissingDates, getParsedDateRangeFromUrl } from "@/lib/dateUtils";
 import { statsConfig } from "@/config/statsConfig";
 import { ActiveUsersCard } from "@/app/user-boards/(board-management)/[boardId]/statistics/activity/_components/ActiveUsersCard";
 const ActivityPage = async ({
@@ -21,7 +21,7 @@ const ActivityPage = async ({
     endDate,
     aggregationIntervalMinutes: aggregationIntervalRule.intervalInMinutes,
   });
-  const completedActiveUsersData = fillMissingData(activeUsersData, aggregationIntervalRule, endDate);
+  const completedActiveUsersData = fillMissingDates(activeUsersData, aggregationIntervalRule, startDate, endDate);
 
   return (
     <ActiveUsersCard
