@@ -259,36 +259,21 @@ export function determineAggregationRule(startDate: Date, endDate: Date): Aggreg
   return AGGREGATION_RULES[AGGREGATION_RULES.length - 1];
 }
 
-export const fillMissingData = (
+export const fillMissingDates = (
   data: ActiveUsersResponse[],
   aggregationRule: AggregationRule,
+  startDate: Date,
   endDate: Date
 ): ActiveUsersResponse[] => {
   const completeData: ActiveUsersResponse[] = [];
 
   const dataMap = new Map<string, number>(data.map((item) => [item.timestamp, item.value]));
 
-  const firstNonZeroIndex = data.findIndex((item) => item.value > 0);
-  if (firstNonZeroIndex === -1) {
-    return completeData;
-  }
-
-  const lastNonZeroIndex = data.length - 1 - [...data].reverse().findIndex((item) => item.value > 0);
-
-  const filteredData = data.slice(firstNonZeroIndex, lastNonZeroIndex + 1);
-
-  let currentDate = new Date(filteredData[0].timestamp);
+  let currentDate = new Date(startDate);
 
   while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
     const timestamp = currentDate.toISOString();
     const value = dataMap.get(timestamp) ?? 0;
-    if (isBefore(currentDate, new Date(filteredData[0].timestamp))) {
-      currentDate = aggregationRule.incrementDate(currentDate);
-      continue;
-    }
-    if (isAfter(currentDate, endDate)) {
-      break;
-    }
     completeData.push({ timestamp, value });
     currentDate = aggregationRule.incrementDate(currentDate);
   }
