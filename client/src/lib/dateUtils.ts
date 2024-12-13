@@ -209,33 +209,33 @@ export const getDateRangeFromUrl = (searchParams: URLSearchParams, prefix: strin
 
 export const AGGREGATION_RULES: AggregationRule[] = [
   {
-    maxMinutes: 120, // To 2 hours
+    maxMinutes: 480, // To 8 hours
     intervalInMinutes: AggregationInterval.FIVE_MINUTES,
     incrementDate: (date: Date) => addMinutes(date, 5),
   },
   {
-    maxMinutes: 360, // To 6 hours
+    maxMinutes: 1440, // To 24 hours -> now we need to multiply this by 4 to get 24 hours
     intervalInMinutes: AggregationInterval.FIFTEEN_MINUTES,
     incrementDate: (date: Date) => addMinutes(date, 15),
   },
   {
-    maxMinutes: 720, // To 12 hours
+    maxMinutes: 2880, // To 48 hours
     intervalInMinutes: AggregationInterval.THIRTY_MINUTES,
     incrementDate: (date: Date) => addMinutes(date, 30),
   },
   {
-    maxMinutes: 1440, // To 24 hours
+    maxMinutes: 5760, // To 4 days (96 hours)
     intervalInMinutes: AggregationInterval.ONE_HOUR,
     incrementDate: (date: Date) => addHours(date, 1),
   },
 
   {
-    maxMinutes: 5760, // To 4 days (96 hours)
+    maxMinutes: 23040, // To 16 days (384 hours)
     intervalInMinutes: AggregationInterval.FOUR_HOURS,
     incrementDate: (date: Date) => addHours(date, 4),
   },
   {
-    maxMinutes: 34560, // To 24 days (576 hours)
+    maxMinutes: 138240, // To 96 days (2304 hours)
     intervalInMinutes: AggregationInterval.DAILY,
     incrementDate: (date: Date) => addDays(date, 1),
   },

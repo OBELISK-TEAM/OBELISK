@@ -18,6 +18,8 @@ export const TimeSpentCard = async ({ boardId }: { boardId: string }) => {
     //  getUniqueVisitors(boardId),
     getTimeSpent(boardId),
   ]);
+  // sort timeSpentData
+  timeSpentData.sort((a, b) => b.timeSpent - a.timeSpent);
   const aggregatedTime = aggregateTimeSpent(timeSpentData);
   return (
     <section className="flex h-full w-full flex-wrap gap-4">
