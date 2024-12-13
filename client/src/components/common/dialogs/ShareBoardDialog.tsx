@@ -14,12 +14,12 @@ import BoardPermissionsSelect from "@/components/common/board-permissions-select
 import { BoardPermission } from "@/enums/BoardPermission";
 import { LoadingSpinner } from "@/components/common/loading/LoadingSpinner";
 import { toast } from "sonner";
-//import { ClipboardIcon, CopyIcon } from "lucide-react";
+import { ClipboardIcon, CopyIcon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { generatePermissionCode } from "@/app/actions/permissionsActions";
 import { GeneratePermissionCodeResponse } from "@/interfaces/responses/board-permission/generate-permission-code-response";
 import { formatDuration } from "@/lib/dateUtils";
-//import logger from "@/lib/logger";
+import logger from "@/lib/logger";
 import { Badge } from "@/components/ui/badge";
 import BoardPermissionsInfoDialog from "@/app/user-boards/(board-management)/[boardId]/permissions/_components/BoardPermissionsInfoDialog";
 
@@ -50,17 +50,17 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
     });
   };
 
-  // const handleCopyLink = async () => {
-  //   try {
-  //     //await navigator.clipboard.writeText(response?.permissionStr || ""); not working on deployed version
-  //     logger.warn(response?.permissionStr);
-  //     toast.info("Link copied to clipboard");
-  //     setCopied(true);
-  //     setTimeout(() => setCopied(false), 4000);
-  //   } catch {
-  //     toast.error("Failed to copy the link");
-  //   }
-  // };
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(response?.permissionStr || ""); //not working on deployed version
+      logger.warn(response?.permissionStr);
+      toast.info("Link copied to clipboard");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 4000);
+    } catch {
+      toast.error("Failed to copy the link");
+    }
+  };
 
   const resetForm = () => {
     setResponse(null);
@@ -70,7 +70,12 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <HoverCard>
+        <HoverCardTrigger>
+          <DialogTrigger asChild>{children}</DialogTrigger>
+        </HoverCardTrigger>
+        <HoverCardContent>Share the board with others</HoverCardContent>
+      </HoverCard>
       <DialogContent className="flex-col gap-10 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className={"flex items-center gap-1"}>
@@ -110,10 +115,10 @@ const ShareBoardDialog: React.FC<ShareBoardDialogProps> = ({ boardId, children }
                 <Badge
                   variant="secondary"
                   className="flex h-fit w-full gap-2 whitespace-normal break-words rounded-md p-2"
-                  // onClick={handleCopyLink}
+                  onClick={handleCopyLink}
                 >
-                  {response.permissionStr}
-                  {/*{copied ? <ClipboardIcon /> : <CopyIcon />}*/}
+                  {response.permissionStr.slice(0, 50) + "..."}
+                  {copied ? <ClipboardIcon /> : <CopyIcon />}
                 </Badge>
               </HoverCardTrigger>
               <HoverCardContent>{copied ? "Copy again" : "Copy this text"}</HoverCardContent>

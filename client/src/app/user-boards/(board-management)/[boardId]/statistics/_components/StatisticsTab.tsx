@@ -12,7 +12,7 @@ import TabButtons from "@/components/common/tab-buttons/TabButtons";
 const tabs = [
   { label: "Activity", value: StatisticsActiveTab.ACTIVITY },
   { label: "Time spent", value: StatisticsActiveTab.TIME_SPENT },
-  { label: "Permissions management", value: StatisticsActiveTab.PERMISSIONS_MANAGEMENT },
+  // { label: "Permissions management", value: StatisticsActiveTab.PERMISSIONS_MANAGEMENT },
 ];
 const StatisticsTabs: React.FC = () => {
   const pathname = usePathname();
