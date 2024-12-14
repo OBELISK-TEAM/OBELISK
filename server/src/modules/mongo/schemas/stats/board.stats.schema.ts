@@ -40,8 +40,13 @@ export class BoardStats extends Document {
     required: false,
     default: [],
   })
-  shareTimeline: [
-    { userId: string; permission: BoardPermission; timestamp: Date },
+  permissionTimeline: [
+    {
+      userId: string;
+      permission: BoardPermission;
+      timestamp: Date;
+      log: string;
+    },
   ];
 
   @Prop({

@@ -296,6 +296,14 @@ export class BoardsService {
 
     await this.removePermission(board, userId, currPermission);
     await this.assignPermission(board, userId, newPermission);
+
+    this.logPermissionChange(
+      boardId,
+      userId.toString(),
+      currPermission,
+      newPermission,
+    );
+
     return {
       boardId,
       name: board.name,
@@ -315,11 +323,6 @@ export class BoardsService {
     permission: BoardPermission,
   ): Promise<void> {
     userId = userId.toString();
-    void this.boardStatsService.logShare(
-      (board._id as Types.ObjectId).toString(),
-      userId,
-      BoardPermission.NONE,
-    );
     switch (permission) {
       case BoardPermission.NONE:
         return;
@@ -334,9 +337,6 @@ export class BoardsService {
         );
         break;
       case BoardPermission.MODERATOR:
-        console.log(board.permissions.moderator);
-        console.log(userId);
-
         board.permissions.moderator = board.permissions.moderator.filter(
           id => id.toString() !== userId,
         );
@@ -352,11 +352,6 @@ export class BoardsService {
     userId: string,
     permission: BoardPermission,
   ): Promise<void> {
-    void this.boardStatsService.logShare(
-      (board._id as Types.ObjectId).toString(),
-      userId.toString(),
-      permission,
-    );
     switch (permission) {
       case BoardPermission.NONE:
         return;
@@ -384,6 +379,12 @@ export class BoardsService {
     const currPermission = this.determineUserPermission(board, userId);
     await this.removePermission(board, userId, currPermission);
     await this.assignPermission(board, userId, permission);
+    this.logPermissionChange(
+      boardId,
+      userId.toString(),
+      currPermission,
+      permission,
+    );
   }
 
   private calculateBoardSizeInBytes(board: SuperBoardDocument): number {
@@ -394,6 +395,30 @@ export class BoardsService {
     query: FilterQuery<SuperBoardDocument>,
   ): Promise<number> {
     return this.boardModel.countDocuments(query).exec();
+  }
+
+  private logPermissionChange(
+    boardId: string,
+    userId: string,
+    oldPermission: BoardPermission,
+    newPermission: BoardPermission,
+  ) {
+    let log = '';
+
+    if (oldPermission == BoardPermission.NONE) {
+      log = `gained ${BoardPermission[newPermission]} permission`;
+    } else if (newPermission == BoardPermission.NONE) {
+      log = `lost all permission (previous: ${BoardPermission[oldPermission]})`;
+    } else {
+      log = `changed permission from ${BoardPermission[oldPermission]} to ${BoardPermission[newPermission]}`;
+    }
+
+    void this.boardStatsService.logPermissionChange(
+      boardId,
+      userId,
+      newPermission,
+      log,
+    );
   }
 }
 

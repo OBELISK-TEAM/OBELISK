@@ -89,19 +89,21 @@ export class BoardStatsService implements OnModuleInit, OnApplicationShutdown {
     void this.logAction(boardId, userId, null, BoardAction.USER_LEAVE_BOARD);
   }
 
-  async logShare(
+  async logPermissionChange(
     boardId: string,
     userId: string,
     permission: BoardPermission,
+    log: string,
   ): Promise<void> {
     await this.boardStatsModel.updateOne(
       { boardId },
       {
         $push: {
-          shareTimeline: {
+          permissionTimeline: {
             timestamp: new Date(),
             userId,
             permission,
+            log,
           },
         },
       },
