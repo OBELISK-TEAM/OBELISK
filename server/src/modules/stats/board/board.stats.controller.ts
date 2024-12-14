@@ -39,4 +39,20 @@ export class BoardStatsController {
   ): Promise<TimeSpentData[]> {
     return this.boardStatsService.getTimesSpentOnBoardInMs(boardId);
   }
+
+  @Get(':boardId/board-actions-over-time')
+  @UseGuards(JwtAuthGuard)
+  async getBoardActionsOverTime(
+    @Param('boardId') boardId: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Query('aggregationIntervalMinutes') aggregationIntervalMinutes: number,
+  ): Promise<NumericalTimelineChartData[]> {
+    return this.boardStatsService.getBoardActionsOverTime(
+      boardId,
+      new Date(startDate),
+      new Date(endDate),
+      aggregationIntervalMinutes,
+    );
+  }
 }

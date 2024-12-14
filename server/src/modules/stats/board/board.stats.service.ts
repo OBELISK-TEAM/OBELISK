@@ -302,4 +302,88 @@ export class BoardStatsService implements OnModuleInit, OnApplicationShutdown {
 
     return this.convertTimesSpentMapToTimeSpentDataArray(timesSpentMap);
   }
+
+  async getBoardActionsOverTime(
+    boardId: string,
+    startDate: Date,
+    endDate: Date,
+    aggregationIntervalMinutes: number,
+  ): Promise<NumericalTimelineChartData[]> {
+    if (startDate.toString() === 'Invalid Date') startDate = new Date(0);
+    if (endDate.toString() === 'Invalid Date' || endDate > new Date())
+      endDate = new Date();
+
+    if (startDate >= endDate) {
+      throw new HttpException('Invalid dates', HttpStatus.BAD_REQUEST);
+    }
+
+    const boardStats = await this.boardStatsModel.findOne({
+      boardId,
+      $and: [
+        { 'actionTimeline.timestamp': { $gte: startDate } },
+        { 'actionTimeline.timestamp': { $lte: endDate } },
+      ],
+    });
+
+    if (!boardStats || !boardStats.actionTimeline) {
+      return [];
+    }
+
+    const boardActionsOverTimeMap = this.getBoardActionsOverTimeMap(
+      boardStats,
+      startDate.getTime(),
+      endDate.getTime(),
+      aggregationIntervalMinutes * 60 * 1000,
+    );
+
+    return this.convertBoardActionsOverToChartDataArray(
+      boardActionsOverTimeMap,
+    );
+  }
+
+  getBoardActionsOverTimeMap(
+    boardStats: BoardStats,
+    startDateMs: number,
+    endDateMs: number,
+    aggregationIntervalMs: number,
+  ): Map<number, number> {
+    const boardActionsOverTimeMap = new Map<number, number>();
+
+    for (let i = startDateMs; i <= endDateMs; i += aggregationIntervalMs) {
+      boardActionsOverTimeMap.set(i, 0);
+    }
+
+    boardActionsOverTimeMap.forEach((_, aggregationPointDateMs) => {
+      for (const actionLog of boardStats.actionTimeline) {
+        const timestamp = actionLog.timestamp.getTime();
+
+        if (
+          timestamp <= aggregationPointDateMs + aggregationIntervalMs / 2 &&
+          timestamp > aggregationPointDateMs - aggregationIntervalMs / 2
+        ) {
+          boardActionsOverTimeMap.set(
+            aggregationPointDateMs,
+            (boardActionsOverTimeMap.get(aggregationPointDateMs) || 0) + 1,
+          );
+        }
+      }
+    });
+
+    return boardActionsOverTimeMap;
+  }
+
+  private convertBoardActionsOverToChartDataArray(
+    boardActionsOverTimeMap: Map<number, number>,
+  ): NumericalTimelineChartData[] {
+    const chartDataArray = [] as NumericalTimelineChartData[];
+    boardActionsOverTimeMap.forEach((noActions, aggregationPointDateMs) => {
+      if (noActions > 0) {
+        chartDataArray.push({
+          timestamp: new Date(aggregationPointDateMs),
+          value: noActions,
+        });
+      }
+    });
+    return chartDataArray;
+  }
 }
