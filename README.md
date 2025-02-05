@@ -3,7 +3,7 @@ Online Board for Effective Learning, Interaction and Sharing Knowledge. Desktop 
 
 ## System Architecture
 
-![system_architecture](https://github.com/user-attachments/assets/ffb7d41b-1255-4ea9-916b-c3e0634f97ae)
+<img src="https://github.com/user-attachments/assets/ffb7d41b-1255-4ea9-916b-c3e0634f97ae" style="width: 60%; height: auto;">
 
 ## Preview
 
